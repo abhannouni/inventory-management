@@ -1,39 +1,39 @@
 import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { InjectRepository } from '@nestjs/typeorm';
+import { User } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
-import { Repository } from 'typeorm';
-import { User } from '../user/entities/user.entity';
-import { RegisterDto } from './dto/register.dto';
+import { PrismaService } from '../prisma/prisma.service';
 import { LoginDto } from './dto/login.dto';
+import { RegisterDto } from './dto/register.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(User) private readonly users: Repository<User>,
+    private readonly prisma: PrismaService,
     private readonly jwt: JwtService,
     private readonly config: ConfigService,
   ) {}
 
   async register(dto: RegisterDto) {
-    const exists = await this.users.findOne({ where: { email: dto.email } });
+    const exists = await this.prisma.user.findUnique({ where: { email: dto.email } });
     if (exists) throw new ConflictException('Email already in use');
 
     const hashed = await bcrypt.hash(dto.password, 12);
-    const user = this.users.create({
-      full_name: dto.full_name,
-      email: dto.email,
-      password: hashed,
-      role: dto.role,
-      region: dto.region_id ? ({ id: dto.region_id } as any) : undefined,
+    const user = await this.prisma.user.create({
+      data: {
+        full_name: dto.full_name,
+        email: dto.email,
+        password: hashed,
+        role: dto.role,
+        region_id: dto.region_id ?? null,
+      },
     });
-    await this.users.save(user);
     return this.sanitize(user);
   }
 
   async login(dto: LoginDto) {
-    const user = await this.users.findOne({ where: { email: dto.email } });
+    const user = await this.prisma.user.findUnique({ where: { email: dto.email } });
     if (!user || !(await bcrypt.compare(dto.password, user.password))) {
       throw new UnauthorizedException('Invalid credentials');
     }
@@ -41,7 +41,10 @@ export class AuthService {
   }
 
   async me(id: string) {
-    const user = await this.users.findOne({ where: { id }, relations: ['region'] });
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+      include: { region: true },
+    });
     if (!user) throw new UnauthorizedException();
     return this.sanitize(user);
   }
@@ -51,12 +54,12 @@ export class AuthService {
       { sub: user.id, email: user.email, role: user.role },
       {
         secret: this.config.get<string>('JWT_ACCESS_SECRET'),
-        expiresIn: this.config.get<string>('JWT_ACCESS_EXPIRES'),
+        expiresIn: this.config.get('JWT_ACCESS_EXPIRES') as any,
       },
     );
   }
 
-  private sanitize(user: User) {
+  private sanitize<T extends User>(user: T) {
     const { password: _, ...rest } = user;
     return rest;
   }

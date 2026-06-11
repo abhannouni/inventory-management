@@ -1,0 +1,143 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Enums ─────────────────────────────────────────────────────────────────────
+
+enum UserRole {
+  super_admin
+  admin
+  supervisor
+  merchandiser
+}
+
+enum VisitStatus {
+  open
+  completed
+}
+
+enum AuditItemStatus {
+  in_stock
+  low_stock
+  out_of_stock
+}
+
+// ─── Models ────────────────────────────────────────────────────────────────────
+
+model Region {
+  id         String   @id @default(uuid())
+  name       String
+  created_at DateTime @default(now())
+
+  users  User[]
+  stores Store[]
+
+  @@map("regions")
+}
+
+model User {
+  id         String   @id @default(uuid())
+  full_name  String
+  email      String   @unique
+  password   String
+  role       UserRole @default(merchandiser)
+  region     Region?  @relation(fields: [region_id], references: [id])
+  region_id  String?
+  created_at DateTime @default(now())
+
+  userStores UserStore[]
+  visits     Visit[]
+
+  @@map("users")
+}
+
+model Store {
+  id         String   @id @default(uuid())
+  name       String
+  address    String?
+  latitude   Decimal? @db.Decimal(10, 7)
+  longitude  Decimal? @db.Decimal(10, 7)
+  region     Region?  @relation(fields: [region_id], references: [id])
+  region_id  String?
+  created_at DateTime @default(now())
+
+  userStores    UserStore[]
+  productStores ProductStore[]
+  visits        Visit[]
+
+  @@map("stores")
+}
+
+model UserStore {
+  id       String @id @default(uuid())
+  user     User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id  String
+  store    Store  @relation(fields: [store_id], references: [id], onDelete: Cascade)
+  store_id String
+
+  @@map("user_stores")
+}
+
+model Product {
+  id         String   @id @default(uuid())
+  name       String
+  sku        String   @unique
+  created_at DateTime @default(now())
+
+  productStores ProductStore[]
+  auditItems    AuditItem[]
+
+  @@map("products")
+}
+
+// Per-store quantity limit for a product
+model ProductStore {
+  id           String  @id @default(uuid())
+  product      Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  product_id   String
+  store        Store   @relation(fields: [store_id], references: [id], onDelete: Cascade)
+  store_id     String
+  expected_qty Int     @default(0)
+
+  @@unique([product_id, store_id])
+  @@map("product_stores")
+}
+
+model Visit {
+  id            String      @id @default(uuid())
+  user          User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id       String
+  store         Store       @relation(fields: [store_id], references: [id], onDelete: Cascade)
+  store_id      String
+  checkin_time  DateTime
+  checkin_lat   Decimal?    @db.Decimal(10, 7)
+  checkin_lng   Decimal?    @db.Decimal(10, 7)
+  checkout_time DateTime?
+  checkout_lat  Decimal?    @db.Decimal(10, 7)
+  checkout_lng  Decimal?    @db.Decimal(10, 7)
+  status        VisitStatus @default(open)
+
+  auditItems AuditItem[]
+
+  @@map("visits")
+}
+
+model AuditItem {
+  id           String          @id @default(uuid())
+  visit        Visit           @relation(fields: [visit_id], references: [id], onDelete: Cascade)
+  visit_id     String
+  product      Product         @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  product_id   String
+  qty_found    Int
+  expected_qty Int             // snapshot from ProductStore.expected_qty at audit time
+  variance     Int             @default(0) // qty_found - expected_qty, computed in service
+  status       AuditItemStatus
+  photo_url    String?
+  notes        String?
+
+  @@map("audit_items")
+}

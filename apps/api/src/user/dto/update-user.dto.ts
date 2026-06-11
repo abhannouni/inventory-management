@@ -1,24 +1,30 @@
+import { ApiPropertyOptional } from '@nestjs/swagger';
+import { UserRole } from '@prisma/client';
 import { IsEmail, IsEnum, IsOptional, IsString, IsUUID, MinLength } from 'class-validator';
-import { UserRole } from '../entities/user.entity';
 
 export class UpdateUserDto {
+  @ApiPropertyOptional({ example: 'John Smith' })
   @IsString()
   @IsOptional()
   full_name?: string;
 
+  @ApiPropertyOptional({ example: 'john@example.com' })
   @IsEmail()
   @IsOptional()
   email?: string;
 
+  @ApiPropertyOptional({ example: 'newpassword123', minLength: 8 })
   @IsString()
   @MinLength(8)
   @IsOptional()
   password?: string;
 
+  @ApiPropertyOptional({ enum: UserRole })
   @IsEnum(UserRole)
   @IsOptional()
   role?: UserRole;
 
+  @ApiPropertyOptional({ example: 'uuid-of-region' })
   @IsUUID()
   @IsOptional()
   region_id?: string;

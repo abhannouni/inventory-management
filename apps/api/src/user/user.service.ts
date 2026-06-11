@@ -1,111 +1,98 @@
-import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
-import { In, Repository } from 'typeorm';
-import { Store } from '../store/entities/store.entity';
-import { UserStore } from '../user-store/entities/user-store.entity';
+import { PrismaService } from '../prisma/prisma.service';
 import { AssignStoresDto } from './dto/assign-stores.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from './entities/user.entity';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class UserService {
-  constructor(
-    @InjectRepository(User) private readonly users: Repository<User>,
-    @InjectRepository(Store) private readonly stores: Repository<Store>,
-    @InjectRepository(UserStore) private readonly userStores: Repository<UserStore>,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async findAll() {
-    const users = await this.users.find({ relations: ['region'] });
+    const users = await this.prisma.user.findMany({ include: { region: true } });
     return users.map(this.sanitize);
   }
 
   async findOne(id: string) {
-    const user = await this.users.findOne({
+    const user = await this.prisma.user.findUnique({
       where: { id },
-      relations: ['region'],
+      include: {
+        region: true,
+        userStores: { include: { store: { include: { region: true } } } },
+      },
     });
     if (!user) throw new NotFoundException('User not found');
-
-    const assignments = await this.userStores.find({
-      where: { user: { id } },
-      relations: ['store', 'store.region'],
-    });
-
-    return { ...this.sanitize(user), stores: assignments.map((a) => a.store) };
+    const { userStores, ...rest } = user;
+    return { ...this.sanitize(rest as User), stores: userStores.map((us) => us.store) };
   }
 
   async create(dto: CreateUserDto) {
-    const exists = await this.users.findOne({ where: { email: dto.email } });
+    const exists = await this.prisma.user.findUnique({ where: { email: dto.email } });
     if (exists) throw new ConflictException('Email already in use');
 
     const hashed = await bcrypt.hash(dto.password, 12);
-    const user = this.users.create({
-      full_name: dto.full_name,
-      email: dto.email,
-      password: hashed,
-      role: dto.role,
-      region: dto.region_id ? ({ id: dto.region_id } as any) : undefined,
+    const user = await this.prisma.user.create({
+      data: {
+        full_name: dto.full_name,
+        email: dto.email,
+        password: hashed,
+        role: dto.role,
+        region_id: dto.region_id ?? null,
+      },
     });
-    await this.users.save(user);
     return this.sanitize(user);
   }
 
   async update(id: string, dto: UpdateUserDto) {
-    const user = await this.users.findOne({ where: { id } });
+    const user = await this.prisma.user.findUnique({ where: { id } });
     if (!user) throw new NotFoundException('User not found');
 
     if (dto.email && dto.email !== user.email) {
-      const conflict = await this.users.findOne({ where: { email: dto.email } });
+      const conflict = await this.prisma.user.findUnique({ where: { email: dto.email } });
       if (conflict) throw new ConflictException('Email already in use');
     }
 
-    if (dto.password) {
-      dto.password = await bcrypt.hash(dto.password, 12);
-    }
+    const data: Record<string, unknown> = {};
+    if (dto.full_name !== undefined) data.full_name = dto.full_name;
+    if (dto.email !== undefined) data.email = dto.email;
+    if (dto.role !== undefined) data.role = dto.role;
+    if (dto.region_id !== undefined) data.region_id = dto.region_id ?? null;
+    if (dto.password) data.password = await bcrypt.hash(dto.password, 12);
 
-    const { region_id, ...fields } = dto;
-    Object.assign(user, fields);
-    if (region_id !== undefined) {
-      user.region = region_id ? ({ id: region_id } as any) : null;
-    }
-
-    await this.users.save(user);
-    return this.sanitize(user);
+    const updated = await this.prisma.user.update({ where: { id }, data });
+    return this.sanitize(updated);
   }
 
   async remove(id: string) {
-    const user = await this.users.findOne({ where: { id } });
+    const user = await this.prisma.user.findUnique({ where: { id } });
     if (!user) throw new NotFoundException('User not found');
-    await this.users.remove(user);
+    await this.prisma.user.delete({ where: { id } });
   }
 
   async assignStores(id: string, dto: AssignStoresDto) {
-    const user = await this.users.findOne({ where: { id } });
+    const user = await this.prisma.user.findUnique({ where: { id } });
     if (!user) throw new NotFoundException('User not found');
 
-    const foundStores = await this.stores.findBy({ id: In(dto.store_ids) });
-    if (foundStores.length !== dto.store_ids.length) {
+    const stores = await this.prisma.store.findMany({
+      where: { id: { in: dto.store_ids } },
+    });
+    if (stores.length !== dto.store_ids.length) {
       throw new NotFoundException('One or more store IDs not found');
     }
 
-    // Replace all existing assignments for this user
-    await this.userStores.delete({ user: { id } });
-    const assignments = foundStores.map((store) =>
-      this.userStores.create({ user, store }),
-    );
-    await this.userStores.save(assignments);
+    await this.prisma.$transaction([
+      this.prisma.userStore.deleteMany({ where: { user_id: id } }),
+      this.prisma.userStore.createMany({
+        data: dto.store_ids.map((store_id) => ({ user_id: id, store_id })),
+      }),
+    ]);
 
-    return { user_id: id, stores: foundStores };
+    return { user_id: id, stores };
   }
 
-  private sanitize(user: User) {
+  private sanitize<T extends User>(user: T) {
     const { password: _, ...rest } = user;
     return rest;
   }
