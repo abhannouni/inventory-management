@@ -7,7 +7,13 @@
     "dev:api": "pnpm --filter api start:dev",
     "build": "pnpm --filter web build && pnpm --filter api build",
     "lint": "pnpm -r lint",
-    "test": "pnpm -r test"
+    "test": "pnpm -r test",
+    "db:generate": "pnpm --filter api db:generate",
+    "db:migrate": "pnpm --filter api db:migrate",
+    "db:migrate:prod": "pnpm --filter api db:migrate:prod",
+    "db:push": "pnpm --filter api db:push",
+    "db:reset": "pnpm --filter api db:reset",
+    "db:studio": "pnpm --filter api db:studio"
   },
   "engines": {
     "node": ">=18",
