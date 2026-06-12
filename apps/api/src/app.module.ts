@@ -10,6 +10,7 @@ import { StoresModule } from './stores/stores.module';
 import { ProductsModule } from './products/products.module';
 import { ProductStoreModule } from './product-store/product-store.module';
 import { VisitsModule } from './visits/visits.module';
+import { AuditItemsModule } from './audit-items/audit-items.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { VisitsModule } from './visits/visits.module';
     ProductsModule,
     ProductStoreModule,
     VisitsModule,
+    AuditItemsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

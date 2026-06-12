@@ -139,5 +139,6 @@ model AuditItem {
   photo_url    String?
   notes        String?
 
+  @@unique([visit_id, product_id])
   @@map("audit_items")
 }
