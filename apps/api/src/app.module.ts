@@ -12,6 +12,7 @@ import { ProductStoreModule } from './product-store/product-store.module';
 import { VisitsModule } from './visits/visits.module';
 import { AuditItemsModule } from './audit-items/audit-items.module';
 import { UploadModule } from './upload/upload.module';
+import { ReportsModule } from './reports/reports.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { UploadModule } from './upload/upload.module';
     VisitsModule,
     AuditItemsModule,
     UploadModule,
+    ReportsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
