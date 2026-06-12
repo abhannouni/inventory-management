@@ -9,7 +9,6 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
-  Query,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -18,14 +17,11 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import type { User } from '@prisma/client';
 import { UserRole } from '@prisma/client';
-import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { CreateProductDto } from './dto/create-product.dto';
-import { FindProductsDto } from './dto/find-products.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductsService } from './products.service';
 
@@ -37,41 +33,37 @@ export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Get()
-  @ApiOperation({ summary: 'List products, optionally filtered by store' })
-  findAll(@Query() query: FindProductsDto, @CurrentUser() user: User) {
-    return this.productsService.findAll(user, query.store_id);
+  @ApiOperation({ summary: 'List all products in the catalog' })
+  findAll() {
+    return this.productsService.findAll();
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get a product by its store-assignment ID' })
-  findOne(@Param('id', ParseUUIDPipe) id: string, @CurrentUser() user: User) {
-    return this.productsService.findOne(id, user);
+  @ApiOperation({ summary: 'Get a product from the catalog' })
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
+    return this.productsService.findOne(id);
   }
 
   @Post()
   @Roles(UserRole.super_admin, UserRole.admin)
-  @ApiOperation({ summary: 'Add a product to a store with expected quantity' })
-  create(@Body() dto: CreateProductDto, @CurrentUser() user: User) {
-    return this.productsService.create(dto, user);
+  @ApiOperation({ summary: 'Add a product to the catalog (admin only)' })
+  create(@Body() dto: CreateProductDto) {
+    return this.productsService.create(dto);
   }
 
   @Patch(':id')
   @Roles(UserRole.super_admin, UserRole.admin)
-  @ApiOperation({ summary: 'Update product name/sku and/or expected quantity' })
-  update(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Body() dto: UpdateProductDto,
-    @CurrentUser() user: User,
-  ) {
-    return this.productsService.update(id, dto, user);
+  @ApiOperation({ summary: 'Update a catalog product (admin only)' })
+  update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateProductDto) {
+    return this.productsService.update(id, dto);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @Roles(UserRole.super_admin, UserRole.admin)
-  @ApiOperation({ summary: 'Remove a product from a store' })
+  @ApiOperation({ summary: 'Delete a catalog product (admin only)' })
   @ApiNoContentResponse()
-  remove(@Param('id', ParseUUIDPipe) id: string, @CurrentUser() user: User) {
-    return this.productsService.remove(id, user);
+  remove(@Param('id', ParseUUIDPipe) id: string) {
+    return this.productsService.remove(id);
   }
 }

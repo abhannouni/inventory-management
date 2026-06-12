@@ -8,6 +8,8 @@ import { UserModule } from './user/user.module';
 import { RegionsModule } from './regions/regions.module';
 import { StoresModule } from './stores/stores.module';
 import { ProductsModule } from './products/products.module';
+import { ProductStoreModule } from './product-store/product-store.module';
+import { VisitsModule } from './visits/visits.module';
 
 @Module({
   imports: [
@@ -21,6 +23,8 @@ import { ProductsModule } from './products/products.module';
     RegionsModule,
     StoresModule,
     ProductsModule,
+    ProductStoreModule,
+    VisitsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
