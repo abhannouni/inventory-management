@@ -269,7 +269,7 @@ export default function DashboardPage() {
       </motion.div>
 
       {/* Stats Row */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 20 }}>
+      <div className="db-stats-grid">
         <StatCard
           label="Total Stores"
           value={stores.length}
@@ -318,11 +318,11 @@ export default function DashboardPage() {
       </div>
 
       {/* Main Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 300px', gap: 20, alignItems: 'start' }}>
+      <div className="db-main-grid">
 
         {/* Visit Activity Chart */}
         <motion.div
-          className="card"
+          className="card db-card-chart"
           style={{ padding: 24 }}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -340,7 +340,7 @@ export default function DashboardPage() {
 
         {/* Audit Progress */}
         <motion.div
-          className="card"
+          className="card db-card-progress"
           style={{ padding: 24 }}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -353,10 +353,10 @@ export default function DashboardPage() {
           <SemiCircle percentage={auditCompletion} />
         </motion.div>
 
-        {/* Recent Stores (right column, spans 2 rows) */}
+        {/* Recent Stores (right column, spans 2 rows on desktop) */}
         <motion.div
-          className="card"
-          style={{ padding: 24, gridRow: '1 / 3' }}
+          className="card db-col-sidebar db-card-sidebar"
+          style={{ padding: 24 }}
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.32, duration: 0.4 }}
@@ -406,7 +406,7 @@ export default function DashboardPage() {
 
         {/* Team / Recent Visits row */}
         <motion.div
-          className="card"
+          className="card db-card-team"
           style={{ padding: 24 }}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -484,9 +484,9 @@ export default function DashboardPage() {
           )}
         </motion.div>
 
-        {/* Recent Visits Table */}
+        {/* Recent Visits */}
         <motion.div
-          className="card"
+          className="card db-card-visits"
           style={{ padding: 24 }}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
