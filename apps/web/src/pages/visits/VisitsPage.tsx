@@ -40,7 +40,7 @@ export default function VisitsPage() {
       toast.success('Checked in successfully!');
       setCheckinOpen(false);
     } else {
-      toast.error(res.payload as string || 'Check-in failed');
+      toast.error((res.payload as string) || 'Check-in failed');
     }
   };
 
@@ -51,7 +51,7 @@ export default function VisitsPage() {
       toast.success('Checked out successfully!');
       setCheckoutVisit(null);
     } else {
-      toast.error(res.payload as string || 'Check-out failed');
+      toast.error((res.payload as string) || 'Check-out failed');
     }
   };
 
@@ -89,11 +89,11 @@ export default function VisitsPage() {
     <div>
       <PageHeader
         title="Visits"
-        subtitle="Track store visits, check-in and check-out with GPS"
+        subtitle="Track store visits with GPS check-in"
         actions={
           p.canCheckin && (
             <Button
-              icon={<CheckinIcon />}
+              icon={<LocationIcon />}
               onClick={() => setCheckinOpen(true)}
               disabled={!!openVisit}
               title={openVisit ? 'You already have an open visit' : undefined}
@@ -104,19 +104,29 @@ export default function VisitsPage() {
         }
       />
 
+      {/* Open visit banner */}
       {openVisit && (
         <motion.div
+          className="open-visit-banner"
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
-          style={{ background: 'var(--success-light)', border: '1px solid var(--success)', borderRadius: 8, padding: '12px 16px', marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
         >
-          <span style={{ color: 'var(--success)', fontWeight: 500 }}>
-            You have an open visit at <strong>{openVisit.store?.name}</strong>
-          </span>
-          <Button variant="secondary" size="sm" onClick={() => setCheckoutVisit(openVisit)}>Check Out Now</Button>
+          <div className="open-visit-banner-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
+            </svg>
+          </div>
+          <div className="open-visit-banner-body">
+            <div className="open-visit-banner-title">Active visit</div>
+            <div className="open-visit-banner-store">{openVisit.store?.name}</div>
+          </div>
+          {p.canCheckin && (
+            <Button size="sm" onClick={() => setCheckoutVisit(openVisit)}>Check Out</Button>
+          )}
         </motion.div>
       )}
 
+      {/* Status filter */}
       <div className="filter-bar">
         <select className="form-select" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} style={{ width: 160 }}>
           <option value="">All statuses</option>
@@ -125,9 +135,67 @@ export default function VisitsPage() {
         </select>
       </div>
 
-      <motion.div className="card" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
-        <DataTable columns={columns} data={visits} loading={loading} keyExtractor={(v) => v.id} emptyMessage="No visits found" />
-      </motion.div>
+      {/* Mobile card list */}
+      <div className="visit-card-list">
+        {loading ? (
+          <p style={{ textAlign: 'center', color: 'var(--gray-400)', padding: '32px 0' }}>Loading…</p>
+        ) : visits.length === 0 ? (
+          <p style={{ textAlign: 'center', color: 'var(--gray-400)', padding: '32px 0' }}>No visits found</p>
+        ) : (
+          visits.map((v) => (
+            <motion.div
+              key={v.id}
+              className="visit-card"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              onClick={() => navigate(`/visits/${v.id}`)}
+              style={{ cursor: 'pointer' }}
+              whileHover={{ y: -1 }}
+            >
+              <div className="visit-card-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z" />
+                </svg>
+              </div>
+              <div className="visit-card-body">
+                <div className="visit-card-store">{v.store?.name || v.store_id}</div>
+                <div className="visit-card-time">{formatDate(v.checkin_at)}</div>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8, flexShrink: 0 }}>
+                <Badge variant={v.status === 'open' ? 'success' : 'gray'} dot>
+                  {v.status === 'open' ? 'Open' : 'Closed'}
+                </Badge>
+                {v.status === 'open' && p.canCheckin && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={(e) => { e.stopPropagation(); setCheckoutVisit(v); }}
+                  >
+                    Check Out
+                  </Button>
+                )}
+              </div>
+            </motion.div>
+          ))
+        )}
+      </div>
+
+      {/* Desktop table */}
+      <div className="visit-table-wrap">
+        <motion.div className="card" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
+          <DataTable columns={columns} data={visits} loading={loading} keyExtractor={(v) => v.id} emptyMessage="No visits found" />
+        </motion.div>
+      </div>
+
+      {/* FAB for check-in (mobile only) */}
+      {p.canCheckin && !openVisit && (
+        <button className="fab" onClick={() => setCheckinOpen(true)} title="Check In">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
+            <line x1="12" y1="5" x2="12" y2="9" /><line x1="10" y1="7" x2="14" y2="7" />
+          </svg>
+        </button>
+      )}
 
       <Modal open={checkinOpen} onClose={() => setCheckinOpen(false)} title="Check In to Store" size="sm">
         <CheckinForm stores={stores} onSubmit={handleCheckin} onCancel={() => setCheckinOpen(false)} />
@@ -142,9 +210,9 @@ export default function VisitsPage() {
   );
 }
 
-function CheckinIcon() {
+function LocationIcon() {
   return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z" />
     </svg>
   );

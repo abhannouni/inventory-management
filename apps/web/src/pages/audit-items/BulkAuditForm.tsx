@@ -7,62 +7,73 @@ import { uploadApi } from '../../api/upload.api';
 import type { Visit, Product } from '../../types';
 
 interface BulkRow {
+  id: number;
   product_id: string;
-  qty_found: string;
+  qty_found: number;
   notes: string;
   photo_url: string;
   uploading: boolean;
 }
 
-interface BulkAuditFormProps {
+interface Props {
   visits: Visit[];
   products: Product[];
   onSubmit: (data: any) => Promise<void>;
   onCancel: () => void;
 }
 
-export default function BulkAuditForm({ visits, products, onSubmit, onCancel }: BulkAuditFormProps) {
+let rowIdCounter = 1;
+
+export default function BulkAuditForm({ visits, products, onSubmit, onCancel }: Props) {
   const [visitId, setVisitId] = useState('');
-  const [rows, setRows] = useState<BulkRow[]>([{ product_id: '', qty_found: '', notes: '', photo_url: '', uploading: false }]);
+  const [rows, setRows] = useState<BulkRow[]>([
+    { id: rowIdCounter++, product_id: '', qty_found: 0, notes: '', photo_url: '', uploading: false },
+  ]);
   const [visitError, setVisitError] = useState('');
   const [loading, setLoading] = useState(false);
-  const fileRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const fileRefs = useRef<Map<number, HTMLInputElement>>(new Map());
 
-  const addRow = () => setRows((r) => [...r, { product_id: '', qty_found: '', notes: '', photo_url: '', uploading: false }]);
-  const removeRow = (idx: number) => setRows((r) => r.filter((_, i) => i !== idx));
-
-  const updateRow = (idx: number, patch: Partial<BulkRow>) => {
-    setRows((r) => r.map((row, i) => i === idx ? { ...row, ...patch } : row));
+  const addRow = () => {
+    setRows((r) => [...r, { id: rowIdCounter++, product_id: '', qty_found: 0, notes: '', photo_url: '', uploading: false }]);
   };
 
-  const handleUpload = async (idx: number, file: File) => {
+  const removeRow = (id: number) => setRows((r) => r.filter((row) => row.id !== id));
+
+  const updateRow = (id: number, patch: Partial<BulkRow>) => {
+    setRows((r) => r.map((row) => (row.id === id ? { ...row, ...patch } : row)));
+  };
+
+  const adjustQty = (id: number, delta: number) => {
+    setRows((r) =>
+      r.map((row) => (row.id === id ? { ...row, qty_found: Math.max(0, row.qty_found + delta) } : row))
+    );
+  };
+
+  const handleUpload = async (id: number, file: File) => {
     if (file.size > 5 * 1024 * 1024) { toast.error('File must be under 5 MB'); return; }
-    updateRow(idx, { uploading: true });
+    updateRow(id, { uploading: true });
     try {
       const res = await uploadApi.upload(file);
-      updateRow(idx, { photo_url: res.url, uploading: false });
-      toast.success('Photo uploaded!');
+      updateRow(id, { photo_url: res.url, uploading: false });
+      toast.success('Photo uploaded');
     } catch {
-      updateRow(idx, { uploading: false });
+      updateRow(id, { uploading: false });
       toast.error('Upload failed');
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!visitId) { setVisitError('Visit is required'); return; }
+    if (!visitId) { setVisitError('Select a visit first'); return; }
     setVisitError('');
-
-    const validRows = rows.filter((r) => r.product_id && r.qty_found !== '');
-    if (!validRows.length) { toast.error('Add at least one audit item'); return; }
-
-    const items = validRows.map((r) => ({
+    const valid = rows.filter((r) => r.product_id);
+    if (!valid.length) { toast.error('Add at least one product'); return; }
+    const items = valid.map((r) => ({
       product_id: r.product_id,
-      qty_found: Number(r.qty_found),
+      qty_found: r.qty_found,
       ...(r.notes ? { notes: r.notes } : {}),
       ...(r.photo_url ? { photo_url: r.photo_url } : {}),
     }));
-
     setLoading(true);
     await onSubmit({ visit_id: visitId, items });
     setLoading(false);
@@ -72,120 +83,167 @@ export default function BulkAuditForm({ visits, products, onSubmit, onCancel }: 
     value: v.id,
     label: `${v.store?.name || v.store_id} — ${new Date(v.checkin_at).toLocaleDateString()}`,
   }));
-
   const productOptions = products.map((p) => ({ value: p.id, label: `${p.name} (${p.sku})` }));
+  const filledCount = rows.filter((r) => r.product_id).length;
 
   return (
     <form onSubmit={handleSubmit}>
+      {/* Visit selector */}
       <Select
         label="Visit"
         value={visitId}
-        onChange={(e) => setVisitId(e.target.value)}
+        onChange={(e) => { setVisitId(e.target.value); setVisitError(''); }}
         options={visitOptions}
-        placeholder="Select visit"
+        placeholder="Select visit…"
         error={visitError}
       />
 
+      {/* Product cards */}
       <div style={{ marginBottom: 12 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-          <label className="form-label">Products</label>
-          <Button type="button" variant="outline" size="sm" onClick={addRow}>+ Add Row</Button>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+          <label className="form-label" style={{ margin: 0 }}>
+            Products <span style={{ color: 'var(--gray-400)', fontWeight: 400 }}>({filledCount} added)</span>
+          </label>
         </div>
 
-        <div style={{ border: '1px solid var(--gray-200)', borderRadius: 8, overflow: 'hidden' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead>
-              <tr style={{ background: 'var(--gray-50)' }}>
-                <th style={{ padding: '8px 12px', textAlign: 'left', fontSize: 12, fontWeight: 600, color: 'var(--gray-500)', width: '30%' }}>Product</th>
-                <th style={{ padding: '8px 12px', textAlign: 'left', fontSize: 12, fontWeight: 600, color: 'var(--gray-500)', width: '80px' }}>Qty</th>
-                <th style={{ padding: '8px 12px', textAlign: 'left', fontSize: 12, fontWeight: 600, color: 'var(--gray-500)' }}>Notes</th>
-                <th style={{ padding: '8px 12px', textAlign: 'left', fontSize: 12, fontWeight: 600, color: 'var(--gray-500)', width: '80px' }}>Photo</th>
-                <th style={{ width: 36 }}></th>
-              </tr>
-            </thead>
-            <tbody>
-              <AnimatePresence>
-                {rows.map((row, idx) => (
-                  <motion.tr
-                    key={idx}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: 10 }}
-                    style={{ borderTop: '1px solid var(--gray-100)' }}
+        <AnimatePresence initial={false}>
+          {rows.map((row, index) => (
+            <motion.div
+              key={row.id}
+              className="audit-card-row"
+              initial={{ opacity: 0, y: -8, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, x: 20, scale: 0.96 }}
+              transition={{ duration: 0.2 }}
+            >
+              {/* Card header */}
+              <div className="audit-card-header">
+                <span className="audit-card-num">Item {index + 1}</span>
+                {rows.length > 1 && (
+                  <button type="button" className="audit-card-remove" onClick={() => removeRow(row.id)}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                      <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                  </button>
+                )}
+              </div>
+
+              {/* Product select */}
+              <div className="form-group" style={{ marginBottom: 12 }}>
+                <label className="form-label" style={{ fontSize: 12 }}>Product</label>
+                <select
+                  className="form-select"
+                  value={row.product_id}
+                  onChange={(e) => updateRow(row.id, { product_id: e.target.value })}
+                >
+                  <option value="">Select product…</option>
+                  {productOptions.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+                </select>
+              </div>
+
+              {/* Qty stepper */}
+              <div className="form-group" style={{ marginBottom: 12 }}>
+                <label className="form-label" style={{ fontSize: 12 }}>Quantity Found</label>
+                <div className="qty-stepper">
+                  <button type="button" className="qty-stepper-btn" onClick={() => adjustQty(row.id, -1)}>−</button>
+                  <input
+                    type="number"
+                    min="0"
+                    className="qty-stepper-input"
+                    value={row.qty_found}
+                    onChange={(e) => updateRow(row.id, { qty_found: Math.max(0, Number(e.target.value)) })}
+                  />
+                  <button type="button" className="qty-stepper-btn" onClick={() => adjustQty(row.id, 1)}>+</button>
+                </div>
+              </div>
+
+              {/* Notes */}
+              <div className="form-group" style={{ marginBottom: 12 }}>
+                <label className="form-label" style={{ fontSize: 12 }}>Notes (optional)</label>
+                <input
+                  type="text"
+                  className="form-input"
+                  value={row.notes}
+                  onChange={(e) => updateRow(row.id, { notes: e.target.value })}
+                  placeholder="Stock observations…"
+                />
+              </div>
+
+              {/* Photo */}
+              <div className="form-group" style={{ marginBottom: 0 }}>
+                <label className="form-label" style={{ fontSize: 12 }}>Photo (optional)</label>
+                {row.photo_url ? (
+                  <div className="photo-thumb-wrap" onClick={() => fileRefs.current.get(row.id)?.click()}>
+                    <img src={row.photo_url} alt="thumb" />
+                    <div className="photo-thumb-change">Change photo</div>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    className="photo-capture-btn"
+                    onClick={() => fileRefs.current.get(row.id)?.click()}
+                    disabled={row.uploading}
                   >
-                    <td style={{ padding: '6px 8px' }}>
-                      <select
-                        className="form-select"
-                        value={row.product_id}
-                        onChange={(e) => updateRow(idx, { product_id: e.target.value })}
-                        style={{ fontSize: 12 }}
-                      >
-                        <option value="">Select product</option>
-                        {productOptions.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-                      </select>
-                    </td>
-                    <td style={{ padding: '6px 8px' }}>
-                      <input
-                        type="number"
-                        min="0"
-                        className="form-input"
-                        value={row.qty_found}
-                        onChange={(e) => updateRow(idx, { qty_found: e.target.value })}
-                        placeholder="0"
-                        style={{ fontSize: 12 }}
-                      />
-                    </td>
-                    <td style={{ padding: '6px 8px' }}>
-                      <input
-                        type="text"
-                        className="form-input"
-                        value={row.notes}
-                        onChange={(e) => updateRow(idx, { notes: e.target.value })}
-                        placeholder="Optional notes"
-                        style={{ fontSize: 12 }}
-                      />
-                    </td>
-                    <td style={{ padding: '6px 8px' }}>
-                      {row.photo_url ? (
-                        <img src={row.photo_url} alt="thumb" style={{ width: 36, height: 36, objectFit: 'cover', borderRadius: 4 }} />
-                      ) : (
-                        <button
-                          type="button"
-                          style={{ background: 'var(--gray-100)', border: 'none', borderRadius: 4, padding: '4px 8px', fontSize: 11, cursor: 'pointer', color: 'var(--gray-600)' }}
-                          onClick={() => fileRefs.current[idx]?.click()}
-                          disabled={row.uploading}
-                        >
-                          {row.uploading ? '…' : 'Upload'}
-                        </button>
-                      )}
-                      <input
-                        ref={(el) => { fileRefs.current[idx] = el; }}
-                        type="file"
-                        accept="image/*"
-                        style={{ display: 'none' }}
-                        onChange={(e) => { const f = e.target.files?.[0]; if (f) handleUpload(idx, f); }}
-                      />
-                    </td>
-                    <td style={{ padding: '6px 4px' }}>
-                      {rows.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => removeRow(idx)}
-                          style={{ background: 'none', border: 'none', color: 'var(--danger)', cursor: 'pointer', padding: 4, fontSize: 16 }}
-                        >×</button>
-                      )}
-                    </td>
-                  </motion.tr>
-                ))}
-              </AnimatePresence>
-            </tbody>
-          </table>
-        </div>
+                    {row.uploading ? (
+                      <span style={{ fontSize: 13 }}>Uploading…</span>
+                    ) : (
+                      <>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                          <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" />
+                          <circle cx="12" cy="13" r="4" />
+                        </svg>
+                        <span>Tap to add photo</span>
+                      </>
+                    )}
+                  </button>
+                )}
+                <input
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  style={{ display: 'none' }}
+                  ref={(el) => { if (el) fileRefs.current.set(row.id, el); }}
+                  onChange={(e) => { const f = e.target.files?.[0]; if (f) handleUpload(row.id, f); }}
+                />
+              </div>
+            </motion.div>
+          ))}
+        </AnimatePresence>
+
+        {/* Add item button */}
+        <button
+          type="button"
+          onClick={addRow}
+          style={{
+            width: '100%',
+            padding: '14px',
+            border: '2px dashed var(--primary-light)',
+            borderRadius: 14,
+            background: 'transparent',
+            color: 'var(--primary)',
+            fontSize: 14,
+            fontWeight: 700,
+            cursor: 'pointer',
+            transition: 'background 0.15s',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 8,
+          }}
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+            <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
+          </svg>
+          Add Another Product
+        </button>
       </div>
 
-      <div className="form-actions">
+      {/* Form actions */}
+      <div className="form-actions" style={{ marginTop: 16 }}>
         <Button variant="ghost" type="button" onClick={onCancel} disabled={loading}>Cancel</Button>
-        <Button type="submit" loading={loading}>Save Bulk Audit ({rows.filter((r) => r.product_id).length} items)</Button>
+        <Button type="submit" loading={loading} disabled={filledCount === 0}>
+          Save {filledCount > 0 ? `${filledCount} Item${filledCount > 1 ? 's' : ''}` : 'Audit'}
+        </Button>
       </div>
     </form>
   );
