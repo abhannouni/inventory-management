@@ -16,6 +16,7 @@ export interface CheckoutPayload {
 export interface FindVisitsParams {
   store_id?: string;
   status?: string;
+  [key: string]: string | undefined;
 }
 
 export const visitsApi = {

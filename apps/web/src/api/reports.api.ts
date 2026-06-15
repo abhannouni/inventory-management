@@ -5,6 +5,7 @@ export interface ReportFilters {
   from?: string;
   to?: string;
   store_id?: string;
+  [key: string]: string | undefined;
 }
 
 export const reportsApi = {
