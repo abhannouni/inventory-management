@@ -79,12 +79,12 @@ export default function VisitDetailPage() {
               </div>
               <div className="detail-item">
                 <span className="detail-label">GPS In</span>
-                <span className="gps-coords">{visit.checkin_lat.toFixed(5)}, {visit.checkin_lng.toFixed(5)}</span>
+                <span className="gps-coords">{Number(visit.checkin_lat).toFixed(5)}, {Number(visit.checkin_lng).toFixed(5)}</span>
               </div>
               {visit.checkout_lat && (
                 <div className="detail-item">
                   <span className="detail-label">GPS Out</span>
-                  <span className="gps-coords">{visit.checkout_lat.toFixed(5)}, {visit.checkout_lng?.toFixed(5)}</span>
+                  <span className="gps-coords">{Number(visit.checkout_lat).toFixed(5)}, {Number(visit.checkout_lng).toFixed(5)}</span>
                 </div>
               )}
             </div>

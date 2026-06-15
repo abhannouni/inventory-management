@@ -64,7 +64,11 @@ export default function VisitsPage() {
       key: 'gps',
       header: 'GPS (in)',
       render: (v: Visit) => (
-        <span className="gps-coords">{v.checkin_lat.toFixed(4)}, {v.checkin_lng.toFixed(4)}</span>
+        <span className="gps-coords">
+          {v.checkin_lat != null && v.checkin_lng != null
+            ? `${Number(v.checkin_lat).toFixed(4)}, ${Number(v.checkin_lng).toFixed(4)}`
+            : '—'}
+        </span>
       ),
     },
     {
