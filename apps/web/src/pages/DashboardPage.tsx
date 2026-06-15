@@ -461,7 +461,7 @@ export default function DashboardPage() {
                 >
                   <div
                     className="team-avatar"
-                    style={{ background: AVATAR_COLORS[i % AVATAR_COLORS.length], borderRadius: 10 }}
+                    style={{ background: AVATAR_COLORS[i % AVATAR_COLORS.length] }}
                   >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2" />
