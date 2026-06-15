@@ -70,7 +70,9 @@ export default function StoresPage() {
       key: 'coords',
       header: 'Coordinates',
       render: (s: Store) => (
-        <span className="gps-coords">{s.lat.toFixed(4)}, {s.lng.toFixed(4)}</span>
+        <span className="gps-coords">
+          {s.lat != null && s.lng != null ? `${s.lat.toFixed(4)}, ${s.lng.toFixed(4)}` : '—'}
+        </span>
       ),
     },
     { key: 'created_at', header: 'Created', render: (s: Store) => <span style={{ color: 'var(--gray-500)' }}>{formatDate(s.created_at)}</span> },
