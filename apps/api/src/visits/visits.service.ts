@@ -65,7 +65,7 @@ export class VisitsService {
       data: {
         user_id: user.id,
         store_id: dto.store_id,
-        checkin_time: new Date(),
+        checkin_time: dto.checkin_at ? new Date(dto.checkin_at) : new Date(),
         checkin_lat: dto.lat,
         checkin_lng: dto.lng,
         status: VisitStatus.open,
@@ -86,7 +86,7 @@ export class VisitsService {
       where: { id: dto.visit_id },
       data: {
         status: VisitStatus.completed,
-        checkout_time: new Date(),
+        checkout_time: dto.checkout_at ? new Date(dto.checkout_at) : new Date(),
         checkout_lat: dto.lat,
         checkout_lng: dto.lng,
       },

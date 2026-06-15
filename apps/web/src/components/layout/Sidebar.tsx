@@ -38,12 +38,6 @@ export default function Sidebar() {
       show: true,
     },
     {
-      to: '/my-visit',
-      label: 'My Visit',
-      icon: <Icon d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z" />,
-      show: p.canCheckin,
-    },
-    {
       to: '/visits',
       label: 'Visits',
       icon: <Icon d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />,

@@ -14,7 +14,6 @@ import ProductsPage from './pages/products/ProductsPage';
 import ProductStoresPage from './pages/product-stores/ProductStoresPage';
 import VisitsPage from './pages/visits/VisitsPage';
 import VisitDetailPage from './pages/visits/VisitDetailPage';
-import MerchandiserFlowPage from './pages/visits/MerchandiserFlowPage';
 import AuditItemsPage from './pages/audit-items/AuditItemsPage';
 import ReportsPage from './pages/reports/ReportsPage';
 
@@ -33,7 +32,7 @@ export default function App() {
             <Route path="/product-stores" element={<ProductStoresPage />} />
             <Route path="/visits" element={<VisitsPage />} />
             <Route path="/visits/:id" element={<VisitDetailPage />} />
-            <Route path="/my-visit" element={<MerchandiserFlowPage />} />
+            <Route path="/my-visit" element={<Navigate to="/visits" replace />} />
             <Route path="/audit-items" element={<AuditItemsPage />} />
             <Route path="/reports" element={<ReportsPage />} />
           </Route>

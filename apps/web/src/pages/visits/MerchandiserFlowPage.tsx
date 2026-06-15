@@ -12,7 +12,6 @@ import type { Visit, ProductStore } from '../../types';
 
 /* ─────────── Types ─────────── */
 type Step = 'checkin' | 'audit' | 'checkout' | 'done';
-type GpsState = 'locating' | 'success' | 'error';
 
 interface AuditRow extends ProductStore {
   qty_found: number;
@@ -26,6 +25,67 @@ function calcStatus(found: number, expected: number): { label: string; color: st
   if (found === 0)                         return { label: 'Out of stock', color: '#dc2626', bg: '#fee2e2' };
   if (found < Math.ceil(expected * 0.5))   return { label: 'Low stock',    color: '#d97706', bg: '#fef3c7' };
   return                                          { label: 'In stock',     color: '#16a34a', bg: '#dcfce7' };
+}
+
+/* ─────────── Manual coordinate input (replaces GPS for testing) ─────────── */
+function CoordInput({ coords, onChange }: {
+  coords: { lat: number; lng: number } | null;
+  onChange: (c: { lat: number; lng: number } | null) => void;
+}) {
+  const [lat, setLat] = useState(coords ? String(coords.lat) : '');
+  const [lng, setLng] = useState(coords ? String(coords.lng) : '');
+
+  const isValid = lat.trim() !== '' && lng.trim() !== '' &&
+    !isNaN(Number(lat)) && !isNaN(Number(lng)) &&
+    Math.abs(Number(lat)) <= 90 && Math.abs(Number(lng)) <= 180;
+
+  useEffect(() => {
+    onChange(isValid ? { lat: Number(lat), lng: Number(lng) } : null);
+  }, [lat, lng]);
+
+  return (
+    <div className={`coord-input-card ${isValid ? 'valid' : ''}`}>
+      <div className="coord-input-header">
+        <div className="coord-input-icon">
+          {isValid ? (
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          ) : (
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/>
+              <line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/>
+              <line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/>
+            </svg>
+          )}
+        </div>
+        <div>
+          <div className="coord-input-title">{isValid ? 'Location set' : 'Enter coordinates'}</div>
+          <div className="coord-input-sub">Testing mode — enter lat / lng manually</div>
+        </div>
+      </div>
+      <div className="coord-fields">
+        <div className="form-group" style={{ marginBottom: 0 }}>
+          <label className="form-label" style={{ fontSize: 11 }}>Latitude</label>
+          <input
+            className="form-input"
+            placeholder="e.g. 33.5731"
+            value={lat}
+            inputMode="decimal"
+            onChange={(e) => setLat(e.target.value)}
+          />
+        </div>
+        <div className="form-group" style={{ marginBottom: 0 }}>
+          <label className="form-label" style={{ fontSize: 11 }}>Longitude</label>
+          <input
+            className="form-input"
+            placeholder="e.g. -7.5898"
+            value={lng}
+            inputMode="decimal"
+            onChange={(e) => setLng(e.target.value)}
+          />
+        </div>
+      </div>
+    </div>
+  );
 }
 
 /* ─────────── Sub-components ─────────── */
@@ -61,52 +121,6 @@ function StepIndicator({ current }: { current: Step }) {
   );
 }
 
-function GpsWidget({ state, coords, error, onRetry }: {
-  state: GpsState;
-  coords: { lat: number; lng: number } | null;
-  error: string;
-  onRetry: () => void;
-}) {
-  return (
-    <div className={`gps-card ${state}`} style={{ marginBottom: 20 }}>
-      <div className="gps-card-icon">
-        {state === 'locating' && (
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="3" />
-            <line x1="12" y1="2" x2="12" y2="5" /><line x1="12" y1="19" x2="12" y2="22" />
-            <line x1="2" y1="12" x2="5" y2="12" /><line x1="19" y1="12" x2="22" y2="12" />
-          </svg>
-        )}
-        {state === 'success' && (
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
-            <polyline points="20 6 9 17 4 12" />
-          </svg>
-        )}
-        {state === 'error' && (
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
-            <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
-          </svg>
-        )}
-      </div>
-      <div className="gps-card-body">
-        <div className="gps-card-title">
-          {state === 'locating' && 'Acquiring GPS…'}
-          {state === 'success'  && 'Location acquired'}
-          {state === 'error'    && 'Location failed'}
-        </div>
-        <div className="gps-card-sub">
-          {state === 'locating' && 'Getting your exact position…'}
-          {state === 'success'  && coords && `${coords.lat.toFixed(5)}, ${coords.lng.toFixed(5)}`}
-          {state === 'error'    && error}
-        </div>
-      </div>
-      {state === 'error' && (
-        <button className="btn btn-danger btn-sm" onClick={onRetry}>Retry</button>
-      )}
-    </div>
-  );
-}
-
 /* ─────────── Main Page ─────────── */
 export default function MerchandiserFlowPage() {
   const dispatch  = useAppDispatch();
@@ -114,13 +128,12 @@ export default function MerchandiserFlowPage() {
   const { items: visits } = useAppSelector((s) => s.visits);
   const { items: stores  } = useAppSelector((s) => s.stores);
 
-  const [step, setStep]         = useState<Step>('checkin');
-  const [gpsState, setGpsState] = useState<GpsState>('locating');
-  const [coords, setCoords]     = useState<{ lat: number; lng: number } | null>(null);
-  const [gpsError, setGpsError] = useState('');
-  const [storeId, setStoreId]   = useState('');
-  const [storeErr, setStoreErr] = useState('');
-  const [busy, setBusy]         = useState(false);
+  const [step, setStep]           = useState<Step>('checkin');
+  const [coords, setCoords]       = useState<{ lat: number; lng: number } | null>(null);
+  const [checkoutCoords, setCheckoutCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const [storeId, setStoreId]     = useState('');
+  const [storeErr, setStoreErr]   = useState('');
+  const [busy, setBusy]           = useState(false);
 
   const [visit, setVisit]         = useState<Visit | null>(null);
   const [auditRows, setAuditRows] = useState<AuditRow[]>([]);
@@ -144,30 +157,6 @@ export default function MerchandiserFlowPage() {
       loadProductsForStore(open.store_id, open);
     }
   }, [visits]);
-
-  /* GPS */
-  const acquireGps = () => {
-    if (!navigator.geolocation) {
-      setGpsState('error');
-      setGpsError('Geolocation not supported on this device');
-      return;
-    }
-    setGpsState('locating');
-    setGpsError('');
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        setCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude });
-        setGpsState('success');
-      },
-      () => {
-        setGpsState('error');
-        setGpsError('Enable location access in your browser settings');
-      },
-      { enableHighAccuracy: true, timeout: 15000 }
-    );
-  };
-
-  useEffect(() => { acquireGps(); }, []);
 
   /* Load products for the selected store */
   const loadProductsForStore = async (sid: string, v: Visit) => {
@@ -207,7 +196,7 @@ export default function MerchandiserFlowPage() {
     if (!coords)  { return; }
     setStoreErr('');
     setBusy(true);
-    const res = await dispatch(checkin({ store_id: storeId, lat: coords.lat, lng: coords.lng }));
+    const res = await dispatch(checkin({ store_id: storeId, lat: coords.lat, lng: coords.lng, checkin_at: new Date().toISOString() }));
     setBusy(false);
     if (checkin.fulfilled.match(res)) {
       const newVisit = res.payload as Visit;
@@ -254,8 +243,8 @@ export default function MerchandiserFlowPage() {
       await auditItemsApi.bulkUpsert({ visit_id: visit.id, items });
       setAuditDone(true);
       toast.success('Audit saved!');
+      setCheckoutCoords(null); // reset checkout coords for step 3
       setStep('checkout');
-      acquireGps(); // start GPS for checkout
     } catch {
       toast.error('Failed to save audit');
     } finally {
@@ -265,9 +254,10 @@ export default function MerchandiserFlowPage() {
 
   /* ── Step 3: Check Out ── */
   const handleCheckout = async () => {
-    if (!visit || !coords) return;
+    if (!visit || !checkoutCoords) return;
+    const coords = checkoutCoords;
     setBusy(true);
-    const res = await dispatch(checkout({ visit_id: visit.id, lat: coords.lat, lng: coords.lng }));
+    const res = await dispatch(checkout({ visit_id: visit.id, lat: coords.lat, lng: coords.lng, checkout_at: new Date().toISOString() }));
     setBusy(false);
     if (checkout.fulfilled.match(res)) {
       toast.success('Visit completed!');
@@ -320,12 +310,12 @@ export default function MerchandiserFlowPage() {
               </div>
             </div>
 
-            <GpsWidget state={gpsState} coords={coords} error={gpsError} onRetry={acquireGps} />
+            <CoordInput coords={coords} onChange={setCoords} />
 
             <AnimatePresence>
-              {gpsState !== 'locating' && (
+              {coords && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                  <div className="form-group">
+                  <div className="form-group" style={{ marginTop: 16 }}>
                     <label className="form-label">Select Store</label>
                     <select
                       className={`form-select ${storeErr ? 'is-error' : ''}`}
@@ -337,16 +327,11 @@ export default function MerchandiserFlowPage() {
                     </select>
                     {storeErr && <p className="form-error">{storeErr}</p>}
                   </div>
-                  <p className="mf-hint">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                      <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-                    </svg>
-                    You must be within 200 metres of the store
-                  </p>
                   <button
                     className="btn btn-primary btn-lg mf-full-btn"
-                    disabled={gpsState !== 'success' || !storeId || busy}
+                    disabled={!storeId || busy}
                     onClick={handleCheckin}
+                    style={{ marginTop: 16 }}
                   >
                     {busy ? <span className="btn-spinner" /> : (
                       <>
@@ -575,13 +560,14 @@ export default function MerchandiserFlowPage() {
               })}
             </div>
 
-            {/* GPS for checkout */}
-            <GpsWidget state={gpsState} coords={coords} error={gpsError} onRetry={acquireGps} />
+            {/* Manual coords for checkout */}
+            <CoordInput coords={checkoutCoords} onChange={setCheckoutCoords} />
 
             <button
               className="btn btn-primary btn-lg mf-full-btn"
-              disabled={gpsState !== 'success' || busy}
+              disabled={!checkoutCoords || busy}
               onClick={handleCheckout}
+              style={{ marginTop: 16 }}
             >
               {busy ? <span className="btn-spinner" /> : (
                 <>

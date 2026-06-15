@@ -3,112 +3,87 @@ import Button from '../../components/ui/Button';
 import { formatDate } from '../../utils/format';
 import type { Visit } from '../../types';
 
-type GpsState = 'locating' | 'success' | 'error';
-
 interface Props {
   visit: Visit;
-  onSubmit: (data: { lat: number; lng: number }) => Promise<void>;
+  onSubmit: (data: { lat: number; lng: number; checkout_at?: string }) => Promise<void>;
   onCancel: () => void;
 }
 
+function CoordInput({ onChange }: { onChange: (c: { lat: number; lng: number } | null) => void }) {
+  const [lat, setLat] = useState('');
+  const [lng, setLng] = useState('');
+
+  const isValid =
+    lat.trim() !== '' && lng.trim() !== '' &&
+    !isNaN(Number(lat)) && !isNaN(Number(lng)) &&
+    Math.abs(Number(lat)) <= 90 && Math.abs(Number(lng)) <= 180;
+
+  useEffect(() => {
+    onChange(isValid ? { lat: Number(lat), lng: Number(lng) } : null);
+  }, [lat, lng]);
+
+  return (
+    <div className={`coord-input-card ${isValid ? 'valid' : ''}`}>
+      <div className="coord-input-header">
+        <div className="coord-input-icon">
+          {isValid ? (
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          ) : (
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/>
+              <line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/>
+              <line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/>
+            </svg>
+          )}
+        </div>
+        <div>
+          <div className="coord-input-title">{isValid ? 'Location set' : 'Enter checkout coordinates'}</div>
+          <div className="coord-input-sub">Testing mode — enter lat / lng manually</div>
+        </div>
+      </div>
+      <div className="coord-fields">
+        <div className="form-group" style={{ marginBottom: 0 }}>
+          <label className="form-label" style={{ fontSize: 11 }}>Latitude</label>
+          <input className="form-input" placeholder="e.g. 33.5731" value={lat} inputMode="decimal"
+            onChange={(e) => setLat(e.target.value)} />
+        </div>
+        <div className="form-group" style={{ marginBottom: 0 }}>
+          <label className="form-label" style={{ fontSize: 11 }}>Longitude</label>
+          <input className="form-input" placeholder="e.g. -7.5898" value={lng} inputMode="decimal"
+            onChange={(e) => setLng(e.target.value)} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function CheckoutForm({ visit, onSubmit, onCancel }: Props) {
-  const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
-  const [gpsState, setGpsState] = useState<GpsState>('locating');
-  const [gpsError, setGpsError] = useState('');
+  const [coords, setCoords]   = useState<{ lat: number; lng: number } | null>(null);
   const [loading, setLoading] = useState(false);
-
-  const acquireGps = () => {
-    if (!navigator.geolocation) {
-      setGpsState('error');
-      setGpsError('Geolocation not supported');
-      return;
-    }
-    setGpsState('locating');
-    setGpsError('');
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        setCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude });
-        setGpsState('success');
-      },
-      () => {
-        setGpsState('error');
-        setGpsError('Enable location access in browser settings');
-      },
-      { enableHighAccuracy: true, timeout: 15000 }
-    );
-  };
-
-  useEffect(() => { acquireGps(); }, []);
 
   const handleCheckout = async () => {
     if (!coords) return;
     setLoading(true);
-    await onSubmit(coords);
+    await onSubmit({ lat: coords.lat, lng: coords.lng, checkout_at: new Date().toISOString() });
     setLoading(false);
   };
 
   return (
     <div>
       {/* Visit summary */}
-      <div style={{ background: 'var(--gray-50)', borderRadius: 14, padding: '14px 16px', marginBottom: 16 }}>
+      <div style={{ background: 'linear-gradient(145deg,#fff,#f8f8f8)', borderRadius: 14, padding: '14px 16px', marginBottom: 20, border: '1px solid #eee', boxShadow: '4px 4px 10px rgba(0,0,0,0.06),-2px -2px 6px rgba(255,255,255,0.85)' }}>
         <p style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--gray-400)', marginBottom: 6 }}>Active Visit</p>
         <p style={{ fontSize: 17, fontWeight: 800, color: 'var(--gray-900)', marginBottom: 4 }}>{visit.store?.name}</p>
         <p style={{ fontSize: 13, color: 'var(--gray-500)' }}>Checked in {formatDate(visit.checkin_at)}</p>
       </div>
 
-      {/* GPS status */}
-      <div className={`gps-card ${gpsState}`} style={{ marginBottom: 24 }}>
-        <div className="gps-card-icon">
-          {gpsState === 'locating' && (
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="3" />
-              <line x1="12" y1="2" x2="12" y2="5" /><line x1="12" y1="19" x2="12" y2="22" />
-              <line x1="2" y1="12" x2="5" y2="12" /><line x1="19" y1="12" x2="22" y2="12" />
-            </svg>
-          )}
-          {gpsState === 'success' && (
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="20 6 9 17 4 12" />
-            </svg>
-          )}
-          {gpsState === 'error' && (
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
-          )}
-        </div>
-        <div className="gps-card-body">
-          <div className="gps-card-title">
-            {gpsState === 'locating' && 'Acquiring location…'}
-            {gpsState === 'success' && 'Location confirmed'}
-            {gpsState === 'error' && 'Location failed'}
-          </div>
-          <div className="gps-card-sub">
-            {gpsState === 'locating' && 'Getting your checkout coordinates'}
-            {gpsState === 'success' && coords && `${coords.lat.toFixed(5)}, ${coords.lng.toFixed(5)}`}
-            {gpsState === 'error' && gpsError}
-          </div>
-        </div>
-        {gpsState === 'error' && (
-          <button
-            onClick={acquireGps}
-            style={{ background: 'var(--danger)', border: 'none', borderRadius: 8, padding: '8px 12px', color: 'white', fontSize: 12, fontWeight: 700, cursor: 'pointer', flexShrink: 0 }}
-          >
-            Retry
-          </button>
-        )}
-      </div>
+      <CoordInput onChange={setCoords} />
 
-      {/* Actions */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-        <Button
-          size="lg"
-          onClick={handleCheckout}
-          loading={loading}
-          disabled={gpsState !== 'success'}
-          style={{ width: '100%' }}
-        >
-          {gpsState === 'locating' ? 'Waiting for GPS…' : 'Confirm Check Out'}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 20 }}>
+        <Button size="lg" onClick={handleCheckout} loading={loading} disabled={!coords} style={{ width: '100%' }}>
+          Confirm Check Out
         </Button>
         <Button variant="ghost" onClick={onCancel} disabled={loading} style={{ width: '100%' }}>
           Cancel

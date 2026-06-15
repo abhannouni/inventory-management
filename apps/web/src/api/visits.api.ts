@@ -5,12 +5,14 @@ export interface CheckinPayload {
   store_id: string;
   lat: number;
   lng: number;
+  checkin_at?: string;
 }
 
 export interface CheckoutPayload {
   visit_id: string;
   lat: number;
   lng: number;
+  checkout_at?: string;
 }
 
 export interface FindVisitsParams {

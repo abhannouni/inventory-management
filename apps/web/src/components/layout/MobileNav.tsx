@@ -1,4 +1,4 @@
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 function Icon({ d, d2 }: { d: string; d2?: string }) {
   return (
@@ -10,11 +10,6 @@ function Icon({ d, d2 }: { d: string; d2?: string }) {
 }
 
 export default function MobileNav() {
-  const { pathname } = useLocation();
-
-  /* "Visit" tab is active for both /my-visit and /visits */
-  const visitActive = pathname.startsWith('/my-visit') || pathname.startsWith('/visits');
-
   return (
     <nav className="mobile-nav">
 
@@ -25,11 +20,7 @@ export default function MobileNav() {
         <span className="mobile-nav-label">Home</span>
       </NavLink>
 
-      {/* Visit = MerchandiserFlowPage, active on /my-visit OR /visits */}
-      <NavLink
-        to="/my-visit"
-        className={`mobile-nav-item${visitActive ? ' active' : ''}`}
-      >
+      <NavLink to="/visits" className={({ isActive }) => `mobile-nav-item${isActive ? ' active' : ''}`}>
         <span className="mobile-nav-icon">
           <Icon d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z" />
         </span>

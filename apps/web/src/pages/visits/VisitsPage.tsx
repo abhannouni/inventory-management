@@ -12,9 +12,12 @@ import Modal from '../../components/ui/Modal';
 import Badge from '../../components/ui/Badge';
 import CheckinForm from './CheckinForm';
 import CheckoutForm from './CheckoutForm';
+import MerchandiserFlowPage from './MerchandiserFlowPage';
 import { formatDate } from '../../utils/format';
 import type { Visit } from '../../types';
 import { usePermissions } from '../../hooks/usePermissions';
+
+type Tab = 'visit' | 'history';
 
 export default function VisitsPage() {
   const dispatch = useAppDispatch();
@@ -23,18 +26,21 @@ export default function VisitsPage() {
   const { items: stores } = useAppSelector((s) => s.stores);
   const p = usePermissions();
 
+  const [activeTab, setActiveTab] = useState<Tab>(p.canCheckin ? 'visit' : 'history');
   const [checkinOpen, setCheckinOpen] = useState(false);
   const [checkoutVisit, setCheckoutVisit] = useState<Visit | null>(null);
   const [statusFilter, setStatusFilter] = useState('');
 
   useEffect(() => {
-    dispatch(fetchVisits(statusFilter ? { status: statusFilter } : undefined));
-    dispatch(fetchStores());
-  }, [dispatch, statusFilter]);
+    if (activeTab === 'history') {
+      dispatch(fetchVisits(statusFilter ? { status: statusFilter } : undefined));
+      dispatch(fetchStores());
+    }
+  }, [dispatch, statusFilter, activeTab]);
 
   const openVisit = visits.find((v) => v.status === 'open');
 
-  const handleCheckin = async (data: { store_id: string; lat: number; lng: number }) => {
+  const handleCheckin = async (data: { store_id: string; lat: number; lng: number; checkin_at?: string }) => {
     const res = await dispatch(checkin(data));
     if (checkin.fulfilled.match(res)) {
       toast.success('Checked in successfully!');
@@ -44,7 +50,7 @@ export default function VisitsPage() {
     }
   };
 
-  const handleCheckout = async (data: { lat: number; lng: number }) => {
+  const handleCheckout = async (data: { lat: number; lng: number; checkout_at?: string }) => {
     if (!checkoutVisit) return;
     const res = await dispatch(checkout({ visit_id: checkoutVisit.id, ...data }));
     if (checkout.fulfilled.match(res)) {
@@ -85,32 +91,25 @@ export default function VisitsPage() {
     },
   ];
 
-  return (
+  /* ─── History panel (shared between tab and admin view) ─── */
+  const historyPanel = (
     <div>
-      <PageHeader
-        title="Visits"
-        subtitle="Track store visits with GPS check-in"
-        actions={
-          p.canCheckin && (
-            <Button
-              icon={<LocationIcon />}
-              onClick={() => setCheckinOpen(true)}
-              disabled={!!openVisit}
-              title={openVisit ? 'You already have an open visit' : undefined}
-            >
-              Check In
-            </Button>
-          )
-        }
-      />
+      {!p.canCheckin && (
+        <PageHeader
+          title="Visits"
+          subtitle="Track store visits with GPS check-in"
+          actions={
+            p.canCheckin && (
+              <Button icon={<LocationIcon />} onClick={() => setCheckinOpen(true)} disabled={!!openVisit}>
+                Check In
+              </Button>
+            )
+          }
+        />
+      )}
 
-      {/* Open visit banner */}
-      {openVisit && (
-        <motion.div
-          className="open-visit-banner"
-          initial={{ opacity: 0, y: -8 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
+      {openVisit && p.canCheckin && (
+        <motion.div className="open-visit-banner" initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}>
           <div className="open-visit-banner-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
@@ -120,13 +119,10 @@ export default function VisitsPage() {
             <div className="open-visit-banner-title">Active visit</div>
             <div className="open-visit-banner-store">{openVisit.store?.name}</div>
           </div>
-          {p.canCheckin && (
-            <Button size="sm" onClick={() => setCheckoutVisit(openVisit)}>Check Out</Button>
-          )}
+          <Button size="sm" onClick={() => setCheckoutVisit(openVisit)}>Check Out</Button>
         </motion.div>
       )}
 
-      {/* Status filter */}
       <div className="filter-bar">
         <select className="form-select" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} style={{ width: 160 }}>
           <option value="">All statuses</option>
@@ -166,11 +162,7 @@ export default function VisitsPage() {
                   {v.status === 'open' ? 'Open' : 'Closed'}
                 </Badge>
                 {v.status === 'open' && p.canCheckin && (
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={(e) => { e.stopPropagation(); setCheckoutVisit(v); }}
-                  >
+                  <Button size="sm" variant="outline" onClick={(e) => { e.stopPropagation(); setCheckoutVisit(v); }}>
                     Check Out
                   </Button>
                 )}
@@ -187,7 +179,7 @@ export default function VisitsPage() {
         </motion.div>
       </div>
 
-      {/* FAB for check-in (mobile only) */}
+      {/* FAB for check-in (mobile, merchandisers only) */}
       {p.canCheckin && !openVisit && (
         <button className="fab" onClick={() => setCheckinOpen(true)} title="Check In">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -200,12 +192,44 @@ export default function VisitsPage() {
       <Modal open={checkinOpen} onClose={() => setCheckinOpen(false)} title="Check In to Store" size="sm">
         <CheckinForm stores={stores} onSubmit={handleCheckin} onCancel={() => setCheckinOpen(false)} />
       </Modal>
-
       <Modal open={!!checkoutVisit} onClose={() => setCheckoutVisit(null)} title="Check Out" size="sm">
         {checkoutVisit && (
           <CheckoutForm visit={checkoutVisit} onSubmit={handleCheckout} onCancel={() => setCheckoutVisit(null)} />
         )}
       </Modal>
+    </div>
+  );
+
+  /* ─── Admin view: no tabs, just history ─── */
+  if (!p.canCheckin) return historyPanel;
+
+  /* ─── Merchandiser/Supervisor view: tabs ─── */
+  return (
+    <div>
+      {/* Tab switcher */}
+      <div className="visits-tab-bar">
+        <button
+          className={`visits-tab-btn${activeTab === 'visit' ? ' active' : ''}`}
+          onClick={() => setActiveTab('visit')}
+        >
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z"/>
+          </svg>
+          My Visit
+        </button>
+        <button
+          className={`visits-tab-btn${activeTab === 'history' ? ' active' : ''}`}
+          onClick={() => setActiveTab('history')}
+        >
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          History
+        </button>
+      </div>
+
+      {activeTab === 'visit'    && <MerchandiserFlowPage />}
+      {activeTab === 'history'  && historyPanel}
     </div>
   );
 }
