@@ -12,18 +12,26 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children?: ReactNode;
 }
 
-const variantStyles: Record<Variant, string> = {
-  primary: 'btn-primary',
+const variantClass: Record<Variant, string> = {
+  primary:   'btn-primary',
   secondary: 'btn-secondary',
-  danger: 'btn-danger',
-  ghost: 'btn-ghost',
-  outline: 'btn-outline',
+  danger:    'btn-danger',
+  ghost:     'btn-ghost',
+  outline:   'btn-outline',
 };
 
-const sizeStyles: Record<Size, string> = {
+const sizeClass: Record<Size, string> = {
   sm: 'btn-sm',
   md: 'btn-md',
   lg: 'btn-lg',
+};
+
+const hoverScale: Record<Variant, number> = {
+  primary:   1.025,
+  secondary: 1.02,
+  danger:    1.025,
+  ghost:     1.01,
+  outline:   1.02,
 };
 
 export default function Button({
@@ -36,11 +44,15 @@ export default function Button({
   className = '',
   ...rest
 }: ButtonProps) {
+  const isDisabled = disabled || loading;
+
   return (
     <motion.button
-      whileTap={{ scale: 0.97 }}
-      className={`btn ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
-      disabled={disabled || loading}
+      className={`btn ${variantClass[variant]} ${sizeClass[size]} ${className}`}
+      disabled={isDisabled}
+      whileHover={isDisabled ? undefined : { scale: hoverScale[variant], transition: { duration: 0.18 } }}
+      whileTap={isDisabled ? undefined : { scale: 0.96, transition: { duration: 0.1 } }}
+      transition={{ type: 'spring', stiffness: 400, damping: 22 }}
       {...(rest as any)}
     >
       {loading ? (
