@@ -8,6 +8,7 @@ import productStoresReducer from './slices/productStoresSlice';
 import visitsReducer from './slices/visitsSlice';
 import auditItemsReducer from './slices/auditItemsSlice';
 import reportsReducer from './slices/reportsSlice';
+import schedulesReducer from './slices/schedulesSlice';
 
 export const store = configureStore({
   reducer: {
@@ -20,6 +21,7 @@ export const store = configureStore({
     visits: visitsReducer,
     auditItems: auditItemsReducer,
     reports: reportsReducer,
+    schedules: schedulesReducer,
   },
 });
 

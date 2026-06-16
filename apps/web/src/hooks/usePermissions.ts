@@ -19,5 +19,6 @@ export function usePermissions() {
     canManageProducts: is('super_admin', 'admin'),
     canManageProductStores: is('super_admin', 'admin'),
     canCheckin: !!role,
+    canManageSchedules: is('super_admin', 'admin', 'supervisor'),
   };
 }

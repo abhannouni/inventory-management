@@ -13,6 +13,7 @@ import { VisitsModule } from './visits/visits.module';
 import { AuditItemsModule } from './audit-items/audit-items.module';
 import { UploadModule } from './upload/upload.module';
 import { ReportsModule } from './reports/reports.module';
+import { SchedulesModule } from './schedules/schedules.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { ReportsModule } from './reports/reports.module';
     AuditItemsModule,
     UploadModule,
     ReportsModule,
+    SchedulesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

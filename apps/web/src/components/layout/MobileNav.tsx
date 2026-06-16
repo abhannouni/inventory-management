@@ -33,12 +33,12 @@ export default function MobileNav() {
       icon: <Icon d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z" />,
       show: true,
     },
-    /* Merchandiser / Supervisor — field-focused items */
+    /* Calendar — all roles */
     {
-      to: '/audit-items',
-      label: 'Audit',
-      icon: <Icon d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />,
-      show: !p.canManageUsers,
+      to: '/schedule',
+      label: 'Schedule',
+      icon: <Icon d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />,
+      show: true,
     },
     /* Admin / Super Admin — management items */
     {

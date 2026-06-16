@@ -15,6 +15,7 @@ export class PrismaService implements OnModuleInit, OnModuleDestroy {
   readonly productStore: PrismaClient['productStore'];
   readonly visit: PrismaClient['visit'];
   readonly auditItem: PrismaClient['auditItem'];
+  readonly schedule: PrismaClient['schedule'];
 
   constructor(config: ConfigService) {
     const adapter = new PrismaPg(config.get<string>('DATABASE_URL')!);
@@ -28,6 +29,7 @@ export class PrismaService implements OnModuleInit, OnModuleDestroy {
     this.productStore = this.client.productStore;
     this.visit = this.client.visit;
     this.auditItem = this.client.auditItem;
+    this.schedule = this.client.schedule;
   }
 
   $transaction: PrismaClient['$transaction'] = (...args: any[]) =>

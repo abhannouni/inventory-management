@@ -114,6 +114,23 @@ export interface ProductReport {
   }>;
 }
 
+export type ScheduleStatus = 'pending' | 'completed' | 'cancelled';
+
+export interface Schedule {
+  id: string;
+  user_id: string;
+  store_id: string;
+  created_by_id: string;
+  scheduled_at: string;
+  notes: string | null;
+  status: ScheduleStatus;
+  user?: User;
+  store?: Store;
+  created_by?: User;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface ApiResponse<T> {
   success: boolean;
   data: T;

@@ -16,6 +16,7 @@ import VisitsPage from './pages/visits/VisitsPage';
 import VisitDetailPage from './pages/visits/VisitDetailPage';
 import AuditItemsPage from './pages/audit-items/AuditItemsPage';
 import ReportsPage from './pages/reports/ReportsPage';
+import SchedulePage from './pages/schedule/SchedulePage';
 
 export default function App() {
   return (
@@ -30,6 +31,7 @@ export default function App() {
             <Route path="/stores" element={<StoresPage />} />
             <Route path="/products" element={<ProductsPage />} />
             <Route path="/product-stores" element={<ProductStoresPage />} />
+            <Route path="/schedule" element={<SchedulePage />} />
             <Route path="/visits" element={<VisitsPage />} />
             <Route path="/visits/:id" element={<VisitDetailPage />} />
             <Route path="/my-visit" element={<Navigate to="/visits" replace />} />

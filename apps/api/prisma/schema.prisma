@@ -26,6 +26,12 @@ enum AuditItemStatus {
   out_of_stock
 }
 
+enum ScheduleStatus {
+  pending
+  completed
+  cancelled
+}
+
 // ─── Models ────────────────────────────────────────────────────────────────────
 
 model Region {
@@ -49,8 +55,10 @@ model User {
   region_id  String?
   created_at DateTime @default(now())
 
-  userStores UserStore[]
-  visits     Visit[]
+  userStores         UserStore[]
+  visits             Visit[]
+  schedulesAssigned  Schedule[] @relation("AssignedSchedules")
+  schedulesCreated   Schedule[] @relation("CreatedSchedules")
 
   @@map("users")
 }
@@ -68,6 +76,7 @@ model Store {
   userStores    UserStore[]
   productStores ProductStore[]
   visits        Visit[]
+  schedules     Schedule[]
 
   @@map("stores")
 }
@@ -141,4 +150,21 @@ model AuditItem {
 
   @@unique([visit_id, product_id])
   @@map("audit_items")
+}
+
+model Schedule {
+  id            String         @id @default(uuid())
+  user          User           @relation("AssignedSchedules", fields: [user_id], references: [id], onDelete: Cascade)
+  user_id       String
+  store         Store          @relation(fields: [store_id], references: [id], onDelete: Cascade)
+  store_id      String
+  created_by    User           @relation("CreatedSchedules", fields: [created_by_id], references: [id])
+  created_by_id String
+  scheduled_at  DateTime
+  notes         String?
+  status        ScheduleStatus @default(pending)
+  created_at    DateTime       @default(now())
+  updated_at    DateTime       @updatedAt
+
+  @@map("schedules")
 }
