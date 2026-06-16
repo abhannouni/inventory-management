@@ -59,8 +59,21 @@ export default function LoginPage() {
       >
         <div className="auth-logo">
           <div className="auth-logo-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
-              <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"
+                fill="rgba(255,255,255,0.15)"
+                stroke="white"
+                strokeWidth="1.6"
+              />
+              <circle cx="12" cy="9" r="3.5" fill="rgba(255,255,255,0.32)" />
+              <path
+                d="M9.5,9 L11.3,11.2 L14.8,6.8"
+                stroke="white"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </svg>
           </div>
           <span className="auth-logo-text">Inventory</span>

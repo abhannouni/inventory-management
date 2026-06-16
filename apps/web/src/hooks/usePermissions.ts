@@ -18,6 +18,6 @@ export function usePermissions() {
     canManageStores: is('super_admin', 'admin'),
     canManageProducts: is('super_admin', 'admin'),
     canManageProductStores: is('super_admin', 'admin'),
-    canCheckin: is('merchandiser', 'supervisor'),
+    canCheckin: !!role,
   };
 }

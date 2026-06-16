@@ -68,13 +68,13 @@ export default function Sidebar() {
       to: '/stores',
       label: 'Stores',
       icon: <Icon d="M3 9h18v10a2 2 0 01-2 2H5a2 2 0 01-2-2V9zM3 9l2.45-4.9A2 2 0 017.24 3h9.52a2 2 0 011.8 1.1L21 9M12 3v6" />,
-      show: true,
+      show: p.canManageStores,
     },
     {
       to: '/products',
       label: 'Products',
       icon: <Icon d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />,
-      show: true,
+      show: p.canManageProducts,
     },
     {
       to: '/product-stores',
@@ -118,11 +118,21 @@ export default function Sidebar() {
       {/* Brand */}
       <div className="sidebar-brand">
         <div className="brand-icon">
-          {/* Target / scope icon matching Donezo style */}
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="10" />
-            <circle cx="12" cy="12" r="6" />
-            <circle cx="12" cy="12" r="2" fill="white" stroke="none" />
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <path
+              d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"
+              fill="rgba(255,255,255,0.15)"
+              stroke="white"
+              strokeWidth="1.6"
+            />
+            <circle cx="12" cy="9" r="3.5" fill="rgba(255,255,255,0.32)" />
+            <path
+              d="M9.5,9 L11.3,11.2 L14.8,6.8"
+              stroke="white"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
           </svg>
         </div>
         <span className="brand-name">Inventory</span>
