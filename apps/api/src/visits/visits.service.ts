@@ -61,7 +61,7 @@ export class VisitsService {
       );
     }
 
-    return this.prisma.visit.create({
+    const visit = await this.prisma.visit.create({
       data: {
         user_id: user.id,
         store_id: dto.store_id,
@@ -72,6 +72,7 @@ export class VisitsService {
       },
       include: VISIT_INCLUDE,
     });
+    return this.serializeVisit(visit);
   }
 
   async checkout(dto: CheckoutDto, user: User) {
@@ -82,7 +83,7 @@ export class VisitsService {
       throw new ConflictException('Visit is already completed');
     }
 
-    return this.prisma.visit.update({
+    const updated = await this.prisma.visit.update({
       where: { id: dto.visit_id },
       data: {
         status: VisitStatus.completed,
@@ -92,15 +93,17 @@ export class VisitsService {
       },
       include: VISIT_INCLUDE,
     });
+    return this.serializeVisit(updated);
   }
 
   async findAll(user: User, query: FindVisitsDto) {
     const where = this.buildFilter(user, query);
-    return this.prisma.visit.findMany({
+    const visits = await this.prisma.visit.findMany({
       where,
       include: VISIT_INCLUDE,
       orderBy: { checkin_time: 'desc' },
     });
+    return visits.map((v) => this.serializeVisit(v));
   }
 
   async findOne(id: string, user: User) {
@@ -110,10 +113,14 @@ export class VisitsService {
     });
     if (!visit) throw new NotFoundException('Visit not found');
     this.assertReadAccess(visit, user);
-    return visit;
+    return this.serializeVisit(visit);
   }
 
   // ─── Helpers ───────────────────────────────────────────────────────────────
+
+  private serializeVisit<T extends { checkin_time: Date; checkout_time: Date | null }>(v: T) {
+    return { ...v, checkin_at: v.checkin_time, checkout_at: v.checkout_time };
+  }
 
   private buildFilter(user: User, query: FindVisitsDto) {
     const where: Record<string, unknown> = {};

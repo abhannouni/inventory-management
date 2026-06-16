@@ -25,8 +25,8 @@ export class ReportsService {
     return visits.map((v) => ({
       id: v.id,
       status: v.status,
-      checkin_time: v.checkin_time,
-      checkout_time: v.checkout_time,
+      checkin_at: v.checkin_time,
+      checkout_at: v.checkout_time,
       user: v.user,
       store: v.store,
       summary: buildSummary(v.auditItems),
@@ -61,11 +61,11 @@ export class ReportsService {
     const auditHistory = visits.map((v) => ({
       id: v.id,
       status: v.status,
-      checkin_time: v.checkin_time,
-      checkout_time: v.checkout_time,
+      checkin_at: v.checkin_time,
+      checkout_at: v.checkout_time,
       user: v.user,
       summary: buildSummary(v.auditItems),
-      items: v.auditItems.map((item) => ({
+      audit_items: v.auditItems.map((item) => ({
         id: item.id,
         product: item.product,
         qty_found: item.qty_found,
@@ -126,20 +126,12 @@ export class ReportsService {
       product,
       summary: { totalScans, avgQtyFound, outOfStockCount, lowStockCount },
       history: auditItems.map((item) => ({
-        id: item.id,
+        visit_id: item.visit.id,
+        store: item.visit.store,
+        checkin_at: item.visit.checkin_time,
         qty_found: item.qty_found,
-        expected_qty: item.expected_qty,
-        variance: item.variance,
         status: item.status,
-        photo_url: item.photo_url,
         notes: item.notes,
-        visit: {
-          id: item.visit.id,
-          checkin_time: item.visit.checkin_time,
-          status: item.visit.status,
-          user: item.visit.user,
-          store: item.visit.store,
-        },
       })),
     };
   }
