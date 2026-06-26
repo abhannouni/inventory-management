@@ -31,7 +31,7 @@ export default function MobileNav() {
       to: '/visits',
       label: 'Visits',
       icon: <Icon d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z" />,
-      show: true,
+      show: !p.isAdmin,
     },
     /* Calendar — all roles */
     {
@@ -46,19 +46,6 @@ export default function MobileNav() {
       label: 'Audit',
       icon: <Icon d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2M9 14l2 2 4-4" />,
       show: p.isSupervisor,
-    },
-    /* Admin / Super Admin — management items */
-    {
-      to: '/stores',
-      label: 'Stores',
-      icon: <Icon d="M3 9h18v10a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" d2="M3 9l2.45-4.9A2 2 0 017.24 3h9.52a2 2 0 011.8 1.1L21 9" />,
-      show: p.canManageStores,
-    },
-    {
-      to: '/users',
-      label: 'Users',
-      icon: <Icon d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8z" d2="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />,
-      show: p.canManageUsers,
     },
     {
       to: '/reports',

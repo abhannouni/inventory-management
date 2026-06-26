@@ -6,19 +6,19 @@ export class CheckoutDto {
   @IsUUID()
   visit_id: string;
 
-  @ApiProperty({ example: 33.5731 })
+  @ApiProperty({ example: 34.052200 })
   @IsNumber()
   @Min(-90)
   @Max(90)
   lat: number;
 
-  @ApiProperty({ example: -7.5898 })
+  @ApiProperty({ example: -118.243700 })
   @IsNumber()
   @Min(-180)
   @Max(180)
   lng: number;
 
-  @ApiPropertyOptional({ example: '2025-06-15T11:00:00' })
+  @ApiPropertyOptional({ example: '2026-06-25T11:18:00.924Z' })
   @IsOptional()
   @IsDateString()
   checkout_at?: string;

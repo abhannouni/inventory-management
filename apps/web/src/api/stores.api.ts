@@ -3,9 +3,9 @@ import type { Store } from '../types';
 
 export interface StorePayload {
   name: string;
-  address: string;
-  lat: number;
-  lng: number;
+  address?: string;
+  latitude?: number;
+  longitude?: number;
   region_id: string;
 }
 

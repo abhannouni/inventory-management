@@ -1,18 +1,14 @@
 import {
-  BadRequestException,
   ConflictException,
   ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { User, UserRole, VisitStatus } from '@prisma/client';
-import { getDistanceMeters } from '../common/utils/haversine';
 import { PrismaService } from '../prisma/prisma.service';
 import { CheckinDto } from './dto/checkin.dto';
 import { CheckoutDto } from './dto/checkout.dto';
 import { FindVisitsDto } from './dto/find-visits.dto';
-
-const CHECKIN_RADIUS_METERS = 200;
 
 const VISIT_INCLUDE = {
   user: { select: { id: true, full_name: true, email: true, role: true } },
@@ -44,23 +40,6 @@ export class VisitsService {
     });
     if (openVisit) throw new ConflictException('You already have an open visit');
 
-    // Haversine distance check — store must have GPS coordinates
-    if (store.latitude == null || store.longitude == null) {
-      throw new BadRequestException('Store has no GPS coordinates configured');
-    }
-
-    const distance = getDistanceMeters(
-      dto.lat,
-      dto.lng,
-      Number(store.latitude),
-      Number(store.longitude),
-    );
-    if (distance > CHECKIN_RADIUS_METERS) {
-      throw new BadRequestException(
-        `You are ${Math.round(distance)}m from the store. Must be within ${CHECKIN_RADIUS_METERS}m to check in.`,
-      );
-    }
-
     const visit = await this.prisma.visit.create({
       data: {
         user_id: user.id,
@@ -76,7 +55,10 @@ export class VisitsService {
   }
 
   async checkout(dto: CheckoutDto, user: User) {
-    const visit = await this.prisma.visit.findUnique({ where: { id: dto.visit_id } });
+    const visit = await this.prisma.visit.findUnique({
+      where: { id: dto.visit_id },
+      include: { store: true },
+    });
     if (!visit) throw new NotFoundException('Visit not found');
     if (visit.user_id !== user.id) throw new ForbiddenException('This visit does not belong to you');
     if (visit.status === VisitStatus.completed) {

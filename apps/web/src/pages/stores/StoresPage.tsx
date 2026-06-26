@@ -71,7 +71,7 @@ export default function StoresPage() {
       header: 'Coordinates',
       render: (s: Store) => (
         <span className="gps-coords">
-          {s.lat != null && s.lng != null ? `${s.lat.toFixed(4)}, ${s.lng.toFixed(4)}` : '—'}
+          {s.latitude != null && s.longitude != null ? `${Number(s.latitude).toFixed(4)}, ${Number(s.longitude).toFixed(4)}` : '—'}
         </span>
       ),
     },

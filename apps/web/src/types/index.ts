@@ -26,8 +26,8 @@ export interface Store {
   id: string;
   name: string;
   address: string;
-  lat: number;
-  lng: number;
+  latitude: number | null;
+  longitude: number | null;
   region_id: string;
   region?: Region;
   created_at: string;

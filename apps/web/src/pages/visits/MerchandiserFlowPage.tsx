@@ -27,67 +27,6 @@ function calcStatus(found: number, expected: number): { label: string; color: st
   return                                          { label: 'In stock',     color: '#16a34a', bg: '#dcfce7' };
 }
 
-/* ─────────── Manual coordinate input (replaces GPS for testing) ─────────── */
-function CoordInput({ coords, onChange }: {
-  coords: { lat: number; lng: number } | null;
-  onChange: (c: { lat: number; lng: number } | null) => void;
-}) {
-  const [lat, setLat] = useState(coords ? String(coords.lat) : '');
-  const [lng, setLng] = useState(coords ? String(coords.lng) : '');
-
-  const isValid = lat.trim() !== '' && lng.trim() !== '' &&
-    !isNaN(Number(lat)) && !isNaN(Number(lng)) &&
-    Math.abs(Number(lat)) <= 90 && Math.abs(Number(lng)) <= 180;
-
-  useEffect(() => {
-    onChange(isValid ? { lat: Number(lat), lng: Number(lng) } : null);
-  }, [lat, lng]);
-
-  return (
-    <div className={`coord-input-card ${isValid ? 'valid' : ''}`}>
-      <div className="coord-input-header">
-        <div className="coord-input-icon">
-          {isValid ? (
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-          ) : (
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/>
-              <line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/>
-              <line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/>
-            </svg>
-          )}
-        </div>
-        <div>
-          <div className="coord-input-title">{isValid ? 'Location set' : 'Enter coordinates'}</div>
-          <div className="coord-input-sub">Testing mode — enter lat / lng manually</div>
-        </div>
-      </div>
-      <div className="coord-fields">
-        <div className="form-group" style={{ marginBottom: 0 }}>
-          <label className="form-label" style={{ fontSize: 11 }}>Latitude</label>
-          <input
-            className="form-input"
-            placeholder="e.g. 33.5731"
-            value={lat}
-            inputMode="decimal"
-            onChange={(e) => setLat(e.target.value)}
-          />
-        </div>
-        <div className="form-group" style={{ marginBottom: 0 }}>
-          <label className="form-label" style={{ fontSize: 11 }}>Longitude</label>
-          <input
-            className="form-input"
-            placeholder="e.g. -7.5898"
-            value={lng}
-            inputMode="decimal"
-            onChange={(e) => setLng(e.target.value)}
-          />
-        </div>
-      </div>
-    </div>
-  );
-}
-
 /* ─────────── Sub-components ─────────── */
 function StepIndicator({ current }: { current: Step }) {
   const steps: { id: Step; label: string; icon: string }[] = [
@@ -129,8 +68,6 @@ export default function MerchandiserFlowPage() {
   const { items: stores  } = useAppSelector((s) => s.stores);
 
   const [step, setStep]           = useState<Step>('checkin');
-  const [coords, setCoords]       = useState<{ lat: number; lng: number } | null>(null);
-  const [checkoutCoords, setCheckoutCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [storeId, setStoreId]     = useState('');
   const [storeErr, setStoreErr]   = useState('');
   const [busy, setBusy]           = useState(false);
@@ -193,10 +130,18 @@ export default function MerchandiserFlowPage() {
   /* ── Step 1: Check In ── */
   const handleCheckin = async () => {
     if (!storeId) { setStoreErr('Please select a store'); return; }
-    if (!coords)  { return; }
+    if (!selectedStore?.latitude || !selectedStore?.longitude) {
+      setStoreErr('This store has no GPS coordinates configured');
+      return;
+    }
     setStoreErr('');
     setBusy(true);
-    const res = await dispatch(checkin({ store_id: storeId, lat: coords.lat, lng: coords.lng, checkin_at: new Date().toISOString() }));
+    const res = await dispatch(checkin({
+      store_id: storeId,
+      lat: Number(selectedStore.latitude),
+      lng: Number(selectedStore.longitude),
+      checkin_at: new Date().toISOString(),
+    }));
     setBusy(false);
     if (checkin.fulfilled.match(res)) {
       const newVisit = res.payload as Visit;
@@ -243,7 +188,6 @@ export default function MerchandiserFlowPage() {
       await auditItemsApi.bulkUpsert({ visit_id: visit.id, items });
       setAuditDone(true);
       toast.success('Audit saved!');
-      setCheckoutCoords(null); // reset checkout coords for step 3
       setStep('checkout');
     } catch {
       toast.error('Failed to save audit');
@@ -254,10 +198,14 @@ export default function MerchandiserFlowPage() {
 
   /* ── Step 3: Check Out ── */
   const handleCheckout = async () => {
-    if (!visit || !checkoutCoords) return;
-    const coords = checkoutCoords;
+    if (!visit) return;
     setBusy(true);
-    const res = await dispatch(checkout({ visit_id: visit.id, lat: coords.lat, lng: coords.lng, checkout_at: new Date().toISOString() }));
+    const res = await dispatch(checkout({
+      visit_id: visit.id,
+      lat: Number(visit.store?.latitude),
+      lng: Number(visit.store?.longitude),
+      checkout_at: new Date().toISOString(),
+    }));
     setBusy(false);
     if (checkout.fulfilled.match(res)) {
       toast.success('Visit completed!');
@@ -279,7 +227,8 @@ export default function MerchandiserFlowPage() {
     { inStock: 0, lowStock: 0, outStock: 0 }
   );
 
-  const storeName = stores.find((s) => s.id === storeId)?.name ?? storeId;
+  const selectedStore = stores.find((s) => s.id === storeId) ?? null;
+  const storeName = selectedStore?.name ?? storeId;
 
   /* ════════════════════ RENDER ════════════════════ */
   return (
@@ -301,51 +250,71 @@ export default function MerchandiserFlowPage() {
             <div className="mf-section-title">
               <div className="mf-section-icon">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z"/>
+                  <path d="M3 9h18v10a2 2 0 01-2 2H5a2 2 0 01-2-2V9zM3 9l2.45-4.9A2 2 0 017.24 3h9.52a2 2 0 011.8 1.1L21 9M12 3v6"/>
                 </svg>
               </div>
               <div>
-                <div className="mf-section-name">Check In to Store</div>
-                <div className="mf-section-sub">We need your location and the store you're visiting</div>
+                <div className="mf-section-name">Select a Store</div>
+                <div className="mf-section-sub">Choose the store you are visiting today</div>
               </div>
             </div>
 
-            <CoordInput coords={coords} onChange={setCoords} />
+            <div className="form-group" style={{ marginTop: 16 }}>
+              <label className="form-label">Store</label>
+              <select
+                className={`form-select ${storeErr ? 'is-error' : ''}`}
+                value={storeId}
+                onChange={(e) => { setStoreId(e.target.value); setStoreErr(''); }}
+              >
+                <option value="">Choose a store…</option>
+                {stores.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
+              </select>
+              {storeErr && <p className="form-error">{storeErr}</p>}
+            </div>
 
-            <AnimatePresence>
-              {coords && (
-                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                  <div className="form-group" style={{ marginTop: 16 }}>
-                    <label className="form-label">Select Store</label>
-                    <select
-                      className={`form-select ${storeErr ? 'is-error' : ''}`}
-                      value={storeId}
-                      onChange={(e) => { setStoreId(e.target.value); setStoreErr(''); }}
-                    >
-                      <option value="">Choose a store…</option>
-                      {stores.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
-                    </select>
-                    {storeErr && <p className="form-error">{storeErr}</p>}
+            {selectedStore && (
+              <div style={{
+                display: 'flex', alignItems: 'center', gap: 10,
+                background: selectedStore.latitude != null ? 'var(--primary-light)' : 'var(--gray-100)',
+                border: `1px solid ${selectedStore.latitude != null ? 'var(--accent-light)' : 'var(--gray-200)'}`,
+                borderRadius: 10, padding: '10px 14px', marginBottom: 4,
+              }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                  stroke={selectedStore.latitude != null ? 'var(--primary)' : 'var(--gray-400)'}
+                  strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z"/>
+                </svg>
+                <div>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: selectedStore.latitude != null ? 'var(--primary)' : 'var(--gray-500)' }}>
+                    {selectedStore.address || selectedStore.name}
                   </div>
-                  <button
-                    className="btn btn-primary btn-lg mf-full-btn"
-                    disabled={!storeId || busy}
-                    onClick={handleCheckin}
-                    style={{ marginTop: 16 }}
-                  >
-                    {busy ? <span className="btn-spinner" /> : (
-                      <>
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
-                          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
-                          <line x1="12" y1="5" x2="12" y2="9"/><line x1="10" y1="7" x2="14" y2="7"/>
-                        </svg>
-                        Check In Now
-                      </>
-                    )}
-                  </button>
-                </motion.div>
+                  {selectedStore.latitude != null && selectedStore.longitude != null ? (
+                    <div style={{ fontSize: 11, color: 'var(--gray-500)', marginTop: 1 }}>
+                      {Number(selectedStore.latitude).toFixed(6)}, {Number(selectedStore.longitude).toFixed(6)}
+                    </div>
+                  ) : (
+                    <div style={{ fontSize: 11, color: 'var(--gray-400)', marginTop: 1 }}>No coordinates set</div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            <button
+              className="btn btn-primary btn-lg mf-full-btn"
+              disabled={!storeId || !selectedStore?.latitude || busy}
+              onClick={handleCheckin}
+              style={{ marginTop: 16 }}
+            >
+              {busy ? <span className="btn-spinner" /> : (
+                <>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+                    <line x1="12" y1="5" x2="12" y2="9"/><line x1="10" y1="7" x2="14" y2="7"/>
+                  </svg>
+                  Check In Now
+                </>
               )}
-            </AnimatePresence>
+            </button>
           </motion.div>
         )}
 
@@ -513,7 +482,7 @@ export default function MerchandiserFlowPage() {
           <motion.div key="checkout" className="mf-panel" initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -24 }} transition={{ duration: 0.25 }}>
 
             <div className="mf-section-title">
-              <div className="mf-section-icon" style={{ background: 'linear-gradient(135deg, #6FCF97 0%, #1F6F5F 100%)' }}>
+              <div className="mf-section-icon" style={{ background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)' }}>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
                   <polyline points="20 6 9 17 4 12"/>
                 </svg>
@@ -560,12 +529,9 @@ export default function MerchandiserFlowPage() {
               })}
             </div>
 
-            {/* Manual coords for checkout */}
-            <CoordInput coords={checkoutCoords} onChange={setCheckoutCoords} />
-
             <button
               className="btn btn-primary btn-lg mf-full-btn"
-              disabled={!checkoutCoords || busy}
+              disabled={busy}
               onClick={handleCheckout}
               style={{ marginTop: 16 }}
             >
