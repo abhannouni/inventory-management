@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../../hooks/useAppDispatch';
 import { fetchStores, createStore, updateStore, deleteStore } from '../../store/slices/storesSlice';
 import { fetchRegions } from '../../store/slices/regionsSlice';
@@ -14,6 +15,8 @@ import { formatDate } from '../../utils/format';
 import type { Store } from '../../types';
 
 export default function StoresPage() {
+  const { t, i18n } = useTranslation('stores');
+  const { t: tCommon } = useTranslation('common');
   const dispatch = useAppDispatch();
   const { items: stores, loading } = useAppSelector((s) => s.stores);
   const { items: regions } = useAppSelector((s) => s.regions);
@@ -31,10 +34,10 @@ export default function StoresPage() {
   const handleCreate = async (data: any) => {
     const res = await dispatch(createStore(data));
     if (createStore.fulfilled.match(res)) {
-      toast.success('Store created');
+      toast.success(t('toasts.createSuccess'));
       setCreateOpen(false);
     } else {
-      toast.error(res.payload as string || 'Failed to create store');
+      toast.error(res.payload as string || t('toasts.createError'));
     }
   };
 
@@ -42,10 +45,10 @@ export default function StoresPage() {
     if (!editStore) return;
     const res = await dispatch(updateStore({ id: editStore.id, payload: data }));
     if (updateStore.fulfilled.match(res)) {
-      toast.success('Store updated');
+      toast.success(t('toasts.updateSuccess'));
       setEditStore(null);
     } else {
-      toast.error(res.payload as string || 'Failed to update store');
+      toast.error(res.payload as string || t('toasts.updateError'));
     }
   };
 
@@ -55,34 +58,34 @@ export default function StoresPage() {
     const res = await dispatch(deleteStore(deleteId));
     setDeleting(false);
     if (deleteStore.fulfilled.match(res)) {
-      toast.success('Store deleted');
+      toast.success(t('toasts.deleteSuccess'));
       setDeleteId(null);
     } else {
-      toast.error(res.payload as string || 'Failed to delete store');
+      toast.error(res.payload as string || t('toasts.deleteError'));
     }
   };
 
   const columns = [
-    { key: 'name', header: 'Store Name', render: (s: Store) => <span style={{ fontWeight: 500 }}>{s.name}</span> },
-    { key: 'address', header: 'Address', render: (s: Store) => <span style={{ color: 'var(--gray-500)' }}>{s.address}</span> },
-    { key: 'region', header: 'Region', render: (s: Store) => <span>{s.region?.name || '—'}</span> },
+    { key: 'name', header: t('columns.name'), render: (s: Store) => <span style={{ fontWeight: 500 }}>{s.name}</span> },
+    { key: 'address', header: t('columns.address'), render: (s: Store) => <span style={{ color: 'var(--gray-500)' }}>{s.address}</span> },
+    { key: 'region', header: t('columns.region'), render: (s: Store) => <span>{s.region?.name || '—'}</span> },
     {
       key: 'coords',
-      header: 'Coordinates',
+      header: t('columns.coordinates'),
       render: (s: Store) => (
         <span className="gps-coords">
           {s.latitude != null && s.longitude != null ? `${Number(s.latitude).toFixed(4)}, ${Number(s.longitude).toFixed(4)}` : '—'}
         </span>
       ),
     },
-    { key: 'created_at', header: 'Created', render: (s: Store) => <span style={{ color: 'var(--gray-500)' }}>{formatDate(s.created_at)}</span> },
+    { key: 'created_at', header: t('columns.created'), render: (s: Store) => <span style={{ color: 'var(--gray-500)' }}>{formatDate(s.created_at, i18n.language)}</span> },
     {
       key: 'actions',
-      header: 'Actions',
+      header: tCommon('table.actions'),
       render: (s: Store) => (
         <div className="table-actions">
-          <Button variant="outline" size="sm" onClick={() => setEditStore(s)}>Edit</Button>
-          <Button variant="danger" size="sm" onClick={() => setDeleteId(s.id)}>Delete</Button>
+          <Button variant="outline" size="sm" onClick={() => setEditStore(s)}>{tCommon('actions.edit')}</Button>
+          <Button variant="danger" size="sm" onClick={() => setDeleteId(s.id)}>{tCommon('actions.delete')}</Button>
         </div>
       ),
     },
@@ -91,20 +94,20 @@ export default function StoresPage() {
   return (
     <div>
       <PageHeader
-        title="Stores"
-        subtitle="Manage store locations and coordinates"
-        actions={<Button icon={<PlusIcon />} onClick={() => setCreateOpen(true)}>Add Store</Button>}
+        title={t('title')}
+        subtitle={t('subtitle')}
+        actions={<Button icon={<PlusIcon />} onClick={() => setCreateOpen(true)}>{t('addStore')}</Button>}
       />
 
       <motion.div className="card" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
-        <DataTable columns={columns} data={stores} loading={loading} keyExtractor={(s) => s.id} emptyMessage="No stores found" />
+        <DataTable columns={columns} data={stores} loading={loading} keyExtractor={(s) => s.id} emptyMessage={t('emptyTable')} />
       </motion.div>
 
-      <Modal open={createOpen} onClose={() => setCreateOpen(false)} title="Create Store" size="md">
+      <Modal open={createOpen} onClose={() => setCreateOpen(false)} title={t('createStore')} size="md">
         <StoreForm regions={regions} onSubmit={handleCreate} onCancel={() => setCreateOpen(false)} />
       </Modal>
 
-      <Modal open={!!editStore} onClose={() => setEditStore(null)} title="Edit Store" size="md">
+      <Modal open={!!editStore} onClose={() => setEditStore(null)} title={t('editStore')} size="md">
         {editStore && (
           <StoreForm regions={regions} initialData={editStore} onSubmit={handleUpdate} onCancel={() => setEditStore(null)} />
         )}
@@ -115,7 +118,7 @@ export default function StoresPage() {
         onClose={() => setDeleteId(null)}
         onConfirm={handleDelete}
         loading={deleting}
-        message="This will permanently delete the store and all associated data."
+        message={t('deleteConfirm.message')}
       />
     </div>
   );

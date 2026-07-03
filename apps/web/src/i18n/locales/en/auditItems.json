@@ -1,0 +1,92 @@
+{
+  "pageTitle": "Audit Items",
+  "pageSubtitle": "Record and manage product audits during store visits",
+  "bulkAudit": "Bulk Audit",
+  "addAuditItem": "Add Audit Item",
+  "allVisits": "All visits",
+  "table": {
+    "product": "Product",
+    "qtyFound": "Qty Found",
+    "status": "Status",
+    "notes": "Notes",
+    "photo": "Photo",
+    "empty": "No audit items found"
+  },
+  "modals": {
+    "createTitle": "Create Audit Item",
+    "editTitle": "Edit Audit Item",
+    "bulkTitle": "Bulk Audit"
+  },
+  "deleteConfirm": {
+    "message": "This will permanently delete the audit item."
+  },
+  "toasts": {
+    "createSuccess": "Audit item created",
+    "createError": "Failed to create audit item",
+    "updateSuccess": "Audit item updated",
+    "updateError": "Failed to update audit item",
+    "deleteSuccess": "Audit item deleted",
+    "deleteError": "Failed to delete audit item",
+    "bulkSuccess": "Bulk audit saved — {{count}} items",
+    "bulkError": "Bulk audit failed"
+  },
+  "form": {
+    "visit": "Visit",
+    "selectVisit": "Select visit",
+    "product": "Product",
+    "selectProduct": "Select product",
+    "qtyFoundLabel": "Quantity Found",
+    "qtyFoundPlaceholder": "e.g. 12",
+    "notesLabel": "Notes (optional)",
+    "notesPlaceholder": "Any observations about stock levels, placement, etc.",
+    "photoLabel": "Photo (optional)",
+    "photoUploading": "Uploading…",
+    "photoChangeHint": "Click to change photo",
+    "photoUploadHint": "Click to upload a photo",
+    "photoFormatsHint": "JPEG, PNG, WebP — max 5 MB",
+    "cancel": "Cancel",
+    "create": "Create",
+    "update": "Update",
+    "errors": {
+      "visitRequired": "Visit is required",
+      "productRequired": "Product is required",
+      "qtyRequired": "Quantity is required",
+      "qtyInvalid": "Invalid quantity"
+    },
+    "toasts": {
+      "fileTooLarge": "File must be under 5 MB",
+      "invalidFileType": "Only JPEG, PNG, and WebP files are allowed",
+      "photoUploaded": "Photo uploaded!",
+      "photoUploadError": "Failed to upload photo"
+    }
+  },
+  "bulkForm": {
+    "visit": "Visit",
+    "selectVisit": "Select visit…",
+    "visitRequired": "Select a visit first",
+    "products": "Products",
+    "productsAdded": "({{count}} added)",
+    "item": "Item {{number}}",
+    "product": "Product",
+    "selectProduct": "Select product…",
+    "qtyFound": "Quantity Found",
+    "notesLabel": "Notes (optional)",
+    "notesPlaceholder": "Stock observations…",
+    "photoLabel": "Photo (optional)",
+    "changePhoto": "Change photo",
+    "uploading": "Uploading…",
+    "tapToAddPhoto": "Tap to add photo",
+    "addAnotherProduct": "Add Another Product",
+    "cancel": "Cancel",
+    "save": "Save",
+    "saveItems_one": "Save {{count}} Item",
+    "saveItems_other": "Save {{count}} Items",
+    "saveAudit": "Save Audit",
+    "toasts": {
+      "fileTooLarge": "File must be under 5 MB",
+      "photoUploaded": "Photo uploaded",
+      "uploadError": "Upload failed",
+      "addAtLeastOneProduct": "Add at least one product"
+    }
+  }
+}

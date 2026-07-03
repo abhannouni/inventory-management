@@ -1,0 +1,59 @@
+{
+  "page": {
+    "title": "Rapports",
+    "subtitle": "Analyses et historique d'audit selon le rôle",
+    "tabs": {
+      "visits": "Rapports de visites",
+      "store": "Rapport de magasin",
+      "product": "Rapport de produit"
+    }
+  },
+  "filters": {
+    "from": "Du",
+    "to": "Au",
+    "apply": "Appliquer",
+    "reset": "Réinitialiser",
+    "loadReport": "Charger le rapport"
+  },
+  "productReport": {
+    "selectProductPlaceholder": "Sélectionner un produit",
+    "selectProductToast": "Veuillez sélectionner un produit",
+    "loadErrorToast": "Échec du chargement du rapport",
+    "totalScans": "scans au total",
+    "table": {
+      "store": "Magasin",
+      "date": "Date",
+      "qtyFound": "Qté trouvée",
+      "status": "Statut",
+      "notes": "Notes"
+    },
+    "noHistory": "Aucun historique de scan trouvé",
+    "emptyState": "Sélectionnez un produit pour voir son historique"
+  },
+  "storeReport": {
+    "selectStorePlaceholder": "Sélectionner un magasin",
+    "selectStoreToast": "Veuillez sélectionner un magasin",
+    "loadErrorToast": "Échec du chargement du rapport",
+    "visitHistory_one": "Historique des visites ({{count}} visite)",
+    "visitHistory_other": "Historique des visites ({{count}} visites)",
+    "closed": "Fermée le : {{date}}",
+    "table": {
+      "product": "Produit",
+      "qtyFound": "Qté trouvée",
+      "status": "Statut"
+    },
+    "emptyState": "Sélectionnez un magasin pour voir son rapport"
+  },
+  "visitsReport": {
+    "loadErrorToast": "Échec du chargement du rapport",
+    "emptyTitle": "Aucune visite trouvée",
+    "emptySubtitle": "Essayez d'ajuster les filtres de dates.",
+    "summary": {
+      "total": "Total",
+      "inStock": "En stock",
+      "lowStock": "Stock faible",
+      "outOfStock": "Rupture de stock"
+    },
+    "completionRate": "Taux de complétion"
+  }
+}

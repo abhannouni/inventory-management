@@ -1,0 +1,162 @@
+{
+  "list": {
+    "title": "Visits",
+    "subtitle": "Track store visits with GPS check-in",
+    "tabs": {
+      "myVisit": "My Visit",
+      "history": "History"
+    },
+    "checkIn": "Check In",
+    "checkOut": "Check Out",
+    "checkInToStore": "Check In to Store",
+    "activeVisit": "Active visit",
+    "filters": {
+      "allStatuses": "All statuses"
+    },
+    "columns": {
+      "store": "Store",
+      "status": "Status",
+      "checkin": "Check-in",
+      "checkout": "Check-out",
+      "gpsIn": "GPS (in)",
+      "actions": "Actions"
+    },
+    "view": "View",
+    "loading": "Loading…",
+    "empty": "No visits found",
+    "toasts": {
+      "checkinSuccess": "Checked in successfully!",
+      "checkinFailed": "Check-in failed",
+      "checkoutSuccess": "Checked out successfully!",
+      "checkoutFailed": "Check-out failed"
+    }
+  },
+  "detail": {
+    "title": "Visit Detail",
+    "subtitleFallbackStore": "Store",
+    "back": "Back",
+    "notFound": "Visit not found",
+    "visitInfo": {
+      "title": "Visit Info",
+      "store": "Store",
+      "status": "Status",
+      "checkin": "Check-in",
+      "checkout": "Check-out",
+      "gpsIn": "GPS In",
+      "gpsOut": "GPS Out"
+    },
+    "auditSummary": {
+      "title": "Audit Summary",
+      "total": "Total",
+      "inStock": "In Stock",
+      "lowStock": "Low Stock",
+      "outOfStock": "Out of Stock",
+      "completion": "Completion"
+    },
+    "auditItems": {
+      "title": "Audit Items ({{count}})",
+      "emptyTitle": "No audit items yet",
+      "emptySubtitle": "Audit items will appear here once the merchandiser records them.",
+      "columns": {
+        "product": "Product",
+        "sku": "SKU",
+        "qtyFound": "Qty Found",
+        "status": "Status",
+        "notes": "Notes",
+        "photo": "Photo"
+      },
+      "photoAlt": "photo"
+    }
+  },
+  "checkin": {
+    "selectStore": "Select Store",
+    "chooseStore": "Choose a store…",
+    "noCoordinates": "No coordinates — cannot check in",
+    "checkInNow": "Check In Now",
+    "cancel": "Cancel",
+    "errors": {
+      "storeRequired": "Please select a store",
+      "noGpsCoordinates": "This store has no GPS coordinates configured"
+    }
+  },
+  "checkout": {
+    "activeVisit": "Active Visit",
+    "checkedInAt": "Checked in {{date}}",
+    "confirmCheckOut": "Confirm Check Out",
+    "cancel": "Cancel"
+  },
+  "merchandiserFlow": {
+    "steps": {
+      "checkin": "Check In",
+      "audit": "Audit",
+      "checkout": "Check Out"
+    },
+    "title": "Store Visit",
+    "checkin": {
+      "sectionTitle": "Select a Store",
+      "sectionSubtitle": "Choose the store you are visiting today",
+      "storeLabel": "Store",
+      "chooseStore": "Choose a store…",
+      "noCoordinatesSet": "No coordinates set",
+      "checkInNow": "Check In Now",
+      "errors": {
+        "storeRequired": "Please select a store",
+        "noGpsCoordinates": "This store has no GPS coordinates configured"
+      },
+      "toasts": {
+        "checkedIn": "Checked in!",
+        "checkinFailed": "Check-in failed"
+      }
+    },
+    "audit": {
+      "productCount_one": "{{count}} product to audit",
+      "productCount_other": "{{count}} products to audit",
+      "loadingProducts": "Loading products…",
+      "noProducts": "No products assigned to this store yet.",
+      "loadProductsFailed": "Could not load products for this store",
+      "sku": "SKU: {{sku}}",
+      "expected": "Expected:",
+      "quantityFound": "Quantity Found",
+      "notesLabel": "Notes (optional)",
+      "notesPlaceholder": "Observations, damage, placement…",
+      "photoLabel": "Photo (optional)",
+      "changePhoto": "Change photo",
+      "uploading": "Uploading…",
+      "takePhoto": "Tap to take a shelf photo",
+      "photoAlt": "shelf",
+      "saveAndContinue": "Save Audit & Continue",
+      "status": {
+        "outOfStock": "Out of stock",
+        "lowStock": "Low stock",
+        "inStock": "In stock"
+      },
+      "toasts": {
+        "fileTooLarge": "File must be under 5 MB",
+        "uploadFailed": "Upload failed",
+        "auditSaved": "Audit saved!",
+        "auditSaveFailed": "Failed to save audit"
+      }
+    },
+    "checkout": {
+      "sectionTitle": "Audit Complete",
+      "sectionSubtitle": "Review the summary and check out",
+      "inStock": "In Stock",
+      "lowStock": "Low Stock",
+      "outOfStock": "Out of Stock",
+      "found": "Found",
+      "confirmCheckOut": "Confirm Check Out",
+      "toasts": {
+        "visitCompleted": "Visit completed!",
+        "checkoutFailed": "Check-out failed"
+      }
+    },
+    "done": {
+      "title": "Visit Complete!",
+      "subtitlePrefix": "You've successfully audited",
+      "subtitleAt": "at",
+      "productsCount_one": "{{count}} product",
+      "productsCount_other": "{{count}} products",
+      "viewHistory": "View Visit History"
+    }
+  }
+}

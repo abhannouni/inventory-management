@@ -1,0 +1,63 @@
+{
+  "months": [
+    "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
+    "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"
+  ],
+  "weekdaysShort": ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"],
+  "pageTitle": "Planning",
+  "subtitleManage": "Planifiez et gérez les affectations de visites terrain",
+  "subtitleView": "Votre planning de visites à venir",
+  "newSchedule": "Nouveau planning",
+  "today": "Aujourd'hui",
+  "previousMonth": "Mois précédent",
+  "nextMonth": "Mois suivant",
+  "legend": {
+    "pending": "En attente",
+    "completed": "Terminé",
+    "cancelled": "Annulé"
+  },
+  "calendar": {
+    "loading": "Chargement du planning…",
+    "visitFallback": "Visite",
+    "moreCount": "+{{count}}"
+  },
+  "dayDetail": {
+    "modalTitle": "Planning du jour",
+    "empty": "Aucune visite programmée pour ce jour.",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "deleteConfirm": "Supprimer ?",
+    "yes": "Oui",
+    "no": "Non",
+    "addVisit": "Ajouter une visite"
+  },
+  "form": {
+    "editTitle": "Modifier le planning",
+    "createTitle": "Nouveau planning",
+    "merchandiser": "Marchandiseur",
+    "selectMerchandiser": "Sélectionner un marchandiseur…",
+    "store": "Magasin",
+    "selectStore": "Sélectionner un magasin…",
+    "dateTime": "Date et heure",
+    "status": "Statut",
+    "statusOptions": {
+      "pending": "En attente",
+      "completed": "Terminé",
+      "cancelled": "Annulé"
+    },
+    "notesLabel": "Notes",
+    "notesOptional": "(optionnel)",
+    "notesPlaceholder": "Ajoutez des instructions ou du contexte…",
+    "cancel": "Annuler",
+    "saveChanges": "Enregistrer les modifications",
+    "createSchedule": "Créer le planning"
+  },
+  "toasts": {
+    "updateSuccess": "Planning mis à jour",
+    "updateError": "Échec de la mise à jour",
+    "createSuccess": "Visite planifiée",
+    "createError": "Échec de la création",
+    "deleteSuccess": "Planning supprimé",
+    "deleteError": "Échec de la suppression"
+  }
+}

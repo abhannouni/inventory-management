@@ -1,0 +1,162 @@
+{
+  "list": {
+    "title": "Visites",
+    "subtitle": "Suivez les visites en magasin avec pointage GPS",
+    "tabs": {
+      "myVisit": "Ma visite",
+      "history": "Historique"
+    },
+    "checkIn": "Pointer l'arrivée",
+    "checkOut": "Pointer la sortie",
+    "checkInToStore": "Pointer l'arrivée en magasin",
+    "activeVisit": "Visite en cours",
+    "filters": {
+      "allStatuses": "Tous les statuts"
+    },
+    "columns": {
+      "store": "Magasin",
+      "status": "Statut",
+      "checkin": "Arrivée",
+      "checkout": "Sortie",
+      "gpsIn": "GPS (entrée)",
+      "actions": "Actions"
+    },
+    "view": "Voir",
+    "loading": "Chargement…",
+    "empty": "Aucune visite trouvée",
+    "toasts": {
+      "checkinSuccess": "Pointage d'arrivée enregistré avec succès !",
+      "checkinFailed": "Échec du pointage d'arrivée",
+      "checkoutSuccess": "Pointage de sortie enregistré avec succès !",
+      "checkoutFailed": "Échec du pointage de sortie"
+    }
+  },
+  "detail": {
+    "title": "Détail de la visite",
+    "subtitleFallbackStore": "Magasin",
+    "back": "Retour",
+    "notFound": "Visite introuvable",
+    "visitInfo": {
+      "title": "Informations sur la visite",
+      "store": "Magasin",
+      "status": "Statut",
+      "checkin": "Arrivée",
+      "checkout": "Sortie",
+      "gpsIn": "GPS entrée",
+      "gpsOut": "GPS sortie"
+    },
+    "auditSummary": {
+      "title": "Résumé de l'audit",
+      "total": "Total",
+      "inStock": "En stock",
+      "lowStock": "Stock faible",
+      "outOfStock": "Rupture de stock",
+      "completion": "Progression"
+    },
+    "auditItems": {
+      "title": "Articles audités ({{count}})",
+      "emptyTitle": "Aucun article audité pour le moment",
+      "emptySubtitle": "Les articles audités apparaîtront ici une fois enregistrés par le marchandiseur.",
+      "columns": {
+        "product": "Produit",
+        "sku": "SKU",
+        "qtyFound": "Qté trouvée",
+        "status": "Statut",
+        "notes": "Notes",
+        "photo": "Photo"
+      },
+      "photoAlt": "photo"
+    }
+  },
+  "checkin": {
+    "selectStore": "Sélectionner un magasin",
+    "chooseStore": "Choisir un magasin…",
+    "noCoordinates": "Aucune coordonnée — pointage impossible",
+    "checkInNow": "Pointer l'arrivée",
+    "cancel": "Annuler",
+    "errors": {
+      "storeRequired": "Veuillez sélectionner un magasin",
+      "noGpsCoordinates": "Ce magasin n'a pas de coordonnées GPS configurées"
+    }
+  },
+  "checkout": {
+    "activeVisit": "Visite en cours",
+    "checkedInAt": "Arrivée pointée le {{date}}",
+    "confirmCheckOut": "Confirmer la sortie",
+    "cancel": "Annuler"
+  },
+  "merchandiserFlow": {
+    "steps": {
+      "checkin": "Arrivée",
+      "audit": "Audit",
+      "checkout": "Sortie"
+    },
+    "title": "Visite en magasin",
+    "checkin": {
+      "sectionTitle": "Sélectionner un magasin",
+      "sectionSubtitle": "Choisissez le magasin que vous visitez aujourd'hui",
+      "storeLabel": "Magasin",
+      "chooseStore": "Choisir un magasin…",
+      "noCoordinatesSet": "Aucune coordonnée définie",
+      "checkInNow": "Pointer l'arrivée",
+      "errors": {
+        "storeRequired": "Veuillez sélectionner un magasin",
+        "noGpsCoordinates": "Ce magasin n'a pas de coordonnées GPS configurées"
+      },
+      "toasts": {
+        "checkedIn": "Arrivée pointée !",
+        "checkinFailed": "Échec du pointage d'arrivée"
+      }
+    },
+    "audit": {
+      "productCount_one": "{{count}} produit à auditer",
+      "productCount_other": "{{count}} produits à auditer",
+      "loadingProducts": "Chargement des produits…",
+      "noProducts": "Aucun produit assigné à ce magasin pour le moment.",
+      "loadProductsFailed": "Impossible de charger les produits pour ce magasin",
+      "sku": "SKU : {{sku}}",
+      "expected": "Attendu :",
+      "quantityFound": "Quantité trouvée",
+      "notesLabel": "Notes (facultatif)",
+      "notesPlaceholder": "Observations, dommages, emplacement…",
+      "photoLabel": "Photo (facultatif)",
+      "changePhoto": "Changer la photo",
+      "uploading": "Envoi en cours…",
+      "takePhoto": "Appuyez pour prendre une photo du rayon",
+      "photoAlt": "rayon",
+      "saveAndContinue": "Enregistrer l'audit et continuer",
+      "status": {
+        "outOfStock": "Rupture de stock",
+        "lowStock": "Stock faible",
+        "inStock": "En stock"
+      },
+      "toasts": {
+        "fileTooLarge": "Le fichier doit faire moins de 5 Mo",
+        "uploadFailed": "Échec de l'envoi",
+        "auditSaved": "Audit enregistré !",
+        "auditSaveFailed": "Échec de l'enregistrement de l'audit"
+      }
+    },
+    "checkout": {
+      "sectionTitle": "Audit terminé",
+      "sectionSubtitle": "Vérifiez le résumé puis pointez la sortie",
+      "inStock": "En stock",
+      "lowStock": "Stock faible",
+      "outOfStock": "Rupture de stock",
+      "found": "Trouvé",
+      "confirmCheckOut": "Confirmer la sortie",
+      "toasts": {
+        "visitCompleted": "Visite terminée !",
+        "checkoutFailed": "Échec du pointage de sortie"
+      }
+    },
+    "done": {
+      "title": "Visite terminée !",
+      "subtitlePrefix": "Vous avez audité avec succès",
+      "subtitleAt": "chez",
+      "productsCount_one": "{{count}} produit",
+      "productsCount_other": "{{count}} produits",
+      "viewHistory": "Voir l'historique des visites"
+    }
+  }
+}

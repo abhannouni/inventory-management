@@ -1,0 +1,48 @@
+{
+  "title": "مخزون المنتجات",
+  "subtitle": "تعيين المنتجات للمتاجر مع الكميات المتوقعة",
+  "assignProduct": "تعيين منتج",
+  "assignProductToStore": "تعيين منتج للمتجر",
+  "updateExpectedQty": "تحديث الكمية المتوقعة",
+  "allStores": "جميع المتاجر",
+  "table": {
+    "store": "المتجر",
+    "product": "المنتج",
+    "sku": "SKU",
+    "category": "الفئة",
+    "expectedQty": "الكمية المتوقعة",
+    "empty": "لم يتم العثور على أي تعيينات"
+  },
+  "actions": {
+    "editQty": "تعديل الكمية",
+    "remove": "إزالة"
+  },
+  "fields": {
+    "store": "المتجر",
+    "storePlaceholder": "اختر المتجر",
+    "product": "المنتج",
+    "productPlaceholder": "اختر المنتج",
+    "expectedQuantity": "الكمية المتوقعة",
+    "expectedQuantityPlaceholder": "مثال: 50"
+  },
+  "errors": {
+    "storeRequired": "المتجر مطلوب",
+    "productRequired": "المنتج مطلوب",
+    "quantityRequired": "الكمية مطلوبة",
+    "quantityInvalid": "كمية غير صالحة"
+  },
+  "toasts": {
+    "assignSuccess": "تم تعيين المنتج للمتجر",
+    "assignError": "فشل تعيين المنتج",
+    "updateSuccess": "تم تحديث الكمية",
+    "updateError": "فشل تحديث الكمية",
+    "removeSuccess": "تمت إزالة التعيين",
+    "removeError": "فشلت إزالة التعيين"
+  },
+  "deleteConfirm": {
+    "message": "سيؤدي هذا إلى إزالة تعيين المنتج من المتجر."
+  },
+  "editQtyForm": {
+    "itemLabel": "<b>{{product}}</b> في متجر <b>{{store}}</b>"
+  }
+}

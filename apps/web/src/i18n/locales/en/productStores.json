@@ -1,0 +1,48 @@
+{
+  "title": "Product Inventory",
+  "subtitle": "Assign products to stores with expected quantities",
+  "assignProduct": "Assign Product",
+  "assignProductToStore": "Assign Product to Store",
+  "updateExpectedQty": "Update Expected Quantity",
+  "allStores": "All stores",
+  "table": {
+    "store": "Store",
+    "product": "Product",
+    "sku": "SKU",
+    "category": "Category",
+    "expectedQty": "Expected Qty",
+    "empty": "No product assignments found"
+  },
+  "actions": {
+    "editQty": "Edit Qty",
+    "remove": "Remove"
+  },
+  "fields": {
+    "store": "Store",
+    "storePlaceholder": "Select store",
+    "product": "Product",
+    "productPlaceholder": "Select product",
+    "expectedQuantity": "Expected Quantity",
+    "expectedQuantityPlaceholder": "e.g. 50"
+  },
+  "errors": {
+    "storeRequired": "Store is required",
+    "productRequired": "Product is required",
+    "quantityRequired": "Quantity is required",
+    "quantityInvalid": "Invalid quantity"
+  },
+  "toasts": {
+    "assignSuccess": "Product assigned to store",
+    "assignError": "Failed to assign product",
+    "updateSuccess": "Quantity updated",
+    "updateError": "Failed to update quantity",
+    "removeSuccess": "Assignment removed",
+    "removeError": "Failed to remove assignment"
+  },
+  "deleteConfirm": {
+    "message": "This will remove the product assignment from the store."
+  },
+  "editQtyForm": {
+    "itemLabel": "<b>{{product}}</b> at <b>{{store}}</b>"
+  }
+}

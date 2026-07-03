@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import Modal from './Modal';
 import Button from './Button';
 
@@ -15,17 +16,18 @@ export default function ConfirmDialog({
   open,
   onClose,
   onConfirm,
-  title = 'Confirm Action',
-  message = 'Are you sure you want to proceed? This action cannot be undone.',
-  confirmLabel = 'Delete',
+  title,
+  message,
+  confirmLabel,
   loading = false,
 }: ConfirmDialogProps) {
+  const { t } = useTranslation('common');
   return (
-    <Modal open={open} onClose={onClose} title={title} size="sm">
-      <p style={{ color: 'var(--gray-600)', marginBottom: '24px' }}>{message}</p>
+    <Modal open={open} onClose={onClose} title={title || t('confirmDialog.title')} size="sm">
+      <p style={{ color: 'var(--gray-600)', marginBottom: '24px' }}>{message || t('confirmDialog.message')}</p>
       <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
-        <Button variant="ghost" onClick={onClose} disabled={loading}>Cancel</Button>
-        <Button variant="danger" onClick={onConfirm} loading={loading}>{confirmLabel}</Button>
+        <Button variant="ghost" onClick={onClose} disabled={loading}>{t('actions.cancel')}</Button>
+        <Button variant="danger" onClick={onConfirm} loading={loading}>{confirmLabel || t('confirmDialog.delete')}</Button>
       </div>
     </Modal>
   );

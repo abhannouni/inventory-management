@@ -1,0 +1,57 @@
+{
+  "appName": "Inventory",
+  "actions": {
+    "add": "إضافة",
+    "edit": "تعديل",
+    "delete": "حذف",
+    "remove": "إزالة",
+    "cancel": "إلغاء",
+    "save": "حفظ",
+    "create": "إنشاء",
+    "update": "تحديث",
+    "confirm": "تأكيد",
+    "close": "إغلاق",
+    "viewAll": "عرض الكل",
+    "seeAll": "عرض الكل",
+    "search": "بحث",
+    "assign": "تعيين",
+    "logout": "تسجيل الخروج",
+    "back": "رجوع"
+  },
+  "status": {
+    "open": "مفتوح",
+    "closed": "مغلق",
+    "in_stock": "متوفر",
+    "low_stock": "مخزون منخفض",
+    "out_of_stock": "نفد المخزون"
+  },
+  "roles": {
+    "super_admin": "مدير عام",
+    "admin": "مدير",
+    "supervisor": "مشرف",
+    "merchandiser": "مندوب ميداني"
+  },
+  "table": {
+    "noData": "لا توجد بيانات",
+    "actions": "الإجراءات",
+    "created": "تاريخ الإنشاء"
+  },
+  "confirmDialog": {
+    "title": "تأكيد الإجراء",
+    "message": "هل أنت متأكد من المتابعة؟ لا يمكن التراجع عن هذا الإجراء.",
+    "delete": "حذف"
+  },
+  "modal": {
+    "close": "إغلاق"
+  },
+  "language": {
+    "label": "اللغة",
+    "fr": "Français",
+    "en": "English",
+    "ar": "العربية",
+    "switch": "تغيير اللغة"
+  },
+  "errors": {
+    "generic": "حدث خطأ ما"
+  }
+}

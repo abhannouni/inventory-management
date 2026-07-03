@@ -1,0 +1,48 @@
+{
+  "title": "Inventaire produits",
+  "subtitle": "Assigner des produits aux magasins avec les quantités attendues",
+  "assignProduct": "Assigner un produit",
+  "assignProductToStore": "Assigner un produit à un magasin",
+  "updateExpectedQty": "Mettre à jour la quantité attendue",
+  "allStores": "Tous les magasins",
+  "table": {
+    "store": "Magasin",
+    "product": "Produit",
+    "sku": "SKU",
+    "category": "Catégorie",
+    "expectedQty": "Qté attendue",
+    "empty": "Aucune assignation trouvée"
+  },
+  "actions": {
+    "editQty": "Modifier qté",
+    "remove": "Retirer"
+  },
+  "fields": {
+    "store": "Magasin",
+    "storePlaceholder": "Sélectionner un magasin",
+    "product": "Produit",
+    "productPlaceholder": "Sélectionner un produit",
+    "expectedQuantity": "Quantité attendue",
+    "expectedQuantityPlaceholder": "ex. 50"
+  },
+  "errors": {
+    "storeRequired": "Le magasin est requis",
+    "productRequired": "Le produit est requis",
+    "quantityRequired": "La quantité est requise",
+    "quantityInvalid": "Quantité invalide"
+  },
+  "toasts": {
+    "assignSuccess": "Produit assigné au magasin",
+    "assignError": "Échec de l'assignation du produit",
+    "updateSuccess": "Quantité mise à jour",
+    "updateError": "Échec de la mise à jour de la quantité",
+    "removeSuccess": "Assignation retirée",
+    "removeError": "Échec du retrait de l'assignation"
+  },
+  "deleteConfirm": {
+    "message": "Cette action retirera l'assignation du produit au magasin."
+  },
+  "editQtyForm": {
+    "itemLabel": "<b>{{product}}</b> au magasin <b>{{store}}</b>"
+  }
+}

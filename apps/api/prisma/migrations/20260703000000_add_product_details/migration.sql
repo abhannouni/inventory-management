@@ -1,0 +1,12 @@
+-- AlterTable
+ALTER TABLE "products" ADD COLUMN "category" TEXT NOT NULL DEFAULT '';
+ALTER TABLE "products" ADD COLUMN "distributeur" TEXT NOT NULL DEFAULT '';
+ALTER TABLE "products" ADD COLUMN "famille" TEXT NOT NULL DEFAULT '';
+ALTER TABLE "products" ADD COLUMN "sous_famille" TEXT NOT NULL DEFAULT '';
+ALTER TABLE "products" ADD COLUMN "format" TEXT NOT NULL DEFAULT '';
+
+ALTER TABLE "products" ALTER COLUMN "category" DROP DEFAULT;
+ALTER TABLE "products" ALTER COLUMN "distributeur" DROP DEFAULT;
+ALTER TABLE "products" ALTER COLUMN "famille" DROP DEFAULT;
+ALTER TABLE "products" ALTER COLUMN "sous_famille" DROP DEFAULT;
+ALTER TABLE "products" ALTER COLUMN "format" DROP DEFAULT;

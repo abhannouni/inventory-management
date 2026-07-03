@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../../hooks/useAppDispatch';
 import { fetchProductReport } from '../../store/slices/reportsSlice';
 import { fetchProducts } from '../../store/slices/productsSlice';
@@ -18,6 +19,8 @@ const statusBadge: Record<AuditStatus, 'success' | 'warning' | 'danger'> = {
 };
 
 export default function ProductReport() {
+  const { t, i18n } = useTranslation('reports');
+  const { t: tCommon } = useTranslation('common');
   const dispatch = useAppDispatch();
   const { productReport, loading } = useAppSelector((s) => s.reports);
   const { items: products } = useAppSelector((s) => s.products);
@@ -28,9 +31,9 @@ export default function ProductReport() {
   useEffect(() => { dispatch(fetchProducts()); }, [dispatch]);
 
   const handleLoad = async () => {
-    if (!productId) { toast.error('Please select a product'); return; }
+    if (!productId) { toast.error(t('productReport.selectProductToast')); return; }
     const res = await dispatch(fetchProductReport({ id: productId, filters: { from: from || undefined, to: to || undefined } }));
-    if (fetchProductReport.rejected.match(res)) toast.error(res.payload as string || 'Failed to load report');
+    if (fetchProductReport.rejected.match(res)) toast.error(res.payload as string || t('productReport.loadErrorToast'));
   };
 
   return (
@@ -40,19 +43,19 @@ export default function ProductReport() {
           options={products.map((p) => ({ value: p.id, label: `${p.name} (${p.sku})` }))}
           value={productId}
           onChange={(e) => setProductId(e.target.value)}
-          placeholder="Select product"
+          placeholder={t('productReport.selectProductPlaceholder')}
           label=""
         />
         <div className="form-group" style={{ margin: 0 }}>
-          <label className="form-label">From</label>
+          <label className="form-label">{t('filters.from')}</label>
           <input type="date" className="form-input" value={from} onChange={(e) => setFrom(e.target.value)} />
         </div>
         <div className="form-group" style={{ margin: 0 }}>
-          <label className="form-label">To</label>
+          <label className="form-label">{t('filters.to')}</label>
           <input type="date" className="form-input" value={to} onChange={(e) => setTo(e.target.value)} />
         </div>
         <div style={{ alignSelf: 'flex-end' }}>
-          <Button onClick={handleLoad} disabled={!productId}>Load Report</Button>
+          <Button onClick={handleLoad} disabled={!productId}>{t('filters.loadReport')}</Button>
         </div>
       </div>
 
@@ -72,7 +75,7 @@ export default function ProductReport() {
                 </div>
                 <div style={{ marginLeft: 'auto', textAlign: 'right' }}>
                   <div style={{ fontSize: 24, fontWeight: 700 }}>{productReport.history?.length ?? 0}</div>
-                  <div style={{ fontSize: 12, color: 'var(--gray-400)' }}>total scans</div>
+                  <div style={{ fontSize: 12, color: 'var(--gray-400)' }}>{t('productReport.totalScans')}</div>
                 </div>
               </div>
             </div>
@@ -82,17 +85,17 @@ export default function ProductReport() {
             <table className="data-table">
               <thead>
                 <tr>
-                  <th>Store</th>
-                  <th>Date</th>
-                  <th>Qty Found</th>
-                  <th>Status</th>
-                  <th>Notes</th>
+                  <th>{t('productReport.table.store')}</th>
+                  <th>{t('productReport.table.date')}</th>
+                  <th>{t('productReport.table.qtyFound')}</th>
+                  <th>{t('productReport.table.status')}</th>
+                  <th>{t('productReport.table.notes')}</th>
                 </tr>
               </thead>
               <tbody>
                 {(productReport.history || []).length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="table-empty">No scan history found</td>
+                    <td colSpan={5} className="table-empty">{t('productReport.noHistory')}</td>
                   </tr>
                 ) : (
                   (productReport.history || []).map((h, i) => (
@@ -103,9 +106,9 @@ export default function ProductReport() {
                       transition={{ delay: i * 0.04 }}
                     >
                       <td style={{ fontWeight: 500 }}>{h.store?.name || h.visit_id}</td>
-                      <td style={{ color: 'var(--gray-500)' }}>{formatDate(h.checkin_at)}</td>
+                      <td style={{ color: 'var(--gray-500)' }}>{formatDate(h.checkin_at, i18n.language)}</td>
                       <td style={{ fontWeight: 600 }}>{h.qty_found}</td>
-                      <td><Badge variant={statusBadge[h.status as AuditStatus]}>{h.status.replace(/_/g, ' ')}</Badge></td>
+                      <td><Badge variant={statusBadge[h.status as AuditStatus]}>{tCommon(`status.${h.status}`)}</Badge></td>
                       <td style={{ color: 'var(--gray-500)' }}>{h.notes || '—'}</td>
                     </motion.tr>
                   ))
@@ -118,7 +121,7 @@ export default function ProductReport() {
 
       {!loading && !productReport && (
         <div className="empty-state">
-          <div className="empty-state-title">Select a product to view its history</div>
+          <div className="empty-state-title">{t('productReport.emptyState')}</div>
         </div>
       )}
     </div>

@@ -9,4 +9,24 @@ export class CreateProductDto {
   @ApiProperty({ example: 'CC-500' })
   @IsString()
   sku: string;
+
+  @ApiProperty({ example: 'Beverages' })
+  @IsString()
+  category: string;
+
+  @ApiProperty({ example: 'Coca-Cola Company' })
+  @IsString()
+  distributeur: string;
+
+  @ApiProperty({ example: 'Boissons' })
+  @IsString()
+  famille: string;
+
+  @ApiProperty({ example: 'Sodas' })
+  @IsString()
+  sous_famille: string;
+
+  @ApiProperty({ example: '500ml' })
+  @IsString()
+  format: string;
 }

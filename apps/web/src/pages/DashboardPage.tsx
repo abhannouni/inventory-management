@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../hooks/useAppDispatch';
 import { fetchVisits } from '../store/slices/visitsSlice';
 import { fetchStores } from '../store/slices/storesSlice';
@@ -63,12 +64,13 @@ function StatCard({
 }
 
 /* ── Weekly Bar Chart ── */
-const CHART_DAYS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 const CHART_FILL = ['light', 'primary', 'accent', 'primary', 'light', 'medium', 'light'] as const;
 
 function WeeklyBarChart({ visits }: { visits: { checkin_at: string }[] }) {
+  const { t } = useTranslation('dashboard');
+  const chartDays = t('weekDaysShort', { returnObjects: true }) as string[];
   const today = new Date().getDay();
-  const counts = CHART_DAYS.map((_, i) =>
+  const counts = chartDays.map((_, i) =>
     visits.filter((v) => new Date(v.checkin_at).getDay() === i).length,
   );
   const max = Math.max(...counts, 1);
@@ -101,7 +103,7 @@ function WeeklyBarChart({ visits }: { visits: { checkin_at: string }[] }) {
               />
             </div>
             <span style={{ fontSize: 11, color: isToday ? 'var(--primary)' : 'var(--gray-400)', fontWeight: isToday ? 700 : 500 }}>
-              {CHART_DAYS[i]}
+              {chartDays[i]}
             </span>
           </div>
         );
@@ -112,6 +114,7 @@ function WeeklyBarChart({ visits }: { visits: { checkin_at: string }[] }) {
 
 /* ── Semi-circle progress ── */
 function SemiCircle({ percentage }: { percentage: number }) {
+  const { t } = useTranslation('dashboard');
   const r = 62;
   const cx = 100;
   const cy = 80;
@@ -139,14 +142,14 @@ function SemiCircle({ percentage }: { percentage: number }) {
           {percentage}%
         </text>
         <text x={cx} y={cy + 12} textAnchor="middle" fontSize="10" fill="var(--gray-400)">
-          completion
+          {t('auditProgress.completion')}
         </text>
       </svg>
       <div className="semi-circle-legend">
         {[
-          { label: 'In Stock', color: 'var(--success)' },
-          { label: 'Low Stock', color: 'var(--warning)' },
-          { label: 'Out of Stock', color: 'var(--danger)' },
+          { label: t('legend.inStock'), color: 'var(--success)' },
+          { label: t('legend.lowStock'), color: 'var(--warning)' },
+          { label: t('legend.outOfStock'), color: 'var(--danger)' },
         ].map((leg) => (
           <div key={leg.label} className="legend-item">
             <div className="legend-dot" style={{ background: leg.color }} />
@@ -160,6 +163,7 @@ function SemiCircle({ percentage }: { percentage: number }) {
 
 /* ── Time Tracker ── */
 function TimeTracker({ hasOpenVisit }: { hasOpenVisit: boolean }) {
+  const { t } = useTranslation('dashboard');
   const [secs, setSecs] = useState(0);
   const [running, setRunning] = useState(hasOpenVisit);
   const ref = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -182,8 +186,8 @@ function TimeTracker({ hasOpenVisit }: { hasOpenVisit: boolean }) {
 
   return (
     <div className="time-tracker-card">
-      <div className="tt-title">Time Tracker</div>
-      <div className="tt-label">{hasOpenVisit ? 'Active Visit' : 'No active visit'}</div>
+      <div className="tt-title">{t('timeTracker.title')}</div>
+      <div className="tt-label">{hasOpenVisit ? t('timeTracker.activeVisit') : t('timeTracker.noActiveVisit')}</div>
       <motion.div
         className="tt-time"
         key={Math.floor(secs / 60)}
@@ -202,14 +206,14 @@ function TimeTracker({ hasOpenVisit }: { hasOpenVisit: boolean }) {
           ) : (
             <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3" /></svg>
           )}
-          {running ? 'Pause' : 'Resume'}
+          {running ? t('timeTracker.pause') : t('timeTracker.resume')}
         </button>
         <button
           className="tt-btn tt-btn-stop"
           onClick={() => { setRunning(false); setSecs(0); }}
         >
           <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="2" /></svg>
-          Stop
+          {t('timeTracker.stop')}
         </button>
       </div>
     </div>
@@ -222,7 +226,11 @@ const AVATAR_COLORS = [
 ];
 
 /* ── Main Dashboard ── */
+const DATE_LOCALES: Record<string, string> = { fr: 'fr-FR', en: 'en-US', ar: 'ar-MA' };
+
 export default function DashboardPage() {
+  const { t, i18n } = useTranslation('dashboard');
+  const { t: tCommon } = useTranslation('common');
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { items: visits } = useAppSelector((s) => s.visits);
@@ -247,7 +255,7 @@ export default function DashboardPage() {
     : 0;
 
   const firstName = user?.full_name?.split(' ')[0] || 'User';
-  const today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+  const today = new Date().toLocaleDateString(DATE_LOCALES[i18n.language] || 'fr-FR', { weekday: 'long', month: 'long', day: 'numeric' });
 
   return (
     <motion.div
@@ -263,7 +271,7 @@ export default function DashboardPage() {
         transition={{ duration: 0.4 }}
       >
         <h1 style={{ fontSize: 22, fontWeight: 800, color: 'var(--gray-900)', letterSpacing: '-0.5px' }}>
-          Good day, {firstName} 👋
+          {t('greeting', { name: firstName })}
         </h1>
         <p style={{ fontSize: 13, color: 'var(--gray-500)', marginTop: 3 }}>{today}</p>
       </motion.div>
@@ -271,11 +279,11 @@ export default function DashboardPage() {
       {/* Stats Row */}
       <div className="db-stats-grid">
         <StatCard
-          label="Total Stores"
+          label={t('stats.totalStores')}
           value={stores.length}
           dark
           delay={0}
-          change="↑ Retail network"
+          change={t('changes.retailNetwork')}
           icon={
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M3 9h18v10a2 2 0 01-2 2H5a2 2 0 01-2-2V9z M3 9l2.45-4.9A2 2 0 017.24 3h9.52a2 2 0 011.8 1.1L21 9" />
@@ -283,10 +291,10 @@ export default function DashboardPage() {
           }
         />
         <StatCard
-          label="Total Products"
+          label={t('stats.totalProducts')}
           value={products.length}
           delay={0.08}
-          change="↑ SKUs tracked"
+          change={t('changes.skusTracked')}
           icon={
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
@@ -294,10 +302,10 @@ export default function DashboardPage() {
           }
         />
         <StatCard
-          label="Total Visits"
+          label={t('stats.totalVisits')}
           value={visits.length}
           delay={0.16}
-          change={`${closedVisits} completed`}
+          change={t('changes.completed', { count: closedVisits })}
           icon={
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2 M9 5a2 2 0 002 2h2a2 2 0 002-2 M9 5a2 2 0 012-2h2a2 2 0 012 2" />
@@ -305,10 +313,10 @@ export default function DashboardPage() {
           }
         />
         <StatCard
-          label="Open Visits"
+          label={t('stats.openVisits')}
           value={openVisits}
           delay={0.24}
-          change={openVisits > 0 ? 'In progress now' : 'All closed'}
+          change={openVisits > 0 ? t('changes.inProgress') : t('changes.allClosed')}
           icon={
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
@@ -329,11 +337,11 @@ export default function DashboardPage() {
           transition={{ delay: 0.3, duration: 0.4 }}
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-            <h3 style={{ fontSize: 15, fontWeight: 700, color: 'var(--gray-900)' }}>Visit Activity</h3>
-            <span style={{ fontSize: 12, color: 'var(--gray-400)' }}>This week</span>
+            <h3 style={{ fontSize: 15, fontWeight: 700, color: 'var(--gray-900)' }}>{t('visitActivity.title')}</h3>
+            <span style={{ fontSize: 12, color: 'var(--gray-400)' }}>{t('visitActivity.thisWeek')}</span>
           </div>
           <p style={{ fontSize: 12, color: 'var(--gray-500)', marginBottom: 12 }}>
-            Daily check-in frequency across all stores
+            {t('visitActivity.subtitle')}
           </p>
           <WeeklyBarChart visits={visits} />
         </motion.div>
@@ -346,9 +354,9 @@ export default function DashboardPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.38, duration: 0.4 }}
         >
-          <h3 style={{ fontSize: 15, fontWeight: 700, color: 'var(--gray-900)', marginBottom: 4 }}>Audit Progress</h3>
+          <h3 style={{ fontSize: 15, fontWeight: 700, color: 'var(--gray-900)', marginBottom: 4 }}>{t('auditProgress.title')}</h3>
           <p style={{ fontSize: 12, color: 'var(--gray-500)', marginBottom: 8 }}>
-            Overall visit completion rate
+            {t('auditProgress.subtitle')}
           </p>
           <SemiCircle percentage={auditCompletion} />
         </motion.div>
@@ -362,12 +370,12 @@ export default function DashboardPage() {
           transition={{ delay: 0.32, duration: 0.4 }}
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-            <h3 style={{ fontSize: 15, fontWeight: 700, color: 'var(--gray-900)' }}>Stores</h3>
+            <h3 style={{ fontSize: 15, fontWeight: 700, color: 'var(--gray-900)' }}>{t('stores.title')}</h3>
             <button
               onClick={() => navigate('/stores')}
               style={{ fontSize: 12, color: 'var(--primary)', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer' }}
             >
-              View all
+              {t('stores.viewAll')}
             </button>
           </div>
 
@@ -394,7 +402,7 @@ export default function DashboardPage() {
 
           {stores.length === 0 && (
             <p style={{ fontSize: 13, color: 'var(--gray-400)', textAlign: 'center', padding: '20px 0' }}>
-              No stores yet
+              {t('stores.empty')}
             </p>
           )}
 
@@ -414,13 +422,13 @@ export default function DashboardPage() {
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
             <h3 style={{ fontSize: 15, fontWeight: 700, color: 'var(--gray-900)' }}>
-              {users.length > 0 ? 'Team Members' : 'Recent Visits'}
+              {users.length > 0 ? t('team.titleMembers') : t('team.titleVisits')}
             </h3>
             <button
               onClick={() => navigate(users.length > 0 ? '/users' : '/visits')}
               style={{ fontSize: 12, color: 'var(--primary)', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer' }}
             >
-              View all
+              {t('team.viewAll')}
             </button>
           </div>
 
@@ -441,10 +449,10 @@ export default function DashboardPage() {
                   </div>
                   <div className="team-info">
                     <div className="team-name">{u.full_name}</div>
-                    <div className="team-role">{u.role.replace('_', ' ')}</div>
+                    <div className="team-role">{tCommon(`roles.${u.role}`)}</div>
                   </div>
                   <Badge variant={u.role === 'merchandiser' ? 'success' : u.role === 'supervisor' ? 'warning' : 'primary'}>
-                    {u.role === 'super_admin' ? 'Admin' : u.role.replace('_', ' ')}
+                    {tCommon(`roles.${u.role}`)}
                   </Badge>
                 </motion.div>
               ))
@@ -469,17 +477,17 @@ export default function DashboardPage() {
                   </div>
                   <div className="team-info">
                     <div className="team-name">{v.store?.name || v.store_id}</div>
-                    <div className="team-role">{formatDate(v.checkin_at)}</div>
+                    <div className="team-role">{formatDate(v.checkin_at, i18n.language)}</div>
                   </div>
                   <Badge variant={v.status === 'open' ? 'success' : 'gray'} dot>
-                    {v.status === 'open' ? 'Open' : 'Closed'}
+                    {v.status === 'open' ? tCommon('status.open') : tCommon('status.closed')}
                   </Badge>
                 </motion.div>
               ))}
 
           {users.length === 0 && visits.length === 0 && (
             <p style={{ fontSize: 13, color: 'var(--gray-400)', textAlign: 'center', padding: '20px 0' }}>
-              No data yet
+              {t('team.empty')}
             </p>
           )}
         </motion.div>
@@ -493,18 +501,18 @@ export default function DashboardPage() {
           transition={{ delay: 0.5, duration: 0.4 }}
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-            <h3 style={{ fontSize: 15, fontWeight: 700, color: 'var(--gray-900)' }}>Recent Visits</h3>
+            <h3 style={{ fontSize: 15, fontWeight: 700, color: 'var(--gray-900)' }}>{t('recentVisits.title')}</h3>
             <button
               onClick={() => navigate('/visits')}
               style={{ fontSize: 12, color: 'var(--primary)', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer' }}
             >
-              See all
+              {t('recentVisits.seeAll')}
             </button>
           </div>
 
           {visits.length === 0 ? (
             <p style={{ fontSize: 13, color: 'var(--gray-400)', textAlign: 'center', padding: '20px 0' }}>
-              No visits recorded yet
+              {t('recentVisits.empty')}
             </p>
           ) : (
             visits.slice(0, 4).map((v, i) => (
@@ -529,11 +537,11 @@ export default function DashboardPage() {
                     {v.store?.name || v.store_id}
                   </div>
                   <div style={{ fontSize: 11.5, color: 'var(--gray-400)', marginTop: 2 }}>
-                    {formatDate(v.checkin_at)}
+                    {formatDate(v.checkin_at, i18n.language)}
                   </div>
                 </div>
                 <Badge variant={v.status === 'open' ? 'success' : 'gray'} dot>
-                  {v.status === 'open' ? 'Open' : 'Closed'}
+                  {v.status === 'open' ? tCommon('status.open') : tCommon('status.closed')}
                 </Badge>
               </motion.div>
             ))

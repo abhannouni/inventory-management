@@ -92,10 +92,15 @@ model UserStore {
 }
 
 model Product {
-  id         String   @id @default(uuid())
-  name       String
-  sku        String   @unique
-  created_at DateTime @default(now())
+  id           String   @id @default(uuid())
+  name         String
+  sku          String   @unique
+  category     String
+  distributeur String
+  famille      String
+  sous_famille String
+  format       String
+  created_at   DateTime @default(now())
 
   productStores ProductStore[]
   auditItems    AuditItem[]

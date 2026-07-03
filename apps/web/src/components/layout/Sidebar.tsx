@@ -1,6 +1,7 @@
 import type { ReactElement } from 'react';
 import { NavLink } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { usePermissions } from '../../hooks/usePermissions';
 
 interface NavItem {
@@ -29,29 +30,30 @@ const Icon = ({ d, d2 }: { d: string; d2?: string }) => (
 
 export default function Sidebar() {
   const p = usePermissions();
+  const { t } = useTranslation('sidebar');
 
   const menuItems: NavItem[] = [
     {
       to: '/dashboard',
-      label: 'Dashboard',
+      label: t('nav.dashboard'),
       icon: <Icon d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" d2="M9 22V12h6v10" />,
       show: true,
     },
     {
       to: '/visits',
-      label: 'Visits',
+      label: t('nav.visits'),
       icon: <Icon d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />,
       show: !p.isAdmin,
     },
     {
       to: '/schedule',
-      label: 'Schedule',
+      label: t('nav.schedule'),
       icon: <Icon d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />,
       show: true,
     },
     {
       to: '/audit-items',
-      label: 'Audit Items',
+      label: t('nav.auditItems'),
       icon: <Icon d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />,
       show: true,
     },
@@ -60,31 +62,31 @@ export default function Sidebar() {
   const managementItems: NavItem[] = [
     {
       to: '/users',
-      label: 'Users',
+      label: t('nav.users'),
       icon: <Icon d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />,
       show: p.canManageUsers,
     },
     {
       to: '/regions',
-      label: 'Regions',
+      label: t('nav.regions'),
       icon: <Icon d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />,
       show: p.canManageRegions,
     },
     {
       to: '/stores',
-      label: 'Stores',
+      label: t('nav.stores'),
       icon: <Icon d="M3 9h18v10a2 2 0 01-2 2H5a2 2 0 01-2-2V9zM3 9l2.45-4.9A2 2 0 017.24 3h9.52a2 2 0 011.8 1.1L21 9M12 3v6" />,
       show: p.canManageStores,
     },
     {
       to: '/products',
-      label: 'Products',
+      label: t('nav.products'),
       icon: <Icon d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />,
       show: p.canManageProducts,
     },
     {
       to: '/product-stores',
-      label: 'Inventory',
+      label: t('nav.inventory'),
       icon: <Icon d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2M9 14l2 2 4-4" />,
       show: p.canManageProductStores,
     },
@@ -93,7 +95,7 @@ export default function Sidebar() {
   const generalItems: NavItem[] = [
     {
       to: '/reports',
-      label: 'Reports',
+      label: t('nav.reports'),
       icon: <Icon d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />,
       show: true,
     },
@@ -141,22 +143,22 @@ export default function Sidebar() {
             />
           </svg>
         </div>
-        <span className="brand-name">Inventory</span>
+        <span className="brand-name">{t('brand')}</span>
       </div>
 
       {/* Nav */}
       <nav className="sidebar-nav">
-        <SectionLabel label="Menu" />
+        <SectionLabel label={t('sections.menu')} />
         {renderItems(menuItems)}
 
         {managementItems.some((i) => i.show) && (
           <>
-            <SectionLabel label="Management" />
+            <SectionLabel label={t('sections.management')} />
             {renderItems(managementItems)}
           </>
         )}
 
-        <SectionLabel label="General" />
+        <SectionLabel label={t('sections.general')} />
         {renderItems(generalItems)}
       </nav>
 
@@ -171,7 +173,7 @@ export default function Sidebar() {
               <line x1="21" y1="12" x2="9" y2="12" />
             </svg>
           </NavIcon>
-          <span className="nav-label">Logout</span>
+          <span className="nav-label">{t('logout')}</span>
         </NavLink>
       </div>
     </motion.aside>

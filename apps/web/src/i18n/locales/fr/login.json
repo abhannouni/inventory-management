@@ -1,0 +1,15 @@
+{
+  "title": "Bon retour",
+  "subtitle": "Connectez-vous à votre compte pour continuer",
+  "emailLabel": "Adresse e-mail",
+  "passwordLabel": "Mot de passe",
+  "signIn": "Se connecter",
+  "defaultCredentials": "Identifiants par défaut :",
+  "welcomeToast": "Bon retour, {{name}} !",
+  "loginFailed": "Échec de la connexion",
+  "errors": {
+    "emailRequired": "L'adresse e-mail est requise",
+    "emailInvalid": "Adresse e-mail invalide",
+    "passwordRequired": "Le mot de passe est requis"
+  }
+}

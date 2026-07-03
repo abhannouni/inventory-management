@@ -1,0 +1,31 @@
+{
+  "title": "Régions",
+  "subtitle": "Gérez les régions géographiques",
+  "addRegion": "Ajouter une région",
+  "createRegion": "Créer une région",
+  "editRegion": "Modifier la région",
+  "columns": {
+    "name": "Nom",
+    "id": "ID",
+    "created": "Créé le"
+  },
+  "form": {
+    "nameLabel": "Nom de la région",
+    "namePlaceholder": "ex. Région Nord"
+  },
+  "errors": {
+    "nameRequired": "Le nom est requis"
+  },
+  "toasts": {
+    "createSuccess": "Région créée",
+    "createError": "Échec de la création de la région",
+    "updateSuccess": "Région mise à jour",
+    "updateError": "Échec de la mise à jour de la région",
+    "deleteSuccess": "Région supprimée",
+    "deleteError": "Échec de la suppression de la région"
+  },
+  "deleteConfirm": {
+    "message": "La suppression de cette région affectera tous les utilisateurs et magasins qui y sont associés."
+  },
+  "emptyTable": "Aucune région trouvée"
+}

@@ -1,0 +1,15 @@
+{
+  "title": "مرحبًا بعودتك",
+  "subtitle": "سجّل الدخول إلى حسابك للمتابعة",
+  "emailLabel": "البريد الإلكتروني",
+  "passwordLabel": "كلمة المرور",
+  "signIn": "تسجيل الدخول",
+  "defaultCredentials": "بيانات الدخول الافتراضية:",
+  "welcomeToast": "مرحبًا بعودتك، {{name}}!",
+  "loginFailed": "فشل تسجيل الدخول",
+  "errors": {
+    "emailRequired": "البريد الإلكتروني مطلوب",
+    "emailInvalid": "عنوان البريد الإلكتروني غير صالح",
+    "passwordRequired": "كلمة المرور مطلوبة"
+  }
+}

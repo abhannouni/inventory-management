@@ -1,0 +1,31 @@
+{
+  "title": "Regions",
+  "subtitle": "Manage geographic regions",
+  "addRegion": "Add Region",
+  "createRegion": "Create Region",
+  "editRegion": "Edit Region",
+  "columns": {
+    "name": "Name",
+    "id": "ID",
+    "created": "Created"
+  },
+  "form": {
+    "nameLabel": "Region Name",
+    "namePlaceholder": "e.g. North Region"
+  },
+  "errors": {
+    "nameRequired": "Name is required"
+  },
+  "toasts": {
+    "createSuccess": "Region created",
+    "createError": "Failed to create region",
+    "updateSuccess": "Region updated",
+    "updateError": "Failed to update region",
+    "deleteSuccess": "Region deleted",
+    "deleteError": "Failed to delete region"
+  },
+  "deleteConfirm": {
+    "message": "Deleting this region will affect all users and stores associated with it."
+  },
+  "emptyTable": "No regions found"
+}

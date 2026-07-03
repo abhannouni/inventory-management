@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import type { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import Spinner from './Spinner';
 
 interface Column<T> {
@@ -17,7 +18,8 @@ interface DataTableProps<T> {
   emptyMessage?: string;
 }
 
-export default function DataTable<T>({ columns, data, loading, keyExtractor, emptyMessage = 'No data found' }: DataTableProps<T>) {
+export default function DataTable<T>({ columns, data, loading, keyExtractor, emptyMessage }: DataTableProps<T>) {
+  const { t } = useTranslation('common');
   if (loading) return <Spinner center size="lg" />;
 
   return (
@@ -36,7 +38,7 @@ export default function DataTable<T>({ columns, data, loading, keyExtractor, emp
           <AnimatePresence>
             {data.length === 0 ? (
               <tr>
-                <td colSpan={columns.length} className="table-empty">{emptyMessage}</td>
+                <td colSpan={columns.length} className="table-empty">{emptyMessage || t('table.noData')}</td>
               </tr>
             ) : (
               data.map((row) => (

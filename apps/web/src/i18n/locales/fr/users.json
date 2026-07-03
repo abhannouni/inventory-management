@@ -1,0 +1,64 @@
+{
+  "title": "Utilisateurs",
+  "subtitle": "Gérer les comptes utilisateurs et les autorisations",
+  "addUser": "Ajouter un utilisateur",
+  "createUser": "Créer un utilisateur",
+  "editUser": "Modifier l'utilisateur",
+  "updateUser": "Mettre à jour l'utilisateur",
+  "table": {
+    "name": "Nom",
+    "role": "Rôle",
+    "region": "Région",
+    "joined": "Date d'adhésion",
+    "empty": "Aucun utilisateur trouvé"
+  },
+  "actions": {
+    "assignStores": "Assigner des magasins"
+  },
+  "assignStoresTitle": "Assigner des magasins — {{name}}",
+  "fields": {
+    "fullName": "Nom complet",
+    "fullNamePlaceholder": "Jean Dupont",
+    "email": "E-mail",
+    "emailPlaceholder": "jean@exemple.com",
+    "role": "Rôle",
+    "region": "Région (facultatif)",
+    "regionPlaceholder": "Aucune région",
+    "password": "Mot de passe",
+    "newPassword": "Nouveau mot de passe (laisser vide pour ne pas changer)"
+  },
+  "roleOptions": {
+    "superAdmin": "Super administrateur",
+    "admin": "Administrateur",
+    "supervisor": "Superviseur",
+    "merchandiser": "Marchandiseur"
+  },
+  "errors": {
+    "nameRequired": "Le nom est requis",
+    "emailRequired": "L'e-mail est requis",
+    "passwordRequired": "Le mot de passe est requis",
+    "passwordMinLength": "Le mot de passe doit comporter au moins 6 caractères",
+    "roleRequired": "Le rôle est requis"
+  },
+  "toasts": {
+    "createSuccess": "Utilisateur créé avec succès",
+    "createError": "Échec de la création de l'utilisateur",
+    "updateSuccess": "Utilisateur mis à jour avec succès",
+    "updateError": "Échec de la mise à jour de l'utilisateur",
+    "deleteSuccess": "Utilisateur supprimé",
+    "deleteError": "Échec de la suppression de l'utilisateur",
+    "assignSuccess": "Magasins assignés avec succès",
+    "assignError": "Échec de l'assignation des magasins"
+  },
+  "deleteConfirm": {
+    "message": "Cette action supprimera définitivement le compte utilisateur."
+  },
+  "assignStoresForm": {
+    "description": "Sélectionnez les magasins à assigner à cet utilisateur. Les assignations précédentes seront remplacées.",
+    "searchPlaceholder": "Rechercher des magasins…",
+    "empty": "Aucun magasin trouvé",
+    "selectedCount_one": "{{count}} magasin sélectionné",
+    "selectedCount_other": "{{count}} magasins sélectionnés",
+    "submit": "Assigner les magasins"
+  }
+}

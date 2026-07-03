@@ -11,4 +11,29 @@ export class UpdateProductDto {
   @IsString()
   @IsOptional()
   sku?: string;
+
+  @ApiPropertyOptional({ example: 'Beverages' })
+  @IsString()
+  @IsOptional()
+  category?: string;
+
+  @ApiPropertyOptional({ example: 'Coca-Cola Company' })
+  @IsString()
+  @IsOptional()
+  distributeur?: string;
+
+  @ApiPropertyOptional({ example: 'Boissons' })
+  @IsString()
+  @IsOptional()
+  famille?: string;
+
+  @ApiPropertyOptional({ example: 'Sodas' })
+  @IsString()
+  @IsOptional()
+  sous_famille?: string;
+
+  @ApiPropertyOptional({ example: '500ml' })
+  @IsString()
+  @IsOptional()
+  format?: string;
 }

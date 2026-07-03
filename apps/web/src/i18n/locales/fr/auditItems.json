@@ -1,0 +1,92 @@
+{
+  "pageTitle": "Éléments d'audit",
+  "pageSubtitle": "Enregistrez et gérez les audits produits lors des visites en magasin",
+  "bulkAudit": "Audit groupé",
+  "addAuditItem": "Ajouter un élément",
+  "allVisits": "Toutes les visites",
+  "table": {
+    "product": "Produit",
+    "qtyFound": "Qté trouvée",
+    "status": "Statut",
+    "notes": "Notes",
+    "photo": "Photo",
+    "empty": "Aucun élément d'audit trouvé"
+  },
+  "modals": {
+    "createTitle": "Créer un élément d'audit",
+    "editTitle": "Modifier l'élément d'audit",
+    "bulkTitle": "Audit groupé"
+  },
+  "deleteConfirm": {
+    "message": "Cette action supprimera définitivement l'élément d'audit."
+  },
+  "toasts": {
+    "createSuccess": "Élément d'audit créé",
+    "createError": "Échec de la création de l'élément d'audit",
+    "updateSuccess": "Élément d'audit mis à jour",
+    "updateError": "Échec de la mise à jour de l'élément d'audit",
+    "deleteSuccess": "Élément d'audit supprimé",
+    "deleteError": "Échec de la suppression de l'élément d'audit",
+    "bulkSuccess": "Audit groupé enregistré — {{count}} éléments",
+    "bulkError": "Échec de l'audit groupé"
+  },
+  "form": {
+    "visit": "Visite",
+    "selectVisit": "Sélectionner une visite",
+    "product": "Produit",
+    "selectProduct": "Sélectionner un produit",
+    "qtyFoundLabel": "Quantité trouvée",
+    "qtyFoundPlaceholder": "ex. 12",
+    "notesLabel": "Notes (optionnel)",
+    "notesPlaceholder": "Observations sur les niveaux de stock, l'emplacement, etc.",
+    "photoLabel": "Photo (optionnel)",
+    "photoUploading": "Téléversement…",
+    "photoChangeHint": "Cliquez pour changer la photo",
+    "photoUploadHint": "Cliquez pour téléverser une photo",
+    "photoFormatsHint": "JPEG, PNG, WebP — 5 Mo max",
+    "cancel": "Annuler",
+    "create": "Créer",
+    "update": "Mettre à jour",
+    "errors": {
+      "visitRequired": "La visite est requise",
+      "productRequired": "Le produit est requis",
+      "qtyRequired": "La quantité est requise",
+      "qtyInvalid": "Quantité invalide"
+    },
+    "toasts": {
+      "fileTooLarge": "Le fichier doit faire moins de 5 Mo",
+      "invalidFileType": "Seuls les fichiers JPEG, PNG et WebP sont autorisés",
+      "photoUploaded": "Photo téléversée !",
+      "photoUploadError": "Échec du téléversement de la photo"
+    }
+  },
+  "bulkForm": {
+    "visit": "Visite",
+    "selectVisit": "Sélectionner une visite…",
+    "visitRequired": "Sélectionnez d'abord une visite",
+    "products": "Produits",
+    "productsAdded": "({{count}} ajoutés)",
+    "item": "Élément {{number}}",
+    "product": "Produit",
+    "selectProduct": "Sélectionner un produit…",
+    "qtyFound": "Quantité trouvée",
+    "notesLabel": "Notes (optionnel)",
+    "notesPlaceholder": "Observations sur le stock…",
+    "photoLabel": "Photo (optionnel)",
+    "changePhoto": "Changer la photo",
+    "uploading": "Téléversement…",
+    "tapToAddPhoto": "Toucher pour ajouter une photo",
+    "addAnotherProduct": "Ajouter un autre produit",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "saveItems_one": "Enregistrer {{count}} élément",
+    "saveItems_other": "Enregistrer {{count}} éléments",
+    "saveAudit": "Enregistrer l'audit",
+    "toasts": {
+      "fileTooLarge": "Le fichier doit faire moins de 5 Mo",
+      "photoUploaded": "Photo téléversée",
+      "uploadError": "Échec du téléversement",
+      "addAtLeastOneProduct": "Ajoutez au moins un produit"
+    }
+  }
+}

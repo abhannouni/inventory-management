@@ -1,0 +1,67 @@
+{
+  "title": "المستخدمون",
+  "subtitle": "إدارة حسابات المستخدمين والصلاحيات",
+  "addUser": "إضافة مستخدم",
+  "createUser": "إنشاء مستخدم",
+  "editUser": "تعديل المستخدم",
+  "updateUser": "تحديث المستخدم",
+  "table": {
+    "name": "الاسم",
+    "role": "الدور",
+    "region": "المنطقة",
+    "joined": "تاريخ الانضمام",
+    "empty": "لم يتم العثور على مستخدمين"
+  },
+  "actions": {
+    "assignStores": "تعيين المتاجر"
+  },
+  "assignStoresTitle": "تعيين المتاجر — {{name}}",
+  "fields": {
+    "fullName": "الاسم الكامل",
+    "fullNamePlaceholder": "أحمد بنعلي",
+    "email": "البريد الإلكتروني",
+    "emailPlaceholder": "ahmed@example.com",
+    "role": "الدور",
+    "region": "المنطقة (اختياري)",
+    "regionPlaceholder": "بدون منطقة",
+    "password": "كلمة المرور",
+    "newPassword": "كلمة مرور جديدة (اتركها فارغة للاحتفاظ بالحالية)"
+  },
+  "roleOptions": {
+    "superAdmin": "مدير عام",
+    "admin": "مدير",
+    "supervisor": "مشرف",
+    "merchandiser": "مندوب ميداني"
+  },
+  "errors": {
+    "nameRequired": "الاسم مطلوب",
+    "emailRequired": "البريد الإلكتروني مطلوب",
+    "passwordRequired": "كلمة المرور مطلوبة",
+    "passwordMinLength": "يجب أن تتكون كلمة المرور من 6 أحرف على الأقل",
+    "roleRequired": "الدور مطلوب"
+  },
+  "toasts": {
+    "createSuccess": "تم إنشاء المستخدم بنجاح",
+    "createError": "فشل إنشاء المستخدم",
+    "updateSuccess": "تم تحديث المستخدم بنجاح",
+    "updateError": "فشل تحديث المستخدم",
+    "deleteSuccess": "تم حذف المستخدم",
+    "deleteError": "فشل حذف المستخدم",
+    "assignSuccess": "تم تعيين المتاجر بنجاح",
+    "assignError": "فشل تعيين المتاجر"
+  },
+  "deleteConfirm": {
+    "message": "سيؤدي هذا إلى حذف حساب المستخدم نهائيًا."
+  },
+  "assignStoresForm": {
+    "description": "اختر المتاجر التي تريد تعيينها لهذا المستخدم. سيتم استبدال التعيينات السابقة.",
+    "searchPlaceholder": "البحث عن متاجر…",
+    "empty": "لم يتم العثور على متاجر",
+    "selectedCount_one": "تم تحديد متجر واحد",
+    "selectedCount_two": "تم تحديد متجرين",
+    "selectedCount_few": "تم تحديد {{count}} متاجر",
+    "selectedCount_many": "تم تحديد {{count}} متجرًا",
+    "selectedCount_other": "تم تحديد {{count}} متجر",
+    "submit": "تعيين المتاجر"
+  }
+}

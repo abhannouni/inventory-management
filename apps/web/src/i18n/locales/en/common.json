@@ -1,0 +1,57 @@
+{
+  "appName": "Inventory",
+  "actions": {
+    "add": "Add",
+    "edit": "Edit",
+    "delete": "Delete",
+    "remove": "Remove",
+    "cancel": "Cancel",
+    "save": "Save",
+    "create": "Create",
+    "update": "Update",
+    "confirm": "Confirm",
+    "close": "Close",
+    "viewAll": "View all",
+    "seeAll": "See all",
+    "search": "Search",
+    "assign": "Assign",
+    "logout": "Logout",
+    "back": "Back"
+  },
+  "status": {
+    "open": "Open",
+    "closed": "Closed",
+    "in_stock": "In Stock",
+    "low_stock": "Low Stock",
+    "out_of_stock": "Out of Stock"
+  },
+  "roles": {
+    "super_admin": "Super Admin",
+    "admin": "Admin",
+    "supervisor": "Supervisor",
+    "merchandiser": "Merchandiser"
+  },
+  "table": {
+    "noData": "No data found",
+    "actions": "Actions",
+    "created": "Created"
+  },
+  "confirmDialog": {
+    "title": "Confirm Action",
+    "message": "Are you sure you want to proceed? This action cannot be undone.",
+    "delete": "Delete"
+  },
+  "modal": {
+    "close": "Close"
+  },
+  "language": {
+    "label": "Language",
+    "fr": "Français",
+    "en": "English",
+    "ar": "العربية",
+    "switch": "Switch language"
+  },
+  "errors": {
+    "generic": "Something went wrong"
+  }
+}

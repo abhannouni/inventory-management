@@ -1,0 +1,23 @@
+{
+  "brand": "Inventory",
+  "sections": {
+    "menu": "Menu",
+    "management": "Management",
+    "general": "General"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "visits": "Visits",
+    "schedule": "Schedule",
+    "auditItems": "Audit Items",
+    "users": "Users",
+    "regions": "Regions",
+    "stores": "Stores",
+    "products": "Products",
+    "inventory": "Inventory",
+    "reports": "Reports",
+    "home": "Home",
+    "audit": "Audit"
+  },
+  "logout": "Logout"
+}

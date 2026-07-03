@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../../hooks/useAppDispatch';
 import { fetchUsers, createUser, updateUser, deleteUser, assignStores } from '../../store/slices/usersSlice';
 import { fetchRegions } from '../../store/slices/regionsSlice';
@@ -13,7 +14,7 @@ import Modal from '../../components/ui/Modal';
 import ConfirmDialog from '../../components/ui/ConfirmDialog';
 import UserForm from './UserForm';
 import AssignStoresForm from './AssignStoresForm';
-import { formatDate, formatRole } from '../../utils/format';
+import { formatDate } from '../../utils/format';
 import type { User, Role } from '../../types';
 
 const roleBadge: Record<Role, 'primary' | 'success' | 'warning' | 'gray'> = {
@@ -24,6 +25,8 @@ const roleBadge: Record<Role, 'primary' | 'success' | 'warning' | 'gray'> = {
 };
 
 export default function UsersPage() {
+  const { t, i18n } = useTranslation('users');
+  const { t: tCommon } = useTranslation('common');
   const dispatch = useAppDispatch();
   const { items: users, loading } = useAppSelector((s) => s.users);
   const { items: regions } = useAppSelector((s) => s.regions);
@@ -44,10 +47,10 @@ export default function UsersPage() {
   const handleCreate = async (data: any) => {
     const res = await dispatch(createUser(data));
     if (createUser.fulfilled.match(res)) {
-      toast.success('User created successfully');
+      toast.success(t('toasts.createSuccess'));
       setCreateOpen(false);
     } else {
-      toast.error(res.payload as string || 'Failed to create user');
+      toast.error(res.payload as string || t('toasts.createError'));
     }
   };
 
@@ -55,10 +58,10 @@ export default function UsersPage() {
     if (!editUser) return;
     const res = await dispatch(updateUser({ id: editUser.id, payload: data }));
     if (updateUser.fulfilled.match(res)) {
-      toast.success('User updated successfully');
+      toast.success(t('toasts.updateSuccess'));
       setEditUser(null);
     } else {
-      toast.error(res.payload as string || 'Failed to update user');
+      toast.error(res.payload as string || t('toasts.updateError'));
     }
   };
 
@@ -68,10 +71,10 @@ export default function UsersPage() {
     const res = await dispatch(deleteUser(deleteId));
     setDeleting(false);
     if (deleteUser.fulfilled.match(res)) {
-      toast.success('User deleted');
+      toast.success(t('toasts.deleteSuccess'));
       setDeleteId(null);
     } else {
-      toast.error(res.payload as string || 'Failed to delete user');
+      toast.error(res.payload as string || t('toasts.deleteError'));
     }
   };
 
@@ -79,17 +82,17 @@ export default function UsersPage() {
     if (!assignUser) return;
     const res = await dispatch(assignStores({ id: assignUser.id, store_ids }));
     if (assignStores.fulfilled.match(res)) {
-      toast.success('Stores assigned successfully');
+      toast.success(t('toasts.assignSuccess'));
       setAssignUser(null);
     } else {
-      toast.error(res.payload as string || 'Failed to assign stores');
+      toast.error(res.payload as string || t('toasts.assignError'));
     }
   };
 
   const columns = [
     {
       key: 'full_name',
-      header: 'Name',
+      header: t('table.name'),
       render: (u: User) => (
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'var(--primary)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 13, flexShrink: 0 }}>
@@ -104,29 +107,29 @@ export default function UsersPage() {
     },
     {
       key: 'role',
-      header: 'Role',
-      render: (u: User) => <Badge variant={roleBadge[u.role]}>{formatRole(u.role)}</Badge>,
+      header: t('table.role'),
+      render: (u: User) => <Badge variant={roleBadge[u.role]}>{tCommon(`roles.${u.role}`)}</Badge>,
     },
     {
       key: 'region',
-      header: 'Region',
+      header: t('table.region'),
       render: (u: User) => <span style={{ color: 'var(--gray-500)' }}>{u.region?.name || '—'}</span>,
     },
     {
       key: 'created_at',
-      header: 'Joined',
-      render: (u: User) => <span style={{ color: 'var(--gray-500)' }}>{formatDate(u.created_at)}</span>,
+      header: t('table.joined'),
+      render: (u: User) => <span style={{ color: 'var(--gray-500)' }}>{formatDate(u.created_at, i18n.language)}</span>,
     },
     {
       key: 'actions',
-      header: 'Actions',
+      header: tCommon('table.actions'),
       render: (u: User) => (
         <div className="table-actions">
           {['supervisor', 'merchandiser'].includes(u.role) && (
-            <Button variant="ghost" size="sm" onClick={() => setAssignUser(u)}>Assign Stores</Button>
+            <Button variant="ghost" size="sm" onClick={() => setAssignUser(u)}>{t('actions.assignStores')}</Button>
           )}
-          <Button variant="outline" size="sm" onClick={() => setEditUser(u)}>Edit</Button>
-          <Button variant="danger" size="sm" onClick={() => setDeleteId(u.id)}>Delete</Button>
+          <Button variant="outline" size="sm" onClick={() => setEditUser(u)}>{tCommon('actions.edit')}</Button>
+          <Button variant="danger" size="sm" onClick={() => setDeleteId(u.id)}>{tCommon('actions.delete')}</Button>
         </div>
       ),
     },
@@ -135,26 +138,26 @@ export default function UsersPage() {
   return (
     <div>
       <PageHeader
-        title="Users"
-        subtitle="Manage user accounts and permissions"
-        actions={<Button icon={<PlusIcon />} onClick={() => setCreateOpen(true)}>Add User</Button>}
+        title={t('title')}
+        subtitle={t('subtitle')}
+        actions={<Button icon={<PlusIcon />} onClick={() => setCreateOpen(true)}>{t('addUser')}</Button>}
       />
 
       <motion.div className="card" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
-        <DataTable columns={columns} data={users} loading={loading} keyExtractor={(u) => u.id} emptyMessage="No users found" />
+        <DataTable columns={columns} data={users} loading={loading} keyExtractor={(u) => u.id} emptyMessage={t('table.empty')} />
       </motion.div>
 
-      <Modal open={createOpen} onClose={() => setCreateOpen(false)} title="Create User" size="md">
+      <Modal open={createOpen} onClose={() => setCreateOpen(false)} title={t('createUser')} size="md">
         <UserForm regions={regions} onSubmit={handleCreate} onCancel={() => setCreateOpen(false)} />
       </Modal>
 
-      <Modal open={!!editUser} onClose={() => setEditUser(null)} title="Edit User" size="md">
+      <Modal open={!!editUser} onClose={() => setEditUser(null)} title={t('editUser')} size="md">
         {editUser && (
           <UserForm regions={regions} initialData={editUser} onSubmit={handleUpdate} onCancel={() => setEditUser(null)} />
         )}
       </Modal>
 
-      <Modal open={!!assignUser} onClose={() => setAssignUser(null)} title={`Assign Stores — ${assignUser?.full_name}`} size="md">
+      <Modal open={!!assignUser} onClose={() => setAssignUser(null)} title={t('assignStoresTitle', { name: assignUser?.full_name })} size="md">
         {assignUser && (
           <AssignStoresForm
             stores={stores}
@@ -170,7 +173,7 @@ export default function UsersPage() {
         onClose={() => setDeleteId(null)}
         onConfirm={handleDelete}
         loading={deleting}
-        message="This will permanently delete the user account."
+        message={t('deleteConfirm.message')}
       />
     </div>
   );

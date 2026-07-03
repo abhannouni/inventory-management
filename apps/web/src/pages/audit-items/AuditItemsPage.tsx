@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../../hooks/useAppDispatch';
 import { fetchAuditItems, createAuditItem, bulkUpsertAuditItems, updateAuditItem, deleteAuditItem } from '../../store/slices/auditItemsSlice';
 import { fetchVisits } from '../../store/slices/visitsSlice';
@@ -22,13 +23,9 @@ const statusBadge: Record<AuditStatus, 'success' | 'warning' | 'danger'> = {
   out_of_stock: 'danger',
 };
 
-const statusLabel: Record<AuditStatus, string> = {
-  in_stock: 'In Stock',
-  low_stock: 'Low Stock',
-  out_of_stock: 'Out of Stock',
-};
-
 export default function AuditItemsPage() {
+  const { t, i18n } = useTranslation('auditItems');
+  const { t: tCommon } = useTranslation('common');
   const dispatch = useAppDispatch();
   const { items, loading } = useAppSelector((s) => s.auditItems);
   const { items: visits } = useAppSelector((s) => s.visits);
@@ -54,20 +51,20 @@ export default function AuditItemsPage() {
   const handleCreate = async (data: any) => {
     const res = await dispatch(createAuditItem(data));
     if (createAuditItem.fulfilled.match(res)) {
-      toast.success('Audit item created');
+      toast.success(t('toasts.createSuccess'));
       setCreateOpen(false);
     } else {
-      toast.error(res.payload as string || 'Failed to create audit item');
+      toast.error(res.payload as string || t('toasts.createError'));
     }
   };
 
   const handleBulk = async (data: any) => {
     const res = await dispatch(bulkUpsertAuditItems(data));
     if (bulkUpsertAuditItems.fulfilled.match(res)) {
-      toast.success(`Bulk audit saved — ${res.payload.length} items`);
+      toast.success(t('toasts.bulkSuccess', { count: res.payload.length }));
       setBulkOpen(false);
     } else {
-      toast.error(res.payload as string || 'Bulk audit failed');
+      toast.error(res.payload as string || t('toasts.bulkError'));
     }
   };
 
@@ -75,10 +72,10 @@ export default function AuditItemsPage() {
     if (!editItem) return;
     const res = await dispatch(updateAuditItem({ id: editItem.id, payload: data }));
     if (updateAuditItem.fulfilled.match(res)) {
-      toast.success('Audit item updated');
+      toast.success(t('toasts.updateSuccess'));
       setEditItem(null);
     } else {
-      toast.error(res.payload as string || 'Failed to update audit item');
+      toast.error(res.payload as string || t('toasts.updateError'));
     }
   };
 
@@ -88,21 +85,27 @@ export default function AuditItemsPage() {
     const res = await dispatch(deleteAuditItem(deleteId));
     setDeleting(false);
     if (deleteAuditItem.fulfilled.match(res)) {
-      toast.success('Audit item deleted');
+      toast.success(t('toasts.deleteSuccess'));
       setDeleteId(null);
     } else {
-      toast.error(res.payload as string || 'Failed to delete audit item');
+      toast.error(res.payload as string || t('toasts.deleteError'));
     }
   };
 
+  const statusLabel: Record<AuditStatus, string> = {
+    in_stock: tCommon('status.in_stock'),
+    low_stock: tCommon('status.low_stock'),
+    out_of_stock: tCommon('status.out_of_stock'),
+  };
+
   const columns = [
-    { key: 'product', header: 'Product', render: (ai: AuditItem) => <span style={{ fontWeight: 500 }}>{ai.product?.name || ai.product_id}</span> },
-    { key: 'qty_found', header: 'Qty Found', render: (ai: AuditItem) => <span style={{ fontWeight: 600 }}>{ai.qty_found}</span> },
-    { key: 'status', header: 'Status', render: (ai: AuditItem) => <Badge variant={statusBadge[ai.status]}>{statusLabel[ai.status]}</Badge> },
-    { key: 'notes', header: 'Notes', render: (ai: AuditItem) => <span style={{ color: 'var(--gray-500)', maxWidth: 200, display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ai.notes || '—'}</span> },
+    { key: 'product', header: t('table.product'), render: (ai: AuditItem) => <span style={{ fontWeight: 500 }}>{ai.product?.name || ai.product_id}</span> },
+    { key: 'qty_found', header: t('table.qtyFound'), render: (ai: AuditItem) => <span style={{ fontWeight: 600 }}>{ai.qty_found}</span> },
+    { key: 'status', header: t('table.status'), render: (ai: AuditItem) => <Badge variant={statusBadge[ai.status]}>{statusLabel[ai.status]}</Badge> },
+    { key: 'notes', header: t('table.notes'), render: (ai: AuditItem) => <span style={{ color: 'var(--gray-500)', maxWidth: 200, display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ai.notes || '—'}</span> },
     {
       key: 'photo',
-      header: 'Photo',
+      header: t('table.photo'),
       render: (ai: AuditItem) =>
         ai.photo_url ? (
           <a href={ai.photo_url} target="_blank" rel="noopener noreferrer">
@@ -112,11 +115,11 @@ export default function AuditItemsPage() {
     },
     {
       key: 'actions',
-      header: 'Actions',
+      header: tCommon('table.actions'),
       render: (ai: AuditItem) => (
         <div className="table-actions">
-          <Button variant="outline" size="sm" onClick={() => setEditItem(ai)}>Edit</Button>
-          <Button variant="danger" size="sm" onClick={() => setDeleteId(ai.id)}>Delete</Button>
+          <Button variant="outline" size="sm" onClick={() => setEditItem(ai)}>{tCommon('actions.edit')}</Button>
+          <Button variant="danger" size="sm" onClick={() => setDeleteId(ai.id)}>{tCommon('actions.delete')}</Button>
         </div>
       ),
     },
@@ -125,20 +128,20 @@ export default function AuditItemsPage() {
   return (
     <div>
       <PageHeader
-        title="Audit Items"
-        subtitle="Record and manage product audits during store visits"
+        title={t('pageTitle')}
+        subtitle={t('pageSubtitle')}
         actions={
           <div style={{ display: 'flex', gap: 8 }}>
-            <Button variant="secondary" onClick={() => setBulkOpen(true)}>Bulk Audit</Button>
-            <Button icon={<PlusIcon />} onClick={() => setCreateOpen(true)}>Add Audit Item</Button>
+            <Button variant="secondary" onClick={() => setBulkOpen(true)}>{t('bulkAudit')}</Button>
+            <Button icon={<PlusIcon />} onClick={() => setCreateOpen(true)}>{t('addAuditItem')}</Button>
           </div>
         }
       />
 
       <div className="filter-bar">
         <Select
-          options={visits.map((v) => ({ value: v.id, label: `${v.store?.name || v.store_id} — ${new Date(v.checkin_at).toLocaleDateString()}` }))}
-          placeholder="All visits"
+          options={visits.map((v) => ({ value: v.id, label: `${v.store?.name || v.store_id} — ${new Date(v.checkin_at).toLocaleDateString(i18n.language)}` }))}
+          placeholder={t('allVisits')}
           value={filterVisit}
           onChange={(e) => setFilterVisit(e.target.value)}
           label=""
@@ -146,18 +149,18 @@ export default function AuditItemsPage() {
       </div>
 
       <motion.div className="card" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
-        <DataTable columns={columns} data={items} loading={loading} keyExtractor={(ai) => ai.id} emptyMessage="No audit items found" />
+        <DataTable columns={columns} data={items} loading={loading} keyExtractor={(ai) => ai.id} emptyMessage={t('table.empty')} />
       </motion.div>
 
-      <Modal open={createOpen} onClose={() => setCreateOpen(false)} title="Create Audit Item" size="md">
+      <Modal open={createOpen} onClose={() => setCreateOpen(false)} title={t('modals.createTitle')} size="md">
         <AuditItemForm visits={visits} products={products} onSubmit={handleCreate} onCancel={() => setCreateOpen(false)} />
       </Modal>
 
-      <Modal open={!!editItem} onClose={() => setEditItem(null)} title="Edit Audit Item" size="md">
+      <Modal open={!!editItem} onClose={() => setEditItem(null)} title={t('modals.editTitle')} size="md">
         {editItem && <AuditItemForm visits={visits} products={products} initialData={editItem} onSubmit={handleUpdate} onCancel={() => setEditItem(null)} />}
       </Modal>
 
-      <Modal open={bulkOpen} onClose={() => setBulkOpen(false)} title="Bulk Audit" size="lg">
+      <Modal open={bulkOpen} onClose={() => setBulkOpen(false)} title={t('modals.bulkTitle')} size="lg">
         <BulkAuditForm visits={visits} products={products} onSubmit={handleBulk} onCancel={() => setBulkOpen(false)} />
       </Modal>
 
@@ -166,7 +169,7 @@ export default function AuditItemsPage() {
         onClose={() => setDeleteId(null)}
         onConfirm={handleDelete}
         loading={deleting}
-        message="This will permanently delete the audit item."
+        message={t('deleteConfirm.message')}
       />
     </div>
   );

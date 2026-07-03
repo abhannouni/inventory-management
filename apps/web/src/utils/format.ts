@@ -1,5 +1,7 @@
-export function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString('en-US', {
+const DATE_LOCALES: Record<string, string> = { fr: 'fr-FR', en: 'en-US', ar: 'ar-MA' };
+
+export function formatDate(dateStr: string, language: string = 'fr'): string {
+  return new Date(dateStr).toLocaleDateString(DATE_LOCALES[language] || 'fr-FR', {
     year: 'numeric',
     month: 'short',
     day: 'numeric',

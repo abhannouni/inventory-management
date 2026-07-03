@@ -185,16 +185,16 @@ async function main() {
 
   // ── 6. Products (10 total) ───────────────────────────────────────────────────
   const productDefs = [
-    { name: 'Milk 1L',           sku: 'MLK-001' },
-    { name: 'White Bread',       sku: 'BRD-001' },
-    { name: 'Orange Juice 1L',   sku: 'OJ-001'  },
-    { name: 'Yogurt 500g',       sku: 'YGT-001' },
-    { name: 'Cheddar Cheese',    sku: 'CHS-001' },
-    { name: 'Butter 250g',       sku: 'BTR-001' },
-    { name: 'Eggs 12pk',         sku: 'EGG-001' },
-    { name: 'Coffee 500g',       sku: 'CFE-001' },
-    { name: 'Sugar 1kg',         sku: 'SGR-001' },
-    { name: 'Mineral Water 1.5L',sku: 'WAT-001' },
+    { name: 'Milk 1L',            sku: 'MLK-001', category: 'Dairy',     distributeur: 'Danone',       famille: 'Produits laitiers', sous_famille: 'Lait',       format: '1L' },
+    { name: 'White Bread',        sku: 'BRD-001', category: 'Bakery',    distributeur: 'Panera',       famille: 'Boulangerie',       sous_famille: 'Pain',       format: '500g' },
+    { name: 'Orange Juice 1L',    sku: 'OJ-001',  category: 'Beverages', distributeur: 'Tropicana',     famille: 'Boissons',          sous_famille: 'Jus',        format: '1L' },
+    { name: 'Yogurt 500g',        sku: 'YGT-001', category: 'Dairy',     distributeur: 'Danone',       famille: 'Produits laitiers', sous_famille: 'Yaourt',     format: '500g' },
+    { name: 'Cheddar Cheese',     sku: 'CHS-001', category: 'Dairy',     distributeur: 'Lactalis',     famille: 'Produits laitiers', sous_famille: 'Fromage',    format: '200g' },
+    { name: 'Butter 250g',        sku: 'BTR-001', category: 'Dairy',     distributeur: 'Lactalis',     famille: 'Produits laitiers', sous_famille: 'Beurre',     format: '250g' },
+    { name: 'Eggs 12pk',          sku: 'EGG-001', category: 'Dairy',     distributeur: 'Local Farms',  famille: 'Produits laitiers', sous_famille: 'Oeufs',      format: '12pk' },
+    { name: 'Coffee 500g',        sku: 'CFE-001', category: 'Beverages', distributeur: 'Nestle',       famille: 'Boissons',          sous_famille: 'Cafe',       format: '500g' },
+    { name: 'Sugar 1kg',          sku: 'SGR-001', category: 'Grocery',   distributeur: 'Cristal',      famille: 'Epicerie',          sous_famille: 'Sucre',      format: '1kg' },
+    { name: 'Mineral Water 1.5L', sku: 'WAT-001', category: 'Beverages', distributeur: 'Nestle',       famille: 'Boissons',          sous_famille: 'Eau',        format: '1.5L' },
   ];
 
   const products = await Promise.all(

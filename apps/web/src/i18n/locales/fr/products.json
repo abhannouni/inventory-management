@@ -1,0 +1,56 @@
+{
+  "title": "Produits",
+  "subtitle": "Gérer le catalogue produits",
+  "addProduct": "Ajouter un produit",
+  "createProduct": "Créer un produit",
+  "editProduct": "Modifier le produit",
+  "updateProduct": "Mettre à jour le produit",
+  "searchPlaceholder": "Rechercher par nom, SKU ou catégorie…",
+  "table": {
+    "product": "Produit",
+    "sku": "SKU",
+    "category": "Catégorie",
+    "distributeur": "Distributeur",
+    "famille": "Famille",
+    "sousFamille": "Sous famille",
+    "format": "Format",
+    "created": "Créé le",
+    "empty": "Aucun produit trouvé"
+  },
+  "fields": {
+    "name": "Nom du produit",
+    "namePlaceholder": "ex. Coca-Cola 330ml",
+    "sku": "SKU",
+    "skuPlaceholder": "ex. CC330",
+    "category": "Catégorie",
+    "categoryPlaceholder": "ex. Boissons",
+    "distributeur": "Distributeur",
+    "distributeurPlaceholder": "ex. Coca-Cola Company",
+    "famille": "Famille",
+    "famillePlaceholder": "ex. Boissons",
+    "sousFamille": "Sous famille",
+    "sousFamillePlaceholder": "ex. Sodas",
+    "format": "Format",
+    "formatPlaceholder": "ex. 500ml"
+  },
+  "errors": {
+    "nameRequired": "Le nom est requis",
+    "skuRequired": "Le SKU est requis",
+    "categoryRequired": "La catégorie est requise",
+    "distributeurRequired": "Distributeur est requis",
+    "familleRequired": "Famille est requis",
+    "sousFamilleRequired": "Sous famille est requis",
+    "formatRequired": "Format est requis"
+  },
+  "toasts": {
+    "createSuccess": "Produit créé",
+    "createError": "Échec de la création du produit",
+    "updateSuccess": "Produit mis à jour",
+    "updateError": "Échec de la mise à jour du produit",
+    "deleteSuccess": "Produit supprimé",
+    "deleteError": "Échec de la suppression du produit"
+  },
+  "deleteConfirm": {
+    "message": "Cette action supprimera définitivement le produit."
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "page": {
+    "title": "Reports",
+    "subtitle": "Role-scoped analytics and audit history",
+    "tabs": {
+      "visits": "Visit Reports",
+      "store": "Store Report",
+      "product": "Product Report"
+    }
+  },
+  "filters": {
+    "from": "From",
+    "to": "To",
+    "apply": "Apply",
+    "reset": "Reset",
+    "loadReport": "Load Report"
+  },
+  "productReport": {
+    "selectProductPlaceholder": "Select product",
+    "selectProductToast": "Please select a product",
+    "loadErrorToast": "Failed to load report",
+    "totalScans": "total scans",
+    "table": {
+      "store": "Store",
+      "date": "Date",
+      "qtyFound": "Qty Found",
+      "status": "Status",
+      "notes": "Notes"
+    },
+    "noHistory": "No scan history found",
+    "emptyState": "Select a product to view its history"
+  },
+  "storeReport": {
+    "selectStorePlaceholder": "Select store",
+    "selectStoreToast": "Please select a store",
+    "loadErrorToast": "Failed to load report",
+    "visitHistory_one": "Visit History ({{count}} visit)",
+    "visitHistory_other": "Visit History ({{count}} visits)",
+    "closed": "Closed: {{date}}",
+    "table": {
+      "product": "Product",
+      "qtyFound": "Qty Found",
+      "status": "Status"
+    },
+    "emptyState": "Select a store to view its report"
+  },
+  "visitsReport": {
+    "loadErrorToast": "Failed to load report",
+    "emptyTitle": "No visits found",
+    "emptySubtitle": "Try adjusting the date filters.",
+    "summary": {
+      "total": "Total",
+      "inStock": "In Stock",
+      "lowStock": "Low Stock",
+      "outOfStock": "Out of Stock"
+    },
+    "completionRate": "Completion Rate"
+  }
+}

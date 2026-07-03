@@ -342,6 +342,165 @@
   margin-top: 1px;
 }
 
+/* Language switcher — header quick-access dropdown */
+.language-switcher {
+  position: relative;
+}
+
+.language-switcher-trigger {
+  width: auto;
+  padding: 0 10px;
+  gap: 6px;
+}
+
+.language-switcher-code {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.language-switcher-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 168px;
+  background: var(--white);
+  border: 1px solid var(--gray-100);
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
+  padding: 6px;
+  z-index: 60;
+}
+
+html[dir='rtl'] .language-switcher-menu {
+  right: auto;
+  left: 0;
+}
+
+.language-switcher-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 10px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--gray-700);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.14s;
+}
+
+html[dir='rtl'] .language-switcher-option {
+  text-align: right;
+}
+
+.language-switcher-option:hover {
+  background: var(--gray-50);
+}
+
+.language-switcher-option.active {
+  color: var(--primary);
+  font-weight: 700;
+  background: var(--gray-50);
+}
+
+/* User account dropdown */
+.user-menu-wrap {
+  position: relative;
+}
+
+.user-menu-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 220px;
+  background: var(--white);
+  border: 1px solid var(--gray-100);
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
+  padding: 12px;
+  z-index: 60;
+}
+
+html[dir='rtl'] .user-menu-dropdown {
+  right: auto;
+  left: 0;
+}
+
+.user-menu-dropdown-section-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gray-400);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 8px;
+}
+
+.user-menu-language-pills {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.language-pill {
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1.5px solid var(--gray-100);
+  background: transparent;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--gray-600);
+  cursor: pointer;
+  transition: all 0.14s;
+}
+
+.language-pill:hover {
+  border-color: var(--gray-200);
+  background: var(--gray-50);
+}
+
+.language-pill.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--white);
+}
+
+.user-menu-dropdown-divider {
+  height: 1px;
+  background: var(--gray-100);
+  margin: 12px 0;
+}
+
+.user-menu-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 9px 10px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--danger, #dc2626);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.14s;
+}
+
+html[dir='rtl'] .user-menu-dropdown-item {
+  text-align: right;
+}
+
+.user-menu-dropdown-item:hover {
+  background: var(--gray-50);
+}
+
 /* legacy — kept for safety */
 .user-info { display: flex; align-items: center; gap: 10px; }
 .header-left { flex-shrink: 0; }
@@ -1265,6 +1424,18 @@
 }
 
 /* ===== AUTH PAGE ===== */
+.auth-lang-switcher {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  z-index: 5;
+}
+
+html[dir='rtl'] .auth-lang-switcher {
+  right: auto;
+  left: 24px;
+}
+
 .auth-page {
   min-height: 100vh;
   display: flex;
@@ -3015,5 +3186,86 @@
     bottom: 4px;
     left: 50%;
     transform: translateX(-50%);
+  }
+}
+
+/* ============================================================
+   RTL SUPPORT (Arabic)
+   Flexbox/Grid layouts already mirror automatically once the
+   `dir="rtl"` attribute is set on <html>. These overrides only
+   target spots that use physical (left/right) values instead of
+   logical ones, plus icons that visually imply a direction.
+   ============================================================ */
+html[dir='rtl'] {
+  font-family: 'Segoe UI', Tahoma, 'Noto Sans Arabic', 'Cairo', Arial, sans-serif;
+}
+
+/* Sidebar sits on the right in RTL; flip its border edge */
+html[dir='rtl'] .sidebar {
+  border-right: none;
+  border-left: 1px solid var(--sidebar-border);
+}
+
+/* User chip spacing */
+html[dir='rtl'] .user-menu {
+  margin-left: 0;
+  margin-right: 6px;
+}
+
+/* Header search input + icon */
+html[dir='rtl'] .header-search-input {
+  padding: 9px 36px 9px 72px;
+}
+
+html[dir='rtl'] .header-search-icon {
+  left: auto;
+  right: 11px;
+}
+
+html[dir='rtl'] .header-search-kbd {
+  right: auto;
+  left: 10px;
+}
+
+/* Input / Select left icon */
+html[dir='rtl'] .input-icon {
+  left: auto;
+  right: 10px;
+}
+
+html[dir='rtl'] .form-input.has-icon,
+html[dir='rtl'] .form-select.has-icon {
+  padding-left: 12px;
+  padding-right: 34px;
+}
+
+/* Table headers */
+html[dir='rtl'] .data-table th {
+  text-align: right;
+}
+
+/* Logout / exit arrow icons should point toward the RTL exit direction (left) */
+html[dir='rtl'] .nav-item-logout .nav-icon svg,
+html[dir='rtl'] .user-menu-dropdown-item svg {
+  transform: scaleX(-1);
+}
+
+/* Toasts read more naturally anchored to the visual left in RTL */
+html[dir='rtl'] .Toastify__toast-container--top-right {
+  right: auto !important;
+  left: 1em !important;
+}
+
+/* Numbers, SKUs, coordinates, dates: keep left-to-right runs even inside RTL text */
+html[dir='rtl'] .ltr-content,
+html[dir='rtl'] .gps-coords {
+  direction: ltr;
+  unicode-bidi: isolate;
+  display: inline-block;
+}
+
+@media (max-width: 768px) {
+  html[dir='rtl'] .mobile-nav {
+    direction: rtl;
   }
 }

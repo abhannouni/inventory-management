@@ -1,0 +1,56 @@
+{
+  "weekDaysShort": ["S", "M", "T", "W", "T", "F", "S"],
+  "greeting": "Good day, {{name}} 👋",
+  "stats": {
+    "totalStores": "Total Stores",
+    "totalProducts": "Total Products",
+    "totalVisits": "Total Visits",
+    "openVisits": "Open Visits"
+  },
+  "changes": {
+    "retailNetwork": "↑ Retail network",
+    "skusTracked": "↑ SKUs tracked",
+    "completed": "{{count}} completed",
+    "inProgress": "In progress now",
+    "allClosed": "All closed"
+  },
+  "visitActivity": {
+    "title": "Visit Activity",
+    "thisWeek": "This week",
+    "subtitle": "Daily check-in frequency across all stores"
+  },
+  "auditProgress": {
+    "title": "Audit Progress",
+    "subtitle": "Overall visit completion rate",
+    "completion": "completion"
+  },
+  "legend": {
+    "inStock": "In Stock",
+    "lowStock": "Low Stock",
+    "outOfStock": "Out of Stock"
+  },
+  "timeTracker": {
+    "title": "Time Tracker",
+    "activeVisit": "Active Visit",
+    "noActiveVisit": "No active visit",
+    "pause": "Pause",
+    "resume": "Resume",
+    "stop": "Stop"
+  },
+  "stores": {
+    "title": "Stores",
+    "viewAll": "View all",
+    "empty": "No stores yet"
+  },
+  "team": {
+    "titleMembers": "Team Members",
+    "titleVisits": "Recent Visits",
+    "viewAll": "View all",
+    "empty": "No data yet"
+  },
+  "recentVisits": {
+    "title": "Recent Visits",
+    "seeAll": "See all",
+    "empty": "No visits recorded yet"
+  }
+}

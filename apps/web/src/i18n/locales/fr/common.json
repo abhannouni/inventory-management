@@ -1,0 +1,57 @@
+{
+  "appName": "Inventory",
+  "actions": {
+    "add": "Ajouter",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "remove": "Retirer",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "create": "Créer",
+    "update": "Mettre à jour",
+    "confirm": "Confirmer",
+    "close": "Fermer",
+    "viewAll": "Voir tout",
+    "seeAll": "Tout voir",
+    "search": "Rechercher",
+    "assign": "Assigner",
+    "logout": "Déconnexion",
+    "back": "Retour"
+  },
+  "status": {
+    "open": "Ouvert",
+    "closed": "Fermé",
+    "in_stock": "En stock",
+    "low_stock": "Stock faible",
+    "out_of_stock": "Rupture de stock"
+  },
+  "roles": {
+    "super_admin": "Super administrateur",
+    "admin": "Administrateur",
+    "supervisor": "Superviseur",
+    "merchandiser": "Marchandiseur"
+  },
+  "table": {
+    "noData": "Aucune donnée trouvée",
+    "actions": "Actions",
+    "created": "Créé le"
+  },
+  "confirmDialog": {
+    "title": "Confirmer l’action",
+    "message": "Êtes-vous sûr de vouloir continuer ? Cette action est irréversible.",
+    "delete": "Supprimer"
+  },
+  "modal": {
+    "close": "Fermer"
+  },
+  "language": {
+    "label": "Langue",
+    "fr": "Français",
+    "en": "English",
+    "ar": "العربية",
+    "switch": "Changer de langue"
+  },
+  "errors": {
+    "generic": "Une erreur est survenue"
+  }
+}

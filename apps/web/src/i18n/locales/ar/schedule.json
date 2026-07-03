@@ -1,0 +1,63 @@
+{
+  "months": [
+    "يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو",
+    "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"
+  ],
+  "weekdaysShort": ["إثن", "ثلا", "أرب", "خمي", "جمع", "سبت", "أحد"],
+  "pageTitle": "الجدول الزمني",
+  "subtitleManage": "خطّط لمهام الزيارات الميدانية وأدرها",
+  "subtitleView": "جدول زياراتك القادمة",
+  "newSchedule": "جدول جديد",
+  "today": "اليوم",
+  "previousMonth": "الشهر السابق",
+  "nextMonth": "الشهر التالي",
+  "legend": {
+    "pending": "قيد الانتظار",
+    "completed": "مكتمل",
+    "cancelled": "ملغى"
+  },
+  "calendar": {
+    "loading": "جارٍ تحميل الجدول الزمني…",
+    "visitFallback": "زيارة",
+    "moreCount": "+{{count}}"
+  },
+  "dayDetail": {
+    "modalTitle": "جدول اليوم",
+    "empty": "لا توجد زيارات مجدولة لهذا اليوم.",
+    "edit": "تعديل",
+    "delete": "حذف",
+    "deleteConfirm": "هل تريد الحذف؟",
+    "yes": "نعم",
+    "no": "لا",
+    "addVisit": "إضافة زيارة"
+  },
+  "form": {
+    "editTitle": "تعديل الجدول",
+    "createTitle": "جدول جديد",
+    "merchandiser": "المندوب الميداني",
+    "selectMerchandiser": "اختر مندوبًا ميدانيًا…",
+    "store": "المتجر",
+    "selectStore": "اختر متجرًا…",
+    "dateTime": "التاريخ والوقت",
+    "status": "الحالة",
+    "statusOptions": {
+      "pending": "قيد الانتظار",
+      "completed": "مكتمل",
+      "cancelled": "ملغى"
+    },
+    "notesLabel": "ملاحظات",
+    "notesOptional": "(اختياري)",
+    "notesPlaceholder": "أضف أي تعليمات أو سياق…",
+    "cancel": "إلغاء",
+    "saveChanges": "حفظ التغييرات",
+    "createSchedule": "إنشاء الجدول"
+  },
+  "toasts": {
+    "updateSuccess": "تم تحديث الجدول",
+    "updateError": "فشل التحديث",
+    "createSuccess": "تمت جدولة الزيارة",
+    "createError": "فشل الإنشاء",
+    "deleteSuccess": "تم حذف الجدول",
+    "deleteError": "فشل الحذف"
+  }
+}

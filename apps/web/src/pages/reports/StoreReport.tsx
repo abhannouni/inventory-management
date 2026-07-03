@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../../hooks/useAppDispatch';
 import { fetchStoreReport } from '../../store/slices/reportsSlice';
 import { fetchStores } from '../../store/slices/storesSlice';
@@ -19,6 +20,8 @@ const statusBadge: Record<AuditStatus, 'success' | 'warning' | 'danger'> = {
 };
 
 export default function StoreReport() {
+  const { t, i18n } = useTranslation('reports');
+  const { t: tCommon } = useTranslation('common');
   const dispatch = useAppDispatch();
   const { storeReport, loading } = useAppSelector((s) => s.reports);
   const { items: stores } = useAppSelector((s) => s.stores);
@@ -29,9 +32,9 @@ export default function StoreReport() {
   useEffect(() => { dispatch(fetchStores()); }, [dispatch]);
 
   const handleLoad = async () => {
-    if (!storeId) { toast.error('Please select a store'); return; }
+    if (!storeId) { toast.error(t('storeReport.selectStoreToast')); return; }
     const res = await dispatch(fetchStoreReport({ id: storeId, filters: { from: from || undefined, to: to || undefined } }));
-    if (fetchStoreReport.rejected.match(res)) toast.error(res.payload as string || 'Failed to load report');
+    if (fetchStoreReport.rejected.match(res)) toast.error(res.payload as string || t('storeReport.loadErrorToast'));
   };
 
   return (
@@ -41,19 +44,19 @@ export default function StoreReport() {
           options={stores.map((s) => ({ value: s.id, label: s.name }))}
           value={storeId}
           onChange={(e) => setStoreId(e.target.value)}
-          placeholder="Select store"
+          placeholder={t('storeReport.selectStorePlaceholder')}
           label=""
         />
         <div className="form-group" style={{ margin: 0 }}>
-          <label className="form-label">From</label>
+          <label className="form-label">{t('filters.from')}</label>
           <input type="date" className="form-input" value={from} onChange={(e) => setFrom(e.target.value)} />
         </div>
         <div className="form-group" style={{ margin: 0 }}>
-          <label className="form-label">To</label>
+          <label className="form-label">{t('filters.to')}</label>
           <input type="date" className="form-input" value={to} onChange={(e) => setTo(e.target.value)} />
         </div>
         <div style={{ alignSelf: 'flex-end' }}>
-          <Button onClick={handleLoad} disabled={!storeId}>Load Report</Button>
+          <Button onClick={handleLoad} disabled={!storeId}>{t('filters.loadReport')}</Button>
         </div>
       </div>
 
@@ -69,7 +72,7 @@ export default function StoreReport() {
           </div>
 
           <h3 style={{ fontSize: 14, fontWeight: 600, marginBottom: 12 }}>
-            Visit History ({storeReport.visits?.length ?? 0} visits)
+            {t('storeReport.visitHistory', { count: storeReport.visits?.length ?? 0 })}
           </h3>
 
           {(storeReport.visits || []).map((v, i) => (
@@ -84,11 +87,11 @@ export default function StoreReport() {
               <div className="card-body">
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
                   <div>
-                    <p style={{ fontWeight: 600 }}>{formatDate(v.checkin_at)}</p>
-                    {v.checkout_at && <p style={{ fontSize: 12, color: 'var(--gray-400)' }}>Closed: {formatDate(v.checkout_at)}</p>}
+                    <p style={{ fontWeight: 600 }}>{formatDate(v.checkin_at, i18n.language)}</p>
+                    {v.checkout_at && <p style={{ fontSize: 12, color: 'var(--gray-400)' }}>{t('storeReport.closed', { date: formatDate(v.checkout_at, i18n.language) })}</p>}
                   </div>
                   <Badge variant={v.status === 'open' ? 'success' : 'gray'} dot>
-                    {v.status === 'open' ? 'Open' : 'Closed'}
+                    {v.status === 'open' ? tCommon('status.open') : tCommon('status.closed')}
                   </Badge>
                 </div>
 
@@ -96,9 +99,9 @@ export default function StoreReport() {
                   <table style={{ width: '100%', fontSize: 13, borderCollapse: 'collapse' }}>
                     <thead>
                       <tr style={{ background: 'var(--gray-50)' }}>
-                        <th style={{ padding: '6px 8px', textAlign: 'left', color: 'var(--gray-500)', fontSize: 11, fontWeight: 600, textTransform: 'uppercase' }}>Product</th>
-                        <th style={{ padding: '6px 8px', textAlign: 'left', color: 'var(--gray-500)', fontSize: 11, fontWeight: 600, textTransform: 'uppercase' }}>Qty Found</th>
-                        <th style={{ padding: '6px 8px', textAlign: 'left', color: 'var(--gray-500)', fontSize: 11, fontWeight: 600, textTransform: 'uppercase' }}>Status</th>
+                        <th style={{ padding: '6px 8px', textAlign: 'left', color: 'var(--gray-500)', fontSize: 11, fontWeight: 600, textTransform: 'uppercase' }}>{t('storeReport.table.product')}</th>
+                        <th style={{ padding: '6px 8px', textAlign: 'left', color: 'var(--gray-500)', fontSize: 11, fontWeight: 600, textTransform: 'uppercase' }}>{t('storeReport.table.qtyFound')}</th>
+                        <th style={{ padding: '6px 8px', textAlign: 'left', color: 'var(--gray-500)', fontSize: 11, fontWeight: 600, textTransform: 'uppercase' }}>{t('storeReport.table.status')}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -106,7 +109,7 @@ export default function StoreReport() {
                         <tr key={ai.id} style={{ borderTop: '1px solid var(--gray-100)' }}>
                           <td style={{ padding: '6px 8px' }}>{ai.product?.name || ai.product_id}</td>
                           <td style={{ padding: '6px 8px', fontWeight: 600 }}>{ai.qty_found}</td>
-                          <td style={{ padding: '6px 8px' }}><Badge variant={statusBadge[ai.status as AuditStatus]}>{ai.status.replace(/_/g, ' ')}</Badge></td>
+                          <td style={{ padding: '6px 8px' }}><Badge variant={statusBadge[ai.status as AuditStatus]}>{tCommon(`status.${ai.status}`)}</Badge></td>
                         </tr>
                       ))}
                     </tbody>
@@ -120,7 +123,7 @@ export default function StoreReport() {
 
       {!loading && !storeReport && (
         <div className="empty-state">
-          <div className="empty-state-title">Select a store to view its report</div>
+          <div className="empty-state-title">{t('storeReport.emptyState')}</div>
         </div>
       )}
     </div>

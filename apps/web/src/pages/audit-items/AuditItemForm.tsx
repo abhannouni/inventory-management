@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
 import Input from '../../components/ui/Input';
 import Select from '../../components/ui/Select';
 import Button from '../../components/ui/Button';
@@ -15,6 +16,8 @@ interface AuditItemFormProps {
 }
 
 export default function AuditItemForm({ visits, products, initialData, onSubmit, onCancel }: AuditItemFormProps) {
+  const { t, i18n } = useTranslation('auditItems');
+  const { t: tCommon } = useTranslation('common');
   const [form, setForm] = useState({
     visit_id: initialData?.visit_id || '',
     product_id: initialData?.product_id || '',
@@ -30,10 +33,10 @@ export default function AuditItemForm({ visits, products, initialData, onSubmit,
 
   const validate = () => {
     const errs: Record<string, string> = {};
-    if (!form.visit_id) errs.visit_id = 'Visit is required';
-    if (!form.product_id) errs.product_id = 'Product is required';
-    if (!form.qty_found) errs.qty_found = 'Quantity is required';
-    else if (isNaN(Number(form.qty_found)) || Number(form.qty_found) < 0) errs.qty_found = 'Invalid quantity';
+    if (!form.visit_id) errs.visit_id = t('form.errors.visitRequired');
+    if (!form.product_id) errs.product_id = t('form.errors.productRequired');
+    if (!form.qty_found) errs.qty_found = t('form.errors.qtyRequired');
+    else if (isNaN(Number(form.qty_found)) || Number(form.qty_found) < 0) errs.qty_found = t('form.errors.qtyInvalid');
     return errs;
   };
 
@@ -41,9 +44,9 @@ export default function AuditItemForm({ visits, products, initialData, onSubmit,
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 5 * 1024 * 1024) { toast.error('File must be under 5 MB'); return; }
+    if (file.size > 5 * 1024 * 1024) { toast.error(t('form.toasts.fileTooLarge')); return; }
     if (!['image/jpeg', 'image/jpg', 'image/png', 'image/webp'].includes(file.type)) {
-      toast.error('Only JPEG, PNG, and WebP files are allowed'); return;
+      toast.error(t('form.toasts.invalidFileType')); return;
     }
 
     setPreview(URL.createObjectURL(file));
@@ -51,9 +54,9 @@ export default function AuditItemForm({ visits, products, initialData, onSubmit,
     try {
       const res = await uploadApi.upload(file);
       setForm((f) => ({ ...f, photo_url: res.url }));
-      toast.success('Photo uploaded!');
+      toast.success(t('form.toasts.photoUploaded'));
     } catch {
-      toast.error('Failed to upload photo');
+      toast.error(t('form.toasts.photoUploadError'));
     } finally {
       setUploading(false);
     }
@@ -73,7 +76,7 @@ export default function AuditItemForm({ visits, products, initialData, onSubmit,
 
   const visitOptions = visits.map((v) => ({
     value: v.id,
-    label: `${v.store?.name || v.store_id} — ${new Date(v.checkin_at).toLocaleDateString()}`,
+    label: `${v.store?.name || v.store_id} — ${new Date(v.checkin_at).toLocaleDateString(i18n.language)}`,
   }));
 
   const productOptions = products.map((p) => ({ value: p.id, label: `${p.name} (${p.sku})` }));
@@ -81,34 +84,34 @@ export default function AuditItemForm({ visits, products, initialData, onSubmit,
   return (
     <form onSubmit={handleSubmit}>
       <div className="form-row">
-        <Select label="Visit" value={form.visit_id} onChange={(e) => setForm({ ...form, visit_id: e.target.value })} options={visitOptions} placeholder="Select visit" error={errors.visit_id} />
-        <Select label="Product" value={form.product_id} onChange={(e) => setForm({ ...form, product_id: e.target.value })} options={productOptions} placeholder="Select product" error={errors.product_id} />
+        <Select label={t('form.visit')} value={form.visit_id} onChange={(e) => setForm({ ...form, visit_id: e.target.value })} options={visitOptions} placeholder={t('form.selectVisit')} error={errors.visit_id} />
+        <Select label={t('form.product')} value={form.product_id} onChange={(e) => setForm({ ...form, product_id: e.target.value })} options={productOptions} placeholder={t('form.selectProduct')} error={errors.product_id} />
       </div>
 
-      <Input label="Quantity Found" type="number" min="0" value={form.qty_found} onChange={(e) => setForm({ ...form, qty_found: e.target.value })} error={errors.qty_found} placeholder="e.g. 12" />
+      <Input label={t('form.qtyFoundLabel')} type="number" min="0" value={form.qty_found} onChange={(e) => setForm({ ...form, qty_found: e.target.value })} error={errors.qty_found} placeholder={t('form.qtyFoundPlaceholder')} />
 
       <div className="form-group">
-        <label className="form-label">Notes (optional)</label>
+        <label className="form-label">{t('form.notesLabel')}</label>
         <textarea
           className="form-textarea"
           value={form.notes}
           onChange={(e) => setForm({ ...form, notes: e.target.value })}
-          placeholder="Any observations about stock levels, placement, etc."
+          placeholder={t('form.notesPlaceholder')}
         />
       </div>
 
       <div className="form-group">
-        <label className="form-label">Photo (optional)</label>
+        <label className="form-label">{t('form.photoLabel')}</label>
         <div
           className="photo-upload"
           onClick={() => fileRef.current?.click()}
         >
           {uploading ? (
-            <p style={{ color: 'var(--gray-500)' }}>Uploading…</p>
+            <p style={{ color: 'var(--gray-500)' }}>{t('form.photoUploading')}</p>
           ) : preview ? (
             <>
               <img src={preview} alt="preview" className="photo-preview" />
-              <p style={{ marginTop: 8, fontSize: 12, color: 'var(--gray-400)' }}>Click to change photo</p>
+              <p style={{ marginTop: 8, fontSize: 12, color: 'var(--gray-400)' }}>{t('form.photoChangeHint')}</p>
             </>
           ) : (
             <>
@@ -116,8 +119,8 @@ export default function AuditItemForm({ visits, products, initialData, onSubmit,
                 <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" />
                 <circle cx="12" cy="13" r="4" />
               </svg>
-              <p style={{ fontSize: 13, color: 'var(--gray-500)' }}>Click to upload a photo</p>
-              <p style={{ fontSize: 11, color: 'var(--gray-400)', marginTop: 4 }}>JPEG, PNG, WebP — max 5 MB</p>
+              <p style={{ fontSize: 13, color: 'var(--gray-500)' }}>{t('form.photoUploadHint')}</p>
+              <p style={{ fontSize: 11, color: 'var(--gray-400)', marginTop: 4 }}>{t('form.photoFormatsHint')}</p>
             </>
           )}
         </div>
@@ -125,8 +128,8 @@ export default function AuditItemForm({ visits, products, initialData, onSubmit,
       </div>
 
       <div className="form-actions">
-        <Button variant="ghost" type="button" onClick={onCancel} disabled={loading || uploading}>Cancel</Button>
-        <Button type="submit" loading={loading} disabled={uploading}>{initialData ? 'Update' : 'Create'}</Button>
+        <Button variant="ghost" type="button" onClick={onCancel} disabled={loading || uploading}>{tCommon('actions.cancel')}</Button>
+        <Button type="submit" loading={loading} disabled={uploading}>{initialData ? tCommon('actions.update') : tCommon('actions.create')}</Button>
       </div>
     </form>
   );

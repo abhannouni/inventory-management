@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import Button from '../../components/ui/Button';
 import { formatDate } from '../../utils/format';
 import type { Visit } from '../../types';
@@ -10,6 +11,7 @@ interface Props {
 }
 
 export default function CheckoutForm({ visit, onSubmit, onCancel }: Props) {
+  const { t, i18n } = useTranslation('visits');
   const [loading, setLoading] = useState(false);
 
   const lat = visit.store?.latitude != null ? Number(visit.store.latitude) : null;
@@ -26,9 +28,9 @@ export default function CheckoutForm({ visit, onSubmit, onCancel }: Props) {
   return (
     <div>
       <div style={{ background: 'var(--primary-light)', borderRadius: 12, padding: '14px 16px', marginBottom: 16, border: '1px solid var(--accent-light)' }}>
-        <p style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--gray-400)', marginBottom: 6 }}>Active Visit</p>
+        <p style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--gray-400)', marginBottom: 6 }}>{t('checkout.activeVisit')}</p>
         <p style={{ fontSize: 17, fontWeight: 800, color: 'var(--gray-900)', marginBottom: 4 }}>{visit.store?.name}</p>
-        <p style={{ fontSize: 13, color: 'var(--gray-500)' }}>Checked in {formatDate(visit.checkin_at)}</p>
+        <p style={{ fontSize: 13, color: 'var(--gray-500)' }}>{t('checkout.checkedInAt', { date: formatDate(visit.checkin_at, i18n.language) })}</p>
       </div>
 
       {hasCoords && (
@@ -49,10 +51,10 @@ export default function CheckoutForm({ visit, onSubmit, onCancel }: Props) {
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         <Button size="lg" onClick={handleCheckout} loading={loading} disabled={!hasCoords} style={{ width: '100%' }}>
-          Confirm Check Out
+          {t('checkout.confirmCheckOut')}
         </Button>
         <Button variant="ghost" onClick={onCancel} disabled={loading} style={{ width: '100%' }}>
-          Cancel
+          {t('checkout.cancel')}
         </Button>
       </div>
     </div>

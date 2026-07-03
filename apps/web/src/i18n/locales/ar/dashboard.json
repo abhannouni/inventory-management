@@ -1,0 +1,56 @@
+{
+  "weekDaysShort": ["ح", "ن", "ث", "ر", "خ", "ج", "س"],
+  "greeting": "مرحبًا بك، {{name}} 👋",
+  "stats": {
+    "totalStores": "إجمالي المتاجر",
+    "totalProducts": "إجمالي المنتجات",
+    "totalVisits": "إجمالي الزيارات",
+    "openVisits": "الزيارات الجارية"
+  },
+  "changes": {
+    "retailNetwork": "↑ شبكة البيع بالتجزئة",
+    "skusTracked": "↑ مراجع متتبَّعة",
+    "completed": "{{count}} مكتملة",
+    "inProgress": "قيد التنفيذ الآن",
+    "allClosed": "جميعها مغلقة"
+  },
+  "visitActivity": {
+    "title": "نشاط الزيارات",
+    "thisWeek": "هذا الأسبوع",
+    "subtitle": "معدل تسجيل الدخول اليومي في جميع المتاجر"
+  },
+  "auditProgress": {
+    "title": "تقدم الجرد",
+    "subtitle": "معدل إتمام الزيارات الإجمالي",
+    "completion": "نسبة الإتمام"
+  },
+  "legend": {
+    "inStock": "متوفر",
+    "lowStock": "مخزون منخفض",
+    "outOfStock": "نفد المخزون"
+  },
+  "timeTracker": {
+    "title": "متتبع الوقت",
+    "activeVisit": "زيارة جارية",
+    "noActiveVisit": "لا توجد زيارة جارية",
+    "pause": "إيقاف مؤقت",
+    "resume": "استئناف",
+    "stop": "إيقاف"
+  },
+  "stores": {
+    "title": "المتاجر",
+    "viewAll": "عرض الكل",
+    "empty": "لا توجد متاجر بعد"
+  },
+  "team": {
+    "titleMembers": "أعضاء الفريق",
+    "titleVisits": "الزيارات الأخيرة",
+    "viewAll": "عرض الكل",
+    "empty": "لا توجد بيانات بعد"
+  },
+  "recentVisits": {
+    "title": "الزيارات الأخيرة",
+    "seeAll": "عرض الكل",
+    "empty": "لم يتم تسجيل أي زيارات بعد"
+  }
+}

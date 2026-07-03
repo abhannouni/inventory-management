@@ -1,0 +1,23 @@
+{
+  "brand": "Inventory",
+  "sections": {
+    "menu": "Menu",
+    "management": "Gestion",
+    "general": "Général"
+  },
+  "nav": {
+    "dashboard": "Tableau de bord",
+    "visits": "Visites",
+    "schedule": "Planning",
+    "auditItems": "Articles à auditer",
+    "users": "Utilisateurs",
+    "regions": "Régions",
+    "stores": "Magasins",
+    "products": "Produits",
+    "inventory": "Inventaire",
+    "reports": "Rapports",
+    "home": "Accueil",
+    "audit": "Audit"
+  },
+  "logout": "Déconnexion"
+}

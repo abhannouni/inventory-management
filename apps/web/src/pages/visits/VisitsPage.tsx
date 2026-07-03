@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../../hooks/useAppDispatch';
 import { fetchVisits, checkin, checkout } from '../../store/slices/visitsSlice';
 import { fetchStores } from '../../store/slices/storesSlice';
@@ -20,6 +21,8 @@ import { usePermissions } from '../../hooks/usePermissions';
 type Tab = 'visit' | 'history';
 
 export default function VisitsPage() {
+  const { t, i18n } = useTranslation('visits');
+  const { t: tCommon } = useTranslation('common');
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { items: visits, loading } = useAppSelector((s) => s.visits);
@@ -43,10 +46,10 @@ export default function VisitsPage() {
   const handleCheckin = async (data: { store_id: string; lat: number; lng: number; checkin_at?: string }) => {
     const res = await dispatch(checkin(data));
     if (checkin.fulfilled.match(res)) {
-      toast.success('Checked in successfully!');
+      toast.success(t('list.toasts.checkinSuccess'));
       setCheckinOpen(false);
     } else {
-      toast.error((res.payload as string) || 'Check-in failed');
+      toast.error((res.payload as string) || t('list.toasts.checkinFailed'));
     }
   };
 
@@ -54,21 +57,21 @@ export default function VisitsPage() {
     if (!checkoutVisit) return;
     const res = await dispatch(checkout({ visit_id: checkoutVisit.id, ...data }));
     if (checkout.fulfilled.match(res)) {
-      toast.success('Checked out successfully!');
+      toast.success(t('list.toasts.checkoutSuccess'));
       setCheckoutVisit(null);
     } else {
-      toast.error((res.payload as string) || 'Check-out failed');
+      toast.error((res.payload as string) || t('list.toasts.checkoutFailed'));
     }
   };
 
   const columns = [
-    { key: 'store', header: 'Store', render: (v: Visit) => <span style={{ fontWeight: 500 }}>{v.store?.name || v.store_id}</span> },
-    { key: 'status', header: 'Status', render: (v: Visit) => <Badge variant={v.status === 'open' ? 'success' : 'gray'} dot>{v.status === 'open' ? 'Open' : 'Closed'}</Badge> },
-    { key: 'checkin_at', header: 'Check-in', render: (v: Visit) => <span style={{ color: 'var(--gray-600)' }}>{formatDate(v.checkin_at)}</span> },
-    { key: 'checkout_at', header: 'Check-out', render: (v: Visit) => <span style={{ color: 'var(--gray-500)' }}>{v.checkout_at ? formatDate(v.checkout_at) : '—'}</span> },
+    { key: 'store', header: t('list.columns.store'), render: (v: Visit) => <span style={{ fontWeight: 500 }}>{v.store?.name || v.store_id}</span> },
+    { key: 'status', header: t('list.columns.status'), render: (v: Visit) => <Badge variant={v.status === 'open' ? 'success' : 'gray'} dot>{v.status === 'open' ? tCommon('status.open') : tCommon('status.closed')}</Badge> },
+    { key: 'checkin_at', header: t('list.columns.checkin'), render: (v: Visit) => <span style={{ color: 'var(--gray-600)' }}>{formatDate(v.checkin_at, i18n.language)}</span> },
+    { key: 'checkout_at', header: t('list.columns.checkout'), render: (v: Visit) => <span style={{ color: 'var(--gray-500)' }}>{v.checkout_at ? formatDate(v.checkout_at, i18n.language) : '—'}</span> },
     {
       key: 'gps',
-      header: 'GPS (in)',
+      header: t('list.columns.gpsIn'),
       render: (v: Visit) => (
         <span className="gps-coords">
           {v.checkin_lat != null && v.checkin_lng != null
@@ -79,12 +82,12 @@ export default function VisitsPage() {
     },
     {
       key: 'actions',
-      header: 'Actions',
+      header: t('list.columns.actions'),
       render: (v: Visit) => (
         <div className="table-actions">
-          <Button variant="outline" size="sm" onClick={() => navigate(`/visits/${v.id}`)}>View</Button>
+          <Button variant="outline" size="sm" onClick={() => navigate(`/visits/${v.id}`)}>{t('list.view')}</Button>
           {v.status === 'open' && p.canCheckin && (
-            <Button variant="secondary" size="sm" onClick={() => setCheckoutVisit(v)}>Check Out</Button>
+            <Button variant="secondary" size="sm" onClick={() => setCheckoutVisit(v)}>{t('list.checkOut')}</Button>
           )}
         </div>
       ),
@@ -96,12 +99,12 @@ export default function VisitsPage() {
     <div>
       {!p.canCheckin && (
         <PageHeader
-          title="Visits"
-          subtitle="Track store visits with GPS check-in"
+          title={t('list.title')}
+          subtitle={t('list.subtitle')}
           actions={
             p.canCheckin && (
               <Button icon={<LocationIcon />} onClick={() => setCheckinOpen(true)} disabled={!!openVisit}>
-                Check In
+                {t('list.checkIn')}
               </Button>
             )
           }
@@ -116,27 +119,27 @@ export default function VisitsPage() {
             </svg>
           </div>
           <div className="open-visit-banner-body">
-            <div className="open-visit-banner-title">Active visit</div>
+            <div className="open-visit-banner-title">{t('list.activeVisit')}</div>
             <div className="open-visit-banner-store">{openVisit.store?.name}</div>
           </div>
-          <Button size="sm" onClick={() => setCheckoutVisit(openVisit)}>Check Out</Button>
+          <Button size="sm" onClick={() => setCheckoutVisit(openVisit)}>{t('list.checkOut')}</Button>
         </motion.div>
       )}
 
       <div className="filter-bar">
         <select className="form-select" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} style={{ width: 160 }}>
-          <option value="">All statuses</option>
-          <option value="open">Open</option>
-          <option value="closed">Closed</option>
+          <option value="">{t('list.filters.allStatuses')}</option>
+          <option value="open">{tCommon('status.open')}</option>
+          <option value="closed">{tCommon('status.closed')}</option>
         </select>
       </div>
 
       {/* Mobile card list */}
       <div className="visit-card-list">
         {loading ? (
-          <p style={{ textAlign: 'center', color: 'var(--gray-400)', padding: '32px 0' }}>Loading…</p>
+          <p style={{ textAlign: 'center', color: 'var(--gray-400)', padding: '32px 0' }}>{t('list.loading')}</p>
         ) : visits.length === 0 ? (
-          <p style={{ textAlign: 'center', color: 'var(--gray-400)', padding: '32px 0' }}>No visits found</p>
+          <p style={{ textAlign: 'center', color: 'var(--gray-400)', padding: '32px 0' }}>{t('list.empty')}</p>
         ) : (
           visits.map((v) => (
             <motion.div
@@ -155,15 +158,15 @@ export default function VisitsPage() {
               </div>
               <div className="visit-card-body">
                 <div className="visit-card-store">{v.store?.name || v.store_id}</div>
-                <div className="visit-card-time">{formatDate(v.checkin_at)}</div>
+                <div className="visit-card-time">{formatDate(v.checkin_at, i18n.language)}</div>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8, flexShrink: 0 }}>
                 <Badge variant={v.status === 'open' ? 'success' : 'gray'} dot>
-                  {v.status === 'open' ? 'Open' : 'Closed'}
+                  {v.status === 'open' ? tCommon('status.open') : tCommon('status.closed')}
                 </Badge>
                 {v.status === 'open' && p.canCheckin && (
                   <Button size="sm" variant="outline" onClick={(e) => { e.stopPropagation(); setCheckoutVisit(v); }}>
-                    Check Out
+                    {t('list.checkOut')}
                   </Button>
                 )}
               </div>
@@ -175,13 +178,13 @@ export default function VisitsPage() {
       {/* Desktop table */}
       <div className="visit-table-wrap">
         <motion.div className="card" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
-          <DataTable columns={columns} data={visits} loading={loading} keyExtractor={(v) => v.id} emptyMessage="No visits found" />
+          <DataTable columns={columns} data={visits} loading={loading} keyExtractor={(v) => v.id} emptyMessage={t('list.empty')} />
         </motion.div>
       </div>
 
       {/* FAB for check-in (mobile, merchandisers only) */}
       {p.canCheckin && !openVisit && (
-        <button className="fab" onClick={() => setCheckinOpen(true)} title="Check In">
+        <button className="fab" onClick={() => setCheckinOpen(true)} title={t('list.checkIn')}>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
             <line x1="12" y1="5" x2="12" y2="9" /><line x1="10" y1="7" x2="14" y2="7" />
@@ -189,10 +192,10 @@ export default function VisitsPage() {
         </button>
       )}
 
-      <Modal open={checkinOpen} onClose={() => setCheckinOpen(false)} title="Check In to Store" size="sm">
+      <Modal open={checkinOpen} onClose={() => setCheckinOpen(false)} title={t('list.checkInToStore')} size="sm">
         <CheckinForm stores={stores} onSubmit={handleCheckin} onCancel={() => setCheckinOpen(false)} />
       </Modal>
-      <Modal open={!!checkoutVisit} onClose={() => setCheckoutVisit(null)} title="Check Out" size="sm">
+      <Modal open={!!checkoutVisit} onClose={() => setCheckoutVisit(null)} title={t('list.checkOut')} size="sm">
         {checkoutVisit && (
           <CheckoutForm visit={checkoutVisit} onSubmit={handleCheckout} onCancel={() => setCheckoutVisit(null)} />
         )}
@@ -215,7 +218,7 @@ export default function VisitsPage() {
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z"/>
           </svg>
-          My Visit
+          {t('list.tabs.myVisit')}
         </button>
         <button
           className={`visits-tab-btn${activeTab === 'history' ? ' active' : ''}`}
@@ -224,7 +227,7 @@ export default function VisitsPage() {
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
           </svg>
-          History
+          {t('list.tabs.history')}
         </button>
       </div>
 

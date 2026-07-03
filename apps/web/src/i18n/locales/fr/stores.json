@@ -1,0 +1,48 @@
+{
+  "title": "Magasins",
+  "subtitle": "Gérez les emplacements et les coordonnées des magasins",
+  "addStore": "Ajouter un magasin",
+  "createStore": "Créer un magasin",
+  "editStore": "Modifier le magasin",
+  "columns": {
+    "name": "Nom du magasin",
+    "address": "Adresse",
+    "region": "Région",
+    "coordinates": "Coordonnées",
+    "created": "Créé le"
+  },
+  "form": {
+    "nameLabel": "Nom du magasin",
+    "namePlaceholder": "ex. Succursale du centre-ville",
+    "regionLabel": "Région",
+    "regionPlaceholder": "Sélectionner une région",
+    "addressLabel": "Adresse",
+    "addressPlaceholder": "ex. 123 Rue Principale, Ville",
+    "latitudeLabel": "Latitude",
+    "latitudePlaceholder": "ex. 34.0522",
+    "longitudeLabel": "Longitude",
+    "longitudePlaceholder": "ex. -118.2437",
+    "gpsHint": "Les coordonnées GPS sont facultatives et servent au suivi de localisation.",
+    "createSubmit": "Créer le magasin",
+    "updateSubmit": "Mettre à jour le magasin"
+  },
+  "errors": {
+    "nameRequired": "Le nom est requis",
+    "addressRequired": "L'adresse est requise",
+    "regionRequired": "La région est requise",
+    "latitudeInvalid": "Latitude invalide (-90 à 90)",
+    "longitudeInvalid": "Longitude invalide (-180 à 180)"
+  },
+  "toasts": {
+    "createSuccess": "Magasin créé",
+    "createError": "Échec de la création du magasin",
+    "updateSuccess": "Magasin mis à jour",
+    "updateError": "Échec de la mise à jour du magasin",
+    "deleteSuccess": "Magasin supprimé",
+    "deleteError": "Échec de la suppression du magasin"
+  },
+  "deleteConfirm": {
+    "message": "Cette action supprimera définitivement le magasin et toutes les données associées."
+  },
+  "emptyTable": "Aucun magasin trouvé"
+}

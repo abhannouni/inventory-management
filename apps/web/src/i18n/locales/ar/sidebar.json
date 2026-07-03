@@ -1,0 +1,23 @@
+{
+  "brand": "Inventory",
+  "sections": {
+    "menu": "القائمة",
+    "management": "الإدارة",
+    "general": "عام"
+  },
+  "nav": {
+    "dashboard": "لوحة التحكم",
+    "visits": "الزيارات",
+    "schedule": "الجدول الزمني",
+    "auditItems": "عناصر الجرد",
+    "users": "المستخدمون",
+    "regions": "المناطق",
+    "stores": "المتاجر",
+    "products": "المنتجات",
+    "inventory": "المخزون",
+    "reports": "التقارير",
+    "home": "الرئيسية",
+    "audit": "الجرد"
+  },
+  "logout": "تسجيل الخروج"
+}

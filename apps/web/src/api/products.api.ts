@@ -5,6 +5,10 @@ export interface ProductPayload {
   name: string;
   sku: string;
   category: string;
+  distributeur: string;
+  famille: string;
+  sous_famille: string;
+  format: string;
 }
 
 export const productsApi = {

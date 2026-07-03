@@ -1,0 +1,15 @@
+{
+  "title": "Welcome back",
+  "subtitle": "Sign in to your account to continue",
+  "emailLabel": "Email address",
+  "passwordLabel": "Password",
+  "signIn": "Sign in",
+  "defaultCredentials": "Default credentials:",
+  "welcomeToast": "Welcome back, {{name}}!",
+  "loginFailed": "Login failed",
+  "errors": {
+    "emailRequired": "Email is required",
+    "emailInvalid": "Invalid email address",
+    "passwordRequired": "Password is required"
+  }
+}

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../../hooks/useAppDispatch';
 import { fetchProducts, createProduct, updateProduct, deleteProduct } from '../../store/slices/productsSlice';
 import PageHeader from '../../components/ui/PageHeader';
@@ -13,6 +14,8 @@ import { formatDate } from '../../utils/format';
 import type { Product } from '../../types';
 
 export default function ProductsPage() {
+  const { t, i18n } = useTranslation('products');
+  const { t: tCommon } = useTranslation('common');
   const dispatch = useAppDispatch();
   const { items: products, loading } = useAppSelector((s) => s.products);
 
@@ -28,16 +31,20 @@ export default function ProductsPage() {
     (p) =>
       p.name.toLowerCase().includes(search.toLowerCase()) ||
       p.sku.toLowerCase().includes(search.toLowerCase()) ||
-      p.category.toLowerCase().includes(search.toLowerCase())
+      p.category.toLowerCase().includes(search.toLowerCase()) ||
+      p.distributeur.toLowerCase().includes(search.toLowerCase()) ||
+      p.famille.toLowerCase().includes(search.toLowerCase()) ||
+      p.sous_famille.toLowerCase().includes(search.toLowerCase()) ||
+      p.format.toLowerCase().includes(search.toLowerCase())
   );
 
   const handleCreate = async (data: any) => {
     const res = await dispatch(createProduct(data));
     if (createProduct.fulfilled.match(res)) {
-      toast.success('Product created');
+      toast.success(t('toasts.createSuccess'));
       setCreateOpen(false);
     } else {
-      toast.error(res.payload as string || 'Failed to create product');
+      toast.error(res.payload as string || t('toasts.createError'));
     }
   };
 
@@ -45,10 +52,10 @@ export default function ProductsPage() {
     if (!editProduct) return;
     const res = await dispatch(updateProduct({ id: editProduct.id, payload: data }));
     if (updateProduct.fulfilled.match(res)) {
-      toast.success('Product updated');
+      toast.success(t('toasts.updateSuccess'));
       setEditProduct(null);
     } else {
-      toast.error(res.payload as string || 'Failed to update product');
+      toast.error(res.payload as string || t('toasts.updateError'));
     }
   };
 
@@ -58,25 +65,29 @@ export default function ProductsPage() {
     const res = await dispatch(deleteProduct(deleteId));
     setDeleting(false);
     if (deleteProduct.fulfilled.match(res)) {
-      toast.success('Product deleted');
+      toast.success(t('toasts.deleteSuccess'));
       setDeleteId(null);
     } else {
-      toast.error(res.payload as string || 'Failed to delete product');
+      toast.error(res.payload as string || t('toasts.deleteError'));
     }
   };
 
   const columns = [
-    { key: 'name', header: 'Product', render: (p: Product) => <span style={{ fontWeight: 500 }}>{p.name}</span> },
-    { key: 'sku', header: 'SKU', render: (p: Product) => <span style={{ fontFamily: 'monospace', fontSize: 13, background: 'var(--gray-100)', padding: '2px 6px', borderRadius: 4 }}>{p.sku}</span> },
-    { key: 'category', header: 'Category', render: (p: Product) => <span style={{ color: 'var(--gray-600)' }}>{p.category}</span> },
-    { key: 'created_at', header: 'Created', render: (p: Product) => <span style={{ color: 'var(--gray-500)' }}>{formatDate(p.created_at)}</span> },
+    { key: 'name', header: t('table.product'), render: (p: Product) => <span style={{ fontWeight: 500 }}>{p.name}</span> },
+    { key: 'sku', header: t('table.sku'), render: (p: Product) => <span style={{ fontFamily: 'monospace', fontSize: 13, background: 'var(--gray-100)', padding: '2px 6px', borderRadius: 4 }}>{p.sku}</span> },
+    { key: 'category', header: t('table.category'), render: (p: Product) => <span style={{ color: 'var(--gray-600)' }}>{p.category}</span> },
+    { key: 'distributeur', header: t('table.distributeur'), render: (p: Product) => <span style={{ color: 'var(--gray-600)' }}>{p.distributeur}</span> },
+    { key: 'famille', header: t('table.famille'), render: (p: Product) => <span style={{ color: 'var(--gray-600)' }}>{p.famille}</span> },
+    { key: 'sous_famille', header: t('table.sousFamille'), render: (p: Product) => <span style={{ color: 'var(--gray-600)' }}>{p.sous_famille}</span> },
+    { key: 'format', header: t('table.format'), render: (p: Product) => <span style={{ color: 'var(--gray-600)' }}>{p.format}</span> },
+    { key: 'created_at', header: t('table.created'), render: (p: Product) => <span style={{ color: 'var(--gray-500)' }}>{formatDate(p.created_at, i18n.language)}</span> },
     {
       key: 'actions',
-      header: 'Actions',
+      header: tCommon('table.actions'),
       render: (p: Product) => (
         <div className="table-actions">
-          <Button variant="outline" size="sm" onClick={() => setEditProduct(p)}>Edit</Button>
-          <Button variant="danger" size="sm" onClick={() => setDeleteId(p.id)}>Delete</Button>
+          <Button variant="outline" size="sm" onClick={() => setEditProduct(p)}>{tCommon('actions.edit')}</Button>
+          <Button variant="danger" size="sm" onClick={() => setDeleteId(p.id)}>{tCommon('actions.delete')}</Button>
         </div>
       ),
     },
@@ -85,16 +96,16 @@ export default function ProductsPage() {
   return (
     <div>
       <PageHeader
-        title="Products"
-        subtitle="Manage the product catalog"
-        actions={<Button icon={<PlusIcon />} onClick={() => setCreateOpen(true)}>Add Product</Button>}
+        title={t('title')}
+        subtitle={t('subtitle')}
+        actions={<Button icon={<PlusIcon />} onClick={() => setCreateOpen(true)}>{t('addProduct')}</Button>}
       />
 
       <div className="filter-bar">
         <div className="form-group" style={{ flex: 1, maxWidth: 320 }}>
           <input
             className="form-input"
-            placeholder="Search by name, SKU or category…"
+            placeholder={t('searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -102,14 +113,14 @@ export default function ProductsPage() {
       </div>
 
       <motion.div className="card" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
-        <DataTable columns={columns} data={filtered} loading={loading} keyExtractor={(p) => p.id} emptyMessage="No products found" />
+        <DataTable columns={columns} data={filtered} loading={loading} keyExtractor={(p) => p.id} emptyMessage={t('table.empty')} />
       </motion.div>
 
-      <Modal open={createOpen} onClose={() => setCreateOpen(false)} title="Create Product" size="sm">
+      <Modal open={createOpen} onClose={() => setCreateOpen(false)} title={t('createProduct')} size="sm">
         <ProductForm onSubmit={handleCreate} onCancel={() => setCreateOpen(false)} />
       </Modal>
 
-      <Modal open={!!editProduct} onClose={() => setEditProduct(null)} title="Edit Product" size="sm">
+      <Modal open={!!editProduct} onClose={() => setEditProduct(null)} title={t('editProduct')} size="sm">
         {editProduct && (
           <ProductForm initialData={editProduct} onSubmit={handleUpdate} onCancel={() => setEditProduct(null)} />
         )}
@@ -120,7 +131,7 @@ export default function ProductsPage() {
         onClose={() => setDeleteId(null)}
         onConfirm={handleDelete}
         loading={deleting}
-        message="This will permanently delete the product."
+        message={t('deleteConfirm.message')}
       />
     </div>
   );

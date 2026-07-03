@@ -1,0 +1,48 @@
+{
+  "title": "المتاجر",
+  "subtitle": "إدارة مواقع المتاجر وإحداثياتها",
+  "addStore": "إضافة متجر",
+  "createStore": "إنشاء متجر",
+  "editStore": "تعديل المتجر",
+  "columns": {
+    "name": "اسم المتجر",
+    "address": "العنوان",
+    "region": "المنطقة",
+    "coordinates": "الإحداثيات",
+    "created": "تاريخ الإنشاء"
+  },
+  "form": {
+    "nameLabel": "اسم المتجر",
+    "namePlaceholder": "مثال: فرع وسط المدينة",
+    "regionLabel": "المنطقة",
+    "regionPlaceholder": "اختر المنطقة",
+    "addressLabel": "العنوان",
+    "addressPlaceholder": "مثال: 123 الشارع الرئيسي، المدينة",
+    "latitudeLabel": "خط العرض",
+    "latitudePlaceholder": "مثال: 34.0522",
+    "longitudeLabel": "خط الطول",
+    "longitudePlaceholder": "مثال: -118.2437",
+    "gpsHint": "إحداثيات GPS اختيارية وتُستخدم لتتبع الموقع.",
+    "createSubmit": "إنشاء المتجر",
+    "updateSubmit": "تحديث المتجر"
+  },
+  "errors": {
+    "nameRequired": "الاسم مطلوب",
+    "addressRequired": "العنوان مطلوب",
+    "regionRequired": "المنطقة مطلوبة",
+    "latitudeInvalid": "خط عرض غير صالح (-90 إلى 90)",
+    "longitudeInvalid": "خط طول غير صالح (-180 إلى 180)"
+  },
+  "toasts": {
+    "createSuccess": "تم إنشاء المتجر",
+    "createError": "فشل إنشاء المتجر",
+    "updateSuccess": "تم تحديث المتجر",
+    "updateError": "فشل تحديث المتجر",
+    "deleteSuccess": "تم حذف المتجر",
+    "deleteError": "فشل حذف المتجر"
+  },
+  "deleteConfirm": {
+    "message": "سيؤدي هذا إلى حذف المتجر وجميع البيانات المرتبطة به نهائيًا."
+  },
+  "emptyTable": "لم يتم العثور على متاجر"
+}

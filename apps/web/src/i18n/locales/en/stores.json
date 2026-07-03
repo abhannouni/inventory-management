@@ -1,0 +1,48 @@
+{
+  "title": "Stores",
+  "subtitle": "Manage store locations and coordinates",
+  "addStore": "Add Store",
+  "createStore": "Create Store",
+  "editStore": "Edit Store",
+  "columns": {
+    "name": "Store Name",
+    "address": "Address",
+    "region": "Region",
+    "coordinates": "Coordinates",
+    "created": "Created"
+  },
+  "form": {
+    "nameLabel": "Store Name",
+    "namePlaceholder": "e.g. Downtown Branch",
+    "regionLabel": "Region",
+    "regionPlaceholder": "Select region",
+    "addressLabel": "Address",
+    "addressPlaceholder": "e.g. 123 Main St, City",
+    "latitudeLabel": "Latitude",
+    "latitudePlaceholder": "e.g. 34.0522",
+    "longitudeLabel": "Longitude",
+    "longitudePlaceholder": "e.g. -118.2437",
+    "gpsHint": "GPS coordinates are optional and used for location tracking.",
+    "createSubmit": "Create Store",
+    "updateSubmit": "Update Store"
+  },
+  "errors": {
+    "nameRequired": "Name is required",
+    "addressRequired": "Address is required",
+    "regionRequired": "Region is required",
+    "latitudeInvalid": "Invalid latitude (-90 to 90)",
+    "longitudeInvalid": "Invalid longitude (-180 to 180)"
+  },
+  "toasts": {
+    "createSuccess": "Store created",
+    "createError": "Failed to create store",
+    "updateSuccess": "Store updated",
+    "updateError": "Failed to update store",
+    "deleteSuccess": "Store deleted",
+    "deleteError": "Failed to delete store"
+  },
+  "deleteConfirm": {
+    "message": "This will permanently delete the store and all associated data."
+  },
+  "emptyTable": "No stores found"
+}

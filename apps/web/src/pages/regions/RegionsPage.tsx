@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../../hooks/useAppDispatch';
 import { fetchRegions, createRegion, updateRegion, deleteRegion } from '../../store/slices/regionsSlice';
 import PageHeader from '../../components/ui/PageHeader';
@@ -13,6 +14,8 @@ import { formatDate } from '../../utils/format';
 import type { Region } from '../../types';
 
 export default function RegionsPage() {
+  const { t, i18n } = useTranslation('regions');
+  const { t: tCommon } = useTranslation('common');
   const dispatch = useAppDispatch();
   const { items: regions, loading } = useAppSelector((s) => s.regions);
 
@@ -31,29 +34,29 @@ export default function RegionsPage() {
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim()) { setNameError('Name is required'); return; }
+    if (!name.trim()) { setNameError(t('errors.nameRequired')); return; }
     setSaving(true);
     const res = await dispatch(createRegion({ name: name.trim() }));
     setSaving(false);
     if (createRegion.fulfilled.match(res)) {
-      toast.success('Region created');
+      toast.success(t('toasts.createSuccess'));
       setCreateOpen(false);
     } else {
-      toast.error(res.payload as string || 'Failed to create region');
+      toast.error(res.payload as string || t('toasts.createError'));
     }
   };
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!editRegion || !name.trim()) { setNameError('Name is required'); return; }
+    if (!editRegion || !name.trim()) { setNameError(t('errors.nameRequired')); return; }
     setSaving(true);
     const res = await dispatch(updateRegion({ id: editRegion.id, payload: { name: name.trim() } }));
     setSaving(false);
     if (updateRegion.fulfilled.match(res)) {
-      toast.success('Region updated');
+      toast.success(t('toasts.updateSuccess'));
       setEditRegion(null);
     } else {
-      toast.error(res.payload as string || 'Failed to update region');
+      toast.error(res.payload as string || t('toasts.updateError'));
     }
   };
 
@@ -63,24 +66,24 @@ export default function RegionsPage() {
     const res = await dispatch(deleteRegion(deleteId));
     setDeleting(false);
     if (deleteRegion.fulfilled.match(res)) {
-      toast.success('Region deleted');
+      toast.success(t('toasts.deleteSuccess'));
       setDeleteId(null);
     } else {
-      toast.error(res.payload as string || 'Failed to delete region');
+      toast.error(res.payload as string || t('toasts.deleteError'));
     }
   };
 
   const columns = [
-    { key: 'name', header: 'Name', render: (r: Region) => <span style={{ fontWeight: 500 }}>{r.name}</span> },
-    { key: 'id', header: 'ID', render: (r: Region) => <span style={{ fontFamily: 'monospace', fontSize: 12, color: 'var(--gray-400)' }}>{r.id.slice(0, 8)}…</span> },
-    { key: 'created_at', header: 'Created', render: (r: Region) => <span style={{ color: 'var(--gray-500)' }}>{formatDate(r.created_at)}</span> },
+    { key: 'name', header: t('columns.name'), render: (r: Region) => <span style={{ fontWeight: 500 }}>{r.name}</span> },
+    { key: 'id', header: t('columns.id'), render: (r: Region) => <span style={{ fontFamily: 'monospace', fontSize: 12, color: 'var(--gray-400)' }}>{r.id.slice(0, 8)}…</span> },
+    { key: 'created_at', header: t('columns.created'), render: (r: Region) => <span style={{ color: 'var(--gray-500)' }}>{formatDate(r.created_at, i18n.language)}</span> },
     {
       key: 'actions',
-      header: 'Actions',
+      header: tCommon('table.actions'),
       render: (r: Region) => (
         <div className="table-actions">
-          <Button variant="outline" size="sm" onClick={() => openEdit(r)}>Edit</Button>
-          <Button variant="danger" size="sm" onClick={() => setDeleteId(r.id)}>Delete</Button>
+          <Button variant="outline" size="sm" onClick={() => openEdit(r)}>{tCommon('actions.edit')}</Button>
+          <Button variant="danger" size="sm" onClick={() => setDeleteId(r.id)}>{tCommon('actions.delete')}</Button>
         </div>
       ),
     },
@@ -89,16 +92,16 @@ export default function RegionsPage() {
   const RegionForm = (onSubmit: (e: React.FormEvent) => void) => (
     <form onSubmit={onSubmit}>
       <Input
-        label="Region Name"
+        label={t('form.nameLabel')}
         value={name}
         onChange={(e) => setName(e.target.value)}
         error={nameError}
-        placeholder="e.g. North Region"
+        placeholder={t('form.namePlaceholder')}
         autoFocus
       />
       <div className="form-actions">
-        <Button variant="ghost" type="button" onClick={() => { setCreateOpen(false); setEditRegion(null); }} disabled={saving}>Cancel</Button>
-        <Button type="submit" loading={saving}>Save</Button>
+        <Button variant="ghost" type="button" onClick={() => { setCreateOpen(false); setEditRegion(null); }} disabled={saving}>{tCommon('actions.cancel')}</Button>
+        <Button type="submit" loading={saving}>{tCommon('actions.save')}</Button>
       </div>
     </form>
   );
@@ -106,20 +109,20 @@ export default function RegionsPage() {
   return (
     <div>
       <PageHeader
-        title="Regions"
-        subtitle="Manage geographic regions"
-        actions={<Button icon={<PlusIcon />} onClick={openCreate}>Add Region</Button>}
+        title={t('title')}
+        subtitle={t('subtitle')}
+        actions={<Button icon={<PlusIcon />} onClick={openCreate}>{t('addRegion')}</Button>}
       />
 
       <motion.div className="card" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
-        <DataTable columns={columns} data={regions} loading={loading} keyExtractor={(r) => r.id} emptyMessage="No regions found" />
+        <DataTable columns={columns} data={regions} loading={loading} keyExtractor={(r) => r.id} emptyMessage={t('emptyTable')} />
       </motion.div>
 
-      <Modal open={createOpen} onClose={() => setCreateOpen(false)} title="Create Region" size="sm">
+      <Modal open={createOpen} onClose={() => setCreateOpen(false)} title={t('createRegion')} size="sm">
         {RegionForm(handleCreate)}
       </Modal>
 
-      <Modal open={!!editRegion} onClose={() => setEditRegion(null)} title="Edit Region" size="sm">
+      <Modal open={!!editRegion} onClose={() => setEditRegion(null)} title={t('editRegion')} size="sm">
         {RegionForm(handleUpdate)}
       </Modal>
 
@@ -128,7 +131,7 @@ export default function RegionsPage() {
         onClose={() => setDeleteId(null)}
         onConfirm={handleDelete}
         loading={deleting}
-        message="Deleting this region will affect all users and stores associated with it."
+        message={t('deleteConfirm.message')}
       />
     </div>
   );

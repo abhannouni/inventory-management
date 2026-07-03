@@ -1,0 +1,63 @@
+{
+  "page": {
+    "title": "التقارير",
+    "subtitle": "تحليلات وسجل تدقيق حسب الدور",
+    "tabs": {
+      "visits": "تقارير الزيارات",
+      "store": "تقرير المتجر",
+      "product": "تقرير المنتج"
+    }
+  },
+  "filters": {
+    "from": "من",
+    "to": "إلى",
+    "apply": "تطبيق",
+    "reset": "إعادة تعيين",
+    "loadReport": "تحميل التقرير"
+  },
+  "productReport": {
+    "selectProductPlaceholder": "اختر منتجًا",
+    "selectProductToast": "يرجى اختيار منتج",
+    "loadErrorToast": "فشل تحميل التقرير",
+    "totalScans": "إجمالي عمليات المسح",
+    "table": {
+      "store": "المتجر",
+      "date": "التاريخ",
+      "qtyFound": "الكمية الموجودة",
+      "status": "الحالة",
+      "notes": "ملاحظات"
+    },
+    "noHistory": "لم يتم العثور على سجل مسح",
+    "emptyState": "اختر منتجًا لعرض سجله"
+  },
+  "storeReport": {
+    "selectStorePlaceholder": "اختر متجرًا",
+    "selectStoreToast": "يرجى اختيار متجر",
+    "loadErrorToast": "فشل تحميل التقرير",
+    "visitHistory_zero": "سجل الزيارات (لا توجد زيارات)",
+    "visitHistory_one": "سجل الزيارات (زيارة واحدة)",
+    "visitHistory_two": "سجل الزيارات (زيارتان)",
+    "visitHistory_few": "سجل الزيارات ({{count}} زيارات)",
+    "visitHistory_many": "سجل الزيارات ({{count}} زيارة)",
+    "visitHistory_other": "سجل الزيارات ({{count}} زيارة)",
+    "closed": "أُغلقت في: {{date}}",
+    "table": {
+      "product": "المنتج",
+      "qtyFound": "الكمية الموجودة",
+      "status": "الحالة"
+    },
+    "emptyState": "اختر متجرًا لعرض تقريره"
+  },
+  "visitsReport": {
+    "loadErrorToast": "فشل تحميل التقرير",
+    "emptyTitle": "لم يتم العثور على زيارات",
+    "emptySubtitle": "حاول تعديل عوامل تصفية التاريخ.",
+    "summary": {
+      "total": "الإجمالي",
+      "inStock": "متوفر",
+      "lowStock": "مخزون منخفض",
+      "outOfStock": "نفد المخزون"
+    },
+    "completionRate": "معدّل الإنجاز"
+  }
+}

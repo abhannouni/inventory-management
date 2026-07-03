@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import Input from '../../components/ui/Input';
 import Select from '../../components/ui/Select';
 import Button from '../../components/ui/Button';
@@ -11,15 +12,17 @@ interface UserFormProps {
   onCancel: () => void;
 }
 
-const roleOptions = [
-  { value: 'super_admin', label: 'Super Admin' },
-  { value: 'admin', label: 'Admin' },
-  { value: 'supervisor', label: 'Supervisor' },
-  { value: 'merchandiser', label: 'Merchandiser' },
-];
-
 export default function UserForm({ regions, initialData, onSubmit, onCancel }: UserFormProps) {
+  const { t } = useTranslation('users');
+  const { t: tCommon } = useTranslation('common');
   const isEdit = !!initialData;
+
+  const roleOptions = [
+    { value: 'super_admin', label: tCommon('roles.super_admin') },
+    { value: 'admin', label: tCommon('roles.admin') },
+    { value: 'supervisor', label: tCommon('roles.supervisor') },
+    { value: 'merchandiser', label: tCommon('roles.merchandiser') },
+  ];
 
   const [form, setForm] = useState({
     full_name: initialData?.full_name || '',
@@ -34,11 +37,11 @@ export default function UserForm({ regions, initialData, onSubmit, onCancel }: U
 
   const validate = () => {
     const errs: Record<string, string> = {};
-    if (!form.full_name.trim()) errs.full_name = 'Name is required';
-    if (!form.email.trim()) errs.email = 'Email is required';
-    if (!isEdit && !form.password) errs.password = 'Password is required';
-    if (!isEdit && form.password.length < 6) errs.password = 'Password must be at least 6 characters';
-    if (!form.role) errs.role = 'Role is required';
+    if (!form.full_name.trim()) errs.full_name = t('errors.nameRequired');
+    if (!form.email.trim()) errs.email = t('errors.emailRequired');
+    if (!isEdit && !form.password) errs.password = t('errors.passwordRequired');
+    if (!isEdit && form.password.length < 6) errs.password = t('errors.passwordMinLength');
+    if (!form.role) errs.role = t('errors.roleRequired');
     return errs;
   };
 
@@ -61,41 +64,41 @@ export default function UserForm({ regions, initialData, onSubmit, onCancel }: U
     <form onSubmit={handleSubmit}>
       <div className="form-row">
         <Input
-          label="Full Name"
+          label={t('fields.fullName')}
           value={form.full_name}
           onChange={(e) => setForm({ ...form, full_name: e.target.value })}
           error={errors.full_name}
-          placeholder="John Doe"
+          placeholder={t('fields.fullNamePlaceholder')}
         />
         <Input
-          label="Email"
+          label={t('fields.email')}
           type="email"
           value={form.email}
           onChange={(e) => setForm({ ...form, email: e.target.value })}
           error={errors.email}
-          placeholder="john@example.com"
+          placeholder={t('fields.emailPlaceholder')}
         />
       </div>
 
       <div className="form-row">
         <Select
-          label="Role"
+          label={t('fields.role')}
           value={form.role}
           onChange={(e) => setForm({ ...form, role: e.target.value as import('../../types').Role })}
           options={roleOptions}
           error={errors.role}
         />
         <Select
-          label="Region (optional)"
+          label={t('fields.region')}
           value={form.region_id}
           onChange={(e) => setForm({ ...form, region_id: e.target.value })}
           options={regionOptions}
-          placeholder="No region"
+          placeholder={t('fields.regionPlaceholder')}
         />
       </div>
 
       <Input
-        label={isEdit ? 'New Password (leave blank to keep)' : 'Password'}
+        label={isEdit ? t('fields.newPassword') : t('fields.password')}
         type="password"
         value={form.password}
         onChange={(e) => setForm({ ...form, password: e.target.value })}
@@ -104,8 +107,8 @@ export default function UserForm({ regions, initialData, onSubmit, onCancel }: U
       />
 
       <div className="form-actions">
-        <Button variant="ghost" type="button" onClick={onCancel} disabled={loading}>Cancel</Button>
-        <Button type="submit" loading={loading}>{isEdit ? 'Update User' : 'Create User'}</Button>
+        <Button variant="ghost" type="button" onClick={onCancel} disabled={loading}>{tCommon('actions.cancel')}</Button>
+        <Button type="submit" loading={loading}>{isEdit ? t('updateUser') : t('createUser')}</Button>
       </div>
     </form>
   );

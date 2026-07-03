@@ -2,12 +2,15 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../hooks/useAppDispatch';
 import { login, fetchMe } from '../store/slices/authSlice';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
+import LanguageSwitcher from '../components/ui/LanguageSwitcher';
 
 export default function LoginPage() {
+  const { t } = useTranslation('login');
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { loading, token } = useAppSelector((s) => s.auth);
@@ -25,9 +28,9 @@ export default function LoginPage() {
 
   const validate = () => {
     const errs: Record<string, string> = {};
-    if (!form.email) errs.email = 'Email is required';
-    else if (!/\S+@\S+\.\S+/.test(form.email)) errs.email = 'Invalid email address';
-    if (!form.password) errs.password = 'Password is required';
+    if (!form.email) errs.email = t('errors.emailRequired');
+    else if (!/\S+@\S+\.\S+/.test(form.email)) errs.email = t('errors.emailInvalid');
+    if (!form.password) errs.password = t('errors.passwordRequired');
     return errs;
   };
 
@@ -41,16 +44,19 @@ export default function LoginPage() {
     if (login.fulfilled.match(res)) {
       const meRes = await dispatch(fetchMe());
       if (fetchMe.fulfilled.match(meRes)) {
-        toast.success(`Welcome back, ${meRes.payload.full_name}!`);
+        toast.success(t('welcomeToast', { name: meRes.payload.full_name }));
         navigate('/dashboard');
       }
     } else {
-      toast.error(res.payload as string || 'Login failed');
+      toast.error((res.payload as string) || t('loginFailed'));
     }
   };
 
   return (
     <div className="auth-page">
+      <div className="auth-lang-switcher">
+        <LanguageSwitcher />
+      </div>
       <motion.div
         className="auth-card"
         initial={{ opacity: 0, y: 30 }}
@@ -79,12 +85,12 @@ export default function LoginPage() {
           <span className="auth-logo-text">Inventory</span>
         </div>
 
-        <h1 className="auth-title">Welcome back</h1>
-        <p className="auth-subtitle">Sign in to your account to continue</p>
+        <h1 className="auth-title">{t('title')}</h1>
+        <p className="auth-subtitle">{t('subtitle')}</p>
 
         <form className="auth-form" onSubmit={handleSubmit}>
           <Input
-            label="Email address"
+            label={t('emailLabel')}
             type="email"
             value={form.email}
             onChange={(e) => setForm({ ...form, email: e.target.value })}
@@ -99,7 +105,7 @@ export default function LoginPage() {
             }
           />
           <Input
-            label="Password"
+            label={t('passwordLabel')}
             type="password"
             value={form.password}
             onChange={(e) => setForm({ ...form, password: e.target.value })}
@@ -116,13 +122,13 @@ export default function LoginPage() {
 
           <div style={{ marginTop: '8px' }}>
             <Button type="submit" loading={loading} style={{ width: '100%' }}>
-              Sign in
+              {t('signIn')}
             </Button>
           </div>
         </form>
 
         <div className="auth-footer">
-          <p>Default credentials: <strong>superadmin@example.com</strong> / <strong>password123</strong></p>
+          <p>{t('defaultCredentials')} <strong>superadmin@example.com</strong> / <strong>password123</strong></p>
         </div>
       </motion.div>
     </div>

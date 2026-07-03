@@ -1,0 +1,96 @@
+{
+  "pageTitle": "عناصر الجرد",
+  "pageSubtitle": "سجّل عناصر جرد المنتجات وأدرها أثناء زيارات المتاجر",
+  "bulkAudit": "جرد جماعي",
+  "addAuditItem": "إضافة عنصر جرد",
+  "allVisits": "جميع الزيارات",
+  "table": {
+    "product": "المنتج",
+    "qtyFound": "الكمية الموجودة",
+    "status": "الحالة",
+    "notes": "ملاحظات",
+    "photo": "صورة",
+    "empty": "لم يتم العثور على عناصر جرد"
+  },
+  "modals": {
+    "createTitle": "إنشاء عنصر جرد",
+    "editTitle": "تعديل عنصر الجرد",
+    "bulkTitle": "جرد جماعي"
+  },
+  "deleteConfirm": {
+    "message": "سيؤدي هذا إلى حذف عنصر الجرد نهائيًا."
+  },
+  "toasts": {
+    "createSuccess": "تم إنشاء عنصر الجرد",
+    "createError": "فشل إنشاء عنصر الجرد",
+    "updateSuccess": "تم تحديث عنصر الجرد",
+    "updateError": "فشل تحديث عنصر الجرد",
+    "deleteSuccess": "تم حذف عنصر الجرد",
+    "deleteError": "فشل حذف عنصر الجرد",
+    "bulkSuccess": "تم حفظ الجرد الجماعي — {{count}} عنصر",
+    "bulkError": "فشل الجرد الجماعي"
+  },
+  "form": {
+    "visit": "الزيارة",
+    "selectVisit": "اختر زيارة",
+    "product": "المنتج",
+    "selectProduct": "اختر منتجًا",
+    "qtyFoundLabel": "الكمية الموجودة",
+    "qtyFoundPlaceholder": "مثال: 12",
+    "notesLabel": "ملاحظات (اختياري)",
+    "notesPlaceholder": "أي ملاحظات حول مستويات المخزون، الموقع، إلخ.",
+    "photoLabel": "صورة (اختياري)",
+    "photoUploading": "جارٍ الرفع…",
+    "photoChangeHint": "انقر لتغيير الصورة",
+    "photoUploadHint": "انقر لرفع صورة",
+    "photoFormatsHint": "JPEG وPNG وWebP — بحد أقصى 5 ميجابايت",
+    "cancel": "إلغاء",
+    "create": "إنشاء",
+    "update": "تحديث",
+    "errors": {
+      "visitRequired": "الزيارة مطلوبة",
+      "productRequired": "المنتج مطلوب",
+      "qtyRequired": "الكمية مطلوبة",
+      "qtyInvalid": "كمية غير صالحة"
+    },
+    "toasts": {
+      "fileTooLarge": "يجب أن يكون حجم الملف أقل من 5 ميجابايت",
+      "invalidFileType": "يُسمح فقط بملفات JPEG وPNG وWebP",
+      "photoUploaded": "تم رفع الصورة!",
+      "photoUploadError": "فشل رفع الصورة"
+    }
+  },
+  "bulkForm": {
+    "visit": "الزيارة",
+    "selectVisit": "اختر زيارة…",
+    "visitRequired": "اختر زيارة أولاً",
+    "products": "المنتجات",
+    "productsAdded": "(تمت إضافة {{count}})",
+    "item": "العنصر {{number}}",
+    "product": "المنتج",
+    "selectProduct": "اختر منتجًا…",
+    "qtyFound": "الكمية الموجودة",
+    "notesLabel": "ملاحظات (اختياري)",
+    "notesPlaceholder": "ملاحظات حول المخزون…",
+    "photoLabel": "صورة (اختياري)",
+    "changePhoto": "تغيير الصورة",
+    "uploading": "جارٍ الرفع…",
+    "tapToAddPhoto": "اضغط لإضافة صورة",
+    "addAnotherProduct": "إضافة منتج آخر",
+    "cancel": "إلغاء",
+    "save": "حفظ",
+    "saveItems_zero": "حفظ العناصر",
+    "saveItems_one": "حفظ عنصر واحد",
+    "saveItems_two": "حفظ عنصرين",
+    "saveItems_few": "حفظ {{count}} عناصر",
+    "saveItems_many": "حفظ {{count}} عنصرًا",
+    "saveItems_other": "حفظ {{count}} عنصر",
+    "saveAudit": "حفظ الجرد",
+    "toasts": {
+      "fileTooLarge": "يجب أن يكون حجم الملف أقل من 5 ميجابايت",
+      "photoUploaded": "تم رفع الصورة",
+      "uploadError": "فشل الرفع",
+      "addAtLeastOneProduct": "أضف منتجًا واحدًا على الأقل"
+    }
+  }
+}

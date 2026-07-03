@@ -1,0 +1,64 @@
+{
+  "title": "Users",
+  "subtitle": "Manage user accounts and permissions",
+  "addUser": "Add User",
+  "createUser": "Create User",
+  "editUser": "Edit User",
+  "updateUser": "Update User",
+  "table": {
+    "name": "Name",
+    "role": "Role",
+    "region": "Region",
+    "joined": "Joined",
+    "empty": "No users found"
+  },
+  "actions": {
+    "assignStores": "Assign Stores"
+  },
+  "assignStoresTitle": "Assign Stores — {{name}}",
+  "fields": {
+    "fullName": "Full Name",
+    "fullNamePlaceholder": "John Doe",
+    "email": "Email",
+    "emailPlaceholder": "john@example.com",
+    "role": "Role",
+    "region": "Region (optional)",
+    "regionPlaceholder": "No region",
+    "password": "Password",
+    "newPassword": "New Password (leave blank to keep)"
+  },
+  "roleOptions": {
+    "superAdmin": "Super Admin",
+    "admin": "Admin",
+    "supervisor": "Supervisor",
+    "merchandiser": "Merchandiser"
+  },
+  "errors": {
+    "nameRequired": "Name is required",
+    "emailRequired": "Email is required",
+    "passwordRequired": "Password is required",
+    "passwordMinLength": "Password must be at least 6 characters",
+    "roleRequired": "Role is required"
+  },
+  "toasts": {
+    "createSuccess": "User created successfully",
+    "createError": "Failed to create user",
+    "updateSuccess": "User updated successfully",
+    "updateError": "Failed to update user",
+    "deleteSuccess": "User deleted",
+    "deleteError": "Failed to delete user",
+    "assignSuccess": "Stores assigned successfully",
+    "assignError": "Failed to assign stores"
+  },
+  "deleteConfirm": {
+    "message": "This will permanently delete the user account."
+  },
+  "assignStoresForm": {
+    "description": "Select stores to assign to this user. Previous assignments will be replaced.",
+    "searchPlaceholder": "Search stores…",
+    "empty": "No stores found",
+    "selectedCount_one": "{{count}} store selected",
+    "selectedCount_other": "{{count}} stores selected",
+    "submit": "Assign Stores"
+  }
+}

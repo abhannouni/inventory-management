@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../../hooks/useAppDispatch';
 import { checkin, checkout, fetchVisits } from '../../store/slices/visitsSlice';
 import { fetchStores } from '../../store/slices/storesSlice';
@@ -21,18 +22,23 @@ interface AuditRow extends ProductStore {
 }
 
 /* ─────────── Helpers ─────────── */
-function calcStatus(found: number, expected: number): { label: string; color: string; bg: string } {
-  if (found === 0)                         return { label: 'Out of stock', color: '#dc2626', bg: '#fee2e2' };
-  if (found < Math.ceil(expected * 0.5))   return { label: 'Low stock',    color: '#d97706', bg: '#fef3c7' };
-  return                                          { label: 'In stock',     color: '#16a34a', bg: '#dcfce7' };
+function calcStatus(
+  found: number,
+  expected: number,
+  labels: { outOfStock: string; lowStock: string; inStock: string },
+): { label: string; color: string; bg: string } {
+  if (found === 0)                         return { label: labels.outOfStock, color: '#dc2626', bg: '#fee2e2' };
+  if (found < Math.ceil(expected * 0.5))   return { label: labels.lowStock,   color: '#d97706', bg: '#fef3c7' };
+  return                                          { label: labels.inStock,    color: '#16a34a', bg: '#dcfce7' };
 }
 
 /* ─────────── Sub-components ─────────── */
 function StepIndicator({ current }: { current: Step }) {
+  const { t } = useTranslation('visits');
   const steps: { id: Step; label: string; icon: string }[] = [
-    { id: 'checkin',  label: 'Check In',  icon: '📍' },
-    { id: 'audit',    label: 'Audit',     icon: '📋' },
-    { id: 'checkout', label: 'Check Out', icon: '✅' },
+    { id: 'checkin',  label: t('merchandiserFlow.steps.checkin'),  icon: '📍' },
+    { id: 'audit',    label: t('merchandiserFlow.steps.audit'),     icon: '📋' },
+    { id: 'checkout', label: t('merchandiserFlow.steps.checkout'), icon: '✅' },
   ];
   const idx = ['checkin','audit','checkout','done'].indexOf(current);
   return (
@@ -62,10 +68,17 @@ function StepIndicator({ current }: { current: Step }) {
 
 /* ─────────── Main Page ─────────── */
 export default function MerchandiserFlowPage() {
+  const { t } = useTranslation('visits');
   const dispatch  = useAppDispatch();
   const navigate  = useNavigate();
   const { items: visits } = useAppSelector((s) => s.visits);
   const { items: stores  } = useAppSelector((s) => s.stores);
+
+  const statusLabels = {
+    outOfStock: t('merchandiserFlow.audit.status.outOfStock'),
+    lowStock: t('merchandiserFlow.audit.status.lowStock'),
+    inStock: t('merchandiserFlow.audit.status.inStock'),
+  };
 
   const [step, setStep]           = useState<Step>('checkin');
   const [storeId, setStoreId]     = useState('');
@@ -121,7 +134,7 @@ export default function MerchandiserFlowPage() {
         );
       }
     } catch {
-      toast.error('Could not load products for this store');
+      toast.error(t('merchandiserFlow.audit.loadProductsFailed'));
     } finally {
       setLoadingProducts(false);
     }
@@ -129,9 +142,9 @@ export default function MerchandiserFlowPage() {
 
   /* ── Step 1: Check In ── */
   const handleCheckin = async () => {
-    if (!storeId) { setStoreErr('Please select a store'); return; }
+    if (!storeId) { setStoreErr(t('merchandiserFlow.checkin.errors.storeRequired')); return; }
     if (!selectedStore?.latitude || !selectedStore?.longitude) {
-      setStoreErr('This store has no GPS coordinates configured');
+      setStoreErr(t('merchandiserFlow.checkin.errors.noGpsCoordinates'));
       return;
     }
     setStoreErr('');
@@ -146,11 +159,11 @@ export default function MerchandiserFlowPage() {
     if (checkin.fulfilled.match(res)) {
       const newVisit = res.payload as Visit;
       setVisit(newVisit);
-      toast.success('Checked in!');
+      toast.success(t('merchandiserFlow.checkin.toasts.checkedIn'));
       await loadProductsForStore(storeId, newVisit);
       setStep('audit');
     } else {
-      toast.error((res.payload as string) || 'Check-in failed');
+      toast.error((res.payload as string) || t('merchandiserFlow.checkin.toasts.checkinFailed'));
     }
   };
 
@@ -164,14 +177,14 @@ export default function MerchandiserFlowPage() {
     );
 
   const handleUpload = async (id: string, file: File) => {
-    if (file.size > 5 * 1024 * 1024) { toast.error('File must be under 5 MB'); return; }
+    if (file.size > 5 * 1024 * 1024) { toast.error(t('merchandiserFlow.audit.toasts.fileTooLarge')); return; }
     updateRow(id, { uploading: true });
     try {
       const res = await uploadApi.upload(file);
       updateRow(id, { photo_url: res.url, uploading: false });
     } catch {
       updateRow(id, { uploading: false });
-      toast.error('Upload failed');
+      toast.error(t('merchandiserFlow.audit.toasts.uploadFailed'));
     }
   };
 
@@ -187,10 +200,10 @@ export default function MerchandiserFlowPage() {
       }));
       await auditItemsApi.bulkUpsert({ visit_id: visit.id, items });
       setAuditDone(true);
-      toast.success('Audit saved!');
+      toast.success(t('merchandiserFlow.audit.toasts.auditSaved'));
       setStep('checkout');
     } catch {
-      toast.error('Failed to save audit');
+      toast.error(t('merchandiserFlow.audit.toasts.auditSaveFailed'));
     } finally {
       setBusy(false);
     }
@@ -208,19 +221,19 @@ export default function MerchandiserFlowPage() {
     }));
     setBusy(false);
     if (checkout.fulfilled.match(res)) {
-      toast.success('Visit completed!');
+      toast.success(t('merchandiserFlow.checkout.toasts.visitCompleted'));
       setStep('done');
     } else {
-      toast.error((res.payload as string) || 'Check-out failed');
+      toast.error((res.payload as string) || t('merchandiserFlow.checkout.toasts.checkoutFailed'));
     }
   };
 
   /* ── Summary counts ── */
   const summary = auditRows.reduce(
     (acc, r) => {
-      const s = calcStatus(r.qty_found, Number(r.expected_qty));
-      if (s.label === 'In stock')     acc.inStock++;
-      else if (s.label === 'Low stock') acc.lowStock++;
+      const s = calcStatus(r.qty_found, Number(r.expected_qty), statusLabels);
+      if (s.label === statusLabels.inStock)     acc.inStock++;
+      else if (s.label === statusLabels.lowStock) acc.lowStock++;
       else acc.outStock++;
       return acc;
     },
@@ -236,7 +249,7 @@ export default function MerchandiserFlowPage() {
       {/* Header */}
       <div className="mf-header">
         <div>
-          <h1 className="mf-title">Store Visit</h1>
+          <h1 className="mf-title">{t('merchandiserFlow.title')}</h1>
           {visit && <p className="mf-subtitle">{storeName}</p>}
         </div>
         <StepIndicator current={step} />
@@ -254,19 +267,19 @@ export default function MerchandiserFlowPage() {
                 </svg>
               </div>
               <div>
-                <div className="mf-section-name">Select a Store</div>
-                <div className="mf-section-sub">Choose the store you are visiting today</div>
+                <div className="mf-section-name">{t('merchandiserFlow.checkin.sectionTitle')}</div>
+                <div className="mf-section-sub">{t('merchandiserFlow.checkin.sectionSubtitle')}</div>
               </div>
             </div>
 
             <div className="form-group" style={{ marginTop: 16 }}>
-              <label className="form-label">Store</label>
+              <label className="form-label">{t('merchandiserFlow.checkin.storeLabel')}</label>
               <select
                 className={`form-select ${storeErr ? 'is-error' : ''}`}
                 value={storeId}
                 onChange={(e) => { setStoreId(e.target.value); setStoreErr(''); }}
               >
-                <option value="">Choose a store…</option>
+                <option value="">{t('merchandiserFlow.checkin.chooseStore')}</option>
                 {stores.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
               </select>
               {storeErr && <p className="form-error">{storeErr}</p>}
@@ -293,7 +306,7 @@ export default function MerchandiserFlowPage() {
                       {Number(selectedStore.latitude).toFixed(6)}, {Number(selectedStore.longitude).toFixed(6)}
                     </div>
                   ) : (
-                    <div style={{ fontSize: 11, color: 'var(--gray-400)', marginTop: 1 }}>No coordinates set</div>
+                    <div style={{ fontSize: 11, color: 'var(--gray-400)', marginTop: 1 }}>{t('merchandiserFlow.checkin.noCoordinatesSet')}</div>
                   )}
                 </div>
               </div>
@@ -311,7 +324,7 @@ export default function MerchandiserFlowPage() {
                     <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
                     <line x1="12" y1="5" x2="12" y2="9"/><line x1="10" y1="7" x2="14" y2="7"/>
                   </svg>
-                  Check In Now
+                  {t('merchandiserFlow.checkin.checkInNow')}
                 </>
               )}
             </button>
@@ -331,7 +344,7 @@ export default function MerchandiserFlowPage() {
               </div>
               <div>
                 <div className="mf-store-name">{storeName}</div>
-                <div className="mf-store-sub">{auditRows.length} product{auditRows.length !== 1 ? 's' : ''} to audit</div>
+                <div className="mf-store-sub">{t('merchandiserFlow.audit.productCount', { count: auditRows.length })}</div>
               </div>
               {/* Progress pill */}
               <div className="mf-audit-progress-pill">
@@ -342,19 +355,19 @@ export default function MerchandiserFlowPage() {
             {loadingProducts ? (
               <div className="mf-loading">
                 <div className="mf-spinner" />
-                <p>Loading products…</p>
+                <p>{t('merchandiserFlow.audit.loadingProducts')}</p>
               </div>
             ) : auditRows.length === 0 ? (
               <div className="mf-empty">
                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
                   <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                 </svg>
-                <p>No products assigned to this store yet.</p>
+                <p>{t('merchandiserFlow.audit.noProducts')}</p>
               </div>
             ) : (
               <div className="mf-audit-list">
                 {auditRows.map((row, idx) => {
-                  const status = calcStatus(row.qty_found, Number(row.expected_qty));
+                  const status = calcStatus(row.qty_found, Number(row.expected_qty), statusLabels);
                   return (
                     <motion.div
                       key={row.id}
@@ -368,10 +381,10 @@ export default function MerchandiserFlowPage() {
                         <div className="mf-product-num">#{idx + 1}</div>
                         <div className="mf-product-info">
                           <div className="mf-product-name">{row.product?.name ?? row.product_id}</div>
-                          <div className="mf-product-sku">SKU: {row.product?.sku}</div>
+                          <div className="mf-product-sku">{t('merchandiserFlow.audit.sku', { sku: row.product?.sku })}</div>
                         </div>
                         <div className="mf-expected-chip">
-                          Expected: <strong>{Number(row.expected_qty)}</strong>
+                          {t('merchandiserFlow.audit.expected')} <strong>{Number(row.expected_qty)}</strong>
                         </div>
                       </div>
 
@@ -386,7 +399,7 @@ export default function MerchandiserFlowPage() {
 
                       {/* Qty stepper */}
                       <div className="form-group" style={{ marginBottom: 12 }}>
-                        <label className="form-label" style={{ fontSize: 12 }}>Quantity Found</label>
+                        <label className="form-label" style={{ fontSize: 12 }}>{t('merchandiserFlow.audit.quantityFound')}</label>
                         <div className="qty-stepper">
                           <button type="button" className="qty-stepper-btn" onClick={() => adjustQty(row.id, -1)}>−</button>
                           <input
@@ -402,23 +415,23 @@ export default function MerchandiserFlowPage() {
 
                       {/* Notes */}
                       <div className="form-group" style={{ marginBottom: 12 }}>
-                        <label className="form-label" style={{ fontSize: 12 }}>Notes (optional)</label>
+                        <label className="form-label" style={{ fontSize: 12 }}>{t('merchandiserFlow.audit.notesLabel')}</label>
                         <input
                           type="text"
                           className="form-input"
                           value={row.notes}
                           onChange={(e) => updateRow(row.id, { notes: e.target.value })}
-                          placeholder="Observations, damage, placement…"
+                          placeholder={t('merchandiserFlow.audit.notesPlaceholder')}
                         />
                       </div>
 
                       {/* Photo */}
                       <div className="form-group" style={{ marginBottom: 0 }}>
-                        <label className="form-label" style={{ fontSize: 12 }}>Photo (optional)</label>
+                        <label className="form-label" style={{ fontSize: 12 }}>{t('merchandiserFlow.audit.photoLabel')}</label>
                         {row.photo_url ? (
                           <div className="photo-thumb-wrap" onClick={() => fileRefs.current.get(row.id)?.click()}>
-                            <img src={row.photo_url} alt="shelf" />
-                            <div className="photo-thumb-change">Change photo</div>
+                            <img src={row.photo_url} alt={t('merchandiserFlow.audit.photoAlt')} />
+                            <div className="photo-thumb-change">{t('merchandiserFlow.audit.changePhoto')}</div>
                           </div>
                         ) : (
                           <button
@@ -428,14 +441,14 @@ export default function MerchandiserFlowPage() {
                             disabled={row.uploading}
                           >
                             {row.uploading ? (
-                              <span style={{ fontSize: 13 }}>Uploading…</span>
+                              <span style={{ fontSize: 13 }}>{t('merchandiserFlow.audit.uploading')}</span>
                             ) : (
                               <>
                                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
                                   <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
                                   <circle cx="12" cy="13" r="4"/>
                                 </svg>
-                                Tap to take a shelf photo
+                                {t('merchandiserFlow.audit.takePhoto')}
                               </>
                             )}
                           </button>
@@ -468,7 +481,7 @@ export default function MerchandiserFlowPage() {
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
                         <polyline points="20 6 9 17 4 12"/>
                       </svg>
-                      Save Audit & Continue
+                      {t('merchandiserFlow.audit.saveAndContinue')}
                     </>
                   )}
                 </button>
@@ -488,8 +501,8 @@ export default function MerchandiserFlowPage() {
                 </svg>
               </div>
               <div>
-                <div className="mf-section-name">Audit Complete</div>
-                <div className="mf-section-sub">Review the summary and check out</div>
+                <div className="mf-section-name">{t('merchandiserFlow.checkout.sectionTitle')}</div>
+                <div className="mf-section-sub">{t('merchandiserFlow.checkout.sectionSubtitle')}</div>
               </div>
             </div>
 
@@ -497,27 +510,27 @@ export default function MerchandiserFlowPage() {
             <div className="mf-summary-cards">
               <div className="mf-summary-card" style={{ borderColor: '#bbf7d0' }}>
                 <div className="mf-summary-num" style={{ color: '#16a34a' }}>{summary.inStock}</div>
-                <div className="mf-summary-lbl">In Stock</div>
+                <div className="mf-summary-lbl">{t('merchandiserFlow.checkout.inStock')}</div>
               </div>
               <div className="mf-summary-card" style={{ borderColor: '#fde68a' }}>
                 <div className="mf-summary-num" style={{ color: '#d97706' }}>{summary.lowStock}</div>
-                <div className="mf-summary-lbl">Low Stock</div>
+                <div className="mf-summary-lbl">{t('merchandiserFlow.checkout.lowStock')}</div>
               </div>
               <div className="mf-summary-card" style={{ borderColor: '#fca5a5' }}>
                 <div className="mf-summary-num" style={{ color: '#dc2626' }}>{summary.outStock}</div>
-                <div className="mf-summary-lbl">Out of Stock</div>
+                <div className="mf-summary-lbl">{t('merchandiserFlow.checkout.outOfStock')}</div>
               </div>
             </div>
 
             {/* Product summary rows */}
             <div className="mf-checkout-list">
               {auditRows.map((row) => {
-                const status = calcStatus(row.qty_found, Number(row.expected_qty));
+                const status = calcStatus(row.qty_found, Number(row.expected_qty), statusLabels);
                 return (
                   <div key={row.id} className="mf-checkout-row">
                     <div className="mf-checkout-name">{row.product?.name}</div>
                     <div className="mf-checkout-qty">
-                      <span style={{ color: 'var(--gray-400)', fontSize: 12 }}>Found </span>
+                      <span style={{ color: 'var(--gray-400)', fontSize: 12 }}>{t('merchandiserFlow.checkout.found')} </span>
                       <strong style={{ color: status.color }}>{row.qty_found}</strong>
                       <span style={{ color: 'var(--gray-400)', fontSize: 12 }}> / {Number(row.expected_qty)}</span>
                     </div>
@@ -540,7 +553,7 @@ export default function MerchandiserFlowPage() {
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round">
                     <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/>
                   </svg>
-                  Confirm Check Out
+                  {t('merchandiserFlow.checkout.confirmCheckOut')}
                 </>
               )}
             </button>
@@ -555,26 +568,26 @@ export default function MerchandiserFlowPage() {
                 <polyline points="20 6 9 17 4 12"/>
               </svg>
             </div>
-            <h2 className="mf-done-title">Visit Complete!</h2>
+            <h2 className="mf-done-title">{t('merchandiserFlow.done.title')}</h2>
             <p className="mf-done-sub">
-              You've successfully audited <strong>{auditRows.length} products</strong> at <strong>{storeName}</strong>.
+              {t('merchandiserFlow.done.subtitlePrefix')} <strong>{t('merchandiserFlow.done.productsCount', { count: auditRows.length })}</strong> {t('merchandiserFlow.done.subtitleAt')} <strong>{storeName}</strong>.
             </p>
             <div className="mf-summary-cards" style={{ marginBottom: 24 }}>
               <div className="mf-summary-card" style={{ borderColor: '#bbf7d0' }}>
                 <div className="mf-summary-num" style={{ color: '#16a34a' }}>{summary.inStock}</div>
-                <div className="mf-summary-lbl">In Stock</div>
+                <div className="mf-summary-lbl">{t('merchandiserFlow.checkout.inStock')}</div>
               </div>
               <div className="mf-summary-card" style={{ borderColor: '#fde68a' }}>
                 <div className="mf-summary-num" style={{ color: '#d97706' }}>{summary.lowStock}</div>
-                <div className="mf-summary-lbl">Low Stock</div>
+                <div className="mf-summary-lbl">{t('merchandiserFlow.checkout.lowStock')}</div>
               </div>
               <div className="mf-summary-card" style={{ borderColor: '#fca5a5' }}>
                 <div className="mf-summary-num" style={{ color: '#dc2626' }}>{summary.outStock}</div>
-                <div className="mf-summary-lbl">Out of Stock</div>
+                <div className="mf-summary-lbl">{t('merchandiserFlow.checkout.outOfStock')}</div>
               </div>
             </div>
             <button className="btn btn-primary btn-lg mf-full-btn" onClick={() => navigate('/visits')}>
-              View Visit History
+              {t('merchandiserFlow.done.viewHistory')}
             </button>
           </motion.div>
         )}

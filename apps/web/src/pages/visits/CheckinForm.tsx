@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import Button from '../../components/ui/Button';
 import type { Store } from '../../types';
 
@@ -9,6 +10,7 @@ interface Props {
 }
 
 export default function CheckinForm({ stores, onSubmit, onCancel }: Props) {
+  const { t } = useTranslation('visits');
   const [storeId, setStoreId] = useState('');
   const [loading, setLoading] = useState(false);
   const [storeError, setStoreError] = useState('');
@@ -17,9 +19,9 @@ export default function CheckinForm({ stores, onSubmit, onCancel }: Props) {
   const hasCoords = selectedStore?.latitude != null && selectedStore?.longitude != null;
 
   const handleSubmit = async () => {
-    if (!storeId) { setStoreError('Please select a store'); return; }
+    if (!storeId) { setStoreError(t('checkin.errors.storeRequired')); return; }
     if (!selectedStore || !hasCoords) {
-      setStoreError('This store has no GPS coordinates configured');
+      setStoreError(t('checkin.errors.noGpsCoordinates'));
       return;
     }
     setStoreError('');
@@ -36,14 +38,14 @@ export default function CheckinForm({ stores, onSubmit, onCancel }: Props) {
   return (
     <div>
       <div className="form-group" style={{ marginBottom: 8 }}>
-        <label className="form-label">Select Store</label>
+        <label className="form-label">{t('checkin.selectStore')}</label>
         <select
           className="form-select"
           value={storeId}
           onChange={(e) => { setStoreId(e.target.value); setStoreError(''); }}
           style={{ borderColor: storeError ? 'var(--danger)' : undefined }}
         >
-          <option value="">Choose a store…</option>
+          <option value="">{t('checkin.chooseStore')}</option>
           {stores.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
         </select>
         {storeError && <p className="form-error" style={{ marginTop: 6 }}>{storeError}</p>}
@@ -70,7 +72,7 @@ export default function CheckinForm({ stores, onSubmit, onCancel }: Props) {
                 {Number(selectedStore.latitude).toFixed(6)}, {Number(selectedStore.longitude).toFixed(6)}
               </div>
             ) : (
-              <div style={{ fontSize: 11, color: 'var(--danger)', marginTop: 1 }}>No coordinates — cannot check in</div>
+              <div style={{ fontSize: 11, color: 'var(--danger)', marginTop: 1 }}>{t('checkin.noCoordinates')}</div>
             )}
           </div>
         </div>
@@ -78,10 +80,10 @@ export default function CheckinForm({ stores, onSubmit, onCancel }: Props) {
 
       <div style={{ display: 'flex', gap: 10, flexDirection: 'column', marginTop: 16 }}>
         <Button size="lg" onClick={handleSubmit} loading={loading} disabled={!storeId || !hasCoords} style={{ width: '100%' }}>
-          Check In Now
+          {t('checkin.checkInNow')}
         </Button>
         <Button variant="ghost" onClick={onCancel} disabled={loading} style={{ width: '100%' }}>
-          Cancel
+          {t('checkin.cancel')}
         </Button>
       </div>
     </div>

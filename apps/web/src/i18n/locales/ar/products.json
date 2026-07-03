@@ -1,0 +1,56 @@
+{
+  "title": "المنتجات",
+  "subtitle": "إدارة كتالوج المنتجات",
+  "addProduct": "إضافة منتج",
+  "createProduct": "إنشاء منتج",
+  "editProduct": "تعديل المنتج",
+  "updateProduct": "تحديث المنتج",
+  "searchPlaceholder": "البحث بالاسم أو SKU أو الفئة…",
+  "table": {
+    "product": "المنتج",
+    "sku": "SKU",
+    "category": "الفئة",
+    "distributeur": "Distributeur",
+    "famille": "Famille",
+    "sousFamille": "Sous famille",
+    "format": "Format",
+    "created": "تاريخ الإنشاء",
+    "empty": "لم يتم العثور على منتجات"
+  },
+  "fields": {
+    "name": "اسم المنتج",
+    "namePlaceholder": "مثال: Coca-Cola 330ml",
+    "sku": "SKU",
+    "skuPlaceholder": "مثال: CC330",
+    "category": "الفئة",
+    "categoryPlaceholder": "مثال: مشروبات",
+    "distributeur": "Distributeur",
+    "distributeurPlaceholder": "مثال: Coca-Cola Company",
+    "famille": "Famille",
+    "famillePlaceholder": "مثال: Boissons",
+    "sousFamille": "Sous famille",
+    "sousFamillePlaceholder": "مثال: Sodas",
+    "format": "Format",
+    "formatPlaceholder": "مثال: 500ml"
+  },
+  "errors": {
+    "nameRequired": "اسم المنتج مطلوب",
+    "skuRequired": "حقل SKU مطلوب",
+    "categoryRequired": "الفئة مطلوبة",
+    "distributeurRequired": "حقل Distributeur مطلوب",
+    "familleRequired": "حقل Famille مطلوب",
+    "sousFamilleRequired": "حقل Sous famille مطلوب",
+    "formatRequired": "حقل Format مطلوب"
+  },
+  "toasts": {
+    "createSuccess": "تم إنشاء المنتج",
+    "createError": "فشل إنشاء المنتج",
+    "updateSuccess": "تم تحديث المنتج",
+    "updateError": "فشل تحديث المنتج",
+    "deleteSuccess": "تم حذف المنتج",
+    "deleteError": "فشل حذف المنتج"
+  },
+  "deleteConfirm": {
+    "message": "سيؤدي هذا إلى حذف المنتج نهائيًا."
+  }
+}

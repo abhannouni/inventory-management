@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import type { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface ModalProps {
   open: boolean;
@@ -12,6 +13,7 @@ interface ModalProps {
 const sizeClass = { sm: 'modal-sm', md: 'modal-md', lg: 'modal-lg', xl: 'modal-xl' };
 
 export default function Modal({ open, onClose, title, children, size = 'md' }: ModalProps) {
+  const { t } = useTranslation('common');
   return (
     <AnimatePresence>
       {open && (
@@ -26,7 +28,7 @@ export default function Modal({ open, onClose, title, children, size = 'md' }: M
           >
             <div className="modal-header">
               <h3 className="modal-title">{title}</h3>
-              <button className="modal-close" onClick={onClose} aria-label="Close">
+              <button className="modal-close" onClick={onClose} aria-label={t('modal.close')}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M18 6L6 18M6 6l12 12" />
                 </svg>

@@ -1,0 +1,168 @@
+{
+  "list": {
+    "title": "الزيارات",
+    "subtitle": "تتبّع زيارات المتاجر عبر تسجيل الدخول بواسطة GPS",
+    "tabs": {
+      "myVisit": "زيارتي",
+      "history": "السجل"
+    },
+    "checkIn": "تسجيل الدخول",
+    "checkOut": "تسجيل الخروج",
+    "checkInToStore": "تسجيل الدخول إلى المتجر",
+    "activeVisit": "زيارة جارية",
+    "filters": {
+      "allStatuses": "جميع الحالات"
+    },
+    "columns": {
+      "store": "المتجر",
+      "status": "الحالة",
+      "checkin": "الدخول",
+      "checkout": "الخروج",
+      "gpsIn": "GPS (دخول)",
+      "actions": "الإجراءات"
+    },
+    "view": "عرض",
+    "loading": "جارٍ التحميل…",
+    "empty": "لا توجد زيارات",
+    "toasts": {
+      "checkinSuccess": "تم تسجيل الدخول بنجاح!",
+      "checkinFailed": "فشل تسجيل الدخول",
+      "checkoutSuccess": "تم تسجيل الخروج بنجاح!",
+      "checkoutFailed": "فشل تسجيل الخروج"
+    }
+  },
+  "detail": {
+    "title": "تفاصيل الزيارة",
+    "subtitleFallbackStore": "المتجر",
+    "back": "رجوع",
+    "notFound": "الزيارة غير موجودة",
+    "visitInfo": {
+      "title": "معلومات الزيارة",
+      "store": "المتجر",
+      "status": "الحالة",
+      "checkin": "الدخول",
+      "checkout": "الخروج",
+      "gpsIn": "GPS الدخول",
+      "gpsOut": "GPS الخروج"
+    },
+    "auditSummary": {
+      "title": "ملخص الجرد",
+      "total": "الإجمالي",
+      "inStock": "متوفر",
+      "lowStock": "مخزون منخفض",
+      "outOfStock": "نفد المخزون",
+      "completion": "نسبة الإنجاز"
+    },
+    "auditItems": {
+      "title": "عناصر الجرد ({{count}})",
+      "emptyTitle": "لا توجد عناصر جرد حتى الآن",
+      "emptySubtitle": "ستظهر عناصر الجرد هنا بمجرد تسجيلها من قبل المندوب الميداني.",
+      "columns": {
+        "product": "المنتج",
+        "sku": "SKU",
+        "qtyFound": "الكمية الموجودة",
+        "status": "الحالة",
+        "notes": "ملاحظات",
+        "photo": "صورة"
+      },
+      "photoAlt": "صورة"
+    }
+  },
+  "checkin": {
+    "selectStore": "اختر المتجر",
+    "chooseStore": "اختر متجرًا…",
+    "noCoordinates": "لا توجد إحداثيات — تعذّر تسجيل الدخول",
+    "checkInNow": "تسجيل الدخول الآن",
+    "cancel": "إلغاء",
+    "errors": {
+      "storeRequired": "يرجى اختيار متجر",
+      "noGpsCoordinates": "لا توجد إحداثيات GPS مضبوطة لهذا المتجر"
+    }
+  },
+  "checkout": {
+    "activeVisit": "زيارة جارية",
+    "checkedInAt": "تم تسجيل الدخول في {{date}}",
+    "confirmCheckOut": "تأكيد تسجيل الخروج",
+    "cancel": "إلغاء"
+  },
+  "merchandiserFlow": {
+    "steps": {
+      "checkin": "الدخول",
+      "audit": "الجرد",
+      "checkout": "الخروج"
+    },
+    "title": "زيارة المتجر",
+    "checkin": {
+      "sectionTitle": "اختر متجرًا",
+      "sectionSubtitle": "اختر المتجر الذي تزوره اليوم",
+      "storeLabel": "المتجر",
+      "chooseStore": "اختر متجرًا…",
+      "noCoordinatesSet": "لا توجد إحداثيات مضبوطة",
+      "checkInNow": "تسجيل الدخول الآن",
+      "errors": {
+        "storeRequired": "يرجى اختيار متجر",
+        "noGpsCoordinates": "لا توجد إحداثيات GPS مضبوطة لهذا المتجر"
+      },
+      "toasts": {
+        "checkedIn": "تم تسجيل الدخول!",
+        "checkinFailed": "فشل تسجيل الدخول"
+      }
+    },
+    "audit": {
+      "productCount_one": "منتج واحد للجرد",
+      "productCount_two": "منتجان للجرد",
+      "productCount_few": "{{count}} منتجات للجرد",
+      "productCount_many": "{{count}} منتجًا للجرد",
+      "productCount_other": "{{count}} منتج للجرد",
+      "loadingProducts": "جارٍ تحميل المنتجات…",
+      "noProducts": "لا توجد منتجات معيّنة لهذا المتجر حتى الآن.",
+      "loadProductsFailed": "تعذّر تحميل منتجات هذا المتجر",
+      "sku": "SKU: {{sku}}",
+      "expected": "الكمية المتوقعة:",
+      "quantityFound": "الكمية الموجودة",
+      "notesLabel": "ملاحظات (اختياري)",
+      "notesPlaceholder": "ملاحظات، أضرار، طريقة العرض…",
+      "photoLabel": "صورة (اختياري)",
+      "changePhoto": "تغيير الصورة",
+      "uploading": "جارٍ الرفع…",
+      "takePhoto": "اضغط لالتقاط صورة للرف",
+      "photoAlt": "صورة الرف",
+      "saveAndContinue": "حفظ الجرد والمتابعة",
+      "status": {
+        "outOfStock": "نفد المخزون",
+        "lowStock": "مخزون منخفض",
+        "inStock": "متوفر"
+      },
+      "toasts": {
+        "fileTooLarge": "يجب ألا يتجاوز حجم الملف 5 ميغابايت",
+        "uploadFailed": "فشل الرفع",
+        "auditSaved": "تم حفظ الجرد!",
+        "auditSaveFailed": "فشل حفظ الجرد"
+      }
+    },
+    "checkout": {
+      "sectionTitle": "اكتمل الجرد",
+      "sectionSubtitle": "راجع الملخص ثم سجّل الخروج",
+      "inStock": "متوفر",
+      "lowStock": "مخزون منخفض",
+      "outOfStock": "نفد المخزون",
+      "found": "موجود",
+      "confirmCheckOut": "تأكيد تسجيل الخروج",
+      "toasts": {
+        "visitCompleted": "اكتملت الزيارة!",
+        "checkoutFailed": "فشل تسجيل الخروج"
+      }
+    },
+    "done": {
+      "title": "اكتملت الزيارة!",
+      "subtitlePrefix": "لقد أتممت بنجاح جرد",
+      "subtitleAt": "في",
+      "productsCount_one": "منتج واحد",
+      "productsCount_two": "منتجين",
+      "productsCount_few": "{{count}} منتجات",
+      "productsCount_many": "{{count}} منتجًا",
+      "productsCount_other": "{{count}} منتج",
+      "viewHistory": "عرض سجل الزيارات"
+    }
+  }
+}

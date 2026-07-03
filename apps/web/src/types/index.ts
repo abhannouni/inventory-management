@@ -39,6 +39,10 @@ export interface Product {
   name: string;
   sku: string;
   category: string;
+  distributeur: string;
+  famille: string;
+  sous_famille: string;
+  format: string;
   created_at: string;
   updated_at: string;
 }

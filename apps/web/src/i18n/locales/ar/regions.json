@@ -1,0 +1,31 @@
+{
+  "title": "المناطق",
+  "subtitle": "إدارة المناطق الجغرافية",
+  "addRegion": "إضافة منطقة",
+  "createRegion": "إنشاء منطقة",
+  "editRegion": "تعديل المنطقة",
+  "columns": {
+    "name": "الاسم",
+    "id": "المعرّف",
+    "created": "تاريخ الإنشاء"
+  },
+  "form": {
+    "nameLabel": "اسم المنطقة",
+    "namePlaceholder": "مثال: المنطقة الشمالية"
+  },
+  "errors": {
+    "nameRequired": "الاسم مطلوب"
+  },
+  "toasts": {
+    "createSuccess": "تم إنشاء المنطقة",
+    "createError": "فشل إنشاء المنطقة",
+    "updateSuccess": "تم تحديث المنطقة",
+    "updateError": "فشل تحديث المنطقة",
+    "deleteSuccess": "تم حذف المنطقة",
+    "deleteError": "فشل حذف المنطقة"
+  },
+  "deleteConfirm": {
+    "message": "سيؤثر حذف هذه المنطقة على جميع المستخدمين والمتاجر المرتبطة بها."
+  },
+  "emptyTable": "لم يتم العثور على مناطق"
+}

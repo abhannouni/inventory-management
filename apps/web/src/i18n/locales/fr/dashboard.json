@@ -1,0 +1,56 @@
+{
+  "weekDaysShort": ["D", "L", "M", "M", "J", "V", "S"],
+  "greeting": "Bonjour, {{name}} 👋",
+  "stats": {
+    "totalStores": "Total magasins",
+    "totalProducts": "Total produits",
+    "totalVisits": "Total visites",
+    "openVisits": "Visites en cours"
+  },
+  "changes": {
+    "retailNetwork": "↑ Réseau de vente",
+    "skusTracked": "↑ Références suivies",
+    "completed": "{{count}} terminées",
+    "inProgress": "En cours",
+    "allClosed": "Toutes clôturées"
+  },
+  "visitActivity": {
+    "title": "Activité des visites",
+    "thisWeek": "Cette semaine",
+    "subtitle": "Fréquence quotidienne des passages en magasin"
+  },
+  "auditProgress": {
+    "title": "Progression de l'audit",
+    "subtitle": "Taux global de complétion des visites",
+    "completion": "complétion"
+  },
+  "legend": {
+    "inStock": "En stock",
+    "lowStock": "Stock faible",
+    "outOfStock": "Rupture de stock"
+  },
+  "timeTracker": {
+    "title": "Chronomètre",
+    "activeVisit": "Visite en cours",
+    "noActiveVisit": "Aucune visite en cours",
+    "pause": "Pause",
+    "resume": "Reprendre",
+    "stop": "Arrêter"
+  },
+  "stores": {
+    "title": "Magasins",
+    "viewAll": "Voir tout",
+    "empty": "Aucun magasin pour le moment"
+  },
+  "team": {
+    "titleMembers": "Membres de l'équipe",
+    "titleVisits": "Visites récentes",
+    "viewAll": "Voir tout",
+    "empty": "Aucune donnée pour le moment"
+  },
+  "recentVisits": {
+    "title": "Visites récentes",
+    "seeAll": "Tout voir",
+    "empty": "Aucune visite enregistrée pour le moment"
+  }
+}
