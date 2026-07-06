@@ -4,7 +4,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { AuditItemStatus, User, UserRole, Visit, VisitStatus } from '@prisma/client';
+import { AuditItemStatus, User, UserRole } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { BulkAuditDto, BulkAuditItemDto } from './dto/bulk-audit.dto';
 import { CreateAuditItemDto } from './dto/create-audit-item.dto';
@@ -21,7 +21,7 @@ export class AuditItemsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(dto: CreateAuditItemDto, user: User) {
-    const visit = await this.getOpenVisit(dto.visit_id, user);
+    const visit = await this.getVisit(dto.visit_id, user);
     const { expected_qty, productStoreId } = await this.resolveProductStore(
       dto.product_id,
       visit.store_id,
@@ -43,7 +43,7 @@ export class AuditItemsService {
   }
 
   async bulk(dto: BulkAuditDto, user: User) {
-    const visit = await this.getOpenVisit(dto.visit_id, user);
+    const visit = await this.getVisit(dto.visit_id, user);
 
     // Resolve expected_qty for all products in one query
     const productIds = dto.items.map((i) => i.product_id);
@@ -101,7 +101,6 @@ export class AuditItemsService {
     });
     if (!item) throw new NotFoundException('Audit item not found');
     this.assertOwnsVisit(item.visit, user);
-    this.assertVisitOpen(item.visit);
 
     const qty_found = dto.qty_found ?? item.qty_found;
     const variance = qty_found - item.expected_qty;
@@ -126,20 +125,18 @@ export class AuditItemsService {
     });
     if (!item) throw new NotFoundException('Audit item not found');
     this.assertOwnsVisit(item.visit, user);
-    this.assertVisitOpen(item.visit);
     await this.prisma.auditItem.delete({ where: { id } });
   }
 
   // ─── Helpers ───────────────────────────────────────────────────────────────
 
-  private async getOpenVisit(visitId: string, user: User) {
+  private async getVisit(visitId: string, user: User) {
     const visit = await this.prisma.visit.findUnique({
       where: { id: visitId },
       include: { store: true },
     });
     if (!visit) throw new NotFoundException('Visit not found');
     this.assertOwnsVisit(visit, user);
-    this.assertVisitOpen(visit);
     return visit;
   }
 
@@ -184,12 +181,6 @@ export class AuditItemsService {
   private assertOwnsVisit(visit: { user_id: string }, user: User) {
     if (user.role !== UserRole.super_admin && visit.user_id !== user.id) {
       throw new ForbiddenException('This visit does not belong to you');
-    }
-  }
-
-  private assertVisitOpen(visit: { status: VisitStatus }) {
-    if (visit.status !== VisitStatus.open) {
-      throw new BadRequestException('Audit items can only be modified on an open visit');
     }
   }
 
