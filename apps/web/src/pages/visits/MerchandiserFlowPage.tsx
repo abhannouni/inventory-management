@@ -6,9 +6,11 @@ import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../../hooks/useAppDispatch';
 import { checkin, checkout, fetchVisits } from '../../store/slices/visitsSlice';
 import { fetchStores } from '../../store/slices/storesSlice';
+import { fetchSchedules } from '../../store/slices/schedulesSlice';
 import { auditItemsApi } from '../../api/audit-items.api';
 import { productStoresApi } from '../../api/product-stores.api';
 import { uploadApi } from '../../api/upload.api';
+import { formatDate } from '../../utils/format';
 import type { Visit, ProductStore } from '../../types';
 
 /* ─────────── Types ─────────── */
@@ -68,11 +70,13 @@ function StepIndicator({ current }: { current: Step }) {
 
 /* ─────────── Main Page ─────────── */
 export default function MerchandiserFlowPage() {
-  const { t } = useTranslation('visits');
+  const { t, i18n } = useTranslation('visits');
   const dispatch  = useAppDispatch();
   const navigate  = useNavigate();
   const { items: visits } = useAppSelector((s) => s.visits);
   const { items: stores  } = useAppSelector((s) => s.stores);
+  const { items: schedules } = useAppSelector((s) => s.schedules);
+  const currentUserId = useAppSelector((s) => s.auth.user?.id);
 
   const statusLabels = {
     outOfStock: t('merchandiserFlow.audit.status.outOfStock'),
@@ -82,6 +86,7 @@ export default function MerchandiserFlowPage() {
 
   const [step, setStep]           = useState<Step>('checkin');
   const [storeId, setStoreId]     = useState('');
+  const [scheduleId, setScheduleId] = useState<string | null>(null);
   const [storeErr, setStoreErr]   = useState('');
   const [busy, setBusy]           = useState(false);
 
@@ -96,7 +101,12 @@ export default function MerchandiserFlowPage() {
   useEffect(() => {
     dispatch(fetchStores());
     dispatch(fetchVisits());
-  }, [dispatch]);
+    if (currentUserId) dispatch(fetchSchedules({ status: 'pending', user_id: currentUserId }));
+  }, [dispatch, currentUserId]);
+
+  const upcomingSchedules = [...schedules].sort(
+    (a, b) => new Date(a.scheduled_at).getTime() - new Date(b.scheduled_at).getTime(),
+  );
 
   useEffect(() => {
     const open = visits.find((v) => v.status === 'open');
@@ -151,6 +161,7 @@ export default function MerchandiserFlowPage() {
     setBusy(true);
     const res = await dispatch(checkin({
       store_id: storeId,
+      schedule_id: scheduleId ?? undefined,
       lat: Number(selectedStore.latitude),
       lng: Number(selectedStore.longitude),
       checkin_at: new Date().toISOString(),
@@ -272,12 +283,30 @@ export default function MerchandiserFlowPage() {
               </div>
             </div>
 
+            {upcomingSchedules.length > 0 && (
+              <div className="mf-scheduled-list" style={{ marginTop: 16 }}>
+                <label className="form-label">{t('merchandiserFlow.checkin.scheduledLabel')}</label>
+                {upcomingSchedules.map((sch) => (
+                  <button
+                    type="button"
+                    key={sch.id}
+                    className={`mf-scheduled-card${scheduleId === sch.id ? ' selected' : ''}`}
+                    onClick={() => { setStoreId(sch.store_id); setScheduleId(sch.id); setStoreErr(''); }}
+                  >
+                    <div className="mf-scheduled-store">{sch.store?.name ?? sch.store_id}</div>
+                    <div className="mf-scheduled-date">{formatDate(sch.scheduled_at, i18n.language)}</div>
+                    {sch.notes && <div className="mf-scheduled-notes">{sch.notes}</div>}
+                  </button>
+                ))}
+              </div>
+            )}
+
             <div className="form-group" style={{ marginTop: 16 }}>
               <label className="form-label">{t('merchandiserFlow.checkin.storeLabel')}</label>
               <select
                 className={`form-select ${storeErr ? 'is-error' : ''}`}
                 value={storeId}
-                onChange={(e) => { setStoreId(e.target.value); setStoreErr(''); }}
+                onChange={(e) => { setStoreId(e.target.value); setScheduleId(null); setStoreErr(''); }}
               >
                 <option value="">{t('merchandiserFlow.checkin.chooseStore')}</option>
                 {stores.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}

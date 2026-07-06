@@ -95,6 +95,7 @@
     "checkin": {
       "sectionTitle": "اختر متجرًا",
       "sectionSubtitle": "اختر المتجر الذي تزوره اليوم",
+      "scheduledLabel": "زياراتك المقررة",
       "storeLabel": "المتجر",
       "chooseStore": "اختر متجرًا…",
       "noCoordinatesSet": "لا توجد إحداثيات مضبوطة",

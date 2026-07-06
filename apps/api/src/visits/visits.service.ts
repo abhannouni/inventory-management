@@ -4,7 +4,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { User, UserRole, VisitStatus } from '@prisma/client';
+import { ScheduleStatus, User, UserRole, VisitStatus } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CheckinDto } from './dto/checkin.dto';
 import { CheckoutDto } from './dto/checkout.dto';
@@ -23,13 +23,25 @@ export class VisitsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async checkin(dto: CheckinDto, user: User) {
-    const store = await this.prisma.store.findUnique({ where: { id: dto.store_id } });
+    let store_id = dto.store_id;
+    let scheduleId: string | undefined;
+
+    if (dto.schedule_id) {
+      const schedule = await this.prisma.schedule.findUnique({ where: { id: dto.schedule_id } });
+      if (!schedule) throw new NotFoundException('Schedule not found');
+      if (schedule.user_id !== user.id) throw new ForbiddenException('This schedule is not assigned to you');
+      if (schedule.status !== ScheduleStatus.pending) throw new ConflictException('This schedule is not pending');
+      store_id = schedule.store_id; // trust the schedule's store, not the client-supplied one
+      scheduleId = schedule.id;
+    }
+
+    const store = await this.prisma.store.findUnique({ where: { id: store_id } });
     if (!store) throw new NotFoundException('Store not found');
 
     // Verify the user is assigned to this store (supervisor/merchandiser)
     if (user.role === UserRole.supervisor || user.role === UserRole.merchandiser) {
       const assignment = await this.prisma.userStore.findFirst({
-        where: { user_id: user.id, store_id: dto.store_id },
+        where: { user_id: user.id, store_id },
       });
       if (!assignment) throw new ForbiddenException('You are not assigned to this store');
     }
@@ -43,7 +55,8 @@ export class VisitsService {
     const visit = await this.prisma.visit.create({
       data: {
         user_id: user.id,
-        store_id: dto.store_id,
+        store_id,
+        schedule_id: scheduleId,
         checkin_time: dto.checkin_at ? new Date(dto.checkin_at) : new Date(),
         checkin_lat: dto.lat,
         checkin_lng: dto.lng,
@@ -65,15 +78,26 @@ export class VisitsService {
       throw new ConflictException('Visit is already completed');
     }
 
-    const updated = await this.prisma.visit.update({
-      where: { id: dto.visit_id },
-      data: {
-        status: VisitStatus.completed,
-        checkout_time: dto.checkout_at ? new Date(dto.checkout_at) : new Date(),
-        checkout_lat: dto.lat,
-        checkout_lng: dto.lng,
-      },
-      include: VISIT_INCLUDE,
+    const updated = await this.prisma.$transaction(async (tx) => {
+      const result = await tx.visit.update({
+        where: { id: dto.visit_id },
+        data: {
+          status: VisitStatus.completed,
+          checkout_time: dto.checkout_at ? new Date(dto.checkout_at) : new Date(),
+          checkout_lat: dto.lat,
+          checkout_lng: dto.lng,
+        },
+        include: VISIT_INCLUDE,
+      });
+
+      if (visit.schedule_id) {
+        await tx.schedule.update({
+          where: { id: visit.schedule_id },
+          data: { status: ScheduleStatus.completed },
+        });
+      }
+
+      return result;
     });
     return this.serializeVisit(updated);
   }

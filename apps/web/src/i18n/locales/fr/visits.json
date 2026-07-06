@@ -95,6 +95,7 @@
     "checkin": {
       "sectionTitle": "Sélectionner un magasin",
       "sectionSubtitle": "Choisissez le magasin que vous visitez aujourd'hui",
+      "scheduledLabel": "Vos visites prévues",
       "storeLabel": "Magasin",
       "chooseStore": "Choisir un magasin…",
       "noCoordinatesSet": "Aucune coordonnée définie",

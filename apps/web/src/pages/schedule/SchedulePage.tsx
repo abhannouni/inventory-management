@@ -209,7 +209,7 @@ function DayDetail({ day, schedules, canManage, currentUserId, onAdd, onEdit, on
               </div>
               <div className="sli-right">
                 <Badge variant={STATUS_VARIANT[s.status]}>{STATUS_LABEL[s.status]}</Badge>
-                {s.status === 'pending' && s.user_id === currentUserId && (
+                {s.status === 'pending' && (s.user_id === currentUserId || canManage) && (
                   <button className="sli-btn complete" onClick={() => onComplete(s.id)} title={t('dayDetail.markComplete')}>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="20 6 9 17 4 12" />

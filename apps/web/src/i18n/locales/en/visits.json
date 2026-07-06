@@ -95,6 +95,7 @@
     "checkin": {
       "sectionTitle": "Select a Store",
       "sectionSubtitle": "Choose the store you are visiting today",
+      "scheduledLabel": "Your planned visits",
       "storeLabel": "Store",
       "chooseStore": "Choose a store…",
       "noCoordinatesSet": "No coordinates set",

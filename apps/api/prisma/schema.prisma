@@ -127,6 +127,8 @@ model Visit {
   user_id       String
   store         Store       @relation(fields: [store_id], references: [id], onDelete: Cascade)
   store_id      String
+  schedule      Schedule?   @relation(fields: [schedule_id], references: [id], onDelete: SetNull)
+  schedule_id   String?     @unique
   checkin_time  DateTime
   checkin_lat   Decimal?    @db.Decimal(10, 7)
   checkin_lng   Decimal?    @db.Decimal(10, 7)
@@ -170,6 +172,8 @@ model Schedule {
   status        ScheduleStatus @default(pending)
   created_at    DateTime       @default(now())
   updated_at    DateTime       @updatedAt
+
+  visit Visit?
 
   @@map("schedules")
 }

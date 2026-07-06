@@ -2796,6 +2796,51 @@ button.mobile-nav-item {
   font-size: 15px;
 }
 
+/* ── Scheduled visits list (check-in step) ── */
+.mf-scheduled-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mf-scheduled-card {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: var(--gray-50);
+  border: 1.5px solid var(--gray-200);
+  border-radius: 10px;
+  padding: 10px 14px;
+  cursor: pointer;
+  transition: all 0.12s;
+}
+
+.mf-scheduled-card:hover { border-color: var(--accent-light); background: var(--primary-light); }
+
+.mf-scheduled-card.selected {
+  border-color: var(--primary);
+  background: var(--primary-light);
+}
+
+.mf-scheduled-store {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gray-900);
+}
+
+.mf-scheduled-date {
+  font-size: 12px;
+  color: var(--gray-500);
+  margin-top: 2px;
+}
+
+.mf-scheduled-notes {
+  font-size: 12px;
+  color: var(--gray-500);
+  font-style: italic;
+  margin-top: 4px;
+}
+
 /* ── Store banner ── */
 .mf-store-banner {
   display: flex;

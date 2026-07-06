@@ -6,6 +6,11 @@ export class CheckinDto {
   @IsUUID()
   store_id: string;
 
+  @ApiPropertyOptional({ example: 'uuid-of-schedule', description: 'Link this visit to a planned schedule entry' })
+  @IsOptional()
+  @IsUUID()
+  schedule_id?: string;
+
   @ApiProperty({ example: 34.052200 })
   @IsNumber()
   @Min(-90)

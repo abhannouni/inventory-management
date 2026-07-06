@@ -3,6 +3,7 @@ import type { Visit } from '../types';
 
 export interface CheckinPayload {
   store_id: string;
+  schedule_id?: string;
   lat: number;
   lng: number;
   checkin_at?: string;

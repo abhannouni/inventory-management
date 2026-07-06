@@ -75,6 +75,7 @@ export interface Visit {
   id: string;
   user_id: string;
   store_id: string;
+  schedule_id: string | null;
   status: VisitStatus;
   checkin_lat: number;
   checkin_lng: number;
