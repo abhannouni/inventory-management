@@ -40,6 +40,15 @@ export default function LoginPage() {
   const [form, setForm] = useState({ email: '', password: '' });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+
+  useEffect(() => {
+    const rememberedEmail = localStorage.getItem('rememberedEmail');
+    if (rememberedEmail) {
+      setForm((f) => ({ ...f, email: rememberedEmail }));
+      setRememberMe(true);
+    }
+  }, []);
 
   useEffect(() => {
     if (token) {
@@ -65,6 +74,8 @@ export default function LoginPage() {
 
     const res = await dispatch(login(form));
     if (login.fulfilled.match(res)) {
+      if (rememberMe) localStorage.setItem('rememberedEmail', form.email);
+      else localStorage.removeItem('rememberedEmail');
       const meRes = await dispatch(fetchMe());
       if (fetchMe.fulfilled.match(meRes)) {
         toast.success(t('welcomeToast', { name: meRes.payload.full_name }));
@@ -201,6 +212,15 @@ export default function LoginPage() {
               </div>
               {errors.password && <p className="form-error">{errors.password}</p>}
             </div>
+
+            <label className="auth-remember">
+              <input
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+              />
+              {t('rememberMe')}
+            </label>
 
             <div style={{ marginTop: '8px' }}>
               <Button type="submit" loading={loading} style={{ width: '100%' }}>

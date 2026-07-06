@@ -1,8 +1,10 @@
 import type { ReactElement } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { usePermissions } from '../../hooks/usePermissions';
+import { useAppDispatch } from '../../hooks/useAppDispatch';
+import { logout } from '../../store/slices/authSlice';
 import Logo from '../ui/Logo';
 
 interface NavItem {
@@ -32,6 +34,13 @@ const Icon = ({ d, d2 }: { d: string; d2?: string }) => (
 export default function Sidebar() {
   const p = usePermissions();
   const { t } = useTranslation('sidebar');
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate('/login');
+  };
 
   const menuItems: NavItem[] = [
     {
@@ -151,7 +160,7 @@ export default function Sidebar() {
       {/* Bottom: logout-style item */}
       <div className="sidebar-footer">
         <div className="sidebar-divider" />
-        <NavLink to="/login" className="nav-item nav-item-logout">
+        <button type="button" className="nav-item nav-item-logout" onClick={handleLogout}>
           <NavIcon>
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
@@ -160,7 +169,7 @@ export default function Sidebar() {
             </svg>
           </NavIcon>
           <span className="nav-label">{t('logout')}</span>
-        </NavLink>
+        </button>
       </div>
     </motion.aside>
   );

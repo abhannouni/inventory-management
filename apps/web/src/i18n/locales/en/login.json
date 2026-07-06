@@ -4,6 +4,7 @@
   "emailLabel": "Email address",
   "passwordLabel": "Password",
   "signIn": "Sign in",
+  "rememberMe": "Remember me",
   "defaultCredentials": "Default credentials:",
   "welcomeToast": "Welcome back, {{name}}!",
   "loginFailed": "Login failed",
