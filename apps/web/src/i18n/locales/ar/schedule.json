@@ -29,7 +29,8 @@
     "deleteConfirm": "هل تريد الحذف؟",
     "yes": "نعم",
     "no": "لا",
-    "addVisit": "إضافة زيارة"
+    "addVisit": "إضافة زيارة",
+    "markComplete": "وضع علامة كمكتملة"
   },
   "form": {
     "editTitle": "تعديل الجدول",

@@ -51,9 +51,6 @@ export class SchedulesService {
   }
 
   async update(id: string, dto: UpdateScheduleDto, actor: User) {
-    if (actor.role === UserRole.merchandiser)
-      throw new ForbiddenException('Merchandisers cannot modify schedules');
-
     const record = await this.prisma.schedule.findUnique({
       where: { id },
       include: {
@@ -62,6 +59,22 @@ export class SchedulesService {
       },
     });
     if (!record) throw new NotFoundException('Schedule not found');
+
+    if (actor.role === UserRole.merchandiser) {
+      if (record.user_id !== actor.id)
+        throw new ForbiddenException('You can only update your own schedule');
+
+      const { status, ...rest } = dto;
+      const hasOtherFields = Object.values(rest).some((v) => v !== undefined);
+      if (hasOtherFields || status !== ScheduleStatus.completed)
+        throw new ForbiddenException('Merchandisers can only mark their own visit as completed');
+
+      return this.prisma.schedule.update({
+        where: { id },
+        data: { status: ScheduleStatus.completed },
+        include: SCHEDULE_INCLUDE,
+      });
+    }
 
     if (actor.role === UserRole.supervisor && record.user.region_id !== actor.region_id)
       throw new ForbiddenException('Access denied: schedule belongs to a different region');

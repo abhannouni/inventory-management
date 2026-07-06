@@ -29,7 +29,8 @@
     "deleteConfirm": "Supprimer ?",
     "yes": "Oui",
     "no": "Non",
-    "addVisit": "Ajouter une visite"
+    "addVisit": "Ajouter une visite",
+    "markComplete": "Marquer comme terminée"
   },
   "form": {
     "editTitle": "Modifier le planning",

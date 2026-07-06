@@ -169,12 +169,14 @@ interface DayDetailProps {
   day: Date;
   schedules: Schedule[];
   canManage: boolean;
+  currentUserId?: string;
   onAdd: () => void;
   onEdit: (s: Schedule) => void;
   onDelete: (id: string) => void;
+  onComplete: (id: string) => void;
 }
 
-function DayDetail({ day, schedules, canManage, onAdd, onEdit, onDelete }: DayDetailProps) {
+function DayDetail({ day, schedules, canManage, currentUserId, onAdd, onEdit, onDelete, onComplete }: DayDetailProps) {
   const { t, i18n } = useTranslation('schedule');
   const [confirmId, setConfirmId] = useState<string | null>(null);
 
@@ -207,6 +209,14 @@ function DayDetail({ day, schedules, canManage, onAdd, onEdit, onDelete }: DayDe
               </div>
               <div className="sli-right">
                 <Badge variant={STATUS_VARIANT[s.status]}>{STATUS_LABEL[s.status]}</Badge>
+                {s.status === 'pending' && s.user_id === currentUserId && (
+                  <button className="sli-btn complete" onClick={() => onComplete(s.id)} title={t('dayDetail.markComplete')}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                    {t('dayDetail.markComplete')}
+                  </button>
+                )}
                 {canManage && (
                   <div className="sli-actions">
                     <button className="sli-btn edit" onClick={() => onEdit(s)} title={t('dayDetail.edit')}>
@@ -264,6 +274,7 @@ export default function SchedulePage() {
   const { items: schedules, loading } = useAppSelector(s => s.schedules);
   const { items: users } = useAppSelector(s => s.users);
   const { items: stores } = useAppSelector(s => s.stores);
+  const currentUserId = useAppSelector(s => s.auth.user?.id);
   const p = usePermissions();
 
   const canManage = p.isSupervisor; // super_admin + admin + supervisor (not merchandiser)
@@ -335,6 +346,15 @@ export default function SchedulePage() {
       toast.success(t('toasts.deleteSuccess'));
     } else {
       toast.error((res.payload as string) || t('toasts.deleteError'));
+    }
+  };
+
+  const handleComplete = async (id: string) => {
+    const res = await dispatch(updateSchedule({ id, payload: { status: 'completed' } }));
+    if (updateSchedule.fulfilled.match(res)) {
+      toast.success(t('toasts.updateSuccess'));
+    } else {
+      toast.error((res.payload as string) || t('toasts.updateError'));
     }
   };
 
@@ -458,9 +478,11 @@ export default function SchedulePage() {
               day={selectedDay}
               schedules={schedulesForDay(selectedDay)}
               canManage={canManage}
+              currentUserId={currentUserId}
               onAdd={openAddForm}
               onEdit={(s) => { openEditForm(s); }}
               onDelete={handleDelete}
+              onComplete={handleComplete}
             />
           </Modal>
         )}

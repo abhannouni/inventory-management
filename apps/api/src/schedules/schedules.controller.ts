@@ -40,7 +40,7 @@ export class SchedulesController {
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Update a schedule (supervisor / admin / super_admin only)' })
+  @ApiOperation({ summary: 'Update a schedule (supervisor / admin / super_admin, or a merchandiser marking their own visit completed)' })
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateScheduleDto,

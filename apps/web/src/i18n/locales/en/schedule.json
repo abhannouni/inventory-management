@@ -29,7 +29,8 @@
     "deleteConfirm": "Delete?",
     "yes": "Yes",
     "no": "No",
-    "addVisit": "Add Visit"
+    "addVisit": "Add Visit",
+    "markComplete": "Mark as completed"
   },
   "form": {
     "editTitle": "Edit Schedule",
