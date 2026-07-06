@@ -8,6 +8,7 @@ interface Column<T> {
   header: string;
   render?: (row: T) => ReactNode;
   width?: string;
+  hideOnMobile?: boolean;
 }
 
 interface DataTableProps<T> {
@@ -28,7 +29,11 @@ export default function DataTable<T>({ columns, data, loading, keyExtractor, emp
         <thead>
           <tr>
             {columns.map((col) => (
-              <th key={col.key} style={col.width ? { width: col.width } : undefined}>
+              <th
+                key={col.key}
+                className={col.hideOnMobile ? 'hide-mobile' : undefined}
+                style={col.width ? { width: col.width } : undefined}
+              >
                 {col.header}
               </th>
             ))}
@@ -50,7 +55,7 @@ export default function DataTable<T>({ columns, data, loading, keyExtractor, emp
                   transition={{ duration: 0.15 }}
                 >
                   {columns.map((col) => (
-                    <td key={col.key}>
+                    <td key={col.key} className={col.hideOnMobile ? 'hide-mobile' : undefined}>
                       {col.render ? col.render(row) : String((row as any)[col.key] ?? '')}
                     </td>
                   ))}

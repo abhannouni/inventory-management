@@ -1721,6 +1721,19 @@ html[dir='rtl'] .auth-lang-switcher {
   .header-search { display: none; }
   .header-icon-btn { width: 36px; height: 36px; }
 
+  /* Anchor to the viewport, not the trigger — on mobile the trigger sits
+     near the left edge, so a right:0 offset pushes most of the menu
+     off-screen to the left. */
+  .language-switcher-menu {
+    position: fixed;
+    left: 12px;
+    right: 12px;
+    top: 64px;
+    min-width: 0;
+  }
+
+  html[dir='rtl'] .language-switcher-menu { left: 12px; right: 12px; }
+
   .page-content { padding: 16px 14px 88px; }
 
   .modal-backdrop { align-items: flex-end; padding: 0; }
@@ -1749,6 +1762,12 @@ html[dir='rtl'] .auth-lang-switcher {
 
   .data-table th:nth-child(n+4),
   .data-table td:nth-child(n+4) { display: none; }
+
+  .data-table th.hide-mobile,
+  .data-table td.hide-mobile { display: none; }
+
+  .user-cell-info { max-width: 150px; overflow: hidden; }
+  .user-cell-info > div { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
   .page-header { flex-direction: column; gap: 12px; }
   .page-header-actions { width: 100%; }
@@ -1787,6 +1806,45 @@ html[dir='rtl'] .auth-lang-switcher {
 }
 
 .mobile-nav-item.active { color: var(--primary); }
+
+button.mobile-nav-item {
+  background: none;
+  border: none;
+  font: inherit;
+  cursor: pointer;
+}
+
+.mobile-more-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mobile-more-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 8px;
+  border-radius: 12px;
+  color: var(--gray-700);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 15px;
+  transition: background 0.15s;
+}
+
+.mobile-more-item:hover,
+.mobile-more-item:active {
+  background: var(--gray-100);
+}
+
+.mobile-more-item .mobile-nav-icon {
+  width: 36px;
+  height: 36px;
+  background: var(--primary-light);
+  color: var(--primary);
+  border-radius: 10px;
+}
 
 .mobile-nav-icon {
   width: 44px;
@@ -3169,6 +3227,9 @@ html[dir='rtl'] .auth-lang-switcher {
   .schedule-chip { font-size: 9px; padding: 1px 3px; }
   .cal-month-name { font-size: 17px; }
   .schedule-title-row { flex-direction: column; gap: 10px; }
+  .cal-month-nav { gap: 6px; }
+  .cal-month-label { min-width: 0; flex: 1; }
+  .cal-today-btn { margin-left: 0; padding: 4px 10px; font-size: 12px; }
 }
 
 @media (max-width: 480px) {

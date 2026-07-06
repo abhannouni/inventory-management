@@ -17,7 +17,8 @@
     "inventory": "Inventaire",
     "reports": "Rapports",
     "home": "Accueil",
-    "audit": "Audit"
+    "audit": "Audit",
+    "more": "Plus"
   },
   "logout": "Déconnexion"
 }

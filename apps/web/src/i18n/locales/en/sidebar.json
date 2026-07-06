@@ -17,7 +17,8 @@
     "inventory": "Inventory",
     "reports": "Reports",
     "home": "Home",
-    "audit": "Audit"
+    "audit": "Audit",
+    "more": "More"
   },
   "logout": "Logout"
 }

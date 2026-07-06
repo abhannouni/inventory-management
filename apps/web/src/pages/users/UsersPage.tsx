@@ -98,7 +98,7 @@ export default function UsersPage() {
           <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'var(--primary)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 13, flexShrink: 0 }}>
             {u.full_name.charAt(0).toUpperCase()}
           </div>
-          <div>
+          <div className="user-cell-info">
             <div style={{ fontWeight: 500 }}>{u.full_name}</div>
             <div style={{ fontSize: 12, color: 'var(--gray-400)' }}>{u.email}</div>
           </div>
@@ -113,6 +113,7 @@ export default function UsersPage() {
     {
       key: 'region',
       header: t('table.region'),
+      hideOnMobile: true,
       render: (u: User) => <span style={{ color: 'var(--gray-500)' }}>{u.region?.name || '—'}</span>,
     },
     {
