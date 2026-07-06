@@ -6,6 +6,7 @@
     "dev": "pnpm --filter web dev",
     "dev:api": "pnpm --filter api start:dev",
     "build": "pnpm --filter web build && pnpm --filter api build",
+    "start": "pnpm --filter api start:prod",
     "lint": "pnpm -r lint",
     "test": "pnpm -r test",
     "db:generate": "pnpm --filter api db:generate",
