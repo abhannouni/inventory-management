@@ -7,6 +7,13 @@
   "defaultCredentials": "Identifiants par défaut :",
   "welcomeToast": "Bon retour, {{name}} !",
   "loginFailed": "Échec de la connexion",
+  "visualHeading": "Des visites en magasin sans faille, à chaque fois.",
+  "visualSubtitle": "Une seule plateforme pour planifier les visites, suivre les stocks et garder chaque magasin conforme.",
+  "features": {
+    "visits": "Suivi des visites en temps réel",
+    "inventory": "Audits de stock en direct",
+    "reports": "Rapports de performance exploitables"
+  },
   "errors": {
     "emailRequired": "L'adresse e-mail est requise",
     "emailInvalid": "Adresse e-mail invalide",

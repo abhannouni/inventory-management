@@ -7,6 +7,13 @@
   "defaultCredentials": "Default credentials:",
   "welcomeToast": "Welcome back, {{name}}!",
   "loginFailed": "Login failed",
+  "visualHeading": "Run flawless store visits, every time.",
+  "visualSubtitle": "One platform to plan visits, track inventory, and keep every store on brand.",
+  "features": {
+    "visits": "Real-time store visit tracking",
+    "inventory": "Live inventory & stock audits",
+    "reports": "Actionable performance reports"
+  },
   "errors": {
     "emailRequired": "Email is required",
     "emailInvalid": "Invalid email address",

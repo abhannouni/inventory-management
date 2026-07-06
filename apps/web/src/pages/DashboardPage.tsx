@@ -38,6 +38,7 @@ function StatCard({
   icon,
   delay,
   change,
+  tone,
 }: {
   label: string;
   value: number;
@@ -45,6 +46,7 @@ function StatCard({
   icon: React.ReactNode;
   delay: number;
   change?: string;
+  tone?: 'teal' | 'violet' | 'amber';
 }) {
   const displayed = useCountUp(value);
   return (
@@ -55,7 +57,7 @@ function StatCard({
       transition={{ delay, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
       whileHover={{ y: -3, transition: { duration: 0.2 } }}
     >
-      <div className="sc-icon">{icon}</div>
+      <div className={`sc-icon ${tone ? `tone-${tone}` : ''}`}>{icon}</div>
       <div className="sc-label">{label}</div>
       <div className="sc-value">{displayed}</div>
       {change && <div className="sc-change">{change}</div>}
@@ -187,7 +189,10 @@ function TimeTracker({ hasOpenVisit }: { hasOpenVisit: boolean }) {
   return (
     <div className="time-tracker-card">
       <div className="tt-title">{t('timeTracker.title')}</div>
-      <div className="tt-label">{hasOpenVisit ? t('timeTracker.activeVisit') : t('timeTracker.noActiveVisit')}</div>
+      <div className="tt-label" style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+        {running && <span className="live-pulse-dot" />}
+        {hasOpenVisit ? t('timeTracker.activeVisit') : t('timeTracker.noActiveVisit')}
+      </div>
       <motion.div
         className="tt-time"
         key={Math.floor(secs / 60)}
@@ -265,15 +270,28 @@ export default function DashboardPage() {
     >
       {/* Greeting */}
       <motion.div
-        style={{ marginBottom: 24 }}
+        style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 24 }}
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
       >
-        <h1 style={{ fontSize: 22, fontWeight: 800, color: 'var(--gray-900)', letterSpacing: '-0.5px' }}>
-          {t('greeting', { name: firstName })}
-        </h1>
-        <p style={{ fontSize: 13, color: 'var(--gray-500)', marginTop: 3 }}>{today}</p>
+        <div className="db-greeting-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="5" />
+            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+          </svg>
+        </div>
+        <div>
+          <h1 style={{ fontSize: 23, fontWeight: 800, color: 'var(--gray-900)', letterSpacing: '-0.5px' }}>
+            {t('greeting', { name: firstName })}
+          </h1>
+          <span className="db-date-pill">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" />
+            </svg>
+            {today}
+          </span>
+        </div>
       </motion.div>
 
       {/* Stats Row */}
@@ -295,6 +313,7 @@ export default function DashboardPage() {
           value={products.length}
           delay={0.08}
           change={t('changes.skusTracked')}
+          tone="teal"
           icon={
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
@@ -306,6 +325,7 @@ export default function DashboardPage() {
           value={visits.length}
           delay={0.16}
           change={t('changes.completed', { count: closedVisits })}
+          tone="violet"
           icon={
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2 M9 5a2 2 0 002 2h2a2 2 0 002-2 M9 5a2 2 0 012-2h2a2 2 0 012 2" />
@@ -317,6 +337,7 @@ export default function DashboardPage() {
           value={openVisits}
           delay={0.24}
           change={openVisits > 0 ? t('changes.inProgress') : t('changes.allClosed')}
+          tone="amber"
           icon={
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />

@@ -64,6 +64,17 @@
   --grad-primary-btn: linear-gradient(135deg, #1D6ADE 0%, #1558C0 100%);
   --grad-card:        #ffffff;
   --grad-bg:          #F0F2F5;
+
+  /* ── Stat icon accent tones (harmonized with primary) ── */
+  --tone-blue:   linear-gradient(135deg, #60A5FA 0%, #1D6ADE 100%);
+  --tone-teal:   linear-gradient(135deg, #5EEAD4 0%, #0D9488 100%);
+  --tone-violet: linear-gradient(135deg, #C4B5FD 0%, #7C3AED 100%);
+  --tone-amber:  linear-gradient(135deg, #FCD34D 0%, #D97706 100%);
+
+  /* ── Auth / marketing panel ── */
+  --auth-bg-deep:  #0b1221;
+  --auth-bg-mid:   #131C30;
+  --auth-bg-edge:  #1D3360;
 }
 
 html, body, #root { height: 100%; }

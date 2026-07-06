@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { usePermissions } from '../../hooks/usePermissions';
+import Logo from '../ui/Logo';
 
 interface NavItem {
   to: string;
@@ -126,22 +127,7 @@ export default function Sidebar() {
       {/* Brand */}
       <div className="sidebar-brand">
         <div className="brand-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-            <path
-              d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"
-              fill="rgba(255,255,255,0.15)"
-              stroke="white"
-              strokeWidth="1.6"
-            />
-            <circle cx="12" cy="9" r="3.5" fill="rgba(255,255,255,0.32)" />
-            <path
-              d="M9.5,9 L11.3,11.2 L14.8,6.8"
-              stroke="white"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+          <Logo size={22} />
         </div>
         <span className="brand-name">{t('brand')}</span>
       </div>
