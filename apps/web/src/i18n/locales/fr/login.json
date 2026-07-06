@@ -5,7 +5,6 @@
   "passwordLabel": "Mot de passe",
   "signIn": "Se connecter",
   "rememberMe": "Se souvenir de moi",
-  "defaultCredentials": "Identifiants par défaut :",
   "welcomeToast": "Bon retour, {{name}} !",
   "loginFailed": "Échec de la connexion",
   "visualHeading": "Des visites en magasin sans faille, à chaque fois.",

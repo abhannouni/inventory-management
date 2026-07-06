@@ -228,10 +228,6 @@ export default function LoginPage() {
               </Button>
             </div>
           </form>
-
-          <div className="auth-footer">
-            <p>{t('defaultCredentials')} <strong>superadmin@example.com</strong> / <strong>password123</strong></p>
-          </div>
         </motion.div>
       </div>
     </div>

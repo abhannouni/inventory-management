@@ -5,7 +5,6 @@
   "passwordLabel": "كلمة المرور",
   "signIn": "تسجيل الدخول",
   "rememberMe": "تذكرني",
-  "defaultCredentials": "بيانات الدخول الافتراضية:",
   "welcomeToast": "مرحبًا بعودتك، {{name}}!",
   "loginFailed": "فشل تسجيل الدخول",
   "visualHeading": "زيارات ميدانية بلا عيوب، في كل مرة.",
