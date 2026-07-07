@@ -17,5 +17,5 @@ export const productsApi = {
   create: (payload: ProductPayload) => api.post<Product>('/products', payload),
   update: (id: string, payload: Partial<ProductPayload>) =>
     api.patch<Product>(`/products/${id}`, payload),
-  remove: (id: string) => api.delete<Product>(`/products/${id}`),
+  remove: (id: string) => api.delete<void>(`/products/${id}`),
 };

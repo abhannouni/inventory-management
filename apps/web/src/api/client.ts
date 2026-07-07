@@ -40,7 +40,16 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
     throw new Error(error.message || 'Request failed');
   }
 
-  const json = await response.json();
+  if (response.status === 204) {
+    return undefined as T;
+  }
+
+  const text = await response.text();
+  if (!text) {
+    return undefined as T;
+  }
+
+  const json = JSON.parse(text);
   return (json.data !== undefined ? json.data : json) as T;
 }
 
