@@ -1,6 +1,14 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { UserRole } from '@prisma/client';
-import { IsEmail, IsEnum, IsOptional, IsString, IsUUID, MinLength } from 'class-validator';
+import {
+  IsBoolean,
+  IsEmail,
+  IsEnum,
+  IsOptional,
+  IsString,
+  IsUUID,
+  MinLength,
+} from 'class-validator';
 
 export class CreateUserDto {
   @ApiProperty({ example: 'John Smith' })
@@ -20,8 +28,21 @@ export class CreateUserDto {
   @IsEnum(UserRole)
   role: UserRole;
 
+  @ApiPropertyOptional({
+    description:
+      'Assign a custom role. Overrides `role` for permission checks; `role` stays as the legacy fallback.',
+  })
+  @IsUUID()
+  @IsOptional()
+  role_id?: string;
+
   @ApiPropertyOptional({ example: 'uuid-of-region' })
   @IsUUID()
   @IsOptional()
   region_id?: string;
+
+  @ApiPropertyOptional({ default: true })
+  @IsBoolean()
+  @IsOptional()
+  is_active?: boolean;
 }

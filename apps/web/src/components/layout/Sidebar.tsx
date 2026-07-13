@@ -69,13 +69,22 @@ export default function Sidebar() {
     },
   ];
 
-  const managementItems: NavItem[] = [
+  const administrationItems: NavItem[] = [
     {
       to: '/users',
       label: t('nav.users'),
       icon: <Icon d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />,
       show: p.canManageUsers,
     },
+    {
+      to: '/roles',
+      label: t('nav.roles'),
+      icon: <Icon d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" d2="M9 12l2 2 4-4" />,
+      show: p.can('roles.read'),
+    },
+  ];
+
+  const managementItems: NavItem[] = [
     {
       to: '/regions',
       label: t('nav.regions'),
@@ -145,6 +154,13 @@ export default function Sidebar() {
       <nav className="sidebar-nav">
         <SectionLabel label={t('sections.menu')} />
         {renderItems(menuItems)}
+
+        {administrationItems.some((i) => i.show) && (
+          <>
+            <SectionLabel label={t('sections.administration')} />
+            {renderItems(administrationItems)}
+          </>
+        )}
 
         {managementItems.some((i) => i.show) && (
           <>

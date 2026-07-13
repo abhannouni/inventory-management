@@ -1,0 +1,92 @@
+{
+  "title": "الأدوار والصلاحيات",
+  "subtitle": "حدّد الأدوار وتحكّم بدقة في ما يمكن لكل دور الوصول إليه",
+  "addRole": "إضافة دور",
+  "createRole": "إنشاء دور",
+  "editRole": "تعديل الدور",
+  "updateRole": "تحديث الدور",
+  "permissionsTitle": "الصلاحيات — {{name}}",
+  "table": {
+    "role": "الدور",
+    "type": "النوع",
+    "description": "الوصف",
+    "permissions": "الصلاحيات",
+    "users": "المستخدمون",
+    "builtIn": "مدمج",
+    "custom": "مخصص",
+    "permissionCount_one": "صلاحية واحدة",
+    "permissionCount_two": "صلاحيتان",
+    "permissionCount_few": "{{count}} صلاحيات",
+    "permissionCount_many": "{{count}} صلاحية",
+    "permissionCount_other": "{{count}} صلاحية",
+    "empty": "لم يتم العثور على أدوار"
+  },
+  "actions": {
+    "permissions": "الصلاحيات",
+    "read": "عرض",
+    "create": "إنشاء",
+    "update": "تعديل",
+    "delete": "حذف",
+    "export": "تصدير",
+    "activate": "تفعيل / تعطيل",
+    "assign_stores": "تعيين نقاط البيع",
+    "assign_permissions": "تعيين الصلاحيات",
+    "set_visibility": "تحديد الظهور",
+    "change_status": "تغيير الحالة",
+    "view_audit_log": "عرض سجل التدقيق"
+  },
+  "resources": {
+    "users": "المستخدمون",
+    "roles": "الأدوار والصلاحيات",
+    "clients": "العملاء",
+    "pos": "نقاط البيع",
+    "regions": "المناطق",
+    "products": "المنتجات",
+    "inventory": "المخزون",
+    "kpis": "مؤشرات الأداء",
+    "dashboards": "لوحات المعلومات",
+    "plans": "الباقات",
+    "subscriptions": "الاشتراكات",
+    "visits": "الزيارات",
+    "audit_items": "عناصر التدقيق",
+    "schedules": "الجدولة",
+    "reports": "التقارير",
+    "settings": "الإعدادات"
+  },
+  "matrix": {
+    "superAdminLocked": "يمتلك مدير النظام دائمًا جميع الصلاحيات. لا يمكن تعديل هذا الدور — وهذا ما يضمن عدم فقدانك للوصول إلى المنصة أبدًا.",
+    "selectedCount_one": "تم منح صلاحية واحدة",
+    "selectedCount_two": "تم منح صلاحيتين",
+    "selectedCount_few": "تم منح {{count}} صلاحيات",
+    "selectedCount_many": "تم منح {{count}} صلاحية",
+    "selectedCount_other": "تم منح {{count}} صلاحية",
+    "save": "حفظ الصلاحيات"
+  },
+  "fields": {
+    "label": "الاسم المعروض",
+    "labelPlaceholder": "مدقق إقليمي",
+    "name": "الاسم التقني",
+    "nameHint": "أحرف صغيرة وأرقام وشرطات سفلية. لا يمكن تغييره لاحقًا.",
+    "nameImmutable": "لا يمكن تغيير الاسم التقني.",
+    "description": "الوصف",
+    "descriptionPlaceholder": "ما المسموح لهذا الدور القيام به"
+  },
+  "errors": {
+    "labelRequired": "الاسم المعروض مطلوب",
+    "nameRequired": "الاسم التقني مطلوب",
+    "nameFormat": "استخدم أحرفًا صغيرة وأرقامًا وشرطات سفلية، بدءًا بحرف"
+  },
+  "toasts": {
+    "createSuccess": "تم إنشاء الدور",
+    "createError": "فشل إنشاء الدور",
+    "updateSuccess": "تم تحديث الدور",
+    "updateError": "فشل تحديث الدور",
+    "deleteSuccess": "تم حذف الدور",
+    "deleteError": "فشل حذف الدور",
+    "permissionsSaved": "تم تحديث الصلاحيات",
+    "permissionsError": "فشل تحديث الصلاحيات"
+  },
+  "deleteConfirm": {
+    "message": "سيؤدي هذا إلى حذف الدور «{{name}}» نهائيًا. يجب إعادة تعيين المستخدمين أولًا."
+  }
+}

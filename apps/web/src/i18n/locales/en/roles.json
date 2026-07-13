@@ -1,0 +1,86 @@
+{
+  "title": "Roles & Permissions",
+  "subtitle": "Define roles and control exactly what each one can access",
+  "addRole": "Add Role",
+  "createRole": "Create Role",
+  "editRole": "Edit Role",
+  "updateRole": "Update Role",
+  "permissionsTitle": "Permissions — {{name}}",
+  "table": {
+    "role": "Role",
+    "type": "Type",
+    "description": "Description",
+    "permissions": "Permissions",
+    "users": "Users",
+    "builtIn": "Built-in",
+    "custom": "Custom",
+    "permissionCount_one": "{{count}} permission",
+    "permissionCount_other": "{{count}} permissions",
+    "empty": "No roles found"
+  },
+  "actions": {
+    "permissions": "Permissions",
+    "read": "View",
+    "create": "Create",
+    "update": "Edit",
+    "delete": "Delete",
+    "export": "Export",
+    "activate": "Activate / deactivate",
+    "assign_stores": "Assign points of sale",
+    "assign_permissions": "Assign permissions",
+    "set_visibility": "Set visibility",
+    "change_status": "Change status",
+    "view_audit_log": "View audit log"
+  },
+  "resources": {
+    "users": "Users",
+    "roles": "Roles & permissions",
+    "clients": "Clients",
+    "pos": "Points of sale",
+    "regions": "Regions",
+    "products": "Products",
+    "inventory": "Inventory",
+    "kpis": "KPIs",
+    "dashboards": "Dashboards",
+    "plans": "Plans",
+    "subscriptions": "Subscriptions",
+    "visits": "Visits",
+    "audit_items": "Audit items",
+    "schedules": "Schedules",
+    "reports": "Reports",
+    "settings": "Settings"
+  },
+  "matrix": {
+    "superAdminLocked": "The Super Administrator always holds every permission. This role cannot be edited — it is what guarantees you can never be locked out of the platform.",
+    "selectedCount_one": "{{count}} permission granted",
+    "selectedCount_other": "{{count}} permissions granted",
+    "save": "Save permissions"
+  },
+  "fields": {
+    "label": "Display name",
+    "labelPlaceholder": "Regional Auditor",
+    "name": "Machine name",
+    "nameHint": "Lowercase letters, digits and underscores. Cannot be changed later.",
+    "nameImmutable": "The machine name cannot be changed.",
+    "description": "Description",
+    "descriptionPlaceholder": "What this role is allowed to do"
+  },
+  "errors": {
+    "labelRequired": "A display name is required",
+    "nameRequired": "A machine name is required",
+    "nameFormat": "Use lowercase letters, digits and underscores, starting with a letter"
+  },
+  "toasts": {
+    "createSuccess": "Role created",
+    "createError": "Failed to create the role",
+    "updateSuccess": "Role updated",
+    "updateError": "Failed to update the role",
+    "deleteSuccess": "Role deleted",
+    "deleteError": "Failed to delete the role",
+    "permissionsSaved": "Permissions updated",
+    "permissionsError": "Failed to update permissions"
+  },
+  "deleteConfirm": {
+    "message": "This will permanently delete the role \"{{name}}\". Users must be reassigned first."
+  }
+}

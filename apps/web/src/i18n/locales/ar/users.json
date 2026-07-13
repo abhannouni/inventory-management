@@ -1,43 +1,50 @@
 {
   "title": "المستخدمون",
-  "subtitle": "إدارة حسابات المستخدمين والصلاحيات",
+  "subtitle": "إدارة الحسابات والأدوار والصلاحيات",
   "addUser": "إضافة مستخدم",
   "createUser": "إنشاء مستخدم",
   "editUser": "تعديل المستخدم",
   "updateUser": "تحديث المستخدم",
+  "searchPlaceholder": "البحث بالاسم أو البريد الإلكتروني…",
   "table": {
     "name": "الاسم",
     "role": "الدور",
+    "status": "الحالة",
     "region": "المنطقة",
     "joined": "تاريخ الانضمام",
+    "lastLogin": "آخر تسجيل دخول",
+    "never": "أبدًا",
     "empty": "لم يتم العثور على مستخدمين"
   },
-  "actions": {
-    "assignStores": "تعيين المتاجر"
+  "filters": {
+    "allRoles": "كل الأدوار",
+    "allStatuses": "كل الحالات",
+    "allRegions": "كل المناطق"
   },
-  "assignStoresTitle": "تعيين المتاجر — {{name}}",
+  "actions": {
+    "assignStores": "تعيين نقاط البيع",
+    "activate": "تفعيل",
+    "deactivate": "تعطيل"
+  },
+  "assignStoresTitle": "تعيين نقاط البيع — {{name}}",
   "fields": {
     "fullName": "الاسم الكامل",
     "fullNamePlaceholder": "أحمد بنعلي",
     "email": "البريد الإلكتروني",
     "emailPlaceholder": "ahmed@example.com",
     "role": "الدور",
+    "rolePlaceholder": "اختر دورًا",
     "region": "المنطقة (اختياري)",
     "regionPlaceholder": "بدون منطقة",
     "password": "كلمة المرور",
-    "newPassword": "كلمة مرور جديدة (اتركها فارغة للاحتفاظ بالحالية)"
-  },
-  "roleOptions": {
-    "superAdmin": "مدير عام",
-    "admin": "مدير",
-    "supervisor": "مشرف",
-    "merchandiser": "مندوب ميداني"
+    "newPassword": "كلمة مرور جديدة",
+    "passwordHint": "اتركها فارغة للاحتفاظ بكلمة المرور الحالية"
   },
   "errors": {
     "nameRequired": "الاسم مطلوب",
     "emailRequired": "البريد الإلكتروني مطلوب",
     "passwordRequired": "كلمة المرور مطلوبة",
-    "passwordMinLength": "يجب أن تتكون كلمة المرور من 6 أحرف على الأقل",
+    "passwordMinLength": "يجب أن تتكون كلمة المرور من {{count}} أحرف على الأقل",
     "roleRequired": "الدور مطلوب"
   },
   "toasts": {
@@ -47,21 +54,32 @@
     "updateError": "فشل تحديث المستخدم",
     "deleteSuccess": "تم حذف المستخدم",
     "deleteError": "فشل حذف المستخدم",
-    "assignSuccess": "تم تعيين المتاجر بنجاح",
-    "assignError": "فشل تعيين المتاجر"
+    "assignSuccess": "تم تعيين نقاط البيع بنجاح",
+    "assignError": "فشل تعيين نقاط البيع",
+    "activateSuccess": "تم تفعيل المستخدم",
+    "deactivateSuccess": "تم تعطيل المستخدم",
+    "toggleError": "فشل تغيير حالة الحساب"
   },
   "deleteConfirm": {
     "message": "سيؤدي هذا إلى حذف حساب المستخدم نهائيًا."
   },
+  "deactivateConfirm": {
+    "title": "تعطيل الحساب",
+    "message": "سيتم تسجيل خروج {{name}} فورًا ومنعه من تسجيل الدخول. يتم الاحتفاظ بسجله ويمكنك إعادة تفعيله في أي وقت."
+  },
+  "activateConfirm": {
+    "title": "تفعيل الحساب",
+    "message": "سيتمكن {{name}} من تسجيل الدخول مرة أخرى."
+  },
   "assignStoresForm": {
-    "description": "اختر المتاجر التي تريد تعيينها لهذا المستخدم. سيتم استبدال التعيينات السابقة.",
-    "searchPlaceholder": "البحث عن متاجر…",
-    "empty": "لم يتم العثور على متاجر",
-    "selectedCount_one": "تم تحديد متجر واحد",
-    "selectedCount_two": "تم تحديد متجرين",
-    "selectedCount_few": "تم تحديد {{count}} متاجر",
-    "selectedCount_many": "تم تحديد {{count}} متجرًا",
-    "selectedCount_other": "تم تحديد {{count}} متجر",
-    "submit": "تعيين المتاجر"
+    "description": "اختر نقاط البيع التي تريد تعيينها لهذا المستخدم. سيتم استبدال التعيينات السابقة.",
+    "searchPlaceholder": "البحث عن نقاط البيع…",
+    "empty": "لم يتم العثور على نقاط بيع",
+    "selectedCount_one": "تم تحديد نقطة بيع واحدة",
+    "selectedCount_two": "تم تحديد نقطتي بيع",
+    "selectedCount_few": "تم تحديد {{count}} نقاط بيع",
+    "selectedCount_many": "تم تحديد {{count}} نقطة بيع",
+    "selectedCount_other": "تم تحديد {{count}} نقطة بيع",
+    "submit": "تعيين نقاط البيع"
   }
 }

@@ -11,6 +11,7 @@ datasource db {
 enum UserRole {
   super_admin
   admin
+  general_management
   supervisor
   merchandiser
 }
@@ -32,6 +33,34 @@ enum ScheduleStatus {
   cancelled
 }
 
+enum SubscriptionStatus {
+  trialing
+  active
+  past_due
+  cancelled
+  expired
+}
+
+enum BillingPeriod {
+  monthly
+  quarterly
+  yearly
+}
+
+/// Whether a higher or a lower value means better performance for a KPI.
+enum KpiDirection {
+  higher_is_better
+  lower_is_better
+}
+
+enum WidgetType {
+  kpi_card
+  line_chart
+  bar_chart
+  pie_chart
+  table
+}
+
 // ─── Models ────────────────────────────────────────────────────────────────────
 
 model Region {
@@ -46,38 +75,56 @@ model Region {
 }
 
 model User {
-  id         String   @id @default(uuid())
-  full_name  String
-  email      String   @unique
-  password   String
-  role       UserRole @default(merchandiser)
-  region     Region?  @relation(fields: [region_id], references: [id])
-  region_id  String?
-  created_at DateTime @default(now())
+  id        String   @id @default(uuid())
+  full_name String
+  email     String   @unique
+  password  String
+  /// Legacy coarse role. Kept in sync with `custom_role` and still read by RolesGuard.
+  role      UserRole @default(merchandiser)
+  /// DB-driven role carrying the actual permission set. Resolved by PermissionsGuard.
+  custom_role    Role?    @relation(fields: [role_id], references: [id], onDelete: SetNull)
+  role_id        String?
+  is_active      Boolean  @default(true)
+  deactivated_at DateTime?
+  last_login_at  DateTime?
+  region         Region?  @relation(fields: [region_id], references: [id])
+  region_id      String?
+  created_at     DateTime @default(now())
+  updated_at     DateTime @default(now()) @updatedAt
 
-  userStores         UserStore[]
-  visits             Visit[]
-  schedulesAssigned  Schedule[] @relation("AssignedSchedules")
-  schedulesCreated   Schedule[] @relation("CreatedSchedules")
+  userStores        UserStore[]
+  visits            Visit[]
+  schedulesAssigned Schedule[] @relation("AssignedSchedules")
+  schedulesCreated  Schedule[] @relation("CreatedSchedules")
+  dashboards        Dashboard[]
 
+  @@index([role_id])
+  @@index([is_active])
   @@map("users")
 }
 
+/// A Point of Sale (POS).
 model Store {
-  id         String   @id @default(uuid())
-  name       String
-  address    String?
-  latitude   Decimal? @db.Decimal(10, 7)
-  longitude  Decimal? @db.Decimal(10, 7)
-  region     Region?  @relation(fields: [region_id], references: [id])
-  region_id  String?
-  created_at DateTime @default(now())
+  id        String   @id @default(uuid())
+  name      String
+  address   String?
+  latitude  Decimal? @db.Decimal(10, 7)
+  longitude Decimal? @db.Decimal(10, 7)
+  region    Region?  @relation(fields: [region_id], references: [id])
+  region_id String?
+  is_active Boolean  @default(true)
+  /// Super Admin curates which POS the general_management role may see.
+  visible_to_gm Boolean  @default(false)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @default(now()) @updatedAt
 
   userStores    UserStore[]
   productStores ProductStore[]
   visits        Visit[]
   schedules     Schedule[]
 
+  @@index([visible_to_gm])
+  @@index([is_active])
   @@map("stores")
 }
 
@@ -100,11 +147,17 @@ model Product {
   famille      String
   sous_famille String
   format       String
+  /// Owning brand / supplier.
+  client       Client?  @relation(fields: [client_id], references: [id], onDelete: SetNull)
+  client_id    String?
+  is_active    Boolean  @default(true)
   created_at   DateTime @default(now())
+  updated_at   DateTime @default(now()) @updatedAt
 
   productStores ProductStore[]
   auditItems    AuditItem[]
 
+  @@index([client_id])
   @@map("products")
 }
 
@@ -176,4 +229,199 @@ model Schedule {
   visit Visit?
 
   @@map("schedules")
+}
+
+// ─── RBAC ──────────────────────────────────────────────────────────────────────
+
+model Role {
+  id          String   @id @default(uuid())
+  /// Stable machine name, e.g. "super_admin". Matches the UserRole enum for built-in roles.
+  name        String   @unique
+  label       String
+  description String?
+  /// System roles cannot be renamed or deleted, only re-permissioned.
+  is_system   Boolean  @default(false)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @default(now()) @updatedAt
+
+  users       User[]
+  permissions RolePermission[]
+  dashboards  Dashboard[]
+
+  @@map("roles")
+}
+
+model Permission {
+  id          String   @id @default(uuid())
+  /// "<resource>.<action>", e.g. "users.create".
+  code        String   @unique
+  resource    String
+  action      String
+  description String?
+  created_at  DateTime @default(now())
+
+  roles RolePermission[]
+
+  @@index([resource])
+  @@map("permissions")
+}
+
+model RolePermission {
+  id            String     @id @default(uuid())
+  role          Role       @relation(fields: [role_id], references: [id], onDelete: Cascade)
+  role_id       String
+  permission    Permission @relation(fields: [permission_id], references: [id], onDelete: Cascade)
+  permission_id String
+
+  @@unique([role_id, permission_id])
+  @@map("role_permissions")
+}
+
+// ─── Clients (brands / suppliers) ──────────────────────────────────────────────
+
+model Client {
+  id            String   @id @default(uuid())
+  name          String
+  code          String   @unique
+  contact_name  String?
+  contact_email String?
+  contact_phone String?
+  address       String?
+  logo_url      String?
+  notes         String?
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @default(now()) @updatedAt
+
+  products      Product[]
+  subscriptions Subscription[]
+
+  @@index([is_active])
+  @@map("clients")
+}
+
+// ─── Subscriptions & plans ─────────────────────────────────────────────────────
+
+model Plan {
+  id             String        @id @default(uuid())
+  name           String
+  code           String        @unique
+  description    String?
+  price          Decimal       @db.Decimal(10, 2)
+  currency       String        @default("MAD")
+  billing_period BillingPeriod @default(monthly)
+  /// null = unlimited
+  max_users      Int?
+  max_pos        Int?
+  max_products   Int?
+  is_active      Boolean       @default(true)
+  sort_order     Int           @default(0)
+  created_at     DateTime      @default(now())
+  updated_at     DateTime      @default(now()) @updatedAt
+
+  subscriptions Subscription[]
+
+  @@map("plans")
+}
+
+model Subscription {
+  id           String             @id @default(uuid())
+  client       Client             @relation(fields: [client_id], references: [id], onDelete: Cascade)
+  client_id    String
+  plan         Plan               @relation(fields: [plan_id], references: [id])
+  plan_id      String
+  status       SubscriptionStatus @default(trialing)
+  starts_at    DateTime
+  ends_at      DateTime?
+  cancelled_at DateTime?
+  notes        String?
+  created_at   DateTime           @default(now())
+  updated_at   DateTime           @default(now()) @updatedAt
+
+  @@index([client_id])
+  @@index([status])
+  @@map("subscriptions")
+}
+
+// ─── KPIs & dashboards ─────────────────────────────────────────────────────────
+
+model Kpi {
+  id          String       @id @default(uuid())
+  /// Maps to a metric the reports layer knows how to compute, e.g. "visit_completion_rate".
+  code        String       @unique
+  name        String
+  description String?
+  /// Display unit, e.g. "%", "MAD", "visits".
+  unit        String?
+  target      Decimal?     @db.Decimal(12, 2)
+  /// Values below this are rendered as critical.
+  warn_below  Decimal?     @db.Decimal(12, 2)
+  direction   KpiDirection @default(higher_is_better)
+  is_active   Boolean      @default(true)
+  sort_order  Int          @default(0)
+  created_at  DateTime     @default(now())
+  updated_at  DateTime     @default(now()) @updatedAt
+
+  widgets DashboardWidget[]
+
+  @@map("kpis")
+}
+
+model Dashboard {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  /// Scope a dashboard to a role; null = available to everyone.
+  role        Role?    @relation(fields: [role_id], references: [id], onDelete: Cascade)
+  role_id     String?
+  /// Owner, when a user personalises their own dashboard. null = shared/global.
+  owner       User?    @relation(fields: [owner_id], references: [id], onDelete: Cascade)
+  owner_id    String?
+  is_default  Boolean  @default(false)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @default(now()) @updatedAt
+
+  widgets DashboardWidget[]
+
+  @@index([role_id])
+  @@index([owner_id])
+  @@map("dashboards")
+}
+
+model DashboardWidget {
+  id           String     @id @default(uuid())
+  dashboard    Dashboard  @relation(fields: [dashboard_id], references: [id], onDelete: Cascade)
+  dashboard_id String
+  /// Set for kpi_card widgets; chart/table widgets may derive data another way.
+  kpi          Kpi?       @relation(fields: [kpi_id], references: [id], onDelete: SetNull)
+  kpi_id       String?
+  type         WidgetType @default(kpi_card)
+  title        String
+  /// Free-form widget options (filters, series, colours…).
+  config       Json?
+  /// Grid placement.
+  position     Int        @default(0)
+  width        Int        @default(1)
+  height       Int        @default(1)
+  is_visible   Boolean    @default(true)
+
+  @@index([dashboard_id])
+  @@map("dashboard_widgets")
+}
+
+// ─── Admin audit trail ─────────────────────────────────────────────────────────
+
+model AdminAuditLog {
+  id          String   @id @default(uuid())
+  actor_id    String?
+  actor_email String
+  action      String
+  resource    String
+  resource_id String?
+  metadata    Json?
+  created_at  DateTime @default(now())
+
+  @@index([resource, resource_id])
+  @@index([created_at])
+  @@map("admin_audit_logs")
 }

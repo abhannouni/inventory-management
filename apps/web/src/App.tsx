@@ -4,10 +4,12 @@ import 'react-toastify/dist/ReactToastify.css';
 import './styles/components.css';
 
 import ProtectedRoute from './components/layout/ProtectedRoute';
+import RequirePermission from './components/layout/RequirePermission';
 import AppLayout from './components/layout/AppLayout';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import UsersPage from './pages/users/UsersPage';
+import RolesPage from './pages/roles/RolesPage';
 import RegionsPage from './pages/regions/RegionsPage';
 import StoresPage from './pages/stores/StoresPage';
 import ProductsPage from './pages/products/ProductsPage';
@@ -26,7 +28,15 @@ export default function App() {
         <Route element={<ProtectedRoute />}>
           <Route element={<AppLayout />}>
             <Route path="/dashboard" element={<DashboardPage />} />
-            <Route path="/users" element={<UsersPage />} />
+
+            {/* Administration — also enforced server-side by PermissionsGuard. */}
+            <Route element={<RequirePermission anyOf={['users.create', 'users.update', 'users.delete']} />}>
+              <Route path="/users" element={<UsersPage />} />
+            </Route>
+            <Route element={<RequirePermission anyOf={['roles.read']} />}>
+              <Route path="/roles" element={<RolesPage />} />
+            </Route>
+
             <Route path="/regions" element={<RegionsPage />} />
             <Route path="/stores" element={<StoresPage />} />
             <Route path="/products" element={<ProductsPage />} />

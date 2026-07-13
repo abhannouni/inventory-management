@@ -21,6 +21,8 @@
   "status": {
     "open": "Ouvert",
     "closed": "Fermé",
+    "active": "Actif",
+    "inactive": "Inactif",
     "in_stock": "En stock",
     "low_stock": "Stock faible",
     "out_of_stock": "Rupture de stock"
@@ -28,6 +30,7 @@
   "roles": {
     "super_admin": "Super administrateur",
     "admin": "Administrateur",
+    "general_management": "Direction générale",
     "supervisor": "Superviseur",
     "merchandiser": "Marchandiseur"
   },
@@ -35,6 +38,21 @@
     "noData": "Aucune donnée trouvée",
     "actions": "Actions",
     "created": "Créé le"
+  },
+  "loading": "Chargement…",
+  "search": {
+    "placeholder": "Rechercher…",
+    "clear": "Effacer la recherche"
+  },
+  "filters": {
+    "reset": "Réinitialiser les filtres"
+  },
+  "pagination": {
+    "showing": "Affichage de {{from}} à {{to}} sur {{total}}",
+    "perPage": "Par page",
+    "label": "Pagination",
+    "previous": "Page précédente",
+    "next": "Page suivante"
   },
   "confirmDialog": {
     "title": "Confirmer l’action",

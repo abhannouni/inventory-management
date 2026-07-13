@@ -16,6 +16,16 @@ export class PrismaService implements OnModuleInit, OnModuleDestroy {
   readonly visit: PrismaClient['visit'];
   readonly auditItem: PrismaClient['auditItem'];
   readonly schedule: PrismaClient['schedule'];
+  readonly role: PrismaClient['role'];
+  readonly permission: PrismaClient['permission'];
+  readonly rolePermission: PrismaClient['rolePermission'];
+  readonly clientAccount: PrismaClient['client'];
+  readonly plan: PrismaClient['plan'];
+  readonly subscription: PrismaClient['subscription'];
+  readonly kpi: PrismaClient['kpi'];
+  readonly dashboard: PrismaClient['dashboard'];
+  readonly dashboardWidget: PrismaClient['dashboardWidget'];
+  readonly adminAuditLog: PrismaClient['adminAuditLog'];
 
   constructor(config: ConfigService) {
     const adapter = new PrismaPg(config.get<string>('DATABASE_URL')!);
@@ -30,6 +40,17 @@ export class PrismaService implements OnModuleInit, OnModuleDestroy {
     this.visit = this.client.visit;
     this.auditItem = this.client.auditItem;
     this.schedule = this.client.schedule;
+    this.role = this.client.role;
+    this.permission = this.client.permission;
+    this.rolePermission = this.client.rolePermission;
+    // Exposed as `clientAccount`: `client` is already taken by the PrismaClient instance above.
+    this.clientAccount = this.client.client;
+    this.plan = this.client.plan;
+    this.subscription = this.client.subscription;
+    this.kpi = this.client.kpi;
+    this.dashboard = this.client.dashboard;
+    this.dashboardWidget = this.client.dashboardWidget;
+    this.adminAuditLog = this.client.adminAuditLog;
   }
 
   $transaction: PrismaClient['$transaction'] = (...args: any[]) =>

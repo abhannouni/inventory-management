@@ -24,6 +24,11 @@ export class UpdateUserDto {
   @IsOptional()
   role?: UserRole;
 
+  @ApiPropertyOptional({ description: 'Assign a custom role.' })
+  @IsUUID()
+  @IsOptional()
+  role_id?: string;
+
   @ApiPropertyOptional({ example: 'uuid-of-region' })
   @IsUUID()
   @IsOptional()

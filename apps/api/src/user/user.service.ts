@@ -1,18 +1,61 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { Prisma, User, UserRole } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
+import {
+  PaginatedResult,
+  paginated,
+  safeOrderBy,
+  toSkipTake,
+} from '../common/dto/pagination.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { AssignStoresDto } from './dto/assign-stores.dto';
 import { CreateUserDto } from './dto/create-user.dto';
+import { ListUsersDto, USER_SORT_FIELDS } from './dto/list-users.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from '@prisma/client';
 
 @Injectable()
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAll() {
-    const users = await this.prisma.user.findMany({ include: { region: true } });
-    return users.map(this.sanitize);
+  async findAll(query: ListUsersDto): Promise<PaginatedResult<Omit<User, 'password'>>> {
+    const where: Prisma.UserWhereInput = {};
+
+    if (query.search) {
+      where.OR = [
+        { full_name: { contains: query.search, mode: 'insensitive' } },
+        { email: { contains: query.search, mode: 'insensitive' } },
+      ];
+    }
+    if (query.role) where.role = query.role;
+    if (query.region_id) where.region_id = query.region_id;
+    if (query.role_id) where.role_id = query.role_id;
+    if (query.is_active !== undefined) where.is_active = query.is_active;
+
+    const orderBy = safeOrderBy(query.sort_by, query.sort_dir, USER_SORT_FIELDS, {
+      created_at: 'desc',
+    });
+
+    const [items, total] = await Promise.all([
+      this.prisma.user.findMany({
+        where,
+        orderBy,
+        ...toSkipTake(query),
+        include: { region: true, custom_role: true },
+      }),
+      this.prisma.user.count({ where }),
+    ]);
+
+    return paginated(
+      items.map((u) => this.sanitize(u)),
+      total,
+      query.page,
+      query.limit,
+    );
   }
 
   async findOne(id: string) {
@@ -20,27 +63,33 @@ export class UserService {
       where: { id },
       include: {
         region: true,
+        custom_role: true,
         userStores: { include: { store: { include: { region: true } } } },
       },
     });
     if (!user) throw new NotFoundException('User not found');
     const { userStores, ...rest } = user;
-    return { ...this.sanitize(rest as User), stores: userStores.map((us) => us.store) };
+    return { ...this.sanitize(rest), stores: userStores.map((us) => us.store) };
   }
 
   async create(dto: CreateUserDto) {
     const exists = await this.prisma.user.findUnique({ where: { email: dto.email } });
     if (exists) throw new ConflictException('Email already in use');
 
+    const { role, role_id } = await this.resolveRole(dto.role, dto.role_id);
     const hashed = await bcrypt.hash(dto.password, 12);
+
     const user = await this.prisma.user.create({
       data: {
         full_name: dto.full_name,
         email: dto.email,
         password: hashed,
-        role: dto.role,
+        role,
+        role_id,
         region_id: dto.region_id ?? null,
+        is_active: dto.is_active ?? true,
       },
+      include: { region: true, custom_role: true },
     });
     return this.sanitize(user);
   }
@@ -54,20 +103,79 @@ export class UserService {
       if (conflict) throw new ConflictException('Email already in use');
     }
 
-    const data: Record<string, unknown> = {};
+    const data: Prisma.UserUpdateInput = {};
     if (dto.full_name !== undefined) data.full_name = dto.full_name;
     if (dto.email !== undefined) data.email = dto.email;
-    if (dto.role !== undefined) data.role = dto.role;
-    if (dto.region_id !== undefined) data.region_id = dto.region_id ?? null;
+    if (dto.region_id !== undefined) {
+      data.region = dto.region_id
+        ? { connect: { id: dto.region_id } }
+        : { disconnect: true };
+    }
     if (dto.password) data.password = await bcrypt.hash(dto.password, 12);
 
-    const updated = await this.prisma.user.update({ where: { id }, data });
+    if (dto.role !== undefined || dto.role_id !== undefined) {
+      const resolved = await this.resolveRole(dto.role ?? user.role, dto.role_id);
+
+      // Demoting the last super admin would leave the platform unadministrable.
+      if (user.role === UserRole.super_admin && resolved.role !== UserRole.super_admin) {
+        await this.assertNotLastSuperAdmin(id, 'demote');
+      }
+
+      data.role = resolved.role;
+      data.custom_role = resolved.role_id
+        ? { connect: { id: resolved.role_id } }
+        : { disconnect: true };
+    }
+
+    const updated = await this.prisma.user.update({
+      where: { id },
+      data,
+      include: { region: true, custom_role: true },
+    });
     return this.sanitize(updated);
   }
 
-  async remove(id: string) {
+  /**
+   * Soft state change — the user keeps all their history. `JwtStrategy` rejects
+   * inactive users on every request, so deactivating also cuts off live sessions.
+   */
+  async setActive(id: string, isActive: boolean, actorId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+      include: { region: true, custom_role: true },
+    });
+    if (!user) throw new NotFoundException('User not found');
+
+    if (!isActive) {
+      if (id === actorId) {
+        throw new BadRequestException('You cannot deactivate your own account');
+      }
+      if (user.role === UserRole.super_admin) {
+        await this.assertNotLastSuperAdmin(id, 'deactivate');
+      }
+    }
+
+    if (user.is_active === isActive) return this.sanitize(user);
+
+    const updated = await this.prisma.user.update({
+      where: { id },
+      data: { is_active: isActive, deactivated_at: isActive ? null : new Date() },
+      include: { region: true, custom_role: true },
+    });
+    return this.sanitize(updated);
+  }
+
+  async remove(id: string, actorId: string) {
     const user = await this.prisma.user.findUnique({ where: { id } });
     if (!user) throw new NotFoundException('User not found');
+
+    if (id === actorId) {
+      throw new BadRequestException('You cannot delete your own account');
+    }
+    if (user.role === UserRole.super_admin) {
+      await this.assertNotLastSuperAdmin(id, 'delete');
+    }
+
     await this.prisma.user.delete({ where: { id } });
   }
 
@@ -92,7 +200,40 @@ export class UserService {
     return { user_id: id, stores };
   }
 
-  private sanitize<T extends User>(user: T) {
+  /**
+   * Keeps `role` (legacy enum) and `role_id` (RBAC row) consistent.
+   * An explicit `role_id` wins; for a custom role the enum falls back to the
+   * least-privileged value, so the legacy RolesGuard can never over-grant.
+   */
+  private async resolveRole(
+    role: UserRole,
+    roleId?: string,
+  ): Promise<{ role: UserRole; role_id: string | null }> {
+    if (roleId) {
+      const found = await this.prisma.role.findUnique({ where: { id: roleId } });
+      if (!found) throw new NotFoundException('Role not found');
+
+      const isBuiltIn = (Object.values(UserRole) as string[]).includes(found.name);
+      return {
+        role: isBuiltIn ? (found.name as UserRole) : UserRole.merchandiser,
+        role_id: found.id,
+      };
+    }
+
+    const found = await this.prisma.role.findUnique({ where: { name: role } });
+    return { role, role_id: found?.id ?? null };
+  }
+
+  private async assertNotLastSuperAdmin(id: string, action: string) {
+    const others = await this.prisma.user.count({
+      where: { role: UserRole.super_admin, is_active: true, id: { not: id } },
+    });
+    if (others === 0) {
+      throw new BadRequestException(`Cannot ${action} the last active super administrator`);
+    }
+  }
+
+  private sanitize<T extends { password: string }>(user: T): Omit<T, 'password'> {
     const { password: _, ...rest } = user;
     return rest;
   }

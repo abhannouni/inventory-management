@@ -1,4 +1,9 @@
-export type Role = 'super_admin' | 'admin' | 'supervisor' | 'merchandiser';
+export type Role =
+  | 'super_admin'
+  | 'admin'
+  | 'general_management'
+  | 'supervisor'
+  | 'merchandiser';
 
 export type VisitStatus = 'open' | 'closed';
 
@@ -16,12 +21,21 @@ export interface User {
   full_name: string;
   email: string;
   role: Role;
+  role_id: string | null;
+  custom_role?: RoleRecord | null;
+  is_active: boolean;
+  deactivated_at: string | null;
+  last_login_at: string | null;
   region_id: string | null;
   region?: Region | null;
+  /** Only present on the `/auth/me` response — the caller's effective permissions. */
+  permissions?: string[];
+  stores?: Store[];
   created_at: string;
   updated_at: string;
 }
 
+/** A Point of Sale (POS). */
 export interface Store {
   id: string;
   name: string;
@@ -30,6 +44,9 @@ export interface Store {
   longitude: number | null;
   region_id: string;
   region?: Region;
+  is_active: boolean;
+  /** Whether General Management is allowed to see this POS. */
+  visible_to_gm: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -43,6 +60,9 @@ export interface Product {
   famille: string;
   sous_famille: string;
   format: string;
+  client_id: string | null;
+  client?: Client | null;
+  is_active: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -134,6 +154,157 @@ export interface Schedule {
   created_by?: User;
   created_at: string;
   updated_at: string;
+}
+
+// ─── RBAC ──────────────────────────────────────────────────────────────────────
+
+/** A role row in the database. Named `RoleRecord` so it doesn't clash with the `Role` union. */
+export interface RoleRecord {
+  id: string;
+  name: string;
+  label: string;
+  description: string | null;
+  is_system: boolean;
+  user_count?: number;
+  permission_count?: number;
+  /** Granted permission codes — only returned by the single-role endpoint. */
+  permissions?: string[];
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Permission {
+  id: string;
+  code: string;
+  resource: string;
+  action: string;
+  description: string | null;
+}
+
+export interface PermissionGroup {
+  resource: string;
+  permissions: Permission[];
+}
+
+// ─── Clients, plans, subscriptions ─────────────────────────────────────────────
+
+export interface Client {
+  id: string;
+  name: string;
+  code: string;
+  contact_name: string | null;
+  contact_email: string | null;
+  contact_phone: string | null;
+  address: string | null;
+  logo_url: string | null;
+  notes: string | null;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export type BillingPeriod = 'monthly' | 'quarterly' | 'yearly';
+
+export interface Plan {
+  id: string;
+  name: string;
+  code: string;
+  description: string | null;
+  price: string;
+  currency: string;
+  billing_period: BillingPeriod;
+  max_users: number | null;
+  max_pos: number | null;
+  max_products: number | null;
+  is_active: boolean;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export type SubscriptionStatus =
+  | 'trialing'
+  | 'active'
+  | 'past_due'
+  | 'cancelled'
+  | 'expired';
+
+export interface Subscription {
+  id: string;
+  client_id: string;
+  plan_id: string;
+  status: SubscriptionStatus;
+  starts_at: string;
+  ends_at: string | null;
+  cancelled_at: string | null;
+  notes: string | null;
+  client?: Client;
+  plan?: Plan;
+  created_at: string;
+  updated_at: string;
+}
+
+// ─── KPIs & dashboards ─────────────────────────────────────────────────────────
+
+export type KpiDirection = 'higher_is_better' | 'lower_is_better';
+
+export interface Kpi {
+  id: string;
+  code: string;
+  name: string;
+  description: string | null;
+  unit: string | null;
+  target: string | null;
+  warn_below: string | null;
+  direction: KpiDirection;
+  is_active: boolean;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export type WidgetType = 'kpi_card' | 'line_chart' | 'bar_chart' | 'pie_chart' | 'table';
+
+export interface DashboardWidget {
+  id: string;
+  dashboard_id: string;
+  kpi_id: string | null;
+  type: WidgetType;
+  title: string;
+  config: Record<string, unknown> | null;
+  position: number;
+  width: number;
+  height: number;
+  is_visible: boolean;
+  kpi?: Kpi | null;
+}
+
+export interface Dashboard {
+  id: string;
+  name: string;
+  description: string | null;
+  role_id: string | null;
+  owner_id: string | null;
+  is_default: boolean;
+  widgets?: DashboardWidget[];
+  created_at: string;
+  updated_at: string;
+}
+
+// ─── Envelopes ─────────────────────────────────────────────────────────────────
+
+export interface PageMeta {
+  total: number;
+  page: number;
+  limit: number;
+  total_pages: number;
+  has_next: boolean;
+  has_prev: boolean;
+}
+
+export interface Paginated<T> {
+  items: T[];
+  meta: PageMeta;
 }
 
 export interface ApiResponse<T> {

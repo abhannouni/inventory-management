@@ -21,6 +21,8 @@
   "status": {
     "open": "Open",
     "closed": "Closed",
+    "active": "Active",
+    "inactive": "Inactive",
     "in_stock": "In Stock",
     "low_stock": "Low Stock",
     "out_of_stock": "Out of Stock"
@@ -28,6 +30,7 @@
   "roles": {
     "super_admin": "Super Admin",
     "admin": "Admin",
+    "general_management": "General Management",
     "supervisor": "Supervisor",
     "merchandiser": "Merchandiser"
   },
@@ -35,6 +38,21 @@
     "noData": "No data found",
     "actions": "Actions",
     "created": "Created"
+  },
+  "loading": "Loading…",
+  "search": {
+    "placeholder": "Search…",
+    "clear": "Clear search"
+  },
+  "filters": {
+    "reset": "Reset filters"
+  },
+  "pagination": {
+    "showing": "Showing {{from}}–{{to}} of {{total}}",
+    "perPage": "Per page",
+    "label": "Pagination",
+    "previous": "Previous page",
+    "next": "Next page"
   },
   "confirmDialog": {
     "title": "Confirm Action",

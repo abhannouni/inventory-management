@@ -2,6 +2,7 @@
   "brand": "Inventory",
   "sections": {
     "menu": "القائمة",
+    "administration": "الإدارة",
     "management": "الإدارة",
     "general": "عام"
   },
@@ -11,6 +12,7 @@
     "schedule": "الجدول الزمني",
     "auditItems": "عناصر الجرد",
     "users": "المستخدمون",
+    "roles": "الأدوار والصلاحيات",
     "regions": "المناطق",
     "stores": "المتاجر",
     "products": "المنتجات",

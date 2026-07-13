@@ -2,6 +2,7 @@ import { AuditItemStatus, PrismaClient, ScheduleStatus, VisitStatus } from '@pri
 import { PrismaPg } from '@prisma/adapter-pg';
 import bcrypt from 'bcryptjs';
 import 'dotenv/config';
+import { syncRbac } from './rbac';
 
 const adapter = new PrismaPg(process.env.DATABASE_URL!);
 const prisma = new PrismaClient({ adapter });
@@ -20,14 +21,23 @@ async function main() {
   console.log('🌱  Seeding database…');
 
   // ── 1. Clean ────────────────────────────────────────────────────────────────
+  await prisma.dashboardWidget.deleteMany();
+  await prisma.dashboard.deleteMany();
+  await prisma.subscription.deleteMany();
+  await prisma.plan.deleteMany();
+  await prisma.kpi.deleteMany();
+  await prisma.adminAuditLog.deleteMany();
   await prisma.schedule.deleteMany();
   await prisma.auditItem.deleteMany();
   await prisma.visit.deleteMany();
   await prisma.productStore.deleteMany();
   await prisma.userStore.deleteMany();
   await prisma.product.deleteMany();
+  await prisma.client.deleteMany();
   await prisma.store.deleteMany();
+  await prisma.rolePermission.deleteMany();
   await prisma.user.deleteMany();
+  await prisma.role.deleteMany();
   await prisma.region.deleteMany();
 
   // ── 2. Regions ──────────────────────────────────────────────────────────────
@@ -38,7 +48,7 @@ async function main() {
   console.log('  ✔  regions');
 
   // ── 3. Users (same as before) ────────────────────────────────────────────────
-  const [superAdmin, adminNorth, adminSouth, supNorth, supSouth, merchNorth, merchSouth] =
+  const [superAdmin, adminNorth, adminSouth, genMgmt, supNorth, supSouth, merchNorth, merchSouth] =
     await Promise.all([
       prisma.user.create({
         data: {
@@ -64,6 +74,14 @@ async function main() {
           password: await HASH('password123'),
           role: 'admin',
           region_id: south.id,
+        },
+      }),
+      prisma.user.create({
+        data: {
+          full_name: 'General Management',
+          email: 'gm@example.com',
+          password: await HASH('password123'),
+          role: 'general_management',
         },
       }),
       prisma.user.create({
@@ -114,6 +132,7 @@ async function main() {
         latitude: 34.052200,
         longitude: -118.243700,
         region_id: north.id,
+        visible_to_gm: true,
       },
     }),
     prisma.store.create({
@@ -123,6 +142,7 @@ async function main() {
         latitude: 34.052800,
         longitude: -118.244100,
         region_id: north.id,
+        visible_to_gm: true,
       },
     }),
     prisma.store.create({
@@ -141,6 +161,7 @@ async function main() {
         latitude: 25.761700,
         longitude: -80.191800,
         region_id: south.id,
+        visible_to_gm: true,
       },
     }),
     prisma.store.create({
@@ -197,8 +218,29 @@ async function main() {
     { name: 'Mineral Water 1.5L', sku: 'WAT-001', category: 'Beverages', distributeur: 'Nestle',       famille: 'Boissons',          sous_famille: 'Eau',        format: '1.5L' },
   ];
 
+  // Clients are the brands/suppliers behind the catalogue — derived from `distributeur`.
+  const clientDefs = [
+    { name: 'Danone',      code: 'DAN', contact_name: 'Sofia Bennani',  contact_email: 'contact@danone.example',      contact_phone: '+212 522 000 001', address: 'Casablanca, Morocco' },
+    { name: 'Panera',      code: 'PAN', contact_name: 'Marc Duval',     contact_email: 'contact@panera.example',      contact_phone: '+212 522 000 002', address: 'Rabat, Morocco' },
+    { name: 'Tropicana',   code: 'TRO', contact_name: 'Leila Amrani',   contact_email: 'contact@tropicana.example',   contact_phone: '+212 522 000 003', address: 'Casablanca, Morocco' },
+    { name: 'Lactalis',    code: 'LAC', contact_name: 'Yassine Idrissi',contact_email: 'contact@lactalis.example',    contact_phone: '+212 522 000 004', address: 'Tangier, Morocco' },
+    { name: 'Local Farms', code: 'LOC', contact_name: 'Fatima Zahra',   contact_email: 'contact@localfarms.example',  contact_phone: '+212 522 000 005', address: 'Meknes, Morocco' },
+    { name: 'Nestle',      code: 'NES', contact_name: 'Omar Tazi',      contact_email: 'contact@nestle.example',      contact_phone: '+212 522 000 006', address: 'Casablanca, Morocco' },
+    { name: 'Cristal',     code: 'CRI', contact_name: 'Nadia Alaoui',   contact_email: 'contact@cristal.example',     contact_phone: '+212 522 000 007', address: 'Fes, Morocco', is_active: false },
+  ];
+
+  const clients = await Promise.all(
+    clientDefs.map((c) => prisma.client.create({ data: c })),
+  );
+  const clientIdByName = new Map(clients.map((c) => [c.name, c.id]));
+  console.log('  ✔  clients');
+
   const products = await Promise.all(
-    productDefs.map((p) => prisma.product.create({ data: p })),
+    productDefs.map((p) =>
+      prisma.product.create({
+        data: { ...p, client_id: clientIdByName.get(p.distributeur) ?? null },
+      }),
+    ),
   );
   console.log('  ✔  products');
 
@@ -463,32 +505,130 @@ async function main() {
   await prisma.schedule.createMany({ data: scheduleData });
   console.log('  ✔  schedules');
 
+  // ── 11. Plans ───────────────────────────────────────────────────────────────
+  const [starter, pro, enterprise] = await Promise.all([
+    prisma.plan.create({
+      data: {
+        name: 'Starter', code: 'STARTER', price: 499, currency: 'MAD',
+        billing_period: 'monthly', max_users: 5, max_pos: 10, max_products: 50,
+        description: 'For small brands starting field audits.', sort_order: 1,
+      },
+    }),
+    prisma.plan.create({
+      data: {
+        name: 'Professional', code: 'PRO', price: 1499, currency: 'MAD',
+        billing_period: 'monthly', max_users: 25, max_pos: 100, max_products: 500,
+        description: 'For growing brands with a national footprint.', sort_order: 2,
+      },
+    }),
+    prisma.plan.create({
+      data: {
+        name: 'Enterprise', code: 'ENTERPRISE', price: 4999, currency: 'MAD',
+        billing_period: 'yearly', max_users: null, max_pos: null, max_products: null,
+        description: 'Unlimited usage with priority support.', sort_order: 3,
+      },
+    }),
+  ]);
+  console.log('  ✔  plans');
+
+  // ── 12. Subscriptions — one per client, covering every status ───────────────
+  const byName = (n: string) => clientIdByName.get(n)!;
+
+  await prisma.subscription.createMany({
+    data: [
+      { client_id: byName('Danone'),      plan_id: enterprise.id, status: 'active',    starts_at: dt(-200), ends_at: dt(165) },
+      { client_id: byName('Nestle'),      plan_id: enterprise.id, status: 'active',    starts_at: dt(-150), ends_at: dt(215) },
+      { client_id: byName('Lactalis'),    plan_id: pro.id,        status: 'active',    starts_at: dt(-60),  ends_at: dt(305) },
+      { client_id: byName('Tropicana'),   plan_id: pro.id,        status: 'past_due',  starts_at: dt(-90),  ends_at: dt(-2), notes: 'Invoice overdue since last cycle.' },
+      { client_id: byName('Panera'),      plan_id: starter.id,    status: 'trialing',  starts_at: dt(-10),  ends_at: dt(20) },
+      { client_id: byName('Local Farms'), plan_id: starter.id,    status: 'expired',   starts_at: dt(-400), ends_at: dt(-35) },
+      { client_id: byName('Cristal'),     plan_id: pro.id,        status: 'cancelled', starts_at: dt(-180), ends_at: dt(-20), cancelled_at: dt(-25), notes: 'Cancelled at renewal.' },
+    ],
+  });
+  console.log('  ✔  subscriptions');
+
+  // ── 13. KPIs ────────────────────────────────────────────────────────────────
+  await prisma.kpi.createMany({
+    data: [
+      { code: 'visit_completion_rate', name: 'Visit completion rate',   unit: '%',      target: 95, warn_below: 80, direction: 'higher_is_better', sort_order: 1, description: 'Share of scheduled visits that were completed.' },
+      { code: 'stock_availability',    name: 'Stock availability',      unit: '%',      target: 90, warn_below: 75, direction: 'higher_is_better', sort_order: 2, description: 'Share of audited products found in stock.' },
+      { code: 'out_of_stock_rate',     name: 'Out-of-stock rate',       unit: '%',      target: 5,  warn_below: null, direction: 'lower_is_better', sort_order: 3, description: 'Share of audited products found out of stock.' },
+      { code: 'avg_visit_duration',    name: 'Average visit duration',  unit: 'min',    target: 90, warn_below: null, direction: 'lower_is_better', sort_order: 4, description: 'Mean time between check-in and check-out.' },
+      { code: 'shelf_variance',        name: 'Shelf variance',          unit: 'units',  target: 0,  warn_below: null, direction: 'lower_is_better', sort_order: 5, description: 'Mean gap between expected and found quantities.' },
+      { code: 'active_pos',            name: 'Active points of sale',   unit: 'POS',    target: null, warn_below: null, direction: 'higher_is_better', sort_order: 6, description: 'Points of sale visited at least once this month.' },
+    ],
+  });
+  console.log('  ✔  kpis');
+
+  // ── 14. RBAC — roles, permissions, grants, and user role_id backfill ────────
+  const rbac = await syncRbac(prisma);
+  console.log(`  ✔  rbac (${rbac.permissions} permissions, ${rbac.roles} roles)`);
+
+  // ── 15. Default dashboards, one per role ────────────────────────────────────
+  const kpis = await prisma.kpi.findMany({ orderBy: { sort_order: 'asc' } });
+  const roles = await prisma.role.findMany();
+
+  for (const role of roles) {
+    const dashboard = await prisma.dashboard.create({
+      data: {
+        name: `${role.label} overview`,
+        description: `Default dashboard for ${role.label}.`,
+        role_id: role.id,
+        is_default: true,
+      },
+    });
+
+    // Merchandisers get a leaner board than everyone else.
+    const shown = role.name === 'merchandiser' ? kpis.slice(0, 3) : kpis.slice(0, 4);
+
+    await prisma.dashboardWidget.createMany({
+      data: shown.map((kpi, i) => ({
+        dashboard_id: dashboard.id,
+        kpi_id: kpi.id,
+        type: 'kpi_card' as const,
+        title: kpi.name,
+        position: i,
+      })),
+    });
+  }
+  console.log('  ✔  dashboards');
+
   // ── Summary ──────────────────────────────────────────────────────────────────
   const counts = {
-    regions:  await prisma.region.count(),
-    stores:   await prisma.store.count(),
-    products: await prisma.product.count(),
-    users:    await prisma.user.count(),
-    visits:   await prisma.visit.count(),
-    audits:   await prisma.auditItem.count(),
-    schedules:await prisma.schedule.count(),
+    regions:       await prisma.region.count(),
+    stores:        await prisma.store.count(),
+    products:      await prisma.product.count(),
+    users:         await prisma.user.count(),
+    visits:        await prisma.visit.count(),
+    audits:        await prisma.auditItem.count(),
+    schedules:     await prisma.schedule.count(),
+    clients:       await prisma.client.count(),
+    plans:         await prisma.plan.count(),
+    subscriptions: await prisma.subscription.count(),
+    kpis:          await prisma.kpi.count(),
+    dashboards:    await prisma.dashboard.count(),
+    permissions:   await prisma.permission.count(),
+    visibleToGm:   await prisma.store.count({ where: { visible_to_gm: true } }),
   };
 
   console.log('\n✅  Seed complete!\n');
-  console.log(`  Regions: ${counts.regions}  Stores: ${counts.stores}  Products: ${counts.products}`);
+  console.log(`  Regions: ${counts.regions}  Stores: ${counts.stores} (${counts.visibleToGm} visible to GM)  Products: ${counts.products}`);
   console.log(`  Users: ${counts.users}  Visits: ${counts.visits}  Audit items: ${counts.audits}  Schedules: ${counts.schedules}`);
+  console.log(`  Clients: ${counts.clients}  Plans: ${counts.plans}  Subscriptions: ${counts.subscriptions}`);
+  console.log(`  KPIs: ${counts.kpis}  Dashboards: ${counts.dashboards}  Permissions: ${counts.permissions}`);
   console.log('\n  Credentials (all passwords: password123)');
-  console.log('  ┌────────────────────────────────────┬─────────────────┐');
-  console.log('  │ Email                               │ Role            │');
-  console.log('  ├────────────────────────────────────┼─────────────────┤');
-  console.log(`  │ ${superAdmin.email.padEnd(36)} │ super_admin     │`);
-  console.log(`  │ ${adminNorth.email.padEnd(36)} │ admin (north)   │`);
-  console.log(`  │ ${adminSouth.email.padEnd(36)} │ admin (south)   │`);
-  console.log(`  │ ${supNorth.email.padEnd(36)} │ supervisor N    │`);
-  console.log(`  │ ${supSouth.email.padEnd(36)} │ supervisor S    │`);
-  console.log(`  │ ${merchNorth.email.padEnd(36)} │ merchandiser N  │`);
-  console.log(`  │ ${merchSouth.email.padEnd(36)} │ merchandiser S  │`);
-  console.log('  └────────────────────────────────────┴─────────────────┘');
+  console.log('  ┌──────────────────────────────────────┬────────────────────┐');
+  console.log('  │ Email                                │ Role               │');
+  console.log('  ├──────────────────────────────────────┼────────────────────┤');
+  console.log(`  │ ${superAdmin.email.padEnd(36)} │ super_admin        │`);
+  console.log(`  │ ${adminNorth.email.padEnd(36)} │ admin (north)      │`);
+  console.log(`  │ ${adminSouth.email.padEnd(36)} │ admin (south)      │`);
+  console.log(`  │ ${genMgmt.email.padEnd(36)} │ general_management │`);
+  console.log(`  │ ${supNorth.email.padEnd(36)} │ supervisor N       │`);
+  console.log(`  │ ${supSouth.email.padEnd(36)} │ supervisor S       │`);
+  console.log(`  │ ${merchNorth.email.padEnd(36)} │ merchandiser N     │`);
+  console.log(`  │ ${merchSouth.email.padEnd(36)} │ merchandiser S     │`);
+  console.log('  └──────────────────────────────────────┴────────────────────┘');
 }
 
 main()

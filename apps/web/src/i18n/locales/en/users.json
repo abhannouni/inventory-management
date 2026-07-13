@@ -1,43 +1,50 @@
 {
   "title": "Users",
-  "subtitle": "Manage user accounts and permissions",
+  "subtitle": "Manage user accounts, roles and access",
   "addUser": "Add User",
   "createUser": "Create User",
   "editUser": "Edit User",
   "updateUser": "Update User",
+  "searchPlaceholder": "Search by name or email…",
   "table": {
     "name": "Name",
     "role": "Role",
+    "status": "Status",
     "region": "Region",
     "joined": "Joined",
+    "lastLogin": "Last login",
+    "never": "Never",
     "empty": "No users found"
   },
-  "actions": {
-    "assignStores": "Assign Stores"
+  "filters": {
+    "allRoles": "All roles",
+    "allStatuses": "All statuses",
+    "allRegions": "All regions"
   },
-  "assignStoresTitle": "Assign Stores — {{name}}",
+  "actions": {
+    "assignStores": "Assign POS",
+    "activate": "Activate",
+    "deactivate": "Deactivate"
+  },
+  "assignStoresTitle": "Assign POS — {{name}}",
   "fields": {
     "fullName": "Full Name",
     "fullNamePlaceholder": "John Doe",
     "email": "Email",
     "emailPlaceholder": "john@example.com",
     "role": "Role",
+    "rolePlaceholder": "Select a role",
     "region": "Region (optional)",
     "regionPlaceholder": "No region",
     "password": "Password",
-    "newPassword": "New Password (leave blank to keep)"
-  },
-  "roleOptions": {
-    "superAdmin": "Super Admin",
-    "admin": "Admin",
-    "supervisor": "Supervisor",
-    "merchandiser": "Merchandiser"
+    "newPassword": "New Password",
+    "passwordHint": "Leave blank to keep the current password"
   },
   "errors": {
     "nameRequired": "Name is required",
     "emailRequired": "Email is required",
     "passwordRequired": "Password is required",
-    "passwordMinLength": "Password must be at least 6 characters",
+    "passwordMinLength": "Password must be at least {{count}} characters",
     "roleRequired": "Role is required"
   },
   "toasts": {
@@ -47,18 +54,29 @@
     "updateError": "Failed to update user",
     "deleteSuccess": "User deleted",
     "deleteError": "Failed to delete user",
-    "assignSuccess": "Stores assigned successfully",
-    "assignError": "Failed to assign stores"
+    "assignSuccess": "Points of sale assigned successfully",
+    "assignError": "Failed to assign points of sale",
+    "activateSuccess": "User activated",
+    "deactivateSuccess": "User deactivated",
+    "toggleError": "Failed to change the account status"
   },
   "deleteConfirm": {
     "message": "This will permanently delete the user account."
   },
+  "deactivateConfirm": {
+    "title": "Deactivate account",
+    "message": "{{name}} will be signed out immediately and blocked from logging in. Their history is kept and you can reactivate them at any time."
+  },
+  "activateConfirm": {
+    "title": "Activate account",
+    "message": "{{name}} will be able to sign in again."
+  },
   "assignStoresForm": {
-    "description": "Select stores to assign to this user. Previous assignments will be replaced.",
-    "searchPlaceholder": "Search stores…",
-    "empty": "No stores found",
-    "selectedCount_one": "{{count}} store selected",
-    "selectedCount_other": "{{count}} stores selected",
-    "submit": "Assign Stores"
+    "description": "Select the points of sale to assign to this user. Previous assignments will be replaced.",
+    "searchPlaceholder": "Search points of sale…",
+    "empty": "No points of sale found",
+    "selectedCount_one": "{{count}} point of sale selected",
+    "selectedCount_other": "{{count}} points of sale selected",
+    "submit": "Assign POS"
   }
 }

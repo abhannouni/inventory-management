@@ -1,0 +1,86 @@
+{
+  "title": "Rôles et permissions",
+  "subtitle": "Définissez les rôles et contrôlez précisément les accès de chacun",
+  "addRole": "Ajouter un rôle",
+  "createRole": "Créer un rôle",
+  "editRole": "Modifier le rôle",
+  "updateRole": "Mettre à jour le rôle",
+  "permissionsTitle": "Permissions — {{name}}",
+  "table": {
+    "role": "Rôle",
+    "type": "Type",
+    "description": "Description",
+    "permissions": "Permissions",
+    "users": "Utilisateurs",
+    "builtIn": "Intégré",
+    "custom": "Personnalisé",
+    "permissionCount_one": "{{count}} permission",
+    "permissionCount_other": "{{count}} permissions",
+    "empty": "Aucun rôle trouvé"
+  },
+  "actions": {
+    "permissions": "Permissions",
+    "read": "Consulter",
+    "create": "Créer",
+    "update": "Modifier",
+    "delete": "Supprimer",
+    "export": "Exporter",
+    "activate": "Activer / désactiver",
+    "assign_stores": "Assigner des points de vente",
+    "assign_permissions": "Assigner des permissions",
+    "set_visibility": "Définir la visibilité",
+    "change_status": "Changer le statut",
+    "view_audit_log": "Consulter le journal d'audit"
+  },
+  "resources": {
+    "users": "Utilisateurs",
+    "roles": "Rôles et permissions",
+    "clients": "Clients",
+    "pos": "Points de vente",
+    "regions": "Régions",
+    "products": "Produits",
+    "inventory": "Inventaire",
+    "kpis": "KPI",
+    "dashboards": "Tableaux de bord",
+    "plans": "Forfaits",
+    "subscriptions": "Abonnements",
+    "visits": "Visites",
+    "audit_items": "Éléments d'audit",
+    "schedules": "Planning",
+    "reports": "Rapports",
+    "settings": "Paramètres"
+  },
+  "matrix": {
+    "superAdminLocked": "Le super administrateur détient toujours toutes les permissions. Ce rôle n'est pas modifiable — c'est ce qui garantit que vous ne pourrez jamais être exclu de la plateforme.",
+    "selectedCount_one": "{{count}} permission accordée",
+    "selectedCount_other": "{{count}} permissions accordées",
+    "save": "Enregistrer les permissions"
+  },
+  "fields": {
+    "label": "Nom affiché",
+    "labelPlaceholder": "Auditeur régional",
+    "name": "Nom technique",
+    "nameHint": "Minuscules, chiffres et tirets bas. Non modifiable par la suite.",
+    "nameImmutable": "Le nom technique n'est pas modifiable.",
+    "description": "Description",
+    "descriptionPlaceholder": "Ce que ce rôle est autorisé à faire"
+  },
+  "errors": {
+    "labelRequired": "Le nom affiché est requis",
+    "nameRequired": "Le nom technique est requis",
+    "nameFormat": "Utilisez des minuscules, chiffres et tirets bas, en commençant par une lettre"
+  },
+  "toasts": {
+    "createSuccess": "Rôle créé",
+    "createError": "Échec de la création du rôle",
+    "updateSuccess": "Rôle mis à jour",
+    "updateError": "Échec de la mise à jour du rôle",
+    "deleteSuccess": "Rôle supprimé",
+    "deleteError": "Échec de la suppression du rôle",
+    "permissionsSaved": "Permissions mises à jour",
+    "permissionsError": "Échec de la mise à jour des permissions"
+  },
+  "deleteConfirm": {
+    "message": "Cette action supprimera définitivement le rôle « {{name}} ». Les utilisateurs doivent d'abord être réassignés."
+  }
+}

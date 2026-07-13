@@ -3,32 +3,44 @@ import { useTranslation } from 'react-i18next';
 import Input from '../../components/ui/Input';
 import Select from '../../components/ui/Select';
 import Button from '../../components/ui/Button';
-import type { Region, User } from '../../types';
+import type { Region, RoleRecord, User } from '../../types';
 
 interface UserFormProps {
   regions: Region[];
+  roles: RoleRecord[];
   initialData?: User;
   onSubmit: (data: any) => Promise<void>;
   onCancel: () => void;
 }
 
-export default function UserForm({ regions, initialData, onSubmit, onCancel }: UserFormProps) {
+/** The API rejects anything shorter — keep the two in step. */
+const MIN_PASSWORD_LENGTH = 8;
+
+export default function UserForm({
+  regions,
+  roles,
+  initialData,
+  onSubmit,
+  onCancel,
+}: UserFormProps) {
   const { t } = useTranslation('users');
   const { t: tCommon } = useTranslation('common');
   const isEdit = !!initialData;
 
-  const roleOptions = [
-    { value: 'super_admin', label: tCommon('roles.super_admin') },
-    { value: 'admin', label: tCommon('roles.admin') },
-    { value: 'supervisor', label: tCommon('roles.supervisor') },
-    { value: 'merchandiser', label: tCommon('roles.merchandiser') },
-  ];
+  // One selector over every role — built-in and custom alike — keyed by id.
+  const roleOptions = roles.map((r) => ({
+    value: r.id,
+    label: r.is_system ? tCommon(`roles.${r.name}`) : r.label,
+  }));
+
+  const initialRoleId =
+    initialData?.role_id ?? roles.find((r) => r.name === initialData?.role)?.id ?? '';
 
   const [form, setForm] = useState({
     full_name: initialData?.full_name || '',
     email: initialData?.email || '',
     password: '',
-    role: initialData?.role || 'merchandiser',
+    role_id: initialRoleId,
     region_id: initialData?.region_id || '',
   });
 
@@ -40,20 +52,37 @@ export default function UserForm({ regions, initialData, onSubmit, onCancel }: U
     if (!form.full_name.trim()) errs.full_name = t('errors.nameRequired');
     if (!form.email.trim()) errs.email = t('errors.emailRequired');
     if (!isEdit && !form.password) errs.password = t('errors.passwordRequired');
-    if (!isEdit && form.password.length < 6) errs.password = t('errors.passwordMinLength');
-    if (!form.role) errs.role = t('errors.roleRequired');
+    if (form.password && form.password.length < MIN_PASSWORD_LENGTH) {
+      errs.password = t('errors.passwordMinLength', { count: MIN_PASSWORD_LENGTH });
+    }
+    if (!form.role_id) errs.role_id = t('errors.roleRequired');
     return errs;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const errs = validate();
-    if (Object.keys(errs).length) { setErrors(errs); return; }
+    if (Object.keys(errs).length) {
+      setErrors(errs);
+      return;
+    }
     setErrors({});
     setLoading(true);
-    const payload: any = { ...form };
+
+    const selected = roles.find((r) => r.id === form.role_id);
+
+    const payload: any = {
+      full_name: form.full_name,
+      email: form.email,
+      role_id: form.role_id,
+      // `role` is the legacy enum column and is still required on create. For a
+      // custom role the server re-resolves it to the least-privileged value.
+      role: selected?.is_system ? selected.name : 'merchandiser',
+      region_id: form.region_id || undefined,
+    };
     if (!payload.region_id) delete payload.region_id;
-    if (isEdit && !payload.password) delete payload.password;
+    if (form.password) payload.password = form.password;
+
     await onSubmit(payload);
     setLoading(false);
   };
@@ -83,10 +112,11 @@ export default function UserForm({ regions, initialData, onSubmit, onCancel }: U
       <div className="form-row">
         <Select
           label={t('fields.role')}
-          value={form.role}
-          onChange={(e) => setForm({ ...form, role: e.target.value as import('../../types').Role })}
+          value={form.role_id}
+          onChange={(e) => setForm({ ...form, role_id: e.target.value })}
           options={roleOptions}
-          error={errors.role}
+          placeholder={t('fields.rolePlaceholder')}
+          error={errors.role_id}
         />
         <Select
           label={t('fields.region')}
@@ -103,12 +133,17 @@ export default function UserForm({ regions, initialData, onSubmit, onCancel }: U
         value={form.password}
         onChange={(e) => setForm({ ...form, password: e.target.value })}
         error={errors.password}
+        hint={isEdit ? t('fields.passwordHint') : undefined}
         placeholder="••••••••"
       />
 
       <div className="form-actions">
-        <Button variant="ghost" type="button" onClick={onCancel} disabled={loading}>{tCommon('actions.cancel')}</Button>
-        <Button type="submit" loading={loading}>{isEdit ? t('updateUser') : t('createUser')}</Button>
+        <Button variant="ghost" type="button" onClick={onCancel} disabled={loading}>
+          {tCommon('actions.cancel')}
+        </Button>
+        <Button type="submit" loading={loading}>
+          {isEdit ? t('updateUser') : t('createUser')}
+        </Button>
       </div>
     </form>
   );

@@ -21,13 +21,16 @@
   "status": {
     "open": "مفتوح",
     "closed": "مغلق",
+    "active": "نشط",
+    "inactive": "غير نشط",
     "in_stock": "متوفر",
     "low_stock": "مخزون منخفض",
     "out_of_stock": "نفد المخزون"
   },
   "roles": {
-    "super_admin": "مدير عام",
+    "super_admin": "مدير النظام",
     "admin": "مدير",
+    "general_management": "الإدارة العامة",
     "supervisor": "مشرف",
     "merchandiser": "مندوب ميداني"
   },
@@ -35,6 +38,21 @@
     "noData": "لا توجد بيانات",
     "actions": "الإجراءات",
     "created": "تاريخ الإنشاء"
+  },
+  "loading": "جارٍ التحميل…",
+  "search": {
+    "placeholder": "بحث…",
+    "clear": "مسح البحث"
+  },
+  "filters": {
+    "reset": "إعادة تعيين عوامل التصفية"
+  },
+  "pagination": {
+    "showing": "عرض {{from}}–{{to}} من {{total}}",
+    "perPage": "لكل صفحة",
+    "label": "ترقيم الصفحات",
+    "previous": "الصفحة السابقة",
+    "next": "الصفحة التالية"
   },
   "confirmDialog": {
     "title": "تأكيد الإجراء",

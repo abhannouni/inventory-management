@@ -1,43 +1,50 @@
 {
   "title": "Utilisateurs",
-  "subtitle": "Gérer les comptes utilisateurs et les autorisations",
+  "subtitle": "Gérer les comptes, les rôles et les accès",
   "addUser": "Ajouter un utilisateur",
   "createUser": "Créer un utilisateur",
   "editUser": "Modifier l'utilisateur",
   "updateUser": "Mettre à jour l'utilisateur",
+  "searchPlaceholder": "Rechercher par nom ou e-mail…",
   "table": {
     "name": "Nom",
     "role": "Rôle",
+    "status": "Statut",
     "region": "Région",
     "joined": "Date d'adhésion",
+    "lastLogin": "Dernière connexion",
+    "never": "Jamais",
     "empty": "Aucun utilisateur trouvé"
   },
-  "actions": {
-    "assignStores": "Assigner des magasins"
+  "filters": {
+    "allRoles": "Tous les rôles",
+    "allStatuses": "Tous les statuts",
+    "allRegions": "Toutes les régions"
   },
-  "assignStoresTitle": "Assigner des magasins — {{name}}",
+  "actions": {
+    "assignStores": "Assigner des PDV",
+    "activate": "Activer",
+    "deactivate": "Désactiver"
+  },
+  "assignStoresTitle": "Assigner des PDV — {{name}}",
   "fields": {
     "fullName": "Nom complet",
     "fullNamePlaceholder": "Jean Dupont",
     "email": "E-mail",
     "emailPlaceholder": "jean@exemple.com",
     "role": "Rôle",
+    "rolePlaceholder": "Sélectionner un rôle",
     "region": "Région (facultatif)",
     "regionPlaceholder": "Aucune région",
     "password": "Mot de passe",
-    "newPassword": "Nouveau mot de passe (laisser vide pour ne pas changer)"
-  },
-  "roleOptions": {
-    "superAdmin": "Super administrateur",
-    "admin": "Administrateur",
-    "supervisor": "Superviseur",
-    "merchandiser": "Marchandiseur"
+    "newPassword": "Nouveau mot de passe",
+    "passwordHint": "Laisser vide pour conserver le mot de passe actuel"
   },
   "errors": {
     "nameRequired": "Le nom est requis",
     "emailRequired": "L'e-mail est requis",
     "passwordRequired": "Le mot de passe est requis",
-    "passwordMinLength": "Le mot de passe doit comporter au moins 6 caractères",
+    "passwordMinLength": "Le mot de passe doit comporter au moins {{count}} caractères",
     "roleRequired": "Le rôle est requis"
   },
   "toasts": {
@@ -47,18 +54,29 @@
     "updateError": "Échec de la mise à jour de l'utilisateur",
     "deleteSuccess": "Utilisateur supprimé",
     "deleteError": "Échec de la suppression de l'utilisateur",
-    "assignSuccess": "Magasins assignés avec succès",
-    "assignError": "Échec de l'assignation des magasins"
+    "assignSuccess": "Points de vente assignés avec succès",
+    "assignError": "Échec de l'assignation des points de vente",
+    "activateSuccess": "Utilisateur activé",
+    "deactivateSuccess": "Utilisateur désactivé",
+    "toggleError": "Échec du changement de statut du compte"
   },
   "deleteConfirm": {
     "message": "Cette action supprimera définitivement le compte utilisateur."
   },
+  "deactivateConfirm": {
+    "title": "Désactiver le compte",
+    "message": "{{name}} sera déconnecté immédiatement et ne pourra plus se connecter. Son historique est conservé et vous pouvez le réactiver à tout moment."
+  },
+  "activateConfirm": {
+    "title": "Activer le compte",
+    "message": "{{name}} pourra de nouveau se connecter."
+  },
   "assignStoresForm": {
-    "description": "Sélectionnez les magasins à assigner à cet utilisateur. Les assignations précédentes seront remplacées.",
-    "searchPlaceholder": "Rechercher des magasins…",
-    "empty": "Aucun magasin trouvé",
-    "selectedCount_one": "{{count}} magasin sélectionné",
-    "selectedCount_other": "{{count}} magasins sélectionnés",
-    "submit": "Assigner les magasins"
+    "description": "Sélectionnez les points de vente à assigner à cet utilisateur. Les assignations précédentes seront remplacées.",
+    "searchPlaceholder": "Rechercher des points de vente…",
+    "empty": "Aucun point de vente trouvé",
+    "selectedCount_one": "{{count}} point de vente sélectionné",
+    "selectedCount_other": "{{count}} points de vente sélectionnés",
+    "submit": "Assigner les PDV"
   }
 }

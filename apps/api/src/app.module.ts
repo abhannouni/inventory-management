@@ -7,6 +7,7 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { UserModule } from './user/user.module';
+import { RolesModule } from './roles/roles.module';
 import { RegionsModule } from './regions/regions.module';
 import { StoresModule } from './stores/stores.module';
 import { ProductsModule } from './products/products.module';
@@ -30,6 +31,7 @@ import { SchedulesModule } from './schedules/schedules.module';
     PrismaModule,
     AuthModule,
     UserModule,
+    RolesModule,
     RegionsModule,
     StoresModule,
     ProductsModule,

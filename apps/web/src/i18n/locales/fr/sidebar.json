@@ -2,6 +2,7 @@
   "brand": "Inventory",
   "sections": {
     "menu": "Menu",
+    "administration": "Administration",
     "management": "Gestion",
     "general": "Général"
   },
@@ -11,6 +12,7 @@
     "schedule": "Planning",
     "auditItems": "Articles à auditer",
     "users": "Utilisateurs",
+    "roles": "Rôles et permissions",
     "regions": "Régions",
     "stores": "Magasins",
     "products": "Produits",
