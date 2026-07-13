@@ -3947,3 +3947,100 @@ html[dir='rtl'] .gps-coords {
   .toolbar-filter { flex: 1 1 auto; min-width: 0; }
   .matrix-groups { grid-template-columns: 1fr; max-height: none; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Visit duration timer
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.visit-timer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 18px 20px;
+  margin-bottom: 20px;
+  text-align: center;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg, 12px);
+  background: var(--gray-50);
+}
+
+.visit-timer.is-running {
+  border-color: var(--accent-light);
+  background: var(--primary-light);
+}
+
+.visit-timer-head {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.visit-timer-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gray-400);
+}
+
+.visit-timer.is-running .visit-timer-label { color: var(--primary); }
+
+.visit-timer-value {
+  /* Tabular figures keep the digits from shifting as the clock ticks. */
+  font-variant-numeric: tabular-nums;
+  font-size: 40px;
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--gray-900);
+}
+
+.visit-timer.is-running .visit-timer-value { color: var(--primary-hover); }
+
+.visit-timer-meta {
+  font-size: 12px;
+  color: var(--gray-400);
+}
+
+/* Inline chip — used in tables, banners and the checkout dialog. */
+.visit-timer-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 9px;
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--gray-600);
+  background: var(--gray-100);
+  border-radius: 999px;
+}
+
+.visit-timer-chip.is-running {
+  color: var(--primary-hover);
+  background: var(--primary-light);
+}
+
+/* Pulsing dot: the only cue that the clock is live. */
+.visit-timer-pulse {
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+  background: var(--success);
+  border-radius: 50%;
+  animation: visit-timer-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes visit-timer-pulse {
+  0%, 100% { opacity: 1;   box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.45); }
+  50%      { opacity: .65; box-shadow: 0 0 0 5px rgba(22, 163, 74, 0); }
+}
+
+/* Respect users who have asked for less motion. */
+@media (prefers-reduced-motion: reduce) {
+  .visit-timer-pulse { animation: none; }
+}
+
+@media (max-width: 640px) {
+  .visit-timer-value { font-size: 32px; }
+}

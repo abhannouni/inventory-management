@@ -4,9 +4,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../../hooks/useAppDispatch';
-import { checkin, checkout, fetchVisits } from '../../store/slices/visitsSlice';
+import { checkin, checkout, fetchVisits, fetchActiveVisit } from '../../store/slices/visitsSlice';
 import { fetchStores } from '../../store/slices/storesSlice';
 import { fetchSchedules } from '../../store/slices/schedulesSlice';
+import VisitTimer from '../../components/ui/VisitTimer';
 import { auditItemsApi } from '../../api/audit-items.api';
 import { productStoresApi } from '../../api/product-stores.api';
 import { uploadApi } from '../../api/upload.api';
@@ -73,7 +74,7 @@ export default function MerchandiserFlowPage() {
   const { t, i18n } = useTranslation('visits');
   const dispatch  = useAppDispatch();
   const navigate  = useNavigate();
-  const { items: visits } = useAppSelector((s) => s.visits);
+  const { active: activeVisit } = useAppSelector((s) => s.visits);
   const { items: stores  } = useAppSelector((s) => s.stores);
   const { items: schedules } = useAppSelector((s) => s.schedules);
   const currentUserId = useAppSelector((s) => s.auth.user?.id);
@@ -97,10 +98,11 @@ export default function MerchandiserFlowPage() {
 
   const fileRefs = useRef<Map<string, HTMLInputElement>>(new Map());
 
-  /* Load stores + detect existing open visit */
+  /* Load stores + ask the server whether a visit is already running */
   useEffect(() => {
     dispatch(fetchStores());
     dispatch(fetchVisits());
+    dispatch(fetchActiveVisit());
     if (currentUserId) dispatch(fetchSchedules({ status: 'pending', user_id: currentUserId }));
   }, [dispatch, currentUserId]);
 
@@ -108,15 +110,19 @@ export default function MerchandiserFlowPage() {
     (a, b) => new Date(a.scheduled_at).getTime() - new Date(b.scheduled_at).getTime(),
   );
 
+  /* Resume an in-progress visit after a refresh, a re-login, or a switch of device.
+     The server is the source of truth: it returns the open visit along with the
+     elapsed seconds measured from the stored checkin_at, so the timer picks up
+     exactly where it left off rather than restarting at zero. */
   useEffect(() => {
-    const open = visits.find((v) => v.status === 'open');
-    if (open && step === 'checkin') {
-      setVisit(open);
-      setStoreId(open.store_id);
+    if (activeVisit && step === 'checkin') {
+      setVisit(activeVisit);
+      setStoreId(activeVisit.store_id);
       setStep('audit');
-      loadProductsForStore(open.store_id, open);
+      loadProductsForStore(activeVisit.store_id, activeVisit);
     }
-  }, [visits]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeVisit]);
 
   /* Load products for the selected store */
   const loadProductsForStore = async (sid: string, v: Visit) => {
@@ -159,12 +165,12 @@ export default function MerchandiserFlowPage() {
     }
     setStoreErr('');
     setBusy(true);
+    // The server starts the clock — no client timestamp is sent.
     const res = await dispatch(checkin({
       store_id: storeId,
       schedule_id: scheduleId ?? undefined,
       lat: Number(selectedStore.latitude),
       lng: Number(selectedStore.longitude),
-      checkin_at: new Date().toISOString(),
     }));
     setBusy(false);
     if (checkin.fulfilled.match(res)) {
@@ -224,14 +230,17 @@ export default function MerchandiserFlowPage() {
   const handleCheckout = async () => {
     if (!visit) return;
     setBusy(true);
+    // The server stamps check-out and computes the stored duration.
     const res = await dispatch(checkout({
       visit_id: visit.id,
       lat: Number(visit.store?.latitude),
       lng: Number(visit.store?.longitude),
-      checkout_at: new Date().toISOString(),
     }));
     setBusy(false);
     if (checkout.fulfilled.match(res)) {
+      // Swap in the completed visit so the timer freezes on the server's duration
+      // rather than continuing to tick against the now-stale open payload.
+      setVisit(res.payload as Visit);
       toast.success(t('merchandiserFlow.checkout.toasts.visitCompleted'));
       setStep('done');
     } else {
@@ -265,6 +274,9 @@ export default function MerchandiserFlowPage() {
         </div>
         <StepIndicator current={step} />
       </div>
+
+      {/* Runs from check-in through check-out, then freezes on the stored duration. */}
+      {visit && <VisitTimer visit={visit} />}
 
       <AnimatePresence mode="wait">
 

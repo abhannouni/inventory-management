@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Button from '../../components/ui/Button';
+import VisitTimer from '../../components/ui/VisitTimer';
 import { formatDate } from '../../utils/format';
 import type { Visit } from '../../types';
 
 interface Props {
   visit: Visit;
-  onSubmit: (data: { lat: number; lng: number; checkout_at?: string }) => Promise<void>;
+  onSubmit: (data: { lat: number; lng: number }) => Promise<void>;
   onCancel: () => void;
 }
 
@@ -21,7 +22,8 @@ export default function CheckoutForm({ visit, onSubmit, onCancel }: Props) {
   const handleCheckout = async () => {
     if (!hasCoords) return;
     setLoading(true);
-    await onSubmit({ lat: lat!, lng: lng!, checkout_at: new Date().toISOString() });
+    // The server stamps check-out and computes the stored duration.
+    await onSubmit({ lat: lat!, lng: lng! });
     setLoading(false);
   };
 
@@ -31,6 +33,9 @@ export default function CheckoutForm({ visit, onSubmit, onCancel }: Props) {
         <p style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--gray-400)', marginBottom: 6 }}>{t('checkout.activeVisit')}</p>
         <p style={{ fontSize: 17, fontWeight: 800, color: 'var(--gray-900)', marginBottom: 4 }}>{visit.store?.name}</p>
         <p style={{ fontSize: 13, color: 'var(--gray-500)' }}>{t('checkout.checkedInAt', { date: formatDate(visit.checkin_at, i18n.language) })}</p>
+        <div style={{ marginTop: 10 }}>
+          <VisitTimer visit={visit} variant="inline" />
+        </div>
       </div>
 
       {hasCoords && (

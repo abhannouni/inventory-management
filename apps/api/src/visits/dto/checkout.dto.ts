@@ -1,5 +1,5 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsDateString, IsNumber, IsOptional, IsUUID, Max, Min } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsNumber, IsUUID, Max, Min } from 'class-validator';
 
 export class CheckoutDto {
   @ApiProperty({ example: 'uuid-of-visit' })
@@ -18,8 +18,6 @@ export class CheckoutDto {
   @Max(180)
   lng: number;
 
-  @ApiPropertyOptional({ example: '2026-06-25T11:18:00.924Z' })
-  @IsOptional()
-  @IsDateString()
-  checkout_at?: string;
+  // No `checkout_at`: the server stamps the end of the visit and derives
+  // duration_seconds from its own two timestamps.
 }

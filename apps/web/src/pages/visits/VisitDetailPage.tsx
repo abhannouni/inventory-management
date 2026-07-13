@@ -9,7 +9,8 @@ import PageHeader from '../../components/ui/PageHeader';
 import Button from '../../components/ui/Button';
 import Badge from '../../components/ui/Badge';
 import Spinner from '../../components/ui/Spinner';
-import { formatDate } from '../../utils/format';
+import VisitTimer from '../../components/ui/VisitTimer';
+import { formatDate, formatDurationShort } from '../../utils/format';
 import type { AuditStatus } from '../../types';
 
 const statusBadge: Record<AuditStatus, 'success' | 'warning' | 'danger'> = {
@@ -79,6 +80,12 @@ export default function VisitDetailPage() {
               <div className="detail-item">
                 <span className="detail-label">{t('detail.visitInfo.checkout')}</span>
                 <span className="detail-value">{visit.checkout_at ? formatDate(visit.checkout_at, i18n.language) : '—'}</span>
+              </div>
+              <div className="detail-item">
+                <span className="detail-label">{t('detail.visitInfo.duration')}</span>
+                {visit.status === 'open'
+                  ? <VisitTimer visit={visit} variant="inline" />
+                  : <span className="detail-value">{formatDurationShort(visit.duration_seconds)}</span>}
               </div>
               <div className="detail-item">
                 <span className="detail-label">{t('detail.visitInfo.gpsIn')}</span>

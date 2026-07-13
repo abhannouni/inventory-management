@@ -19,7 +19,8 @@
       "checkin": "Check-in",
       "checkout": "Check-out",
       "gpsIn": "GPS (in)",
-      "actions": "Actions"
+      "actions": "Actions",
+      "duration": "Duration"
     },
     "view": "View",
     "loading": "Loading…",
@@ -43,7 +44,8 @@
       "checkin": "Check-in",
       "checkout": "Check-out",
       "gpsIn": "GPS In",
-      "gpsOut": "GPS Out"
+      "gpsOut": "GPS Out",
+      "duration": "Duration"
     },
     "auditSummary": {
       "title": "Audit Summary",
@@ -159,5 +161,10 @@
       "productsCount_other": "{{count}} products",
       "viewHistory": "View Visit History"
     }
+  },
+  "timer": {
+    "inProgress": "Visit in progress",
+    "completed": "Visit completed",
+    "startedAt": "Started at {{time}}"
   }
 }

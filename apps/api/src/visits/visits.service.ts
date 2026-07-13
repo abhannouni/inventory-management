@@ -4,11 +4,23 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { ScheduleStatus, User, UserRole, VisitStatus } from '@prisma/client';
+import { Prisma, ScheduleStatus, User, UserRole, VisitStatus } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CheckinDto } from './dto/checkin.dto';
 import { CheckoutDto } from './dto/checkout.dto';
 import { FindVisitsDto } from './dto/find-visits.dto';
+
+/**
+ * The single definition of visit duration: `checkout_at - checkin_at`, in whole seconds.
+ *
+ * Clamped at zero — the two timestamps both come from the server clock, but an
+ * NTP step backwards between check-in and check-out could otherwise persist a
+ * negative duration.
+ */
+export function computeDurationSeconds(checkinAt: Date, checkoutAt: Date): number {
+  const ms = checkoutAt.getTime() - checkinAt.getTime();
+  return Math.max(0, Math.floor(ms / 1000));
+}
 
 const VISIT_INCLUDE = {
   user: { select: { id: true, full_name: true, email: true, role: true } },
@@ -46,25 +58,49 @@ export class VisitsService {
       if (!assignment) throw new ForbiddenException('You are not assigned to this store');
     }
 
-    // Enforce one open visit at a time
+    // Enforce one open visit at a time.
     const openVisit = await this.prisma.visit.findFirst({
       where: { user_id: user.id, status: VisitStatus.open },
     });
     if (openVisit) throw new ConflictException('You already have an open visit');
 
-    const visit = await this.prisma.visit.create({
-      data: {
-        user_id: user.id,
-        store_id,
-        schedule_id: scheduleId,
-        checkin_time: dto.checkin_at ? new Date(dto.checkin_at) : new Date(),
-        checkin_lat: dto.lat,
-        checkin_lng: dto.lng,
-        status: VisitStatus.open,
-      },
+    try {
+      const visit = await this.prisma.visit.create({
+        data: {
+          user_id: user.id,
+          store_id,
+          schedule_id: scheduleId,
+          // The visit clock is started by the server, never by the client: a device
+          // with a wrong or tampered clock must not be able to skew the duration.
+          checkin_time: new Date(),
+          checkin_lat: dto.lat,
+          checkin_lng: dto.lng,
+          status: VisitStatus.open,
+        },
+        include: VISIT_INCLUDE,
+      });
+      return this.serializeVisit(visit);
+    } catch (err) {
+      // The check above can be raced by two simultaneous check-ins; the partial
+      // unique index on (user_id) WHERE status = 'open' is the real guarantee.
+      if (
+        err instanceof Prisma.PrismaClientKnownRequestError &&
+        err.code === 'P2002'
+      ) {
+        throw new ConflictException('You already have an open visit');
+      }
+      throw err;
+    }
+  }
+
+  /** The merchandiser's currently open visit, if any — used to resume the timer. */
+  async findActive(user: User) {
+    const visit = await this.prisma.visit.findFirst({
+      where: { user_id: user.id, status: VisitStatus.open },
       include: VISIT_INCLUDE,
+      orderBy: { checkin_time: 'desc' },
     });
-    return this.serializeVisit(visit);
+    return visit ? this.serializeVisit(visit) : null;
   }
 
   async checkout(dto: CheckoutDto, user: User) {
@@ -78,14 +114,20 @@ export class VisitsService {
       throw new ConflictException('Visit is already completed');
     }
 
+    // Server clock again — and the duration is derived from the two stored
+    // timestamps, never from anything the client reports having counted.
+    const checkoutTime = new Date();
+    const durationSeconds = computeDurationSeconds(visit.checkin_time, checkoutTime);
+
     const updated = await this.prisma.$transaction(async (tx) => {
       const result = await tx.visit.update({
         where: { id: dto.visit_id },
         data: {
           status: VisitStatus.completed,
-          checkout_time: dto.checkout_at ? new Date(dto.checkout_at) : new Date(),
+          checkout_time: checkoutTime,
           checkout_lat: dto.lat,
           checkout_lng: dto.lng,
+          duration_seconds: durationSeconds,
         },
         include: VISIT_INCLUDE,
       });
@@ -124,8 +166,27 @@ export class VisitsService {
 
   // ─── Helpers ───────────────────────────────────────────────────────────────
 
-  private serializeVisit<T extends { checkin_time: Date; checkout_time: Date | null }>(v: T) {
-    return { ...v, checkin_at: v.checkin_time, checkout_at: v.checkout_time };
+  private serializeVisit<
+    T extends {
+      checkin_time: Date;
+      checkout_time: Date | null;
+      duration_seconds: number | null;
+    },
+  >(v: T) {
+    // `elapsed_seconds` is the duration as of *now*, measured against the server
+    // clock. The client seeds its ticking timer from this instead of computing
+    // `Date.now() - checkin_at` itself, so a skewed device clock cannot distort
+    // the displayed timer.
+    const elapsed_seconds = v.checkout_time
+      ? (v.duration_seconds ?? computeDurationSeconds(v.checkin_time, v.checkout_time))
+      : computeDurationSeconds(v.checkin_time, new Date());
+
+    return {
+      ...v,
+      checkin_at: v.checkin_time,
+      checkout_at: v.checkout_time,
+      elapsed_seconds,
+    };
   }
 
   private buildFilter(user: User, query: FindVisitsDto) {

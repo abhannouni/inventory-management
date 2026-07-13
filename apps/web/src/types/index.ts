@@ -103,6 +103,13 @@ export interface Visit {
   checkout_lng: number | null;
   checkin_at: string;
   checkout_at: string | null;
+  /** Server-computed `checkout_at - checkin_at`, in seconds. Null while the visit is open. */
+  duration_seconds: number | null;
+  /**
+   * Duration as of the moment the server built this response, in seconds. The UI
+   * timer uses this as its baseline rather than reading the device clock.
+   */
+  elapsed_seconds: number;
   store?: Store;
   user?: User;
   audit_items?: AuditItem[];

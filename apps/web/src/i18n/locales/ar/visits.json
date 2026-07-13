@@ -19,7 +19,8 @@
       "checkin": "الدخول",
       "checkout": "الخروج",
       "gpsIn": "GPS (دخول)",
-      "actions": "الإجراءات"
+      "actions": "الإجراءات",
+      "duration": "المدة"
     },
     "view": "عرض",
     "loading": "جارٍ التحميل…",
@@ -43,7 +44,8 @@
       "checkin": "الدخول",
       "checkout": "الخروج",
       "gpsIn": "GPS الدخول",
-      "gpsOut": "GPS الخروج"
+      "gpsOut": "GPS الخروج",
+      "duration": "المدة"
     },
     "auditSummary": {
       "title": "ملخص الجرد",
@@ -165,5 +167,10 @@
       "productsCount_other": "{{count}} منتج",
       "viewHistory": "عرض سجل الزيارات"
     }
+  },
+  "timer": {
+    "inProgress": "زيارة جارية",
+    "completed": "اكتملت الزيارة",
+    "startedAt": "بدأت في {{time}}"
   }
 }

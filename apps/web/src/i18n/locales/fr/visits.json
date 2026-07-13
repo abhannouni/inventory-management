@@ -19,7 +19,8 @@
       "checkin": "Arrivée",
       "checkout": "Sortie",
       "gpsIn": "GPS (entrée)",
-      "actions": "Actions"
+      "actions": "Actions",
+      "duration": "Durée"
     },
     "view": "Voir",
     "loading": "Chargement…",
@@ -43,7 +44,8 @@
       "checkin": "Arrivée",
       "checkout": "Sortie",
       "gpsIn": "GPS entrée",
-      "gpsOut": "GPS sortie"
+      "gpsOut": "GPS sortie",
+      "duration": "Durée"
     },
     "auditSummary": {
       "title": "Résumé de l'audit",
@@ -159,5 +161,10 @@
       "productsCount_other": "{{count}} produits",
       "viewHistory": "Voir l'historique des visites"
     }
+  },
+  "timer": {
+    "inProgress": "Visite en cours",
+    "completed": "Visite terminée",
+    "startedAt": "Démarrée à {{time}}"
   }
 }

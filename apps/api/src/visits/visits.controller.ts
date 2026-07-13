@@ -37,6 +37,15 @@ export class VisitsController {
     return this.visitsService.checkout(dto, user);
   }
 
+  @Get('active')
+  @ApiOperation({
+    summary:
+      'The caller’s currently open visit, or null — lets the client resume the timer after a refresh or on another device',
+  })
+  findActive(@CurrentUser() user: User) {
+    return this.visitsService.findActive(user);
+  }
+
   @Get()
   @ApiOperation({ summary: 'List visits (scoped by role, filterable by store/status)' })
   findAll(@Query() query: FindVisitsDto, @CurrentUser() user: User) {

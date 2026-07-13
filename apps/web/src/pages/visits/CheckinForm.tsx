@@ -5,7 +5,7 @@ import type { Store } from '../../types';
 
 interface Props {
   stores: Store[];
-  onSubmit: (data: { store_id: string; lat: number; lng: number; checkin_at?: string }) => Promise<void>;
+  onSubmit: (data: { store_id: string; lat: number; lng: number }) => Promise<void>;
   onCancel: () => void;
 }
 
@@ -26,11 +26,11 @@ export default function CheckinForm({ stores, onSubmit, onCancel }: Props) {
     }
     setStoreError('');
     setLoading(true);
+    // The server starts the visit clock — no client timestamp is sent.
     await onSubmit({
       store_id: storeId,
       lat: Number(selectedStore.latitude),
       lng: Number(selectedStore.longitude),
-      checkin_at: new Date().toISOString(),
     });
     setLoading(false);
   };

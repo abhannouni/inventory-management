@@ -188,10 +188,15 @@ model Visit {
   checkout_time DateTime?
   checkout_lat  Decimal?    @db.Decimal(10, 7)
   checkout_lng  Decimal?    @db.Decimal(10, 7)
-  status        VisitStatus @default(open)
+  /// Elapsed seconds between checkin_time and checkout_time, computed server-side
+  /// at checkout. Null while the visit is still open.
+  duration_seconds Int?
+  status           VisitStatus @default(open)
 
   auditItems AuditItem[]
 
+  /// Supports the "one open visit per merchandiser" lookup and the resume query.
+  @@index([user_id, status])
   @@map("visits")
 }
 

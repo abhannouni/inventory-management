@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsDateString, IsNumber, IsOptional, IsUUID, Max, Min } from 'class-validator';
+import { IsNumber, IsOptional, IsUUID, Max, Min } from 'class-validator';
 
 export class CheckinDto {
   @ApiProperty({ example: 'uuid-of-store' })
@@ -23,8 +23,6 @@ export class CheckinDto {
   @Max(180)
   lng: number;
 
-  @ApiPropertyOptional({ example: '2026-06-25T11:18:00.924Z' })
-  @IsOptional()
-  @IsDateString()
-  checkin_at?: string;
+  // No `checkin_at`: the visit clock is started by the server. Accepting a
+  // client timestamp would let a device with a wrong clock fake the duration.
 }

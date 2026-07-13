@@ -14,7 +14,8 @@ import Badge from '../../components/ui/Badge';
 import CheckinForm from './CheckinForm';
 import CheckoutForm from './CheckoutForm';
 import MerchandiserFlowPage from './MerchandiserFlowPage';
-import { formatDate } from '../../utils/format';
+import VisitTimer from '../../components/ui/VisitTimer';
+import { formatDate, formatDurationShort } from '../../utils/format';
 import type { Visit } from '../../types';
 import { usePermissions } from '../../hooks/usePermissions';
 
@@ -43,7 +44,7 @@ export default function VisitsPage() {
 
   const openVisit = visits.find((v) => v.status === 'open');
 
-  const handleCheckin = async (data: { store_id: string; lat: number; lng: number; checkin_at?: string }) => {
+  const handleCheckin = async (data: { store_id: string; lat: number; lng: number }) => {
     const res = await dispatch(checkin(data));
     if (checkin.fulfilled.match(res)) {
       toast.success(t('list.toasts.checkinSuccess'));
@@ -53,7 +54,7 @@ export default function VisitsPage() {
     }
   };
 
-  const handleCheckout = async (data: { lat: number; lng: number; checkout_at?: string }) => {
+  const handleCheckout = async (data: { lat: number; lng: number }) => {
     if (!checkoutVisit) return;
     const res = await dispatch(checkout({ visit_id: checkoutVisit.id, ...data }));
     if (checkout.fulfilled.match(res)) {
@@ -69,6 +70,14 @@ export default function VisitsPage() {
     { key: 'status', header: t('list.columns.status'), render: (v: Visit) => <Badge variant={v.status === 'open' ? 'success' : 'gray'} dot>{v.status === 'open' ? tCommon('status.open') : tCommon('status.closed')}</Badge> },
     { key: 'checkin_at', header: t('list.columns.checkin'), render: (v: Visit) => <span style={{ color: 'var(--gray-600)' }}>{formatDate(v.checkin_at, i18n.language)}</span> },
     { key: 'checkout_at', header: t('list.columns.checkout'), render: (v: Visit) => <span style={{ color: 'var(--gray-500)' }}>{v.checkout_at ? formatDate(v.checkout_at, i18n.language) : '—'}</span> },
+    {
+      key: 'duration',
+      header: t('list.columns.duration'),
+      render: (v: Visit) =>
+        v.status === 'open'
+          ? <VisitTimer visit={v} variant="inline" />
+          : <span style={{ color: 'var(--gray-600)', fontVariantNumeric: 'tabular-nums' }}>{formatDurationShort(v.duration_seconds)}</span>,
+    },
     {
       key: 'gps',
       header: t('list.columns.gpsIn'),
@@ -122,6 +131,7 @@ export default function VisitsPage() {
             <div className="open-visit-banner-title">{t('list.activeVisit')}</div>
             <div className="open-visit-banner-store">{openVisit.store?.name}</div>
           </div>
+          <VisitTimer visit={openVisit} variant="inline" />
           <Button size="sm" onClick={() => setCheckoutVisit(openVisit)}>{t('list.checkOut')}</Button>
         </motion.div>
       )}
