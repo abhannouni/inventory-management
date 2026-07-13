@@ -30,7 +30,8 @@
       "checkinFailed": "Échec du pointage d'arrivée",
       "checkoutSuccess": "Pointage de sortie enregistré avec succès !",
       "checkoutFailed": "Échec du pointage de sortie"
-    }
+    },
+    "resumeVisit": "Reprendre la visite"
   },
   "detail": {
     "title": "Détail de la visite",
@@ -166,5 +167,9 @@
     "inProgress": "Visite en cours",
     "completed": "Visite terminée",
     "startedAt": "Démarrée à {{time}}"
+  },
+  "activeBar": {
+    "resume": "Reprendre",
+    "audited": "{{audited}}/{{expected}} audités"
   }
 }

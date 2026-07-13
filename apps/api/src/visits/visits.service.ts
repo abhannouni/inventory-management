@@ -79,7 +79,10 @@ export class VisitsService {
         },
         include: VISIT_INCLUDE,
       });
-      return this.serializeVisit(visit);
+      return {
+        ...this.serializeVisit(visit),
+        audit_progress: await this.auditProgress(visit.id, visit.store_id),
+      };
     } catch (err) {
       // The check above can be raced by two simultaneous check-ins; the partial
       // unique index on (user_id) WHERE status = 'open' is the real guarantee.
@@ -100,7 +103,12 @@ export class VisitsService {
       include: VISIT_INCLUDE,
       orderBy: { checkin_time: 'desc' },
     });
-    return visit ? this.serializeVisit(visit) : null;
+    if (!visit) return null;
+
+    return {
+      ...this.serializeVisit(visit),
+      audit_progress: await this.auditProgress(visit.id, visit.store_id),
+    };
   }
 
   async checkout(dto: CheckoutDto, user: User) {
@@ -112,6 +120,16 @@ export class VisitsService {
     if (visit.user_id !== user.id) throw new ForbiddenException('This visit does not belong to you');
     if (visit.status === VisitStatus.completed) {
       throw new ConflictException('Visit is already completed');
+    }
+
+    // A visit is finished by doing the work, not by pressing a button: every
+    // product expected at this POS must have been audited before we let the
+    // merchandiser check out.
+    const { audited, expected } = await this.auditProgress(visit.id, visit.store_id);
+    if (expected > 0 && audited < expected) {
+      throw new ConflictException(
+        `Complete the audit before checking out — ${expected - audited} of ${expected} product(s) still to be recorded`,
+      );
     }
 
     // Server clock again — and the duration is derived from the two stored
@@ -161,10 +179,26 @@ export class VisitsService {
     });
     if (!visit) throw new NotFoundException('Visit not found');
     this.assertReadAccess(visit, user);
-    return this.serializeVisit(visit);
+
+    return {
+      ...this.serializeVisit(visit),
+      audit_progress: await this.auditProgress(visit.id, visit.store_id),
+    };
   }
 
   // ─── Helpers ───────────────────────────────────────────────────────────────
+
+  /**
+   * How much of the visit's audit is done: how many of the products expected at
+   * this POS already have an audit item recorded against the visit.
+   */
+  private async auditProgress(visitId: string, storeId: string) {
+    const [expected, audited] = await Promise.all([
+      this.prisma.productStore.count({ where: { store_id: storeId } }),
+      this.prisma.auditItem.count({ where: { visit_id: visitId } }),
+    ]);
+    return { audited, expected, is_complete: expected === 0 || audited >= expected };
+  }
 
   private serializeVisit<
     T extends {

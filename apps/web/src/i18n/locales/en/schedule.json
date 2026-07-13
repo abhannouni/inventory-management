@@ -1,9 +1,27 @@
 {
   "months": [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
   ],
-  "weekdaysShort": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+  "weekdaysShort": [
+    "Mon",
+    "Tue",
+    "Wed",
+    "Thu",
+    "Fri",
+    "Sat",
+    "Sun"
+  ],
   "pageTitle": "Schedule",
   "subtitleManage": "Plan and manage field visit assignments",
   "subtitleView": "Your upcoming visit schedule",
@@ -30,7 +48,10 @@
     "yes": "Yes",
     "no": "No",
     "addVisit": "Add Visit",
-    "markComplete": "Mark as completed"
+    "markComplete": "Mark as completed",
+    "startVisit": "Start visit",
+    "starting": "Starting…",
+    "finishOpenVisitFirst": "Finish your current visit before starting another"
   },
   "form": {
     "editTitle": "Edit Schedule",
@@ -59,6 +80,9 @@
     "createSuccess": "Visit scheduled",
     "createError": "Create failed",
     "deleteSuccess": "Schedule removed",
-    "deleteError": "Delete failed"
+    "deleteError": "Delete failed",
+    "visitStarted": "Visit started — complete the audit, then check out",
+    "visitStartFailed": "Could not start the visit",
+    "noGpsCoordinates": "This point of sale has no GPS coordinates"
   }
 }

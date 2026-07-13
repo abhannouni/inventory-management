@@ -1,9 +1,27 @@
 {
   "months": [
-    "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
-    "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"
+    "Janvier",
+    "Février",
+    "Mars",
+    "Avril",
+    "Mai",
+    "Juin",
+    "Juillet",
+    "Août",
+    "Septembre",
+    "Octobre",
+    "Novembre",
+    "Décembre"
   ],
-  "weekdaysShort": ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"],
+  "weekdaysShort": [
+    "Lun",
+    "Mar",
+    "Mer",
+    "Jeu",
+    "Ven",
+    "Sam",
+    "Dim"
+  ],
   "pageTitle": "Planning",
   "subtitleManage": "Planifiez et gérez les affectations de visites terrain",
   "subtitleView": "Votre planning de visites à venir",
@@ -30,7 +48,10 @@
     "yes": "Oui",
     "no": "Non",
     "addVisit": "Ajouter une visite",
-    "markComplete": "Marquer comme terminée"
+    "markComplete": "Marquer comme terminée",
+    "startVisit": "Démarrer la visite",
+    "starting": "Démarrage…",
+    "finishOpenVisitFirst": "Terminez votre visite en cours avant d’en démarrer une autre"
   },
   "form": {
     "editTitle": "Modifier le planning",
@@ -59,6 +80,9 @@
     "createSuccess": "Visite planifiée",
     "createError": "Échec de la création",
     "deleteSuccess": "Planning supprimé",
-    "deleteError": "Échec de la suppression"
+    "deleteError": "Échec de la suppression",
+    "visitStarted": "Visite démarrée — complétez l’audit, puis pointez la sortie",
+    "visitStartFailed": "Impossible de démarrer la visite",
+    "noGpsCoordinates": "Ce point de vente n’a pas de coordonnées GPS"
   }
 }

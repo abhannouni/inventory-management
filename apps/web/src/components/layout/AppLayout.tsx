@@ -2,6 +2,7 @@ import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Header from './Header';
 import MobileNav from './MobileNav';
+import ActiveVisitBar from './ActiveVisitBar';
 
 export default function AppLayout() {
   return (
@@ -9,6 +10,8 @@ export default function AppLayout() {
       <Sidebar />
       <div className="main-content">
         <Header />
+        {/* Rides above every page, so a running visit stays visible app-wide. */}
+        <ActiveVisitBar />
         <main className="page-content">
           <Outlet />
         </main>

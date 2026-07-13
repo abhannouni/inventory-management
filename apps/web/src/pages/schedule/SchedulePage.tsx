@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../../hooks/useAppDispatch';
 import { fetchSchedules, createSchedule, updateSchedule, deleteSchedule } from '../../store/slices/schedulesSlice';
+import { checkin, fetchActiveVisit } from '../../store/slices/visitsSlice';
 import { fetchUsers } from '../../store/slices/usersSlice';
 import { fetchStores } from '../../store/slices/storesSlice';
 import { usePermissions } from '../../hooks/usePermissions';
@@ -170,13 +172,29 @@ interface DayDetailProps {
   schedules: Schedule[];
   canManage: boolean;
   currentUserId?: string;
+  /** Set while another visit is already open — a second one cannot be started. */
+  hasOpenVisit: boolean;
+  startingId: string | null;
   onAdd: () => void;
   onEdit: (s: Schedule) => void;
   onDelete: (id: string) => void;
   onComplete: (id: string) => void;
+  onStartVisit: (s: Schedule) => void;
 }
 
-function DayDetail({ day, schedules, canManage, currentUserId, onAdd, onEdit, onDelete, onComplete }: DayDetailProps) {
+function DayDetail({
+  day,
+  schedules,
+  canManage,
+  currentUserId,
+  hasOpenVisit,
+  startingId,
+  onAdd,
+  onEdit,
+  onDelete,
+  onComplete,
+  onStartVisit,
+}: DayDetailProps) {
   const { t, i18n } = useTranslation('schedule');
   const [confirmId, setConfirmId] = useState<string | null>(null);
 
@@ -209,7 +227,27 @@ function DayDetail({ day, schedules, canManage, currentUserId, onAdd, onEdit, on
               </div>
               <div className="sli-right">
                 <Badge variant={STATUS_VARIANT[s.status]}>{STATUS_LABEL[s.status]}</Badge>
-                {s.status === 'pending' && (s.user_id === currentUserId || canManage) && (
+
+                {/* The merchandiser starts the visit from their plan. They cannot
+                    tick it off from here — the schedule is only marked completed
+                    once they have actually audited the POS and checked out. */}
+                {s.status === 'pending' && s.user_id === currentUserId && (
+                  <button
+                    className="sli-btn start"
+                    onClick={() => onStartVisit(s)}
+                    disabled={hasOpenVisit || startingId === s.id}
+                    title={hasOpenVisit ? t('dayDetail.finishOpenVisitFirst') : t('dayDetail.startVisit')}
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="10" />
+                      <polyline points="12 7 12 12 15 14" />
+                    </svg>
+                    {startingId === s.id ? t('dayDetail.starting') : t('dayDetail.startVisit')}
+                  </button>
+                )}
+
+                {/* Supervisors and admins keep the administrative override. */}
+                {s.status === 'pending' && canManage && s.user_id !== currentUserId && (
                   <button className="sli-btn complete" onClick={() => onComplete(s.id)} title={t('dayDetail.markComplete')}>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="20 6 9 17 4 12" />
@@ -271,13 +309,16 @@ function DayDetail({ day, schedules, canManage, currentUserId, onAdd, onEdit, on
 export default function SchedulePage() {
   const { t } = useTranslation('schedule');
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const { items: schedules, loading } = useAppSelector(s => s.schedules);
   const { items: users } = useAppSelector(s => s.users);
   const { items: stores } = useAppSelector(s => s.stores);
+  const activeVisit = useAppSelector(s => s.visits.active);
   const currentUserId = useAppSelector(s => s.auth.user?.id);
   const p = usePermissions();
 
   const canManage = p.isSupervisor; // super_admin + admin + supervisor (not merchandiser)
+  const [startingId, setStartingId] = useState<string | null>(null);
 
   const [currentDate, setCurrentDate] = useState(() => {
     const now = new Date();
@@ -293,6 +334,12 @@ export default function SchedulePage() {
   useEffect(() => {
     dispatch(fetchSchedules({ month: monthStr }));
   }, [dispatch, monthStr]);
+
+  // Needed to know whether a visit is already running before offering to start another.
+  useEffect(() => {
+    if (p.canCheckin) dispatch(fetchActiveVisit());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch]);
 
   useEffect(() => {
     if (canManage) {
@@ -355,6 +402,35 @@ export default function SchedulePage() {
       toast.success(t('toasts.updateSuccess'));
     } else {
       toast.error((res.payload as string) || t('toasts.updateError'));
+    }
+  };
+
+  /**
+   * Start the planned visit: check in against this schedule, then hand the
+   * merchandiser straight to the audit. The schedule flips to `completed` only
+   * when they check out, which the API refuses until the audit is done.
+   */
+  const handleStartVisit = async (s: Schedule) => {
+    const store = s.store;
+    if (store?.latitude == null || store?.longitude == null) {
+      toast.error(t('toasts.noGpsCoordinates'));
+      return;
+    }
+
+    setStartingId(s.id);
+    const res = await dispatch(checkin({
+      store_id: s.store_id,
+      schedule_id: s.id,
+      lat: Number(store.latitude),
+      lng: Number(store.longitude),
+    }));
+    setStartingId(null);
+
+    if (checkin.fulfilled.match(res)) {
+      toast.success(t('toasts.visitStarted'));
+      navigate('/visits');
+    } else {
+      toast.error((res.payload as string) || t('toasts.visitStartFailed'));
     }
   };
 
@@ -479,10 +555,13 @@ export default function SchedulePage() {
               schedules={schedulesForDay(selectedDay)}
               canManage={canManage}
               currentUserId={currentUserId}
+              hasOpenVisit={!!activeVisit}
+              startingId={startingId}
               onAdd={openAddForm}
               onEdit={(s) => { openEditForm(s); }}
               onDelete={handleDelete}
               onComplete={handleComplete}
+              onStartVisit={handleStartVisit}
             />
           </Modal>
         )}

@@ -30,7 +30,8 @@
       "checkinFailed": "Check-in failed",
       "checkoutSuccess": "Checked out successfully!",
       "checkoutFailed": "Check-out failed"
-    }
+    },
+    "resumeVisit": "Resume visit"
   },
   "detail": {
     "title": "Visit Detail",
@@ -166,5 +167,9 @@
     "inProgress": "Visit in progress",
     "completed": "Visit completed",
     "startedAt": "Started at {{time}}"
+  },
+  "activeBar": {
+    "resume": "Resume",
+    "audited": "{{audited}}/{{expected}} audited"
   }
 }

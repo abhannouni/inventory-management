@@ -4044,3 +4044,100 @@ html[dir='rtl'] .gps-coords {
 @media (max-width: 640px) {
   .visit-timer-value { font-size: 32px; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Global active-visit bar — visible on every page while a visit is running
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.active-visit-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 20px;
+  color: #fff;
+  background: linear-gradient(90deg, var(--primary-hover), var(--primary));
+  border-bottom: 1px solid var(--primary-hover);
+}
+
+.avb-pulse {
+  width: 9px;
+  height: 9px;
+  flex-shrink: 0;
+  background: #fff;
+  border-radius: 50%;
+  animation: visit-timer-pulse 1.6s ease-in-out infinite;
+}
+
+.avb-body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.25;
+}
+
+.avb-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  opacity: .85;
+}
+
+.avb-store {
+  font-size: 14px;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.avb-clock {
+  /* Pushed to the far side; tabular figures stop the row jittering each second. */
+  margin-inline-start: auto;
+  font-size: 20px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.avb-progress {
+  padding: 3px 9px;
+  font-size: 12px;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.avb-action {
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--primary-hover);
+  background: #fff;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.avb-action:hover { background: var(--gray-100); }
+
+@media (max-width: 640px) {
+  .active-visit-bar { padding: 8px 12px; gap: 8px; }
+  .avb-progress { display: none; }
+  .avb-clock { font-size: 17px; }
+}
+
+/* "Start visit" action in the schedule day panel. */
+.sli-btn.start {
+  color: #fff;
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+.sli-btn.start:hover:not(:disabled) { background: var(--primary-hover); }
+
+.sli-btn.start:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}

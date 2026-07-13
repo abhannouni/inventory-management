@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../../hooks/useAppDispatch';
-import { fetchVisits, checkin, checkout } from '../../store/slices/visitsSlice';
+import { fetchVisits, checkin } from '../../store/slices/visitsSlice';
 import { fetchStores } from '../../store/slices/storesSlice';
 import PageHeader from '../../components/ui/PageHeader';
 import Button from '../../components/ui/Button';
@@ -12,7 +12,6 @@ import DataTable from '../../components/ui/DataTable';
 import Modal from '../../components/ui/Modal';
 import Badge from '../../components/ui/Badge';
 import CheckinForm from './CheckinForm';
-import CheckoutForm from './CheckoutForm';
 import MerchandiserFlowPage from './MerchandiserFlowPage';
 import VisitTimer from '../../components/ui/VisitTimer';
 import { formatDate, formatDurationShort } from '../../utils/format';
@@ -32,7 +31,6 @@ export default function VisitsPage() {
 
   const [activeTab, setActiveTab] = useState<Tab>(p.canCheckin ? 'visit' : 'history');
   const [checkinOpen, setCheckinOpen] = useState(false);
-  const [checkoutVisit, setCheckoutVisit] = useState<Visit | null>(null);
   const [statusFilter, setStatusFilter] = useState('');
 
   useEffect(() => {
@@ -51,17 +49,6 @@ export default function VisitsPage() {
       setCheckinOpen(false);
     } else {
       toast.error((res.payload as string) || t('list.toasts.checkinFailed'));
-    }
-  };
-
-  const handleCheckout = async (data: { lat: number; lng: number }) => {
-    if (!checkoutVisit) return;
-    const res = await dispatch(checkout({ visit_id: checkoutVisit.id, ...data }));
-    if (checkout.fulfilled.match(res)) {
-      toast.success(t('list.toasts.checkoutSuccess'));
-      setCheckoutVisit(null);
-    } else {
-      toast.error((res.payload as string) || t('list.toasts.checkoutFailed'));
     }
   };
 
@@ -95,8 +82,10 @@ export default function VisitsPage() {
       render: (v: Visit) => (
         <div className="table-actions">
           <Button variant="outline" size="sm" onClick={() => navigate(`/visits/${v.id}`)}>{t('list.view')}</Button>
+          {/* An open visit is resumed, never closed from here: it can only be
+              completed by finishing the audit in the visit flow. */}
           {v.status === 'open' && p.canCheckin && (
-            <Button variant="secondary" size="sm" onClick={() => setCheckoutVisit(v)}>{t('list.checkOut')}</Button>
+            <Button variant="secondary" size="sm" onClick={() => setActiveTab('visit')}>{t('list.resumeVisit')}</Button>
           )}
         </div>
       ),
@@ -132,7 +121,7 @@ export default function VisitsPage() {
             <div className="open-visit-banner-store">{openVisit.store?.name}</div>
           </div>
           <VisitTimer visit={openVisit} variant="inline" />
-          <Button size="sm" onClick={() => setCheckoutVisit(openVisit)}>{t('list.checkOut')}</Button>
+          <Button size="sm" onClick={() => setActiveTab('visit')}>{t('list.resumeVisit')}</Button>
         </motion.div>
       )}
 
@@ -175,8 +164,8 @@ export default function VisitsPage() {
                   {v.status === 'open' ? tCommon('status.open') : tCommon('status.closed')}
                 </Badge>
                 {v.status === 'open' && p.canCheckin && (
-                  <Button size="sm" variant="outline" onClick={(e) => { e.stopPropagation(); setCheckoutVisit(v); }}>
-                    {t('list.checkOut')}
+                  <Button size="sm" variant="outline" onClick={(e) => { e.stopPropagation(); setActiveTab('visit'); }}>
+                    {t('list.resumeVisit')}
                   </Button>
                 )}
               </div>
@@ -204,11 +193,6 @@ export default function VisitsPage() {
 
       <Modal open={checkinOpen} onClose={() => setCheckinOpen(false)} title={t('list.checkInToStore')} size="sm">
         <CheckinForm stores={stores} onSubmit={handleCheckin} onCancel={() => setCheckinOpen(false)} />
-      </Modal>
-      <Modal open={!!checkoutVisit} onClose={() => setCheckoutVisit(null)} title={t('list.checkOut')} size="sm">
-        {checkoutVisit && (
-          <CheckoutForm visit={checkoutVisit} onSubmit={handleCheckout} onCancel={() => setCheckoutVisit(null)} />
-        )}
       </Modal>
     </div>
   );

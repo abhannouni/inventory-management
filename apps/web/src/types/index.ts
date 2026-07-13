@@ -110,11 +110,19 @@ export interface Visit {
    * timer uses this as its baseline rather than reading the device clock.
    */
   elapsed_seconds: number;
+  /** How much of the POS product list has been audited. Check-out is blocked until complete. */
+  audit_progress?: AuditProgress;
   store?: Store;
   user?: User;
   audit_items?: AuditItem[];
   created_at: string;
   updated_at: string;
+}
+
+export interface AuditProgress {
+  audited: number;
+  expected: number;
+  is_complete: boolean;
 }
 
 export interface VisitSummary {

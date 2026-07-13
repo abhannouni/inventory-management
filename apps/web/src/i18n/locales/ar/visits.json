@@ -30,7 +30,8 @@
       "checkinFailed": "فشل تسجيل الدخول",
       "checkoutSuccess": "تم تسجيل الخروج بنجاح!",
       "checkoutFailed": "فشل تسجيل الخروج"
-    }
+    },
+    "resumeVisit": "استئناف الزيارة"
   },
   "detail": {
     "title": "تفاصيل الزيارة",
@@ -172,5 +173,9 @@
     "inProgress": "زيارة جارية",
     "completed": "اكتملت الزيارة",
     "startedAt": "بدأت في {{time}}"
+  },
+  "activeBar": {
+    "resume": "استئناف",
+    "audited": "{{audited}}/{{expected}} تم تدقيقها"
   }
 }
