@@ -12,6 +12,7 @@ import UsersPage from './pages/users/UsersPage';
 import RolesPage from './pages/roles/RolesPage';
 import RegionsPage from './pages/regions/RegionsPage';
 import StoresPage from './pages/stores/StoresPage';
+import StoreDetailPage from './pages/stores/StoreDetailPage';
 import ProductsPage from './pages/products/ProductsPage';
 import ProductStoresPage from './pages/product-stores/ProductStoresPage';
 import VisitsPage from './pages/visits/VisitsPage';
@@ -39,6 +40,7 @@ export default function App() {
 
             <Route path="/regions" element={<RegionsPage />} />
             <Route path="/stores" element={<StoresPage />} />
+            <Route path="/stores/:id" element={<StoreDetailPage />} />
             <Route path="/products" element={<ProductsPage />} />
             <Route path="/product-stores" element={<ProductStoresPage />} />
             <Route path="/schedule" element={<SchedulePage />} />

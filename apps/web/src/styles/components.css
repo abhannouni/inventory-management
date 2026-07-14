@@ -4644,3 +4644,264 @@ html[dir='rtl'] .gps-coords {
   .var-row { grid-template-columns: minmax(70px, 1fr) 2fr 44px; }
   .kpi-row { grid-template-columns: repeat(2, 1fr); }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Points of Sale — profile form, detail page, map
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Sectioned form ───────────────────────────────────────────────────────── */
+.store-form .form-section {
+  padding: 18px;
+  margin-bottom: 18px;
+  border: 1px solid var(--gray-200);
+  border-radius: 12px;
+  background: var(--gray-50);
+}
+
+.store-form .form-section:last-of-type { margin-bottom: 8px; }
+
+.form-section-title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 6px;
+  margin-bottom: 14px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--gray-900);
+}
+
+/* The step chip makes a long form read as three short ones. */
+.form-section-step {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  font-size: 12px;
+  font-weight: 800;
+  color: #fff;
+  background: var(--primary);
+  border-radius: 50%;
+}
+
+.contact-block {
+  padding: 12px 14px;
+  margin-bottom: 10px;
+  background: #fff;
+  border: 1px solid var(--gray-200);
+  border-radius: 10px;
+}
+
+.contact-block:last-child { margin-bottom: 0; }
+
+.contact-block-title {
+  margin-bottom: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  color: var(--gray-500);
+}
+
+.geo-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: -4px 0 14px;
+}
+
+/* ── Map ──────────────────────────────────────────────────────────────────── */
+.store-map {
+  overflow: hidden;
+  border: 1px solid var(--gray-200);
+  border-radius: 12px;
+  background: var(--gray-100);
+}
+
+.store-map iframe {
+  display: block;
+  width: 100%;
+  border: 0;
+}
+
+.store-map-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 24px;
+  color: var(--gray-400);
+  text-align: center;
+  background: var(--gray-50);
+  border-style: dashed;
+}
+
+.store-map-empty p { font-size: 13px; max-width: 320px; }
+
+.store-map-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  background: #fff;
+  border-top: 1px solid var(--gray-200);
+}
+
+.store-map-coords {
+  font-size: 12px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: var(--gray-500);
+}
+
+.store-map-links { display: flex; gap: 8px; }
+
+.store-map-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 11px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gray-600);
+  text-decoration: none;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius);
+}
+
+.store-map-link:hover { color: var(--primary); border-color: var(--primary); background: var(--primary-light); }
+
+.store-map-link.is-primary {
+  color: #fff;
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+.store-map-link.is-primary:hover { background: var(--primary-hover); color: #fff; }
+
+/* ── Detail page ──────────────────────────────────────────────────────────── */
+.pos-detail { display: flex; flex-direction: column; gap: 16px; }
+
+.pos-badges { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.pos-card {
+  padding: 18px;
+  background: #fff;
+  border: 1px solid var(--gray-200);
+  border-radius: 12px;
+}
+
+.pos-card-title {
+  margin-bottom: 14px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--gray-900);
+}
+
+.pos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 14px 20px;
+}
+
+.pos-grid-geo { margin-bottom: 14px; }
+
+.pos-field { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+
+.pos-field-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--gray-400);
+}
+
+.pos-field-value { font-size: 14px; color: var(--gray-900); overflow-wrap: anywhere; }
+.pos-field-value.is-empty { color: var(--gray-300); }
+
+/* ── Contacts ─────────────────────────────────────────────────────────────── */
+.pos-contacts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 12px;
+}
+
+.pos-contact {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px;
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: 10px;
+}
+
+.pos-contact-role {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  color: var(--gray-400);
+}
+
+.pos-contact-name { font-size: 15px; font-weight: 600; color: var(--gray-900); }
+
+.pos-contact-phone {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.pos-contact-phone:hover { text-decoration: underline; }
+.pos-contact-phone.is-empty { color: var(--gray-300); }
+.pos-contact-empty { font-size: 13px; color: var(--gray-300); }
+
+/* ── List page ────────────────────────────────────────────────────────────── */
+.pos-header-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.pos-name-link {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 0;
+  text-align: start;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.pos-name { font-weight: 600; color: var(--gray-900); }
+.pos-name-link:hover .pos-name { color: var(--primary); text-decoration: underline; }
+.pos-brand { font-size: 12px; color: var(--gray-400); }
+
+.pos-map-link { color: var(--primary); text-decoration: none; }
+.pos-map-link:hover { text-decoration: underline; }
+
+/* Chips used on the store-report subject line. */
+.pos-chip {
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--gray-600);
+  background: var(--gray-100);
+  border-radius: 999px;
+}
+
+.pos-chip.is-link { color: var(--primary); background: var(--primary-light); text-decoration: none; }
+.pos-chip.is-link:hover { text-decoration: underline; }
+
+@media (max-width: 640px) {
+  .store-form .form-section { padding: 14px; }
+  .pos-grid { grid-template-columns: 1fr 1fr; }
+  .pos-contacts { grid-template-columns: 1fr; }
+  .store-map-bar { flex-direction: column; align-items: stretch; }
+  .store-map-links { justify-content: stretch; }
+  .store-map-link { flex: 1; justify-content: center; }
+}

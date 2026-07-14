@@ -35,15 +35,44 @@ export interface User {
   updated_at: string;
 }
 
+/** Distribution channel: Grande et Moyenne Surface, or Libre Service. */
+export type StoreChannel = 'gms' | 'ls';
+
+/** Commercial importance of a POS — A is the highest. */
+export type StoreClassification = 'A' | 'B' | 'C' | 'D';
+
 /** A Point of Sale (POS). */
 export interface Store {
   id: string;
   name: string;
+
+  // General information
+  brand: string | null;
+  channel: StoreChannel | null;
+  classification: StoreClassification | null;
+
+  // Address
   address: string;
-  latitude: number | null;
-  longitude: number | null;
+  city: string | null;
+  postal_code: string | null;
   region_id: string;
   region?: Region;
+  opening_date: string | null;
+
+  // Contacts
+  section_manager_name: string | null;
+  section_manager_phone: string | null;
+  department_manager_name: string | null;
+  department_manager_phone: string | null;
+  gds_name: string | null;
+  gds_phone: string | null;
+
+  // Geolocation
+  latitude: number | null;
+  longitude: number | null;
+  /** Explicit link; when empty the app derives one from lat/lng. */
+  google_maps_url: string | null;
+
   is_active: boolean;
   /** Whether General Management is allowed to see this POS. */
   visible_to_gm: boolean;

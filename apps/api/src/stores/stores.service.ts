@@ -3,10 +3,61 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { User, UserRole } from '@prisma/client';
+import { Prisma, User, UserRole } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateStoreDto } from './dto/create-store.dto';
 import { UpdateStoreDto } from './dto/update-store.dto';
+
+/**
+ * Maps a store DTO onto Prisma's shape.
+ *
+ * Two things this has to get right:
+ *  - only keys the caller actually sent are copied, so a PATCH of one field
+ *    cannot silently blank the rest of the profile;
+ *  - `opening_date` arrives as an ISO string and must become a Date, which
+ *    Prisma will not coerce for a `@db.Date` column.
+ */
+type StoreWritable = Partial<Prisma.StoreUncheckedCreateInput>;
+
+function toStoreData(dto: CreateStoreDto | UpdateStoreDto): StoreWritable {
+  const data: StoreWritable = {};
+
+  const copy = <K extends keyof (CreateStoreDto & UpdateStoreDto)>(key: K) => {
+    if (dto[key] !== undefined) {
+      (data as Record<string, unknown>)[key as string] = dto[key];
+    }
+  };
+
+  (
+    [
+      'name',
+      'brand',
+      'channel',
+      'classification',
+      'address',
+      'city',
+      'postal_code',
+      'region_id',
+      'section_manager_name',
+      'section_manager_phone',
+      'department_manager_name',
+      'department_manager_phone',
+      'gds_name',
+      'gds_phone',
+      'latitude',
+      'longitude',
+      'google_maps_url',
+      'is_active',
+      'visible_to_gm',
+    ] as const
+  ).forEach(copy);
+
+  if (dto.opening_date !== undefined) {
+    data.opening_date = new Date(dto.opening_date);
+  }
+
+  return data;
+}
 
 @Injectable()
 export class StoresService {
@@ -54,13 +105,7 @@ export class StoresService {
     }
 
     return this.prisma.store.create({
-      data: {
-        name: dto.name,
-        address: dto.address,
-        latitude: dto.latitude,
-        longitude: dto.longitude,
-        region_id: dto.region_id,
-      },
+      data: { ...toStoreData(dto), name: dto.name, region_id: dto.region_id },
       include: { region: true },
     });
   }
@@ -75,7 +120,7 @@ export class StoresService {
 
     return this.prisma.store.update({
       where: { id },
-      data: dto,
+      data: toStoreData(dto),
       include: { region: true },
     });
   }

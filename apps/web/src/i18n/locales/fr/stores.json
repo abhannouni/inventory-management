@@ -1,48 +1,116 @@
 {
-  "title": "Magasins",
-  "subtitle": "Gérez les emplacements et les coordonnées des magasins",
-  "addStore": "Ajouter un magasin",
-  "createStore": "Créer un magasin",
-  "editStore": "Modifier le magasin",
+  "title": "Points de vente",
+  "subtitle": "Gérer les profils PDV, les contacts et la géolocalisation",
+  "addStore": "Ajouter un PDV",
+  "createStore": "Créer un point de vente",
+  "editStore": "Modifier le point de vente",
+  "emptyTable": "Aucun point de vente trouvé",
+  "channel": {
+    "gms": "GMS",
+    "ls": "LS",
+    "gmsFull": "GMS — Grandes et moyennes surfaces",
+    "lsFull": "LS — Libre service"
+  },
+  "classification": {
+    "A": "A — Compte clé",
+    "B": "B — Majeur",
+    "C": "C — Standard",
+    "D": "D — Secondaire"
+  },
   "columns": {
-    "name": "Nom du magasin",
+    "name": "Point de vente",
+    "channel": "Canal",
+    "classification": "Classe",
+    "city": "Ville",
     "address": "Adresse",
     "region": "Région",
     "coordinates": "Coordonnées",
-    "created": "Créé le"
+    "created": "Créé le",
+    "view": "Voir"
   },
   "form": {
-    "nameLabel": "Nom du magasin",
-    "namePlaceholder": "ex. Succursale du centre-ville",
+    "sections": {
+      "general": "Informations générales",
+      "contacts": "Contacts du magasin",
+      "location": "Localisation et géolocalisation"
+    },
+    "nameLabel": "Nom du point de vente",
+    "namePlaceholder": "ex. Marjane Californie",
+    "brandLabel": "Enseigne / chaîne",
+    "brandPlaceholder": "ex. Marjane",
+    "channelLabel": "Canal",
+    "channelPlaceholder": "Sélectionner un canal",
+    "classificationLabel": "Classification",
+    "classificationPlaceholder": "Sélectionner une classe",
     "regionLabel": "Région",
     "regionPlaceholder": "Sélectionner une région",
     "addressLabel": "Adresse",
-    "addressPlaceholder": "ex. 123 Rue Principale, Ville",
+    "addressPlaceholder": "ex. 12 Boulevard Zerktouni",
+    "cityLabel": "Ville",
+    "cityPlaceholder": "ex. Casablanca",
+    "postalCodeLabel": "Code postal",
+    "postalCodePlaceholder": "ex. 20250",
+    "openingDateLabel": "Date d’ouverture",
+    "contacts": {
+      "sectionManager": "Chef de rayon",
+      "departmentManager": "Chef de département",
+      "gds": "GDS",
+      "name": "Nom",
+      "namePlaceholder": "Nom complet",
+      "phone": "Numéro de téléphone"
+    },
     "latitudeLabel": "Latitude",
-    "latitudePlaceholder": "ex. 34.0522",
     "longitudeLabel": "Longitude",
-    "longitudePlaceholder": "ex. -118.2437",
-    "gpsHint": "Les coordonnées GPS sont facultatives et servent au suivi de localisation.",
-    "createSubmit": "Créer le magasin",
-    "updateSubmit": "Mettre à jour le magasin"
+    "mapsUrlLabel": "Lien Google Maps",
+    "mapsUrlHint": "Collez un lien Google Maps, puis utilisez « Remplir depuis le lien » pour renseigner les coordonnées automatiquement.",
+    "extractFromLink": "Remplir depuis le lien",
+    "useMyLocation": "Utiliser ma position actuelle",
+    "linkNoCoords": "Aucune coordonnée trouvée dans ce lien. Ouvrez le lieu dans Google Maps et copiez l’URL depuis la barre d’adresse.",
+    "linkCoordsFound": "Coordonnées renseignées depuis le lien",
+    "locationCaptured": "Position actuelle enregistrée",
+    "locationDenied": "Autorisation de localisation refusée",
+    "geolocationUnsupported": "Ce navigateur ne prend pas en charge la géolocalisation",
+    "mapPreview": "Aperçu de la carte",
+    "createSubmit": "Créer le PDV",
+    "updateSubmit": "Enregistrer"
+  },
+  "map": {
+    "title": "Localisation du point de vente",
+    "titleFor": "Localisation de {{name}}",
+    "noCoords": "Aucune coordonnée — ajoutez une latitude et une longitude pour afficher la carte.",
+    "openInGoogleMaps": "Ouvrir dans Google Maps",
+    "directions": "Itinéraire"
+  },
+  "detail": {
+    "edit": "Modifier le PDV",
+    "editTitle": "Modifier le point de vente",
+    "notFound": "Point de vente introuvable",
+    "noContact": "Non renseigné",
+    "classShort": "Classe {{value}}",
+    "visibleToGm": "Visible par la Direction générale"
   },
   "errors": {
     "nameRequired": "Le nom est requis",
-    "addressRequired": "L'adresse est requise",
+    "addressRequired": "L’adresse est requise",
     "regionRequired": "La région est requise",
     "latitudeInvalid": "Latitude invalide (-90 à 90)",
-    "longitudeInvalid": "Longitude invalide (-180 à 180)"
+    "longitudeInvalid": "Longitude invalide (-180 à 180)",
+    "coordsPair": "La latitude et la longitude doivent être renseignées ensemble",
+    "phoneInvalid": "Saisissez un numéro valide, ex. +212 661 234 567",
+    "postalCodeInvalid": "Saisissez un code postal valide",
+    "dateInvalid": "Saisissez une date valide",
+    "dateFuture": "La date d’ouverture ne peut pas être dans le futur",
+    "urlInvalid": "Saisissez une URL valide commençant par http:// ou https://"
   },
   "toasts": {
-    "createSuccess": "Magasin créé",
-    "createError": "Échec de la création du magasin",
-    "updateSuccess": "Magasin mis à jour",
-    "updateError": "Échec de la mise à jour du magasin",
-    "deleteSuccess": "Magasin supprimé",
-    "deleteError": "Échec de la suppression du magasin"
+    "createSuccess": "Point de vente créé",
+    "createError": "Échec de la création du point de vente",
+    "updateSuccess": "Point de vente mis à jour",
+    "updateError": "Échec de la mise à jour du point de vente",
+    "deleteSuccess": "Point de vente supprimé",
+    "deleteError": "Échec de la suppression du point de vente"
   },
   "deleteConfirm": {
-    "message": "Cette action supprimera définitivement le magasin et toutes les données associées."
-  },
-  "emptyTable": "Aucun magasin trouvé"
+    "message": "Cette action supprimera définitivement le point de vente et toutes ses données associées."
+  }
 }

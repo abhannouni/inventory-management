@@ -49,7 +49,21 @@ const storesSlice = createSlice({
       .addCase(fetchStores.pending, (state) => { state.loading = true; state.error = null; })
       .addCase(fetchStores.fulfilled, (state, action) => { state.loading = false; state.items = action.payload; })
       .addCase(fetchStores.rejected, (state, action) => { state.loading = false; state.error = action.payload as string; })
-      .addCase(fetchStore.fulfilled, (state, action) => { state.selected = action.payload; })
+      // Drop the previously-selected store while the next one loads, so the
+      // detail page shows a spinner rather than the wrong POS for a beat.
+      .addCase(fetchStore.pending, (state, action) => {
+        state.loading = true;
+        state.error = null;
+        if (state.selected?.id !== action.meta.arg) state.selected = null;
+      })
+      .addCase(fetchStore.fulfilled, (state, action) => {
+        state.loading = false;
+        state.selected = action.payload;
+      })
+      .addCase(fetchStore.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
       .addCase(createStore.fulfilled, (state, action) => { state.items.unshift(action.payload); })
       .addCase(updateStore.fulfilled, (state, action) => {
         const idx = state.items.findIndex((s) => s.id === action.payload.id);

@@ -1,48 +1,116 @@
 {
-  "title": "Stores",
-  "subtitle": "Manage store locations and coordinates",
-  "addStore": "Add Store",
-  "createStore": "Create Store",
-  "editStore": "Edit Store",
+  "title": "Points of Sale",
+  "subtitle": "Manage POS profiles, contacts and geolocation",
+  "addStore": "Add POS",
+  "createStore": "Create Point of Sale",
+  "editStore": "Edit Point of Sale",
+  "emptyTable": "No points of sale found",
+  "channel": {
+    "gms": "GMS",
+    "ls": "LS",
+    "gmsFull": "GMS — Large & medium retail",
+    "lsFull": "LS — Self-service"
+  },
+  "classification": {
+    "A": "A — Key account",
+    "B": "B — Major",
+    "C": "C — Standard",
+    "D": "D — Secondary"
+  },
   "columns": {
-    "name": "Store Name",
+    "name": "Point of sale",
+    "channel": "Channel",
+    "classification": "Class",
+    "city": "City",
     "address": "Address",
     "region": "Region",
     "coordinates": "Coordinates",
-    "created": "Created"
+    "created": "Created",
+    "view": "View"
   },
   "form": {
-    "nameLabel": "Store Name",
-    "namePlaceholder": "e.g. Downtown Branch",
+    "sections": {
+      "general": "General information",
+      "contacts": "Store contacts",
+      "location": "Location & geolocation"
+    },
+    "nameLabel": "Point of sale name",
+    "namePlaceholder": "e.g. Marjane Californie",
+    "brandLabel": "Brand / retail chain",
+    "brandPlaceholder": "e.g. Marjane",
+    "channelLabel": "Channel",
+    "channelPlaceholder": "Select a channel",
+    "classificationLabel": "Classification",
+    "classificationPlaceholder": "Select a class",
     "regionLabel": "Region",
-    "regionPlaceholder": "Select region",
+    "regionPlaceholder": "Select a region",
     "addressLabel": "Address",
-    "addressPlaceholder": "e.g. 123 Main St, City",
+    "addressPlaceholder": "e.g. 12 Boulevard Zerktouni",
+    "cityLabel": "City",
+    "cityPlaceholder": "e.g. Casablanca",
+    "postalCodeLabel": "Postal code",
+    "postalCodePlaceholder": "e.g. 20250",
+    "openingDateLabel": "Opening date",
+    "contacts": {
+      "sectionManager": "Department section manager",
+      "departmentManager": "Department manager",
+      "gds": "GDS",
+      "name": "Name",
+      "namePlaceholder": "Full name",
+      "phone": "Phone number"
+    },
     "latitudeLabel": "Latitude",
-    "latitudePlaceholder": "e.g. 34.0522",
     "longitudeLabel": "Longitude",
-    "longitudePlaceholder": "e.g. -118.2437",
-    "gpsHint": "GPS coordinates are optional and used for location tracking.",
-    "createSubmit": "Create Store",
-    "updateSubmit": "Update Store"
+    "mapsUrlLabel": "Google Maps link",
+    "mapsUrlHint": "Paste a Google Maps link, then use “Fill from link” to set the coordinates automatically.",
+    "extractFromLink": "Fill from link",
+    "useMyLocation": "Use my current location",
+    "linkNoCoords": "No coordinates found in that link. Open the place in Google Maps and copy the URL from the address bar.",
+    "linkCoordsFound": "Coordinates filled from the link",
+    "locationCaptured": "Current location captured",
+    "locationDenied": "Location permission denied",
+    "geolocationUnsupported": "This browser does not support geolocation",
+    "mapPreview": "Map preview",
+    "createSubmit": "Create POS",
+    "updateSubmit": "Save changes"
+  },
+  "map": {
+    "title": "Point of sale location",
+    "titleFor": "Location of {{name}}",
+    "noCoords": "No coordinates set — add a latitude and longitude to show the map.",
+    "openInGoogleMaps": "Open in Google Maps",
+    "directions": "Directions"
+  },
+  "detail": {
+    "edit": "Edit POS",
+    "editTitle": "Edit point of sale",
+    "notFound": "Point of sale not found",
+    "noContact": "Not provided",
+    "classShort": "Class {{value}}",
+    "visibleToGm": "Visible to General Management"
   },
   "errors": {
     "nameRequired": "Name is required",
     "addressRequired": "Address is required",
     "regionRequired": "Region is required",
     "latitudeInvalid": "Invalid latitude (-90 to 90)",
-    "longitudeInvalid": "Invalid longitude (-180 to 180)"
+    "longitudeInvalid": "Invalid longitude (-180 to 180)",
+    "coordsPair": "Latitude and longitude must both be set",
+    "phoneInvalid": "Enter a valid phone number, e.g. +212 661 234 567",
+    "postalCodeInvalid": "Enter a valid postal code",
+    "dateInvalid": "Enter a valid date",
+    "dateFuture": "The opening date cannot be in the future",
+    "urlInvalid": "Enter a valid URL starting with http:// or https://"
   },
   "toasts": {
-    "createSuccess": "Store created",
-    "createError": "Failed to create store",
-    "updateSuccess": "Store updated",
-    "updateError": "Failed to update store",
-    "deleteSuccess": "Store deleted",
-    "deleteError": "Failed to delete store"
+    "createSuccess": "Point of sale created",
+    "createError": "Failed to create the point of sale",
+    "updateSuccess": "Point of sale updated",
+    "updateError": "Failed to update the point of sale",
+    "deleteSuccess": "Point of sale deleted",
+    "deleteError": "Failed to delete the point of sale"
   },
   "deleteConfirm": {
-    "message": "This will permanently delete the store and all associated data."
-  },
-  "emptyTable": "No stores found"
+    "message": "This will permanently delete the point of sale and all associated data."
+  }
 }

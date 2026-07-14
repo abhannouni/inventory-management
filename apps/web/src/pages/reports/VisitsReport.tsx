@@ -19,6 +19,7 @@ import type { VisitReport } from '../../types';
 
 export default function VisitsReport() {
   const { t, i18n } = useTranslation('reports');
+  const { t: tStores } = useTranslation('stores');
   const dispatch = useAppDispatch();
   const { visitsReport, loading } = useAppSelector((s) => s.reports);
 
@@ -92,13 +93,28 @@ export default function VisitsReport() {
   const byStore = useMemo(() => {
     const map = new Map<
       string,
-      { name: string; audited: number; inStock: number; visits: number }
+      {
+        name: string;
+        brand: string;
+        channel: string;
+        classification: string;
+        city: string;
+        audited: number;
+        inStock: number;
+        visits: number;
+      }
     >();
 
     for (const v of visitsReport) {
       const id = v.store?.id ?? 'unknown';
       const row = map.get(id) ?? {
         name: v.store?.name ?? t('visitsReport.unknownStore'),
+        // The POS profile travels with the numbers: a brand or channel breakdown
+        // is the first thing anyone asks for once these fields exist.
+        brand: v.store?.brand ?? '',
+        channel: v.store?.channel ?? '',
+        classification: v.store?.classification ?? '',
+        city: v.store?.city ?? '',
         audited: 0,
         inStock: 0,
         visits: 0,
@@ -149,6 +165,10 @@ export default function VisitsReport() {
     name: t('visitsReport.datasets.byStore'),
     columns: [
       { header: t('table.store'), value: (r) => r.name },
+      { header: t('table.brand'), value: (r) => r.brand },
+      { header: t('table.channel'), value: (r) => (r.channel ? tStores(`channel.${r.channel}`) : '') },
+      { header: t('table.classification'), value: (r) => r.classification },
+      { header: t('table.city'), value: (r) => r.city },
       { header: t('visitsReport.datasets.visitCount'), value: (r) => r.visits },
       { header: t('visitsReport.summary.total'), value: (r) => r.audited },
       { header: t('visitsReport.summary.inStock'), value: (r) => r.inStock },

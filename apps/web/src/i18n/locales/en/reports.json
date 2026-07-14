@@ -21,7 +21,11 @@
     "checkin": "Check-in",
     "checkout": "Check-out",
     "status": "Status",
-    "date": "Date"
+    "date": "Date",
+    "brand": "Brand",
+    "channel": "Channel",
+    "classification": "Class",
+    "city": "City"
   },
   "chart": {
     "showTable": "Table",

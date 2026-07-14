@@ -33,6 +33,21 @@ enum ScheduleStatus {
   cancelled
 }
 
+/// Distribution channel of a point of sale.
+/// gms = Grande et Moyenne Surface (hyper/supermarkets); ls = Libre Service (self-service).
+enum StoreChannel {
+  gms
+  ls
+}
+
+/// Commercial importance of a point of sale — A is the highest.
+enum StoreClassification {
+  A
+  B
+  C
+  D
+}
+
 enum SubscriptionStatus {
   trialing
   active
@@ -105,14 +120,42 @@ model User {
 
 /// A Point of Sale (POS).
 model Store {
-  id        String   @id @default(uuid())
-  name      String
-  address   String?
+  id   String @id @default(uuid())
+  name String
+
+  // ── General information ──────────────────────────────────────────────────
+  /// Retail chain the POS belongs to, e.g. "Marjane", "Carrefour".
+  brand          String?
+  channel        StoreChannel?
+  classification StoreClassification?
+
+  // ── Address ──────────────────────────────────────────────────────────────
+  address     String?
+  city        String?
+  postal_code String?
+  region      Region? @relation(fields: [region_id], references: [id])
+  region_id   String?
+
+  opening_date DateTime? @db.Date
+
+  // ── Contacts ─────────────────────────────────────────────────────────────
+  /// Chef de rayon — runs the specific section the products sit in.
+  section_manager_name     String?
+  section_manager_phone    String?
+  /// Chef de département — runs the wider department.
+  department_manager_name  String?
+  department_manager_phone String?
+  /// Gestionnaire de Stock / Directeur de Site.
+  gds_name                 String?
+  gds_phone                String?
+
+  // ── Geolocation ──────────────────────────────────────────────────────────
   latitude  Decimal? @db.Decimal(10, 7)
   longitude Decimal? @db.Decimal(10, 7)
-  region    Region?  @relation(fields: [region_id], references: [id])
-  region_id String?
-  is_active Boolean  @default(true)
+  /// Optional explicit Google Maps link. When empty the app derives one from lat/lng.
+  google_maps_url String?
+
+  is_active Boolean @default(true)
   /// Super Admin curates which POS the general_management role may see.
   visible_to_gm Boolean  @default(false)
   created_at    DateTime @default(now())
@@ -125,6 +168,8 @@ model Store {
 
   @@index([visible_to_gm])
   @@index([is_active])
+  @@index([city])
+  @@index([brand])
   @@map("stores")
 }
 

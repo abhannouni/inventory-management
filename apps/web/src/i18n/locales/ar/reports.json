@@ -21,7 +21,11 @@
     "checkin": "الدخول",
     "checkout": "الخروج",
     "status": "الحالة",
-    "date": "التاريخ"
+    "date": "التاريخ",
+    "brand": "العلامة",
+    "channel": "القناة",
+    "classification": "الفئة",
+    "city": "المدينة"
   },
   "chart": {
     "showTable": "جدول",

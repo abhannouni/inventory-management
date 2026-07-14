@@ -15,10 +15,12 @@ import VarianceChart from '../../components/charts/VarianceChart';
 import { STATUS } from '../../components/charts/tokens';
 import ReportFilters from './ReportFilters';
 import { formatDate } from '../../utils/format';
+import { googleMapsLink } from '../../utils/maps';
 import type { ExportDataset } from '../../utils/export';
 
 export default function StoreReport() {
   const { t, i18n } = useTranslation('reports');
+  const { t: tStores } = useTranslation('stores');
   const dispatch = useAppDispatch();
   const { storeReport, loading } = useAppSelector((s) => s.reports);
   const { items: stores } = useAppSelector((s) => s.stores);
@@ -60,6 +62,7 @@ export default function StoreReport() {
   };
 
   const visits = useMemo(() => storeReport?.visits ?? [], [storeReport]);
+  const mapsLink = storeReport ? googleMapsLink(storeReport.store) : null;
 
   const totals = useMemo(() => {
     const acc = { audited: 0, inStock: 0, lowStock: 0, outOfStock: 0 };
@@ -230,11 +233,32 @@ export default function StoreReport() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.25 }}
         >
+          {/* The POS profile rides along with its numbers. */}
           <div className="report-subject">
             <h2 className="report-subject-name">{storeReport.store.name}</h2>
-            {storeReport.store.address && (
-              <p className="report-subject-meta">{storeReport.store.address}</p>
-            )}
+            <p className="report-subject-meta">
+              {storeReport.store.brand && <strong>{storeReport.store.brand}</strong>}
+              {storeReport.store.channel && (
+                <span className="pos-chip">{tStores(`channel.${storeReport.store.channel}`)}</span>
+              )}
+              {storeReport.store.classification && (
+                <span className="pos-chip">{storeReport.store.classification}</span>
+              )}
+              {[storeReport.store.address, storeReport.store.city, storeReport.store.postal_code]
+                .filter(Boolean)
+                .join(', ') && (
+                <span>
+                  {[storeReport.store.address, storeReport.store.city, storeReport.store.postal_code]
+                    .filter(Boolean)
+                    .join(', ')}
+                </span>
+              )}
+              {mapsLink && (
+                <a href={mapsLink} target="_blank" rel="noopener noreferrer" className="pos-chip is-link">
+                  {tStores('map.openInGoogleMaps')}
+                </a>
+              )}
+            </p>
           </div>
 
           <div className="kpi-row">

@@ -21,7 +21,11 @@
     "checkin": "Arrivée",
     "checkout": "Sortie",
     "status": "Statut",
-    "date": "Date"
+    "date": "Date",
+    "brand": "Enseigne",
+    "channel": "Canal",
+    "classification": "Classe",
+    "city": "Ville"
   },
   "chart": {
     "showTable": "Tableau",

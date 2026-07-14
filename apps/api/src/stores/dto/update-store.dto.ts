@@ -1,33 +1,8 @@
-import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNumber, IsOptional, IsString, IsUUID, Max, Min } from 'class-validator';
+import { PartialType } from '@nestjs/swagger';
+import { CreateStoreDto } from './create-store.dto';
 
-export class UpdateStoreDto {
-  @ApiPropertyOptional({ example: 'Downtown Branch' })
-  @IsString()
-  @IsOptional()
-  name?: string;
-
-  @ApiPropertyOptional({ example: '123 Main St' })
-  @IsString()
-  @IsOptional()
-  address?: string;
-
-  @ApiPropertyOptional({ example: 33.5731 })
-  @IsNumber()
-  @Min(-90)
-  @Max(90)
-  @IsOptional()
-  latitude?: number;
-
-  @ApiPropertyOptional({ example: -7.5898 })
-  @IsNumber()
-  @Min(-180)
-  @Max(180)
-  @IsOptional()
-  longitude?: number;
-
-  @ApiPropertyOptional({ example: 'uuid-of-region' })
-  @IsUUID()
-  @IsOptional()
-  region_id?: string;
-}
+/**
+ * Every field optional, but with exactly the same validation rules as create —
+ * derived rather than duplicated, so the two forms can never drift apart.
+ */
+export class UpdateStoreDto extends PartialType(CreateStoreDto) {}

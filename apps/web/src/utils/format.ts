@@ -35,6 +35,19 @@ export function formatDurationShort(totalSeconds: number | null | undefined): st
   return `${s}s`;
 }
 
+/**
+ * A calendar date with no time — for fields that are dates, not instants
+ * (an opening date, a birthday). Showing "1 Jul 2021, 01:00" for a date-only
+ * column exposes the storage timezone and reads as a bug.
+ */
+export function formatDateOnly(dateStr: string, language: string = 'fr'): string {
+  return new Date(dateStr).toLocaleDateString(DATE_LOCALES[language] || 'fr-FR', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+}
+
 export function formatRole(role: string): string {
   return role.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 }
