@@ -1,130 +1,347 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../../hooks/useAppDispatch';
 import { fetchStoreReport } from '../../store/slices/reportsSlice';
 import { fetchStores } from '../../store/slices/storesSlice';
-import { useEffect } from 'react';
-import Button from '../../components/ui/Button';
-import Select from '../../components/ui/Select';
 import Spinner from '../../components/ui/Spinner';
-import Badge from '../../components/ui/Badge';
+import ChartCard from '../../components/charts/ChartCard';
+import DownloadDataButton from '../../components/charts/DownloadDataButton';
+import StatTile from '../../components/charts/StatTile';
+import TrendChart from '../../components/charts/TrendChart';
+import StatusBar from '../../components/charts/StatusBar';
+import VarianceChart from '../../components/charts/VarianceChart';
+import { STATUS } from '../../components/charts/tokens';
+import ReportFilters from './ReportFilters';
 import { formatDate } from '../../utils/format';
-import type { AuditStatus } from '../../types';
-
-const statusBadge: Record<AuditStatus, 'success' | 'warning' | 'danger'> = {
-  in_stock: 'success',
-  low_stock: 'warning',
-  out_of_stock: 'danger',
-};
+import type { ExportDataset } from '../../utils/export';
 
 export default function StoreReport() {
   const { t, i18n } = useTranslation('reports');
-  const { t: tCommon } = useTranslation('common');
   const dispatch = useAppDispatch();
   const { storeReport, loading } = useAppSelector((s) => s.reports);
   const { items: stores } = useAppSelector((s) => s.stores);
+
   const [storeId, setStoreId] = useState('');
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
 
-  useEffect(() => { dispatch(fetchStores()); }, [dispatch]);
+  useEffect(() => {
+    dispatch(fetchStores());
+  }, [dispatch]);
 
-  const handleLoad = async () => {
-    if (!storeId) { toast.error(t('storeReport.selectStoreToast')); return; }
-    const res = await dispatch(fetchStoreReport({ id: storeId, filters: { from: from || undefined, to: to || undefined } }));
-    if (fetchStoreReport.rejected.match(res)) toast.error(res.payload as string || t('storeReport.loadErrorToast'));
+  const load = async () => {
+    if (!storeId) {
+      toast.error(t('storeReport.selectStoreToast'));
+      return;
+    }
+    const res = await dispatch(
+      fetchStoreReport({
+        id: storeId,
+        filters: { from: from || undefined, to: to || undefined },
+      }),
+    );
+    if (fetchStoreReport.rejected.match(res)) {
+      toast.error((res.payload as string) || t('storeReport.loadErrorToast'));
+    }
+  };
+
+  const reset = () => {
+    setFrom('');
+    setTo('');
+    if (storeId) dispatch(fetchStoreReport({ id: storeId }));
+  };
+
+  const statusLabels = {
+    inStock: t('visitsReport.summary.inStock'),
+    lowStock: t('visitsReport.summary.lowStock'),
+    outOfStock: t('visitsReport.summary.outOfStock'),
+  };
+
+  const visits = useMemo(() => storeReport?.visits ?? [], [storeReport]);
+
+  const totals = useMemo(() => {
+    const acc = { audited: 0, inStock: 0, lowStock: 0, outOfStock: 0 };
+    for (const v of visits) {
+      acc.audited += v.summary?.total ?? 0;
+      acc.inStock += v.summary?.inStock ?? 0;
+      acc.lowStock += v.summary?.lowStock ?? 0;
+      acc.outOfStock += v.summary?.outOfStock ?? 0;
+    }
+    return acc;
+  }, [visits]);
+
+  const availability =
+    totals.audited === 0 ? 0 : Math.round((totals.inStock / totals.audited) * 100);
+
+  /** Availability per visit, oldest → newest: is this POS getting better or worse? */
+  const trend = useMemo(
+    () =>
+      [...visits]
+        .sort((a, b) => String(a.checkin_at).localeCompare(String(b.checkin_at)))
+        .map((v) => ({
+          date: String(v.checkin_at).slice(0, 10),
+          label: new Date(v.checkin_at).toLocaleDateString(i18n.language, {
+            day: 'numeric',
+            month: 'short',
+          }),
+          value: v.summary?.completionPct ?? 0,
+        })),
+    [visits, i18n.language],
+  );
+
+  /**
+   * Shelf gap on the most recent visit: found − expected, per product.
+   * Diverging, because the reader's question is "which side of expected is it?" —
+   * a plain bar chart cannot show that.
+   */
+  const variance = useMemo(() => {
+    const latest = [...visits].sort((a, b) =>
+      String(b.checkin_at).localeCompare(String(a.checkin_at)),
+    )[0];
+
+    return (latest?.audit_items ?? [])
+      .map((ai) => ({
+        label: ai.product?.name ?? '—',
+        found: ai.qty_found,
+        expected: ai.expected_qty ?? 0,
+        variance: ai.variance ?? ai.qty_found - (ai.expected_qty ?? 0),
+      }))
+      .sort((a, b) => a.variance - b.variance);
+  }, [visits]);
+
+  /* ── Export datasets ──────────────────────────────────────────────────── */
+
+  const itemsDataset: ExportDataset<{
+    date: string;
+    product: string;
+    sku: string;
+    found: number;
+    expected: number;
+    variance: number;
+    status: string;
+    notes: string;
+  }> = {
+    name: t('storeReport.datasets.items'),
+    columns: [
+      { header: t('table.date'), value: (r) => r.date },
+      { header: t('storeReport.table.product'), value: (r) => r.product },
+      { header: 'SKU', value: (r) => r.sku },
+      { header: t('storeReport.table.qtyFound'), value: (r) => r.found },
+      { header: t('storeReport.table.expected'), value: (r) => r.expected },
+      { header: t('storeReport.table.variance'), value: (r) => r.variance },
+      { header: t('table.status'), value: (r) => r.status },
+      { header: t('productReport.table.notes'), value: (r) => r.notes },
+    ],
+    rows: visits.flatMap((v) =>
+      (v.audit_items ?? []).map((ai) => ({
+        date: String(v.checkin_at).slice(0, 10),
+        product: ai.product?.name ?? '',
+        sku: ai.product?.sku ?? '',
+        found: ai.qty_found,
+        expected: ai.expected_qty ?? 0,
+        variance: ai.variance ?? ai.qty_found - (ai.expected_qty ?? 0),
+        status: ai.status,
+        notes: ai.notes ?? '',
+      })),
+    ),
+  };
+
+  const trendDataset: ExportDataset<(typeof trend)[number]> = {
+    name: t('storeReport.datasets.trend'),
+    columns: [
+      { header: t('table.date'), value: (r) => r.date },
+      { header: t('visitsReport.availability'), value: (r) => r.value },
+    ],
+    rows: trend,
+  };
+
+  const varianceDataset: ExportDataset<(typeof variance)[number]> = {
+    name: t('storeReport.datasets.variance'),
+    columns: [
+      { header: t('storeReport.table.product'), value: (r) => r.label },
+      { header: t('storeReport.table.qtyFound'), value: (r) => r.found },
+      { header: t('storeReport.table.expected'), value: (r) => r.expected },
+      { header: t('storeReport.table.variance'), value: (r) => r.variance },
+    ],
+    rows: variance,
+  };
+
+  const statusDataset: ExportDataset<{ label: string; count: number }> = {
+    name: t('storeReport.datasets.status'),
+    columns: [
+      { header: t('table.status'), value: (r) => r.label },
+      { header: t('visitsReport.datasets.productCount'), value: (r) => r.count },
+    ],
+    rows: [
+      { label: statusLabels.inStock, count: totals.inStock },
+      { label: statusLabels.lowStock, count: totals.lowStock },
+      { label: statusLabels.outOfStock, count: totals.outOfStock },
+    ],
   };
 
   return (
-    <div>
-      <div className="filter-bar" style={{ marginBottom: 20 }}>
-        <Select
-          options={stores.map((s) => ({ value: s.id, label: s.name }))}
-          value={storeId}
-          onChange={(e) => setStoreId(e.target.value)}
-          placeholder={t('storeReport.selectStorePlaceholder')}
-          label=""
-        />
-        <div className="form-group" style={{ margin: 0 }}>
-          <label className="form-label">{t('filters.from')}</label>
-          <input type="date" className="form-input" value={from} onChange={(e) => setFrom(e.target.value)} />
-        </div>
-        <div className="form-group" style={{ margin: 0 }}>
-          <label className="form-label">{t('filters.to')}</label>
-          <input type="date" className="form-input" value={to} onChange={(e) => setTo(e.target.value)} />
-        </div>
-        <div style={{ alignSelf: 'flex-end' }}>
-          <Button onClick={handleLoad} disabled={!storeId}>{t('filters.loadReport')}</Button>
-        </div>
-      </div>
+    <div className={loading ? 'is-refetching' : undefined}>
+      <ReportFilters
+        from={from}
+        to={to}
+        onFrom={setFrom}
+        onTo={setTo}
+        onApply={load}
+        onReset={reset}
+        actions={
+          storeReport ? (
+            <DownloadDataButton
+              size="md"
+              datasets={[itemsDataset, trendDataset, varianceDataset, statusDataset]}
+              fileName={`${storeReport.store.name} ${t('storeReport.datasets.workbook')}`}
+            />
+          ) : undefined
+        }
+      >
+        <label className="rf-field rf-field-wide">
+          <span className="rf-label">{t('storeReport.store')}</span>
+          <select
+            className="form-select"
+            value={storeId}
+            onChange={(e) => setStoreId(e.target.value)}
+          >
+            <option value="">{t('storeReport.selectStorePlaceholder')}</option>
+            {stores.map((s) => (
+              <option key={s.id} value={s.id}>{s.name}</option>
+            ))}
+          </select>
+        </label>
+      </ReportFilters>
 
-      {loading && <Spinner center size="lg" />}
-
-      {!loading && storeReport && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-          <div className="card" style={{ marginBottom: 16 }}>
-            <div className="card-body">
-              <h3 style={{ fontWeight: 700, fontSize: 16 }}>{storeReport.store.name}</h3>
-              <p style={{ color: 'var(--gray-500)', fontSize: 13 }}>{storeReport.store.address}</p>
-            </div>
-          </div>
-
-          <h3 style={{ fontSize: 14, fontWeight: 600, marginBottom: 12 }}>
-            {t('storeReport.visitHistory', { count: storeReport.visits?.length ?? 0 })}
-          </h3>
-
-          {(storeReport.visits || []).map((v, i) => (
-            <motion.div
-              key={v.id}
-              className="card"
-              style={{ marginBottom: 12 }}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.05 }}
-            >
-              <div className="card-body">
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
-                  <div>
-                    <p style={{ fontWeight: 600 }}>{formatDate(v.checkin_at, i18n.language)}</p>
-                    {v.checkout_at && <p style={{ fontSize: 12, color: 'var(--gray-400)' }}>{t('storeReport.closed', { date: formatDate(v.checkout_at, i18n.language) })}</p>}
-                  </div>
-                  <Badge variant={v.status === 'open' ? 'success' : 'gray'} dot>
-                    {v.status === 'open' ? tCommon('status.open') : tCommon('status.closed')}
-                  </Badge>
-                </div>
-
-                {v.audit_items && v.audit_items.length > 0 && (
-                  <table style={{ width: '100%', fontSize: 13, borderCollapse: 'collapse' }}>
-                    <thead>
-                      <tr style={{ background: 'var(--gray-50)' }}>
-                        <th style={{ padding: '6px 8px', textAlign: 'left', color: 'var(--gray-500)', fontSize: 11, fontWeight: 600, textTransform: 'uppercase' }}>{t('storeReport.table.product')}</th>
-                        <th style={{ padding: '6px 8px', textAlign: 'left', color: 'var(--gray-500)', fontSize: 11, fontWeight: 600, textTransform: 'uppercase' }}>{t('storeReport.table.qtyFound')}</th>
-                        <th style={{ padding: '6px 8px', textAlign: 'left', color: 'var(--gray-500)', fontSize: 11, fontWeight: 600, textTransform: 'uppercase' }}>{t('storeReport.table.status')}</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {v.audit_items.map((ai: any) => (
-                        <tr key={ai.id} style={{ borderTop: '1px solid var(--gray-100)' }}>
-                          <td style={{ padding: '6px 8px' }}>{ai.product?.name || ai.product_id}</td>
-                          <td style={{ padding: '6px 8px', fontWeight: 600 }}>{ai.qty_found}</td>
-                          <td style={{ padding: '6px 8px' }}><Badge variant={statusBadge[ai.status as AuditStatus]}>{tCommon(`status.${ai.status}`)}</Badge></td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                )}
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
-      )}
+      {loading && !storeReport && <Spinner center size="lg" />}
 
       {!loading && !storeReport && (
         <div className="empty-state">
           <div className="empty-state-title">{t('storeReport.emptyState')}</div>
         </div>
+      )}
+
+      {storeReport && (
+        <motion.div
+          className="report-grid"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.25 }}
+        >
+          <div className="report-subject">
+            <h2 className="report-subject-name">{storeReport.store.name}</h2>
+            {storeReport.store.address && (
+              <p className="report-subject-meta">{storeReport.store.address}</p>
+            )}
+          </div>
+
+          <div className="kpi-row">
+            <StatTile label={t('storeReport.kpis.visits')} value={visits.length} />
+            <StatTile label={t('visitsReport.kpis.audited')} value={totals.audited} />
+            <StatTile
+              label={t('visitsReport.kpis.availability')}
+              value={availability}
+              unit="%"
+              tone={availability >= 90 ? 'good' : availability >= 75 ? 'warning' : 'critical'}
+            />
+            <StatTile
+              label={t('visitsReport.summary.outOfStock')}
+              value={totals.outOfStock}
+              tone={totals.outOfStock === 0 ? 'good' : 'critical'}
+            />
+          </div>
+
+          {trend.length > 0 && (
+            <ChartCard
+              title={t('storeReport.charts.trendTitle')}
+              subtitle={t('storeReport.charts.trendSub')}
+              dataset={trendDataset}
+            >
+              <TrendChart data={trend} unit="%" maxValue={100} />
+            </ChartCard>
+          )}
+
+          {totals.audited > 0 && (
+            <ChartCard
+              title={t('storeReport.charts.statusTitle')}
+              subtitle={t('storeReport.charts.statusSub')}
+              dataset={statusDataset}
+              legend={[
+                { label: statusLabels.inStock, color: STATUS.in_stock },
+                { label: statusLabels.lowStock, color: STATUS.low_stock },
+                { label: statusLabels.outOfStock, color: STATUS.out_of_stock },
+              ]}
+            >
+              <StatusBar
+                variant="block"
+                labels={statusLabels}
+                counts={{
+                  inStock: totals.inStock,
+                  lowStock: totals.lowStock,
+                  outOfStock: totals.outOfStock,
+                }}
+              />
+            </ChartCard>
+          )}
+
+          {variance.length > 0 && (
+            <ChartCard
+              title={t('storeReport.charts.varianceTitle')}
+              subtitle={t('storeReport.charts.varianceSub')}
+              dataset={varianceDataset}
+            >
+              <VarianceChart
+                data={variance}
+                labels={{
+                  under: t('storeReport.charts.under'),
+                  over: t('storeReport.charts.over'),
+                }}
+              />
+            </ChartCard>
+          )}
+
+          <ChartCard
+            title={t('storeReport.charts.historyTitle')}
+            subtitle={t('storeReport.visitHistory', { count: visits.length })}
+            dataset={itemsDataset}
+          >
+            <div className="visit-rows">
+              {visits.map((v) => (
+                <div key={v.id} className="visit-row">
+                  <div className="visit-row-main">
+                    <span className="visit-row-store">
+                      {formatDate(v.checkin_at, i18n.language)}
+                    </span>
+                    <span className="visit-row-meta">
+                      {v.user?.full_name ?? ''}
+                      {' · '}
+                      {t('storeReport.productsAudited', { count: v.summary?.total ?? 0 })}
+                    </span>
+                  </div>
+
+                  {v.summary && v.summary.total > 0 ? (
+                    <div className="visit-row-bar">
+                      <StatusBar
+                        labels={statusLabels}
+                        counts={{
+                          inStock: v.summary.inStock,
+                          lowStock: v.summary.lowStock,
+                          outOfStock: v.summary.outOfStock,
+                        }}
+                      />
+                    </div>
+                  ) : (
+                    <span className="visit-row-none">{t('visitsReport.noAudit')}</span>
+                  )}
+
+                  <span className="visit-row-pct">{v.summary?.completionPct ?? 0}%</span>
+                </div>
+              ))}
+            </div>
+          </ChartCard>
+        </motion.div>
       )}
     </div>
   );

@@ -83,6 +83,10 @@ export interface AuditItem {
   visit_id: string;
   product_id: string;
   qty_found: number;
+  /** Snapshot of ProductStore.expected_qty at audit time. */
+  expected_qty: number;
+  /** qty_found − expected_qty. Negative = short of what the shelf should hold. */
+  variance: number;
   notes: string | null;
   photo_url: string | null;
   status: AuditStatus;

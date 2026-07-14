@@ -1,11 +1,11 @@
 {
   "page": {
     "title": "Rapports",
-    "subtitle": "Analyses et historique d'audit selon le rôle",
+    "subtitle": "Performance des audits sur vos points de vente",
     "tabs": {
-      "visits": "Rapports de visites",
-      "store": "Rapport de magasin",
-      "product": "Rapport de produit"
+      "visits": "Vue d’ensemble",
+      "store": "Par point de vente",
+      "product": "Par produit"
     }
   },
   "filters": {
@@ -15,45 +15,151 @@
     "reset": "Réinitialiser",
     "loadReport": "Charger le rapport"
   },
+  "table": {
+    "store": "Point de vente",
+    "merchandiser": "Marchandiseur",
+    "checkin": "Arrivée",
+    "checkout": "Sortie",
+    "status": "Statut",
+    "date": "Date"
+  },
+  "chart": {
+    "showTable": "Tableau",
+    "showChart": "Graphique",
+    "noData": "Aucune donnée"
+  },
+  "download": {
+    "label": "Télécharger les données",
+    "csv": "CSV",
+    "csvHint": "S’ouvre dans Excel, Sheets ou Numbers",
+    "excel": "Excel (.xlsx)",
+    "excelHint": "Une feuille par graphique",
+    "preparing": "Préparation...",
+    "failed": "Échec du téléchargement",
+    "noData": "Rien à télécharger pour l’instant",
+    "rowCount_one": "{{count}} ligne",
+    "rowCount_other": "{{count}} lignes"
+  },
+  "visitsReport": {
+    "loadErrorToast": "Échec du chargement du rapport",
+    "emptyTitle": "Aucune visite trouvée",
+    "emptySubtitle": "Ajustez les filtres de date.",
+    "summary": {
+      "total": "Audités",
+      "inStock": "En stock",
+      "lowStock": "Stock faible",
+      "outOfStock": "Rupture"
+    },
+    "completionRate": "Taux de complétion",
+    "availability": "Disponibilité %",
+    "unknownStore": "Inconnu",
+    "noAudit": "Aucun audit enregistré",
+    "kpis": {
+      "visits": "Visites",
+      "audited": "Produits audités",
+      "availability": "Disponibilité",
+      "availabilityHint": "Part des produits audités trouvés en stock",
+      "outOfStock": "Taux de rupture",
+      "outOfStockHint": "Part des produits audités trouvés en rupture"
+    },
+    "charts": {
+      "trendTitle": "Visites dans le temps",
+      "trendSub": "Visites réalisées par jour",
+      "statusTitle": "État du stock",
+      "statusSub": "Chaque produit audité, selon ce qui a été trouvé en rayon",
+      "storeTitle": "Disponibilité par point de vente",
+      "storeSub": "Les plus faibles d’abord — à surveiller",
+      "storeHint": "{{visits}} visites · {{audited}} produits audités",
+      "visitsTitle": "Détail des visites",
+      "visitsSub": "Chaque visite et ce qui a été trouvé"
+    },
+    "datasets": {
+      "visits": "Visites",
+      "trend": "Visites par jour",
+      "byStore": "Disponibilité par PDV",
+      "stockStatus": "État du stock",
+      "visitCount": "Visites",
+      "productCount": "Produits",
+      "share": "Part %",
+      "workbook": "Rapport de visites"
+    }
+  },
+  "storeReport": {
+    "store": "Point de vente",
+    "selectStorePlaceholder": "Sélectionner un point de vente",
+    "selectStoreToast": "Veuillez sélectionner un point de vente",
+    "loadErrorToast": "Échec du chargement du rapport",
+    "visitHistory_one": "{{count}} visite",
+    "visitHistory_other": "{{count}} visites",
+    "closed": "Clôturée : {{date}}",
+    "productsAudited_one": "{{count}} produit",
+    "productsAudited_other": "{{count}} produits",
+    "table": {
+      "product": "Produit",
+      "qtyFound": "Trouvé",
+      "expected": "Attendu",
+      "variance": "Écart",
+      "status": "Statut"
+    },
+    "emptyState": "Sélectionnez un point de vente pour voir son rapport",
+    "kpis": {
+      "visits": "Visites"
+    },
+    "charts": {
+      "trendTitle": "Disponibilité dans le temps",
+      "trendSub": "Part des produits en stock, visite après visite",
+      "statusTitle": "État du stock",
+      "statusSub": "Tous les produits audités dans ce point de vente",
+      "varianceTitle": "Écart en rayon par produit",
+      "varianceSub": "Trouvé moins attendu, lors de la dernière visite",
+      "under": "Sous l’attendu",
+      "over": "Au-dessus",
+      "historyTitle": "Historique des visites",
+      "historySub": "Chaque visite et ce qui a été trouvé"
+    },
+    "datasets": {
+      "items": "Éléments audités",
+      "trend": "Disponibilité",
+      "variance": "Écart en rayon",
+      "status": "État du stock",
+      "workbook": "rapport"
+    }
+  },
   "productReport": {
+    "product": "Produit",
     "selectProductPlaceholder": "Sélectionner un produit",
     "selectProductToast": "Veuillez sélectionner un produit",
     "loadErrorToast": "Échec du chargement du rapport",
-    "totalScans": "scans au total",
+    "totalScans": "Nombre d’audits",
+    "oosHint": "Trouvé en rupture {{count}} fois",
     "table": {
-      "store": "Magasin",
+      "store": "Point de vente",
       "date": "Date",
       "qtyFound": "Qté trouvée",
       "status": "Statut",
       "notes": "Notes"
     },
-    "noHistory": "Aucun historique de scan trouvé",
-    "emptyState": "Sélectionnez un produit pour voir son historique"
-  },
-  "storeReport": {
-    "selectStorePlaceholder": "Sélectionner un magasin",
-    "selectStoreToast": "Veuillez sélectionner un magasin",
-    "loadErrorToast": "Échec du chargement du rapport",
-    "visitHistory_one": "Historique des visites ({{count}} visite)",
-    "visitHistory_other": "Historique des visites ({{count}} visites)",
-    "closed": "Fermée le : {{date}}",
-    "table": {
-      "product": "Produit",
-      "qtyFound": "Qté trouvée",
-      "status": "Statut"
+    "noHistory": "Aucun historique pour ce produit",
+    "emptyState": "Sélectionnez un produit pour voir son historique",
+    "charts": {
+      "trendTitle": "Quantité trouvée dans le temps",
+      "trendSub": "Ce que les marchandiseurs ont compté en rayon",
+      "statusTitle": "État du stock",
+      "statusSub": "Fréquence en stock, stock faible ou rupture",
+      "storeTitle": "Quantité moyenne par point de vente",
+      "storeSub": "Les plus faibles d’abord — là où le produit manque",
+      "storeHint": "{{scans}} audits · {{oos}} fois en rupture",
+      "historyTitle": "Historique des audits",
+      "historySub": "Chaque comptage de ce produit"
     },
-    "emptyState": "Sélectionnez un magasin pour voir son rapport"
-  },
-  "visitsReport": {
-    "loadErrorToast": "Échec du chargement du rapport",
-    "emptyTitle": "Aucune visite trouvée",
-    "emptySubtitle": "Essayez d'ajuster les filtres de dates.",
-    "summary": {
-      "total": "Total",
-      "inStock": "En stock",
-      "lowStock": "Stock faible",
-      "outOfStock": "Rupture de stock"
-    },
-    "completionRate": "Taux de complétion"
+    "datasets": {
+      "history": "Historique des audits",
+      "trend": "Quantité dans le temps",
+      "byStore": "Par point de vente",
+      "status": "État du stock",
+      "scans": "Audits",
+      "avgQty": "Qté moyenne trouvée",
+      "workbook": "rapport"
+    }
   }
 }

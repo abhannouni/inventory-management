@@ -1,11 +1,11 @@
 {
   "page": {
     "title": "التقارير",
-    "subtitle": "تحليلات وسجل تدقيق حسب الدور",
+    "subtitle": "أداء التدقيق عبر نقاط البيع",
     "tabs": {
-      "visits": "تقارير الزيارات",
-      "store": "تقرير المتجر",
-      "product": "تقرير المنتج"
+      "visits": "نظرة عامة",
+      "store": "حسب نقطة البيع",
+      "product": "حسب المنتج"
     }
   },
   "filters": {
@@ -15,49 +15,160 @@
     "reset": "إعادة تعيين",
     "loadReport": "تحميل التقرير"
   },
+  "table": {
+    "store": "نقطة البيع",
+    "merchandiser": "المندوب",
+    "checkin": "الدخول",
+    "checkout": "الخروج",
+    "status": "الحالة",
+    "date": "التاريخ"
+  },
+  "chart": {
+    "showTable": "جدول",
+    "showChart": "رسم بياني",
+    "noData": "لا توجد بيانات"
+  },
+  "download": {
+    "label": "تنزيل البيانات",
+    "csv": "CSV",
+    "csvHint": "يُفتح في Excel أو Sheets",
+    "excel": "Excel (.xlsx)",
+    "excelHint": "ورقة لكل رسم بياني",
+    "preparing": "جارٍ التحضير...",
+    "failed": "فشل التنزيل",
+    "noData": "لا توجد بيانات للتنزيل",
+    "rowCount_one": "صف واحد",
+    "rowCount_two": "صفان",
+    "rowCount_few": "{{count}} صفوف",
+    "rowCount_many": "{{count}} صفًا",
+    "rowCount_other": "{{count}} صف"
+  },
+  "visitsReport": {
+    "loadErrorToast": "فشل تحميل التقرير",
+    "emptyTitle": "لم يتم العثور على زيارات",
+    "emptySubtitle": "جرّب تعديل عوامل تصفية التاريخ.",
+    "summary": {
+      "total": "تم تدقيقها",
+      "inStock": "متوفر",
+      "lowStock": "مخزون منخفض",
+      "outOfStock": "نفد المخزون"
+    },
+    "completionRate": "معدل الإنجاز",
+    "availability": "نسبة التوفر %",
+    "unknownStore": "غير معروف",
+    "noAudit": "لا يوجد تدقيق مسجل",
+    "kpis": {
+      "visits": "الزيارات",
+      "audited": "المنتجات المدققة",
+      "availability": "التوفر",
+      "availabilityHint": "نسبة المنتجات المتوفرة",
+      "outOfStock": "معدل نفاد المخزون",
+      "outOfStockHint": "نسبة المنتجات التي نفدت"
+    },
+    "charts": {
+      "trendTitle": "الزيارات عبر الزمن",
+      "trendSub": "الزيارات المنجزة يوميًا",
+      "statusTitle": "حالة المخزون",
+      "statusSub": "كل منتج مدقق حسب ما وُجد على الرف",
+      "storeTitle": "التوفر حسب نقطة البيع",
+      "storeSub": "الأدنى أولاً",
+      "storeHint": "{{visits}} زيارات · {{audited}} منتجًا",
+      "visitsTitle": "تفاصيل الزيارات",
+      "visitsSub": "كل زيارة وما وُجد فيها"
+    },
+    "datasets": {
+      "visits": "الزيارات",
+      "trend": "الزيارات يوميًا",
+      "byStore": "التوفر حسب نقطة البيع",
+      "stockStatus": "حالة المخزون",
+      "visitCount": "الزيارات",
+      "productCount": "المنتجات",
+      "share": "النسبة %",
+      "workbook": "تقرير الزيارات"
+    }
+  },
+  "storeReport": {
+    "store": "نقطة البيع",
+    "selectStorePlaceholder": "اختر نقطة بيع",
+    "selectStoreToast": "يرجى اختيار نقطة بيع",
+    "loadErrorToast": "فشل تحميل التقرير",
+    "visitHistory_one": "زيارة واحدة",
+    "visitHistory_two": "زيارتان",
+    "visitHistory_few": "{{count}} زيارات",
+    "visitHistory_many": "{{count}} زيارة",
+    "visitHistory_other": "{{count}} زيارة",
+    "productsAudited_one": "منتج واحد",
+    "productsAudited_two": "منتجان",
+    "productsAudited_few": "{{count}} منتجات",
+    "productsAudited_many": "{{count}} منتجًا",
+    "productsAudited_other": "{{count}} منتج",
+    "closed": "أُغلقت: {{date}}",
+    "table": {
+      "product": "المنتج",
+      "qtyFound": "الموجود",
+      "expected": "المتوقع",
+      "variance": "الفارق",
+      "status": "الحالة"
+    },
+    "emptyState": "اختر نقطة بيع لعرض تقريرها",
+    "kpis": {
+      "visits": "الزيارات"
+    },
+    "charts": {
+      "trendTitle": "التوفر عبر الزمن",
+      "trendSub": "نسبة المنتجات المتوفرة، زيارة بعد زيارة",
+      "statusTitle": "حالة المخزون",
+      "statusSub": "كل المنتجات المدققة في نقطة البيع هذه",
+      "varianceTitle": "فارق الرف حسب المنتج",
+      "varianceSub": "الموجود ناقص المتوقع، في آخر زيارة",
+      "under": "أقل من المتوقع",
+      "over": "أكثر من المتوقع",
+      "historyTitle": "سجل الزيارات",
+      "historySub": "كل زيارة وما وُجد فيها"
+    },
+    "datasets": {
+      "items": "عناصر التدقيق",
+      "trend": "التوفر",
+      "variance": "فارق الرف",
+      "status": "حالة المخزون",
+      "workbook": "تقرير"
+    }
+  },
   "productReport": {
+    "product": "المنتج",
     "selectProductPlaceholder": "اختر منتجًا",
     "selectProductToast": "يرجى اختيار منتج",
     "loadErrorToast": "فشل تحميل التقرير",
-    "totalScans": "إجمالي عمليات المسح",
+    "totalScans": "مرات التدقيق",
+    "oosHint": "نفد المخزون {{count}} مرة",
     "table": {
-      "store": "المتجر",
+      "store": "نقطة البيع",
       "date": "التاريخ",
       "qtyFound": "الكمية الموجودة",
       "status": "الحالة",
       "notes": "ملاحظات"
     },
-    "noHistory": "لم يتم العثور على سجل مسح",
-    "emptyState": "اختر منتجًا لعرض سجله"
-  },
-  "storeReport": {
-    "selectStorePlaceholder": "اختر متجرًا",
-    "selectStoreToast": "يرجى اختيار متجر",
-    "loadErrorToast": "فشل تحميل التقرير",
-    "visitHistory_zero": "سجل الزيارات (لا توجد زيارات)",
-    "visitHistory_one": "سجل الزيارات (زيارة واحدة)",
-    "visitHistory_two": "سجل الزيارات (زيارتان)",
-    "visitHistory_few": "سجل الزيارات ({{count}} زيارات)",
-    "visitHistory_many": "سجل الزيارات ({{count}} زيارة)",
-    "visitHistory_other": "سجل الزيارات ({{count}} زيارة)",
-    "closed": "أُغلقت في: {{date}}",
-    "table": {
-      "product": "المنتج",
-      "qtyFound": "الكمية الموجودة",
-      "status": "الحالة"
+    "noHistory": "لا يوجد سجل تدقيق لهذا المنتج",
+    "emptyState": "اختر منتجًا لعرض سجله",
+    "charts": {
+      "trendTitle": "الكمية الموجودة عبر الزمن",
+      "trendSub": "ما أحصاه المندوبون على الرف",
+      "statusTitle": "حالة المخزون",
+      "statusSub": "كم مرة كان المنتج متوفرًا أو منخفضًا أو نافدًا",
+      "storeTitle": "متوسط الكمية حسب نقطة البيع",
+      "storeSub": "الأدنى أولاً",
+      "storeHint": "{{scans}} تدقيقًا · {{oos}} مرة نفد",
+      "historyTitle": "سجل التدقيق",
+      "historySub": "كل مرة تم فيها إحصاء هذا المنتج"
     },
-    "emptyState": "اختر متجرًا لعرض تقريره"
-  },
-  "visitsReport": {
-    "loadErrorToast": "فشل تحميل التقرير",
-    "emptyTitle": "لم يتم العثور على زيارات",
-    "emptySubtitle": "حاول تعديل عوامل تصفية التاريخ.",
-    "summary": {
-      "total": "الإجمالي",
-      "inStock": "متوفر",
-      "lowStock": "مخزون منخفض",
-      "outOfStock": "نفد المخزون"
-    },
-    "completionRate": "معدّل الإنجاز"
+    "datasets": {
+      "history": "سجل التدقيق",
+      "trend": "الكمية عبر الزمن",
+      "byStore": "حسب نقطة البيع",
+      "status": "حالة المخزون",
+      "scans": "التدقيقات",
+      "avgQty": "متوسط الكمية",
+      "workbook": "تقرير"
+    }
   }
 }

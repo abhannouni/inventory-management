@@ -1,11 +1,11 @@
 {
   "page": {
     "title": "Reports",
-    "subtitle": "Role-scoped analytics and audit history",
+    "subtitle": "Audit performance across your points of sale",
     "tabs": {
-      "visits": "Visit Reports",
-      "store": "Store Report",
-      "product": "Product Report"
+      "visits": "Overview",
+      "store": "By point of sale",
+      "product": "By product"
     }
   },
   "filters": {
@@ -13,47 +13,153 @@
     "to": "To",
     "apply": "Apply",
     "reset": "Reset",
-    "loadReport": "Load Report"
+    "loadReport": "Load report"
   },
-  "productReport": {
-    "selectProductPlaceholder": "Select product",
-    "selectProductToast": "Please select a product",
-    "loadErrorToast": "Failed to load report",
-    "totalScans": "total scans",
-    "table": {
-      "store": "Store",
-      "date": "Date",
-      "qtyFound": "Qty Found",
-      "status": "Status",
-      "notes": "Notes"
-    },
-    "noHistory": "No scan history found",
-    "emptyState": "Select a product to view its history"
+  "table": {
+    "store": "Point of sale",
+    "merchandiser": "Merchandiser",
+    "checkin": "Check-in",
+    "checkout": "Check-out",
+    "status": "Status",
+    "date": "Date"
   },
-  "storeReport": {
-    "selectStorePlaceholder": "Select store",
-    "selectStoreToast": "Please select a store",
-    "loadErrorToast": "Failed to load report",
-    "visitHistory_one": "Visit History ({{count}} visit)",
-    "visitHistory_other": "Visit History ({{count}} visits)",
-    "closed": "Closed: {{date}}",
-    "table": {
-      "product": "Product",
-      "qtyFound": "Qty Found",
-      "status": "Status"
-    },
-    "emptyState": "Select a store to view its report"
+  "chart": {
+    "showTable": "Table",
+    "showChart": "Chart",
+    "noData": "No data"
+  },
+  "download": {
+    "label": "Download data",
+    "csv": "CSV",
+    "csvHint": "Opens in Excel, Sheets or Numbers",
+    "excel": "Excel (.xlsx)",
+    "excelHint": "One sheet per chart",
+    "preparing": "Preparing...",
+    "failed": "Download failed",
+    "noData": "Nothing to download yet",
+    "rowCount_one": "{{count}} row",
+    "rowCount_other": "{{count}} rows"
   },
   "visitsReport": {
     "loadErrorToast": "Failed to load report",
     "emptyTitle": "No visits found",
     "emptySubtitle": "Try adjusting the date filters.",
     "summary": {
-      "total": "Total",
-      "inStock": "In Stock",
-      "lowStock": "Low Stock",
-      "outOfStock": "Out of Stock"
+      "total": "Audited",
+      "inStock": "In stock",
+      "lowStock": "Low stock",
+      "outOfStock": "Out of stock"
     },
-    "completionRate": "Completion Rate"
+    "completionRate": "Completion rate",
+    "availability": "Availability %",
+    "unknownStore": "Unknown",
+    "noAudit": "No audit recorded",
+    "kpis": {
+      "visits": "Visits",
+      "audited": "Products audited",
+      "availability": "Availability",
+      "availabilityHint": "Share of audited products found in stock",
+      "outOfStock": "Out-of-stock rate",
+      "outOfStockHint": "Share of audited products found empty"
+    },
+    "charts": {
+      "trendTitle": "Visits over time",
+      "trendSub": "Completed store visits per day",
+      "statusTitle": "Stock status",
+      "statusSub": "Every audited product, by what was found on the shelf",
+      "storeTitle": "Availability by point of sale",
+      "storeSub": "Lowest first — these need attention",
+      "storeHint": "{{visits}} visits · {{audited}} products audited",
+      "visitsTitle": "Visit detail",
+      "visitsSub": "Each visit and what was found"
+    },
+    "datasets": {
+      "visits": "Visits",
+      "trend": "Visits per day",
+      "byStore": "Availability by POS",
+      "stockStatus": "Stock status",
+      "visitCount": "Visits",
+      "productCount": "Products",
+      "share": "Share %",
+      "workbook": "Visit report"
+    }
+  },
+  "storeReport": {
+    "store": "Point of sale",
+    "selectStorePlaceholder": "Select a point of sale",
+    "selectStoreToast": "Please select a point of sale",
+    "loadErrorToast": "Failed to load report",
+    "visitHistory_one": "{{count}} visit",
+    "visitHistory_other": "{{count}} visits",
+    "closed": "Closed: {{date}}",
+    "productsAudited_one": "{{count}} product",
+    "productsAudited_other": "{{count}} products",
+    "table": {
+      "product": "Product",
+      "qtyFound": "Found",
+      "expected": "Expected",
+      "variance": "Variance",
+      "status": "Status"
+    },
+    "emptyState": "Select a point of sale to view its report",
+    "kpis": {
+      "visits": "Visits"
+    },
+    "charts": {
+      "trendTitle": "Availability over time",
+      "trendSub": "Share of products in stock, visit by visit",
+      "statusTitle": "Stock status",
+      "statusSub": "All audited products at this point of sale",
+      "varianceTitle": "Shelf gap by product",
+      "varianceSub": "Found minus expected, on the most recent visit",
+      "under": "Below expected",
+      "over": "Above expected",
+      "historyTitle": "Visit history",
+      "historySub": "Each visit and what was found"
+    },
+    "datasets": {
+      "items": "Audit items",
+      "trend": "Availability",
+      "variance": "Shelf gap",
+      "status": "Stock status",
+      "workbook": "report"
+    }
+  },
+  "productReport": {
+    "product": "Product",
+    "selectProductPlaceholder": "Select a product",
+    "selectProductToast": "Please select a product",
+    "loadErrorToast": "Failed to load report",
+    "totalScans": "Times audited",
+    "oosHint": "Found empty {{count}} times",
+    "table": {
+      "store": "Point of sale",
+      "date": "Date",
+      "qtyFound": "Qty found",
+      "status": "Status",
+      "notes": "Notes"
+    },
+    "noHistory": "No audit history for this product",
+    "emptyState": "Select a product to view its history",
+    "charts": {
+      "trendTitle": "Quantity found over time",
+      "trendSub": "What merchandisers counted on the shelf",
+      "statusTitle": "Stock status",
+      "statusSub": "How often this product was in stock, low, or empty",
+      "storeTitle": "Average quantity by point of sale",
+      "storeSub": "Lowest first — where this product runs dry",
+      "storeHint": "{{scans}} audits · {{oos}} times empty",
+      "historyTitle": "Audit history",
+      "historySub": "Every time this product was counted"
+    },
+    "datasets": {
+      "history": "Audit history",
+      "trend": "Quantity over time",
+      "byStore": "By point of sale",
+      "status": "Stock status",
+      "scans": "Audits",
+      "avgQty": "Average qty found",
+      "workbook": "report"
+    }
   }
 }
