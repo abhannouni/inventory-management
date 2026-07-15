@@ -13,6 +13,7 @@ import RolesPage from './pages/roles/RolesPage';
 import RegionsPage from './pages/regions/RegionsPage';
 import StoresPage from './pages/stores/StoresPage';
 import StoreDetailPage from './pages/stores/StoreDetailPage';
+import PosDirectoryPage from './pages/pos/PosDirectoryPage';
 import ProductsPage from './pages/products/ProductsPage';
 import ProductStoresPage from './pages/product-stores/ProductStoresPage';
 import VisitsPage from './pages/visits/VisitsPage';
@@ -39,7 +40,14 @@ export default function App() {
             </Route>
 
             <Route path="/regions" element={<RegionsPage />} />
-            <Route path="/stores" element={<StoresPage />} />
+            {/* POS directory + map — every authenticated role, scoped server-side. */}
+            <Route path="/pos" element={<PosDirectoryPage />} />
+            <Route path="/pos/:id" element={<StoreDetailPage />} />
+
+            {/* POS management (CRUD) — managers only; the guard also runs server-side. */}
+            <Route element={<RequirePermission anyOf={['pos.create', 'pos.update', 'pos.delete']} />}>
+              <Route path="/stores" element={<StoresPage />} />
+            </Route>
             <Route path="/stores/:id" element={<StoreDetailPage />} />
             <Route path="/products" element={<ProductsPage />} />
             <Route path="/product-stores" element={<ProductStoresPage />} />

@@ -1,0 +1,76 @@
+{
+  "title": "Points of Sale",
+  "subtitle": "Every point of sale you're authorized to see, on a map or as a directory",
+  "searchPlaceholder": "Search by name…",
+  "view": {
+    "map": "Map",
+    "list": "List"
+  },
+  "filters": {
+    "allRegions": "All regions",
+    "allCities": "All cities",
+    "allChains": "All chains",
+    "allStatuses": "All statuses",
+    "active": "Active",
+    "inactive": "Inactive",
+    "reset": "Reset"
+  },
+  "count": {
+    "pos_one": "point of sale",
+    "pos_other": "points of sale",
+    "mappable_one": "· {{count}} on the map",
+    "mappable_other": "· {{count}} on the map"
+  },
+  "empty": {
+    "title": "No points of sale",
+    "filtered": "No point of sale matches your filters.",
+    "scope": "You have no points of sale in your scope yet."
+  },
+  "preview": {
+    "viewDetails": "View details",
+    "close": "Close"
+  },
+  "sections": {
+    "team": "Assigned field team",
+    "stock": "Stock & availability",
+    "stockouts": "Stockout reports",
+    "visits": "Visit history",
+    "photos": "Photos & field evidence",
+    "sellOut": "Sell-out data",
+    "merchandising": "Merchandising · TG · MEA · PLV"
+  },
+  "team": {
+    "empty": "No field team assigned to this point of sale yet."
+  },
+  "stock": {
+    "expected": "Expected products",
+    "inStock": "In stock",
+    "lowStock": "Low stock",
+    "outOfStock": "Out of stock",
+    "product": "Product",
+    "expectedQty": "Expected",
+    "lastFound": "Last found",
+    "status": "Status",
+    "lastSeen": "Last audited",
+    "neverAudited": "Never audited"
+  },
+  "stockouts": {
+    "empty": "No stockouts recorded."
+  },
+  "visits": {
+    "empty": "No visits recorded for this point of sale.",
+    "date": "Date",
+    "merchandiser": "Merchandiser",
+    "status": "Status",
+    "audited": "Audited",
+    "duration": "Duration",
+    "view": "Open"
+  },
+  "photos": {
+    "empty": "No field photos captured yet."
+  },
+  "soon": {
+    "sellOut": "Sell-out tracking isn't captured yet — this section will populate once sell-out data is recorded.",
+    "merchandising": "Merchandising execution (displays, TG, MEA, PLV) isn't modelled yet — this section is ready for when that data is collected."
+  }
+}

@@ -46,6 +46,15 @@ export class StoresController {
     return this.storesService.findOne(id, user);
   }
 
+  @Get(':id/overview')
+  @ApiOperation({
+    summary:
+      'Aggregated POS details: team, visit history, stock, availability, stockouts, photos (scoped by role)',
+  })
+  overview(@Param('id', ParseUUIDPipe) id: string, @CurrentUser() user: User) {
+    return this.storesService.overview(id, user);
+  }
+
   @Post()
   @Roles(UserRole.super_admin, UserRole.admin)
   @ApiOperation({ summary: 'Create a store (admin restricted to their region)' })

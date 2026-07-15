@@ -37,6 +37,7 @@ export interface StorePayload {
 export const storesApi = {
   findAll: () => api.get<Store[]>('/stores'),
   findOne: (id: string) => api.get<Store>(`/stores/${id}`),
+  overview: (id: string) => api.get<import('../types').StoreOverview>(`/stores/${id}/overview`),
   create: (payload: StorePayload) => api.post<Store>('/stores', payload),
   update: (id: string, payload: Partial<StorePayload>) =>
     api.patch<Store>(`/stores/${id}`, payload),

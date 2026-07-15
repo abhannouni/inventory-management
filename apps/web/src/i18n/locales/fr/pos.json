@@ -1,0 +1,76 @@
+{
+  "title": "Points de vente",
+  "subtitle": "Tous les points de vente que vous êtes autorisé à voir, sur une carte ou en annuaire",
+  "searchPlaceholder": "Rechercher par nom…",
+  "view": {
+    "map": "Carte",
+    "list": "Liste"
+  },
+  "filters": {
+    "allRegions": "Toutes les régions",
+    "allCities": "Toutes les villes",
+    "allChains": "Toutes les enseignes",
+    "allStatuses": "Tous les statuts",
+    "active": "Actif",
+    "inactive": "Inactif",
+    "reset": "Réinitialiser"
+  },
+  "count": {
+    "pos_one": "point de vente",
+    "pos_other": "points de vente",
+    "mappable_one": "· {{count}} sur la carte",
+    "mappable_other": "· {{count}} sur la carte"
+  },
+  "empty": {
+    "title": "Aucun point de vente",
+    "filtered": "Aucun point de vente ne correspond à vos filtres.",
+    "scope": "Vous n'avez pas encore de points de vente dans votre périmètre."
+  },
+  "preview": {
+    "viewDetails": "Voir les détails",
+    "close": "Fermer"
+  },
+  "sections": {
+    "team": "Équipe terrain assignée",
+    "stock": "Stock et disponibilité",
+    "stockouts": "Ruptures signalées",
+    "visits": "Historique des visites",
+    "photos": "Photos et preuves terrain",
+    "sellOut": "Données de sell-out",
+    "merchandising": "Merchandising · TG · MEA · PLV"
+  },
+  "team": {
+    "empty": "Aucune équipe terrain assignée à ce point de vente pour l'instant."
+  },
+  "stock": {
+    "expected": "Produits attendus",
+    "inStock": "En stock",
+    "lowStock": "Stock faible",
+    "outOfStock": "Rupture",
+    "product": "Produit",
+    "expectedQty": "Attendu",
+    "lastFound": "Dernier relevé",
+    "status": "Statut",
+    "lastSeen": "Dernier audit",
+    "neverAudited": "Jamais audité"
+  },
+  "stockouts": {
+    "empty": "Aucune rupture enregistrée."
+  },
+  "visits": {
+    "empty": "Aucune visite enregistrée pour ce point de vente.",
+    "date": "Date",
+    "merchandiser": "Marchandiseur",
+    "status": "Statut",
+    "audited": "Audités",
+    "duration": "Durée",
+    "view": "Ouvrir"
+  },
+  "photos": {
+    "empty": "Aucune photo terrain capturée pour l'instant."
+  },
+  "soon": {
+    "sellOut": "Le suivi du sell-out n'est pas encore collecté — cette section se remplira dès que les données seront enregistrées.",
+    "merchandising": "L'exécution merchandising (displays, TG, MEA, PLV) n'est pas encore modélisée — cette section est prête pour ces données."
+  }
+}

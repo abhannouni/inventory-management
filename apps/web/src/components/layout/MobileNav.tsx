@@ -41,7 +41,7 @@ export default function MobileNav() {
     },
     {
       to: '/stores',
-      label: t('nav.stores'),
+      label: t('nav.storesManage'),
       icon: <Icon d="M3 9h18v10a2 2 0 01-2 2H5a2 2 0 01-2-2V9zM3 9l2.45-4.9A2 2 0 017.24 3h9.52a2 2 0 011.8 1.1L21 9M12 3v6" />,
       show: p.canManageStores,
     },
@@ -66,6 +66,13 @@ export default function MobileNav() {
       to: '/dashboard',
       label: t('nav.home'),
       icon: <Icon d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" d2="M9 22V12h6v10" />,
+      show: true,
+    },
+    /* POS map & directory — every role */
+    {
+      to: '/pos',
+      label: t('nav.posMap'),
+      icon: <Icon d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />,
       show: true,
     },
     {

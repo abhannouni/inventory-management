@@ -14,8 +14,10 @@ import Modal from '../../components/ui/Modal';
 import Spinner from '../../components/ui/Spinner';
 import StoreForm from './StoreForm';
 import StoreMap from './StoreMap';
+import PosOverviewSections from './PosOverviewSections';
+import { storesApi } from '../../api/stores.api';
 import { formatDateOnly } from '../../utils/format';
-import type { Store } from '../../types';
+import type { Store, StoreOverview } from '../../types';
 
 /** A labelled value. Renders an em dash rather than a blank when unset. */
 function Field({ label, value }: { label: string; value?: string | null }) {
@@ -77,10 +79,37 @@ export default function StoreDetailPage() {
   const { items: regions } = useAppSelector((s) => s.regions);
   const [editOpen, setEditOpen] = useState(false);
 
+  // The rich aggregate (team, visits, stock, photos…) is loaded alongside the
+  // base store, in local state rather than Redux — nothing else needs it. Tagged
+  // with the id it belongs to so a stale result for the previous POS is ignored.
+  const [fetched, setFetched] = useState<{ id: string; data: StoreOverview | null } | null>(null);
+
   useEffect(() => {
     if (id) dispatch(fetchStore(id));
     dispatch(fetchRegions());
   }, [dispatch, id]);
+
+  useEffect(() => {
+    if (!id) return;
+    let cancelled = false;
+    storesApi
+      .overview(id)
+      .then((data) => !cancelled && setFetched({ id, data }))
+      // A 403/404 here just means the overview isn't available — the base store
+      // view still renders; don't blow up the page.
+      .catch(() => !cancelled && setFetched({ id, data: null }));
+    return () => {
+      cancelled = true;
+    };
+  }, [id]);
+
+  // Only surface the aggregate once it matches the POS currently on screen.
+  const overview = fetched && fetched.id === id ? fetched.data : null;
+  const overviewLoading = !fetched || fetched.id !== id;
+
+  const reloadOverview = () => {
+    if (id) storesApi.overview(id).then((data) => setFetched({ id, data })).catch(() => {});
+  };
 
   const handleUpdate = async (data: Record<string, unknown>) => {
     if (!store) return;
@@ -88,6 +117,7 @@ export default function StoreDetailPage() {
     if (updateStore.fulfilled.match(res)) {
       toast.success(t('toasts.updateSuccess'));
       setEditOpen(false);
+      reloadOverview();
     } else {
       toast.error((res.payload as string) || t('toasts.updateError'));
     }
@@ -99,7 +129,7 @@ export default function StoreDetailPage() {
     return (
       <div className="empty-state">
         <div className="empty-state-title">{t('detail.notFound')}</div>
-        <Button variant="ghost" onClick={() => navigate('/stores')}>
+        <Button variant="ghost" onClick={() => navigate('/pos')}>
           {tCommon('actions.back')}
         </Button>
       </div>
@@ -204,6 +234,9 @@ export default function StoreDetailPage() {
           </div>
           <StoreMap store={s} label={s.name} height={300} />
         </section>
+
+        {/* ── Operational sections — team, stock, visits, photos, … ────────── */}
+        <PosOverviewSections overview={overview} loading={overviewLoading} />
       </motion.div>
 
       <Modal open={editOpen} onClose={() => setEditOpen(false)} title={t('detail.editTitle')} size="lg">

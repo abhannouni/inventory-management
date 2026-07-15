@@ -152,6 +152,47 @@ export interface Visit {
   updated_at: string;
 }
 
+/** Aggregated details behind the Point of Sale details page. */
+export interface StoreOverview {
+  store: Store;
+  team: Array<Pick<User, 'id' | 'full_name' | 'email' | 'role' | 'is_active'>>;
+  visits: Array<{
+    id: string;
+    status: VisitStatus;
+    checkin_at: string;
+    checkout_at: string | null;
+    duration_seconds: number | null;
+    user?: Pick<User, 'id' | 'full_name' | 'role'> | null;
+    audited: number;
+  }>;
+  product_availability: Array<{
+    product: Product;
+    expected_qty: number;
+    last_qty_found: number | null;
+    last_status: AuditStatus | null;
+    last_seen_at: string | null;
+  }>;
+  stock_summary: {
+    expected_products: number;
+    audited: number;
+    in_stock: number;
+    low_stock: number;
+    out_of_stock: number;
+  };
+  stockouts: Array<{
+    product: Product;
+    checkin_at: string;
+    visit_id: string;
+    reported_by?: Pick<User, 'id' | 'full_name' | 'role'> | null;
+  }>;
+  photos: Array<{
+    url: string;
+    product: Product;
+    checkin_at: string;
+    visit_id: string;
+  }>;
+}
+
 export interface AuditProgress {
   audited: number;
   expected: number;
