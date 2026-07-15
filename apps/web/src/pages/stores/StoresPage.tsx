@@ -14,7 +14,7 @@ import Modal from '../../components/ui/Modal';
 import ConfirmDialog from '../../components/ui/ConfirmDialog';
 import DownloadDataButton from '../../components/charts/DownloadDataButton';
 import StoreForm from './StoreForm';
-import { googleMapsLink } from '../../utils/maps';
+import { externalMapLink } from '../../utils/maps';
 import type { ExportDataset } from '../../utils/export';
 import type { Store } from '../../types';
 
@@ -119,7 +119,7 @@ export default function StoresPage() {
       header: t('columns.coordinates'),
       hideOnMobile: true,
       render: (s: Store) => {
-        const link = googleMapsLink(s);
+        const link = externalMapLink(s);
         return link ? (
           <a
             className="gps-coords pos-map-link"
@@ -171,7 +171,7 @@ export default function StoresPage() {
       { header: `${t('form.contacts.gds')} — ${t('form.contacts.phone')}`, value: (s) => s.gds_phone ?? '' },
       { header: t('form.latitudeLabel'), value: (s) => (s.latitude != null ? Number(s.latitude) : '') },
       { header: t('form.longitudeLabel'), value: (s) => (s.longitude != null ? Number(s.longitude) : '') },
-      { header: t('form.mapsUrlLabel'), value: (s) => googleMapsLink(s) ?? '' },
+      { header: t('form.mapsUrlLabel'), value: (s) => externalMapLink(s) ?? '' },
       { header: tCommon('status.active'), value: (s) => (s.is_active ? 'yes' : 'no') },
       { header: t('columns.created'), value: (s) => String(s.created_at).slice(0, 10) },
     ],

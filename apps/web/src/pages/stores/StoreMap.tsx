@@ -1,9 +1,12 @@
+import { useEffect, useRef, useState } from 'react';
+import type { Map as MapboxMap, Marker } from 'mapbox-gl';
 import { useTranslation } from 'react-i18next';
 import {
-  googleMapsDirections,
-  googleMapsEmbed,
-  googleMapsLink,
+  MAPBOX_TOKEN,
+  directionsLink,
+  externalMapLink,
   hasCoords,
+  mapboxStaticImage,
 } from '../../utils/maps';
 
 interface StoreMapProps {
@@ -13,25 +16,88 @@ interface StoreMapProps {
     google_maps_url?: string | null;
   };
   height?: number;
-  /** Name shown above the map. */
+  /** Name shown in the marker popup / image alt. */
   label?: string;
 }
 
 /**
- * Embedded Google map for a point of sale, with links out to Maps.
+ * Interactive Mapbox map for a point of sale, with links out to Maps.
  *
- * The iframe is lazy-loaded and keyless by default (see `utils/maps`), so it
- * works with no configuration; setting VITE_GOOGLE_MAPS_API_KEY upgrades it to
- * the official Embed API.
+ * mapbox-gl is pulled in on demand so it never lands in the initial bundle. If
+ * the token is missing or WebGL fails, it falls back to a static Mapbox image,
+ * so the location is always shown one way or another.
  */
 export default function StoreMap({ store, height = 260, label }: StoreMapProps) {
   const { t } = useTranslation('stores');
 
-  const embed = googleMapsEmbed(store);
-  const link = googleMapsLink(store);
-  const directions = googleMapsDirections(store);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<MapboxMap | null>(null);
+  const markerRef = useRef<Marker | null>(null);
+  const [glFailed, setGlFailed] = useState(false);
 
-  if (!hasCoords(store)) {
+  const coords = hasCoords(store);
+  const lng = coords ? Number(store.longitude) : 0;
+  const lat = coords ? Number(store.latitude) : 0;
+
+  const link = externalMapLink(store);
+  const directions = directionsLink(store);
+  const staticImg = mapboxStaticImage(store, { height });
+
+  // Create the map once, then keep it pointed at the current coordinates.
+  useEffect(() => {
+    if (!coords || !MAPBOX_TOKEN || glFailed) return;
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const mapboxgl = (await import('mapbox-gl')).default;
+        await import('mapbox-gl/dist/mapbox-gl.css');
+        if (cancelled || !containerRef.current) return;
+
+        mapboxgl.accessToken = MAPBOX_TOKEN;
+
+        if (!mapRef.current) {
+          const map = new mapboxgl.Map({
+            container: containerRef.current,
+            style: 'mapbox://styles/mapbox/streets-v12',
+            center: [lng, lat],
+            zoom: 15,
+            attributionControl: true,
+          });
+          map.addControl(new mapboxgl.NavigationControl({ showCompass: false }), 'top-right');
+          map.on('error', (e) => {
+            // A WebGL/context failure surfaces here — drop to the static image.
+            if (e?.error && /webgl|context/i.test(String(e.error.message))) setGlFailed(true);
+          });
+          markerRef.current = new mapboxgl.Marker({ color: '#2b6cb0' })
+            .setLngLat([lng, lat])
+            .addTo(map);
+          mapRef.current = map;
+        } else {
+          mapRef.current.setCenter([lng, lat]);
+          markerRef.current?.setLngLat([lng, lat]);
+        }
+      } catch {
+        if (!cancelled) setGlFailed(true);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+    // Re-run when the coordinates change (the form preview updates live).
+  }, [coords, lng, lat, glFailed]);
+
+  // Tear the map down only when the component unmounts.
+  useEffect(() => {
+    return () => {
+      mapRef.current?.remove();
+      mapRef.current = null;
+      markerRef.current = null;
+    };
+  }, []);
+
+  if (!coords) {
     return (
       <div className="store-map store-map-empty" style={{ minHeight: height }}>
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -45,18 +111,33 @@ export default function StoreMap({ store, height = 260, label }: StoreMapProps) 
 
   return (
     <div className="store-map">
-      <iframe
-        title={label ? t('map.titleFor', { name: label }) : t('map.title')}
-        src={embed!}
-        height={height}
-        loading="lazy"
-        referrerPolicy="no-referrer-when-downgrade"
-        allowFullScreen
-      />
+      {glFailed || !MAPBOX_TOKEN ? (
+        // Fallback: a static Mapbox image (or a plain message with no token).
+        staticImg ? (
+          <img
+            className="store-map-static"
+            src={staticImg}
+            style={{ height }}
+            alt={label ? t('map.titleFor', { name: label }) : t('map.title')}
+            loading="lazy"
+          />
+        ) : (
+          <div className="store-map-empty" style={{ minHeight: height }}>
+            <p>{t('map.noToken')}</p>
+          </div>
+        )
+      ) : (
+        <div
+          ref={containerRef}
+          className="store-map-canvas"
+          style={{ height }}
+          aria-label={label ? t('map.titleFor', { name: label }) : t('map.title')}
+        />
+      )}
 
       <div className="store-map-bar">
         <span className="store-map-coords">
-          {Number(store.latitude).toFixed(5)}, {Number(store.longitude).toFixed(5)}
+          {lat.toFixed(5)}, {lng.toFixed(5)}
         </span>
 
         <div className="store-map-links">

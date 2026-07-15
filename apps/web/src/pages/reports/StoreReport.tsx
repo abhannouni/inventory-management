@@ -15,7 +15,7 @@ import VarianceChart from '../../components/charts/VarianceChart';
 import { STATUS } from '../../components/charts/tokens';
 import ReportFilters from './ReportFilters';
 import { formatDate } from '../../utils/format';
-import { googleMapsLink } from '../../utils/maps';
+import { externalMapLink } from '../../utils/maps';
 import type { ExportDataset } from '../../utils/export';
 
 export default function StoreReport() {
@@ -62,7 +62,7 @@ export default function StoreReport() {
   };
 
   const visits = useMemo(() => storeReport?.visits ?? [], [storeReport]);
-  const mapsLink = storeReport ? googleMapsLink(storeReport.store) : null;
+  const mapsLink = storeReport ? externalMapLink(storeReport.store) : null;
 
   const totals = useMemo(() => {
     const acc = { audited: 0, inStock: 0, lowStock: 0, outOfStock: 0 };

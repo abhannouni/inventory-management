@@ -79,7 +79,8 @@
     "titleFor": "موقع {{name}}",
     "noCoords": "لا توجد إحداثيات — أضف خط العرض وخط الطول لعرض الخريطة.",
     "openInGoogleMaps": "فتح في خرائط Google",
-    "directions": "الاتجاهات"
+    "directions": "الاتجاهات",
+    "noToken": "رمز الخريطة غير مُهيأ — عيّن VITE_MAPBOX_TOKEN."
   },
   "detail": {
     "edit": "تعديل نقطة البيع",

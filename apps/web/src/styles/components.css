@@ -4719,11 +4719,22 @@ html[dir='rtl'] .gps-coords {
   background: var(--gray-100);
 }
 
-.store-map iframe {
+.store-map iframe,
+.store-map-static {
   display: block;
   width: 100%;
   border: 0;
+  object-fit: cover;
 }
+
+/* Mapbox GL canvas host. */
+.store-map-canvas {
+  width: 100%;
+}
+
+/* Keep the Mapbox logo + attribution legible but unobtrusive. */
+.store-map .mapboxgl-ctrl-logo { opacity: .65; }
+.store-map .mapboxgl-ctrl-bottom-right { z-index: 1; }
 
 .store-map-empty {
   display: flex;
@@ -4904,4 +4915,251 @@ html[dir='rtl'] .gps-coords {
   .store-map-bar { flex-direction: column; align-items: stretch; }
   .store-map-links { justify-content: stretch; }
   .store-map-link { flex: 1; justify-content: center; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Points of Sale — map & directory module
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.pos-dir { display: flex; flex-direction: column; }
+
+/* ── Toolbar ──────────────────────────────────────────────────────────────── */
+.pos-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.pos-toolbar-search { flex: 1 1 240px; min-width: 200px; }
+
+.pos-toolbar-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.pos-toolbar-filters .form-select {
+  width: auto;
+  min-width: 140px;
+  padding-block: 8px;
+  font-size: 13px;
+}
+
+.pos-toolbar-filters .form-select.is-active {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  color: var(--primary-hover);
+  font-weight: 500;
+}
+
+.pos-view-toggle {
+  display: inline-flex;
+  padding: 3px;
+  background: var(--gray-100);
+  border-radius: var(--radius);
+}
+
+.pos-view-btn {
+  padding: 6px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gray-500);
+  background: none;
+  border: none;
+  border-radius: calc(var(--radius) - 2px);
+  cursor: pointer;
+}
+
+.pos-view-btn.is-active { color: var(--primary); background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+
+.pos-count {
+  margin-bottom: 12px;
+  font-size: 14px;
+  color: var(--gray-600);
+}
+.pos-count strong { color: var(--gray-900); font-weight: 800; }
+.pos-count-sub { margin-inline-start: 6px; font-size: 13px; color: var(--gray-400); }
+
+/* ── Map ──────────────────────────────────────────────────────────────────── */
+.pos-map-wrap { position: relative; }
+
+.pos-map-shell {
+  width: 100%;
+  min-height: 360px;
+  overflow: hidden;
+  border: 1px solid var(--gray-200);
+  border-radius: 12px;
+  background: var(--gray-100);
+}
+
+.pos-map-noken {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  color: var(--gray-400);
+  text-align: center;
+}
+
+/* ── Marker preview card (floats over the map) ────────────────────────────── */
+.pos-preview {
+  position: absolute;
+  inset-inline-start: 16px;
+  bottom: 16px;
+  z-index: 5;
+  width: min(340px, calc(100% - 32px));
+  padding: 16px;
+  background: #fff;
+  border: 1px solid var(--gray-200);
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, .16);
+}
+
+.pos-preview-close {
+  position: absolute;
+  inset-inline-end: 10px;
+  top: 10px;
+  width: 24px;
+  height: 24px;
+  font-size: 12px;
+  color: var(--gray-400);
+  background: var(--gray-100);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.pos-preview-close:hover { color: var(--gray-700); background: var(--gray-200); }
+
+.pos-preview-head { display: flex; flex-direction: column; gap: 2px; padding-inline-end: 24px; }
+.pos-preview-name { font-size: 16px; font-weight: 700; color: var(--gray-900); }
+.pos-preview-brand { font-size: 13px; color: var(--gray-400); }
+
+.pos-preview-badges { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; }
+.pos-preview-addr { font-size: 13px; color: var(--gray-500); margin-bottom: 14px; }
+
+.pos-preview-actions { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.pos-preview-directions {
+  font-size: 13px; font-weight: 600; color: var(--primary); text-decoration: none;
+}
+.pos-preview-directions:hover { text-decoration: underline; }
+
+/* ── Directory list ───────────────────────────────────────────────────────── */
+.pos-grid-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+.pos-card-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px;
+  text-align: start;
+  background: #fff;
+  border: 1px solid var(--gray-200);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: border-color .15s, box-shadow .15s, transform .1s;
+}
+.pos-card-item:hover {
+  border-color: var(--primary);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .07);
+}
+
+.pos-card-item-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.pos-card-item-name { font-size: 15px; font-weight: 700; color: var(--gray-900); }
+.pos-card-item-brand { font-size: 13px; color: var(--gray-400); }
+.pos-card-item-meta { display: flex; flex-wrap: wrap; gap: 6px; }
+.pos-card-item-addr { font-size: 13px; color: var(--gray-500); }
+
+/* ── Details page — operational sections ──────────────────────────────────── */
+.pos-card-muted { background: var(--gray-50); }
+.pos-soon { font-size: 13px; color: var(--gray-400); line-height: 1.55; }
+.pos-muted { color: var(--gray-400); }
+
+.pos-team {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px;
+}
+.pos-team-member {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: 10px;
+}
+.pos-team-avatar {
+  display: flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px; flex-shrink: 0;
+  font-size: 14px; font-weight: 700; color: #fff;
+  background: var(--primary); border-radius: 50%;
+}
+.pos-team-info { display: flex; flex-direction: column; min-width: 0; }
+.pos-team-name { font-size: 14px; font-weight: 600; color: var(--gray-900); }
+.pos-team-role { font-size: 12px; color: var(--gray-400); }
+
+.pos-stat-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 10px;
+}
+.pos-stat {
+  display: flex; flex-direction: column; gap: 2px;
+  padding: 12px 14px;
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: 10px;
+}
+.pos-stat-val { font-size: 22px; font-weight: 800; color: var(--gray-900); line-height: 1.1; }
+.pos-stat-label { font-size: 12px; color: var(--gray-500); }
+
+.pos-stockouts { display: flex; flex-direction: column; gap: 8px; list-style: none; }
+.pos-stockout {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--gray-100);
+  font-size: 13px;
+}
+.pos-stockout:last-child { border-bottom: none; }
+.pos-stockout-product { font-weight: 600; color: var(--gray-900); }
+
+.pos-photos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 10px;
+}
+.pos-photo {
+  display: flex; flex-direction: column; gap: 4px;
+  text-decoration: none;
+  border: 1px solid var(--gray-200);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--gray-50);
+}
+.pos-photo img { width: 100%; height: 100px; object-fit: cover; display: block; }
+.pos-photo-cap {
+  padding: 6px 8px; font-size: 11px; color: var(--gray-500);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+.pos-link {
+  font-size: 13px; font-weight: 600; color: var(--primary);
+  background: none; border: none; cursor: pointer; padding: 0;
+}
+.pos-link:hover { text-decoration: underline; }
+
+@media (max-width: 640px) {
+  .pos-toolbar { flex-direction: column; align-items: stretch; }
+  .pos-toolbar-filters { display: grid; grid-template-columns: 1fr 1fr; }
+  .pos-toolbar-filters .form-select { min-width: 0; width: 100%; }
+  .pos-view-toggle { align-self: stretch; }
+  .pos-view-btn { flex: 1; }
+  .pos-preview { inset-inline: 12px; width: auto; }
 }

@@ -79,7 +79,8 @@
     "titleFor": "Localisation de {{name}}",
     "noCoords": "Aucune coordonnée — ajoutez une latitude et une longitude pour afficher la carte.",
     "openInGoogleMaps": "Ouvrir dans Google Maps",
-    "directions": "Itinéraire"
+    "directions": "Itinéraire",
+    "noToken": "Jeton de carte non configuré — définissez VITE_MAPBOX_TOKEN."
   },
   "detail": {
     "edit": "Modifier le PDV",

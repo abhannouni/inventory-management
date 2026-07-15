@@ -79,7 +79,8 @@
     "titleFor": "Location of {{name}}",
     "noCoords": "No coordinates set — add a latitude and longitude to show the map.",
     "openInGoogleMaps": "Open in Google Maps",
-    "directions": "Directions"
+    "directions": "Directions",
+    "noToken": "Map token not configured — set VITE_MAPBOX_TOKEN."
   },
   "detail": {
     "edit": "Edit POS",

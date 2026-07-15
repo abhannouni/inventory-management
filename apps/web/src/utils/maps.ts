@@ -1,14 +1,13 @@
 /**
- * Google Maps helpers.
+ * Map helpers.
  *
- * Everything here works with **no API key**: the `maps.google.com/maps?...&output=embed`
- * iframe and the `google.com/maps/search/?api=1` link are both public endpoints.
- * If a key is configured in `VITE_GOOGLE_MAPS_API_KEY`, the embed upgrades to the
- * official Maps Embed API (nicer controls, no "for development" watermark) — but
- * the module degrades gracefully without one, so the map works out of the box.
+ * The embedded map is rendered by **Mapbox** (see `StoreMap`), using the public
+ * token in `VITE_MAPBOX_TOKEN`. The external "open / directions" links stay on
+ * Google Maps: Mapbox has no consumer navigation app, and the Google links are
+ * keyless and open the map app a merchandiser actually navigates with.
  */
 
-const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string | undefined;
+export const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN as string | undefined;
 
 export interface Coords {
   latitude: number | null;
@@ -24,66 +23,86 @@ export function hasCoords(store: Coords): store is { latitude: number; longitude
   );
 }
 
-/** The URL that opens the location in the Google Maps app or site. */
-export function googleMapsLink(store: Coords & { google_maps_url?: string | null }): string | null {
-  // An explicit link wins: a short goo.gl link may point at the exact storefront
+/**
+ * A Mapbox Static Images URL — a plain PNG with a pin, no JS required.
+ *
+ * Used as the map's no-JavaScript / loading fallback and anywhere a lightweight
+ * thumbnail is enough. `@2x` keeps it crisp on retina screens.
+ */
+export function mapboxStaticImage(
+  store: Coords,
+  { width = 640, height = 320, zoom = 15 } = {},
+): string | null {
+  if (!hasCoords(store) || !MAPBOX_TOKEN) return null;
+  const lng = Number(store.longitude);
+  const lat = Number(store.latitude);
+  const marker = `pin-l+2b6cb0(${lng},${lat})`;
+  return (
+    `https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/` +
+    `${marker}/${lng},${lat},${zoom}/${width}x${height}@2x` +
+    `?access_token=${MAPBOX_TOKEN}`
+  );
+}
+
+/** The URL that opens the location in the Google Maps app or site (keyless). */
+export function externalMapLink(
+  store: Coords & { google_maps_url?: string | null },
+): string | null {
+  // An explicit link wins: a pasted link may point at the exact storefront
   // entrance rather than the rooftop coordinate.
   if (store.google_maps_url) return store.google_maps_url;
   if (!hasCoords(store)) return null;
   return `https://www.google.com/maps/search/?api=1&query=${store.latitude},${store.longitude}`;
 }
 
-/** The src for an embedded map iframe, or null when there is nothing to show. */
-export function googleMapsEmbed(store: Coords, zoom = 16): string | null {
-  if (!hasCoords(store)) return null;
-  const q = `${store.latitude},${store.longitude}`;
-
-  // Point at www.google.com directly: maps.google.com 301-redirects there, and a
-  // redirect inside an iframe is a wasted round-trip on every render.
-  return API_KEY
-    ? `https://www.google.com/maps/embed/v1/place?key=${API_KEY}&q=${q}&zoom=${zoom}`
-    : `https://www.google.com/maps?q=${encodeURIComponent(q)}&z=${zoom}&output=embed`;
-}
-
-/** The directions URL — what a merchandiser actually wants on a phone. */
-export function googleMapsDirections(store: Coords): string | null {
+/** Turn-by-turn directions — what a merchandiser actually wants on a phone. */
+export function directionsLink(store: Coords): string | null {
   if (!hasCoords(store)) return null;
   return `https://www.google.com/maps/dir/?api=1&destination=${store.latitude},${store.longitude}`;
 }
 
 /**
- * Pull coordinates out of a pasted Google Maps URL.
+ * Pull coordinates out of a pasted map URL (Google or Mapbox).
  *
- * Handles the three shapes people actually paste:
+ * Handles the shapes people actually paste:
  *   .../@33.5731,-7.5898,17z          → the map centre
- *   ...?q=33.5731,-7.5898              → an explicit query
- *   .../place/Name/@33.57,-7.58,17z/   → a place page
+ *   ...?q=33.5731,-7.5898             → an explicit query
+ *   .../place/Name/@33.57,-7.58,17z/  → a place page
+ *   ...#12/33.57/-7.58                → a Mapbox-style hash (lat/lng order)
  *
  * Short links (maps.app.goo.gl/…) carry no coordinates until they are followed,
  * which the browser cannot do cross-origin — those are stored as-is instead.
  */
 export function parseCoordsFromUrl(url: string): { latitude: number; longitude: number } | null {
-  const patterns = [
-    /@(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/, // /@lat,lng,17z
-    /[?&]q=(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/, // ?q=lat,lng
-    /[?&]query=(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/, // ?query=lat,lng
-    /!3d(-?\d+(?:\.\d+)?)!4d(-?\d+(?:\.\d+)?)/, // !3dlat!4dlng
+  const latLng = (lat: number, lng: number) =>
+    Number.isFinite(lat) &&
+    Number.isFinite(lng) &&
+    Math.abs(lat) <= 90 &&
+    Math.abs(lng) <= 180
+      ? { latitude: lat, longitude: lng }
+      : null;
+
+  // lat,lng-ordered patterns
+  const latFirst = [
+    /@(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/,
+    /[?&]q=(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/,
+    /[?&]query=(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/,
+    /#\d+(?:\.\d+)?\/(-?\d+(?:\.\d+)?)\/(-?\d+(?:\.\d+)?)/, // Mapbox #zoom/lat/lng
   ];
-
-  for (const re of patterns) {
+  for (const re of latFirst) {
     const m = url.match(re);
-    if (!m) continue;
-
-    const latitude = Number(m[1]);
-    const longitude = Number(m[2]);
-    if (
-      Number.isFinite(latitude) &&
-      Number.isFinite(longitude) &&
-      Math.abs(latitude) <= 90 &&
-      Math.abs(longitude) <= 180
-    ) {
-      return { latitude, longitude };
+    if (m) {
+      const r = latLng(Number(m[1]), Number(m[2]));
+      if (r) return r;
     }
   }
+
+  // Google's place marker encodes lng,lat as !3d<lat>!4d<lng>
+  const g = url.match(/!3d(-?\d+(?:\.\d+)?)!4d(-?\d+(?:\.\d+)?)/);
+  if (g) {
+    const r = latLng(Number(g[1]), Number(g[2]));
+    if (r) return r;
+  }
+
   return null;
 }
