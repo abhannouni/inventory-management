@@ -27,6 +27,9 @@ export class ReportsService {
       status: v.status,
       checkin_at: v.checkin_time,
       checkout_at: v.checkout_time,
+      // Server-computed at checkout time (see VisitsService.checkout); null while
+      // the visit is still open — never derived from anything client-reported.
+      duration_seconds: v.duration_seconds,
       user: v.user,
       store: v.store,
       summary: buildSummary(v.auditItems),

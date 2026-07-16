@@ -1,14 +1,17 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../hooks/useAppDispatch';
-import { fetchVisits } from '../store/slices/visitsSlice';
+import { usePermissions } from '../hooks/usePermissions';
+import { fetchVisits, fetchActiveVisit } from '../store/slices/visitsSlice';
 import { fetchStores } from '../store/slices/storesSlice';
 import { fetchProducts } from '../store/slices/productsSlice';
 import { fetchUsers } from '../store/slices/usersSlice';
+import { useVisitTimer } from '../hooks/useVisitTimer';
 import Badge from '../components/ui/Badge';
-import { formatDate } from '../utils/format';
+import { formatDate, formatDuration } from '../utils/format';
+import type { Visit } from '../types';
 
 /* ── Count-up hook ── */
 function useCountUp(target: number, duration = 1200) {
@@ -163,64 +166,46 @@ function SemiCircle({ percentage }: { percentage: number }) {
   );
 }
 
-/* ── Time Tracker ── */
-function TimeTracker({ hasOpenVisit }: { hasOpenVisit: boolean }) {
+/* ── Time Tracker ──
+ * Mirrors the real visit clock (same `useVisitTimer` hook as ActiveVisitBar):
+ * elapsed time is derived from the server's `checkin_at`, never counted
+ * client-side, so it can never drift from what checkout will actually store.
+ * There is no client-side pause — a visit's only real states are open/closed,
+ * so a fake pause here could show a number that disagrees with the stored
+ * checkin/checkout timestamps. Ending a visit routes to the real checkout flow.
+ */
+function TimeTracker({ visit }: { visit: Visit | null }) {
   const { t } = useTranslation('dashboard');
-  const [secs, setSecs] = useState(0);
-  const [running, setRunning] = useState(hasOpenVisit);
-  const ref = useRef<ReturnType<typeof setInterval> | null>(null);
-
-  useEffect(() => {
-    if (running) {
-      ref.current = setInterval(() => setSecs((s) => s + 1), 1000);
-    } else if (ref.current) {
-      clearInterval(ref.current);
-    }
-    return () => { if (ref.current) clearInterval(ref.current); };
-  }, [running]);
-
-  const fmt = (s: number) => {
-    const h = Math.floor(s / 3600);
-    const m = Math.floor((s % 3600) / 60);
-    const sc = s % 60;
-    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(sc).padStart(2, '0')}`;
-  };
+  const navigate = useNavigate();
+  const elapsed = useVisitTimer(visit);
+  const running = visit?.status === 'open';
 
   return (
     <div className="time-tracker-card">
       <div className="tt-title">{t('timeTracker.title')}</div>
       <div className="tt-label" style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
         {running && <span className="live-pulse-dot" />}
-        {hasOpenVisit ? t('timeTracker.activeVisit') : t('timeTracker.noActiveVisit')}
+        {running ? (visit?.store?.name ?? t('timeTracker.activeVisit')) : t('timeTracker.noActiveVisit')}
       </div>
       <motion.div
         className="tt-time"
-        key={Math.floor(secs / 60)}
+        key={Math.floor(elapsed / 60)}
         initial={{ opacity: 0.7 }}
         animate={{ opacity: 1 }}
       >
-        {fmt(secs)}
+        {formatDuration(elapsed)}
       </motion.div>
-      <div className="tt-controls">
-        <button
-          className="tt-btn tt-btn-pause"
-          onClick={() => setRunning((r) => !r)}
-        >
-          {running ? (
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16" /><rect x="14" y="4" width="4" height="16" /></svg>
-          ) : (
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3" /></svg>
-          )}
-          {running ? t('timeTracker.pause') : t('timeTracker.resume')}
-        </button>
-        <button
-          className="tt-btn tt-btn-stop"
-          onClick={() => { setRunning(false); setSecs(0); }}
-        >
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="2" /></svg>
-          {t('timeTracker.stop')}
-        </button>
-      </div>
+      {running && (
+        <div className="tt-controls">
+          <button
+            className="tt-btn tt-btn-stop"
+            onClick={() => navigate('/visits')}
+          >
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="2" /></svg>
+            {t('timeTracker.checkout')}
+          </button>
+        </div>
+      )}
     </div>
   );
 }
@@ -242,18 +227,20 @@ export default function DashboardPage() {
   const { items: stores } = useAppSelector((s) => s.stores);
   const { items: products } = useAppSelector((s) => s.products);
   const { items: users } = useAppSelector((s) => s.users);
+  const activeVisit = useAppSelector((s) => s.visits.active);
   const user = useAppSelector((s) => s.auth.user);
+  const { canCheckin } = usePermissions();
 
   useEffect(() => {
     dispatch(fetchVisits(undefined));
     dispatch(fetchStores());
     dispatch(fetchProducts());
     if (['super_admin', 'admin'].includes(user?.role || '')) dispatch(fetchUsers());
-  }, [dispatch, user]);
+    if (canCheckin) dispatch(fetchActiveVisit());
+  }, [dispatch, user, canCheckin]);
 
   const openVisits = visits.filter((v) => v.status === 'open').length;
   const closedVisits = visits.filter((v) => v.status === 'closed').length;
-  const hasOpenVisit = openVisits > 0;
 
   const auditCompletion = visits.length > 0
     ? Math.round((closedVisits / visits.length) * 100)
@@ -429,7 +416,7 @@ export default function DashboardPage() {
 
           {/* Time Tracker below stores */}
           <div style={{ marginTop: 20 }}>
-            <TimeTracker hasOpenVisit={hasOpenVisit} />
+            <TimeTracker visit={activeVisit} />
           </div>
         </motion.div>
 

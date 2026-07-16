@@ -11,10 +11,15 @@
     "checkInToStore": "Check In to Store",
     "activeVisit": "Active visit",
     "filters": {
-      "allStatuses": "All statuses"
+      "allStatuses": "All statuses",
+      "searchPlaceholder": "Search by store or user…",
+      "allStores": "All stores",
+      "allMerchandisers": "All users",
+      "clear": "Clear filters"
     },
     "columns": {
       "store": "Store",
+      "merchandiser": "User",
       "status": "Status",
       "checkin": "Check-in",
       "checkout": "Check-out",

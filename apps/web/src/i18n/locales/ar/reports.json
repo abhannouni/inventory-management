@@ -17,9 +17,10 @@
   },
   "table": {
     "store": "نقطة البيع",
-    "merchandiser": "المندوب",
+    "merchandiser": "المستخدم",
     "checkin": "الدخول",
     "checkout": "الخروج",
+    "duration": "المدة",
     "status": "الحالة",
     "date": "التاريخ",
     "brand": "العلامة",

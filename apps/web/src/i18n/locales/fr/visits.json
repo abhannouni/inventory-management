@@ -11,10 +11,15 @@
     "checkInToStore": "Pointer l'arrivée en magasin",
     "activeVisit": "Visite en cours",
     "filters": {
-      "allStatuses": "Tous les statuts"
+      "allStatuses": "Tous les statuts",
+      "searchPlaceholder": "Rechercher par magasin ou utilisateur…",
+      "allStores": "Tous les magasins",
+      "allMerchandisers": "Tous les utilisateurs",
+      "clear": "Effacer les filtres"
     },
     "columns": {
       "store": "Magasin",
+      "merchandiser": "Utilisateur",
       "status": "Statut",
       "checkin": "Arrivée",
       "checkout": "Sortie",

@@ -17,9 +17,10 @@
   },
   "table": {
     "store": "Point de vente",
-    "merchandiser": "Marchandiseur",
+    "merchandiser": "Utilisateur",
     "checkin": "Arrivée",
     "checkout": "Sortie",
+    "duration": "Durée",
     "status": "Statut",
     "date": "Date",
     "brand": "Enseigne",

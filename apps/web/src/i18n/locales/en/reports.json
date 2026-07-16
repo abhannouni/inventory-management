@@ -17,9 +17,10 @@
   },
   "table": {
     "store": "Point of sale",
-    "merchandiser": "Merchandiser",
+    "merchandiser": "User",
     "checkin": "Check-in",
     "checkout": "Check-out",
+    "duration": "Duration",
     "status": "Status",
     "date": "Date",
     "brand": "Brand",

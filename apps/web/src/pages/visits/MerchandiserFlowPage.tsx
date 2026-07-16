@@ -101,7 +101,15 @@ function StepIndicator({ current }: { current: Step }) {
 }
 
 /* ─────────── Main Page ─────────── */
-export default function MerchandiserFlowPage() {
+interface MerchandiserFlowPageProps {
+  /** Called when the merchandiser asks to see visit history after finishing a
+   *  visit. This component is always rendered as the "visit" tab inside
+   *  VisitsPage, so `navigate('/visits')` is a no-op there — the URL never
+   *  changes. Switching tabs has to happen through the parent instead. */
+  onViewHistory?: () => void;
+}
+
+export default function MerchandiserFlowPage({ onViewHistory }: MerchandiserFlowPageProps) {
   const { t, i18n } = useTranslation('visits');
   const dispatch  = useAppDispatch();
   const navigate  = useNavigate();
@@ -710,7 +718,10 @@ export default function MerchandiserFlowPage() {
                 <div className="mf-summary-lbl">{t('merchandiserFlow.checkout.outOfStock')}</div>
               </div>
             </div>
-            <button className="btn btn-primary btn-lg mf-full-btn" onClick={() => navigate('/visits')}>
+            <button
+              className="btn btn-primary btn-lg mf-full-btn"
+              onClick={() => (onViewHistory ? onViewHistory() : navigate('/visits'))}
+            >
               {t('merchandiserFlow.done.viewHistory')}
             </button>
           </motion.div>

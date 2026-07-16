@@ -33,9 +33,7 @@
     "title": "Chronomètre",
     "activeVisit": "Visite en cours",
     "noActiveVisit": "Aucune visite en cours",
-    "pause": "Pause",
-    "resume": "Reprendre",
-    "stop": "Arrêter"
+    "checkout": "Terminer la visite"
   },
   "stores": {
     "title": "Magasins",

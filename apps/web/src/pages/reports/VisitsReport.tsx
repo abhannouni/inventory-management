@@ -13,7 +13,7 @@ import BarChart from '../../components/charts/BarChart';
 import StatusBar from '../../components/charts/StatusBar';
 import { STATUS } from '../../components/charts/tokens';
 import ReportFilters from './ReportFilters';
-import { formatDate } from '../../utils/format';
+import { formatDate, formatDurationShort } from '../../utils/format';
 import type { ExportDataset } from '../../utils/export';
 import type { VisitReport } from '../../types';
 
@@ -142,6 +142,10 @@ export default function VisitsReport() {
       { header: t('table.merchandiser'), value: (v) => v.user?.full_name ?? '' },
       { header: t('table.checkin'), value: (v) => v.checkin_at },
       { header: t('table.checkout'), value: (v) => v.checkout_at ?? '' },
+      {
+        header: t('table.duration'),
+        value: (v) => (v.duration_seconds != null ? formatDurationShort(v.duration_seconds) : ''),
+      },
       { header: t('table.status'), value: (v) => v.status },
       { header: t('visitsReport.summary.total'), value: (v) => v.summary?.total ?? 0 },
       { header: t('visitsReport.summary.inStock'), value: (v) => v.summary?.inStock ?? 0 },
@@ -309,6 +313,7 @@ export default function VisitsReport() {
                     <span className="visit-row-meta">
                       {formatDate(v.checkin_at, i18n.language)}
                       {v.user?.full_name ? ` · ${v.user.full_name}` : ''}
+                      {v.duration_seconds != null ? ` · ${formatDurationShort(v.duration_seconds)}` : ''}
                     </span>
                   </div>
 

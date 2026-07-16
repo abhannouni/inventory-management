@@ -33,9 +33,7 @@
     "title": "Time Tracker",
     "activeVisit": "Active Visit",
     "noActiveVisit": "No active visit",
-    "pause": "Pause",
-    "resume": "Resume",
-    "stop": "Stop"
+    "checkout": "End visit"
   },
   "stores": {
     "title": "Stores",

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
@@ -13,6 +13,7 @@ import DataTable from '../../components/ui/DataTable';
 import Modal from '../../components/ui/Modal';
 import Badge from '../../components/ui/Badge';
 import Pagination from '../../components/ui/Pagination';
+import Select from '../../components/ui/Select';
 import CheckinForm from './CheckinForm';
 import MerchandiserFlowPage from './MerchandiserFlowPage';
 import VisitTimer from '../../components/ui/VisitTimer';
@@ -34,6 +35,9 @@ export default function VisitsPage() {
   const [activeTab, setActiveTab] = useState<Tab>(p.canCheckin ? 'visit' : 'history');
   const [checkinOpen, setCheckinOpen] = useState(false);
   const [statusFilter, setStatusFilter] = useState('');
+  const [search, setSearch] = useState('');
+  const [storeFilter, setStoreFilter] = useState('');
+  const [merchFilter, setMerchFilter] = useState('');
 
   useEffect(() => {
     if (activeTab === 'history') {
@@ -42,9 +46,50 @@ export default function VisitsPage() {
     }
   }, [dispatch, statusFilter, activeTab]);
 
-  const { pageItems: visitPage, meta, setPage, setLimit } = useClientPagination(visits);
-
   const openVisit = visits.find((v) => v.status === 'open');
+
+  /* Store and merchandiser dropdowns are built from whatever visits are already
+     loaded — no separate lookup call, and the options never outrun what's
+     actually filterable on screen. */
+  const storeOptions = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const v of visits) if (v.store) map.set(v.store.id, v.store.name);
+    return [...map.entries()]
+      .sort(([, a], [, b]) => a.localeCompare(b))
+      .map(([value, label]) => ({ value, label }));
+  }, [visits]);
+
+  const merchOptions = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const v of visits) if (v.user) map.set(v.user.id, v.user.full_name);
+    return [...map.entries()]
+      .sort(([, a], [, b]) => a.localeCompare(b))
+      .map(([value, label]) => ({ value, label }));
+  }, [visits]);
+
+  const filteredVisits = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    return visits.filter((v) => {
+      const matchesSearch =
+        !q ||
+        v.store?.name?.toLowerCase().includes(q) ||
+        v.user?.full_name?.toLowerCase().includes(q);
+      const matchesStore = !storeFilter || v.store_id === storeFilter;
+      const matchesMerch = !merchFilter || v.user_id === merchFilter;
+      return matchesSearch && matchesStore && matchesMerch;
+    });
+  }, [visits, search, storeFilter, merchFilter]);
+
+  const hasActiveFilters = !!search || !!storeFilter || !!merchFilter || !!statusFilter;
+
+  const clearFilters = () => {
+    setSearch('');
+    setStoreFilter('');
+    setMerchFilter('');
+    setStatusFilter('');
+  };
+
+  const { pageItems: visitPage, meta, setPage, setLimit } = useClientPagination(filteredVisits);
 
   const handleCheckin = async (data: { store_id: string; lat: number; lng: number }) => {
     const res = await dispatch(checkin(data));
@@ -58,6 +103,7 @@ export default function VisitsPage() {
 
   const columns = [
     { key: 'store', header: t('list.columns.store'), render: (v: Visit) => <span style={{ fontWeight: 500 }}>{v.store?.name || v.store_id}</span> },
+    { key: 'merchandiser', header: t('list.columns.merchandiser'), render: (v: Visit) => <span style={{ color: 'var(--gray-600)' }}>{v.user?.full_name || '—'}</span> },
     { key: 'status', header: t('list.columns.status'), render: (v: Visit) => <Badge variant={v.status === 'open' ? 'success' : 'gray'} dot>{v.status === 'open' ? tCommon('status.open') : tCommon('status.closed')}</Badge> },
     { key: 'checkin_at', header: t('list.columns.checkin'), render: (v: Visit) => <span style={{ color: 'var(--gray-600)' }}>{formatDate(v.checkin_at, i18n.language)}</span> },
     { key: 'checkout_at', header: t('list.columns.checkout'), render: (v: Visit) => <span style={{ color: 'var(--gray-500)' }}>{v.checkout_at ? formatDate(v.checkout_at, i18n.language) : '—'}</span> },
@@ -130,11 +176,40 @@ export default function VisitsPage() {
       )}
 
       <div className="filter-bar">
+        <div className="form-group" style={{ flex: 1, maxWidth: 320 }}>
+          <input
+            className="form-input"
+            placeholder={t('list.filters.searchPlaceholder')}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
         <select className="form-select" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} style={{ width: 160 }}>
           <option value="">{t('list.filters.allStatuses')}</option>
           <option value="open">{tCommon('status.open')}</option>
           <option value="closed">{tCommon('status.closed')}</option>
         </select>
+        <Select
+          options={storeOptions}
+          placeholder={t('list.filters.allStores')}
+          value={storeFilter}
+          onChange={(e) => setStoreFilter(e.target.value)}
+          style={{ minWidth: 160 }}
+        />
+        {/* A merchandiser only ever sees their own visits (server-scoped), so this
+            dropdown would always have exactly one option — not worth showing. */}
+        {merchOptions.length > 1 && (
+          <Select
+            options={merchOptions}
+            placeholder={t('list.filters.allMerchandisers')}
+            value={merchFilter}
+            onChange={(e) => setMerchFilter(e.target.value)}
+            style={{ minWidth: 160 }}
+          />
+        )}
+        {hasActiveFilters && (
+          <Button variant="ghost" size="sm" onClick={clearFilters}>{t('list.filters.clear')}</Button>
+        )}
       </div>
 
       {/* Mobile card list */}
@@ -161,7 +236,10 @@ export default function VisitsPage() {
               </div>
               <div className="visit-card-body">
                 <div className="visit-card-store">{v.store?.name || v.store_id}</div>
-                <div className="visit-card-time">{formatDate(v.checkin_at, i18n.language)}</div>
+                <div className="visit-card-time">
+                  {formatDate(v.checkin_at, i18n.language)}
+                  {v.user?.full_name ? ` · ${v.user.full_name}` : ''}
+                </div>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8, flexShrink: 0 }}>
                 <Badge variant={v.status === 'open' ? 'success' : 'gray'} dot>
@@ -231,7 +309,7 @@ export default function VisitsPage() {
         </button>
       </div>
 
-      {activeTab === 'visit'    && <MerchandiserFlowPage />}
+      {activeTab === 'visit'    && <MerchandiserFlowPage onViewHistory={() => setActiveTab('history')} />}
       {activeTab === 'history'  && historyPanel}
     </div>
   );

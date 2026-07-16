@@ -11,10 +11,15 @@
     "checkInToStore": "تسجيل الدخول إلى المتجر",
     "activeVisit": "زيارة جارية",
     "filters": {
-      "allStatuses": "جميع الحالات"
+      "allStatuses": "جميع الحالات",
+      "searchPlaceholder": "البحث حسب المتجر أو المستخدم…",
+      "allStores": "جميع المتاجر",
+      "allMerchandisers": "جميع المستخدمين",
+      "clear": "مسح الفلاتر"
     },
     "columns": {
       "store": "المتجر",
+      "merchandiser": "المستخدم",
       "status": "الحالة",
       "checkin": "الدخول",
       "checkout": "الخروج",
