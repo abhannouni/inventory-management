@@ -1137,15 +1137,21 @@ html[dir='rtl'] .user-menu-dropdown-item {
   box-shadow: 0 0 0 3px rgba(29,106,222,0.25);
 }
 
-/* Ghost */
+/* Ghost — bordered at rest (not just on hover) so it reads as a button, not plain text */
 .btn-ghost {
-  background: transparent;
+  background: var(--gray-50);
   color: var(--gray-600);
+  border: 1.5px solid var(--gray-200);
   box-shadow: none;
 }
 .btn-ghost:hover:not(:disabled) {
   background: var(--gray-100);
+  border-color: var(--gray-300);
   color: var(--gray-800);
+}
+.btn-ghost:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(29,106,222,0.20);
 }
 
 /* Outline */
@@ -1317,8 +1323,78 @@ html[dir='rtl'] .user-menu-dropdown-item {
 
 .table-actions {
   display: flex;
-  gap: 6px;
+  gap: 8px;
   align-items: center;
+  justify-content: flex-end;
+}
+
+/* Status cell: badge + inline activate/deactivate switch, so the toggle
+   lives with the state it controls instead of competing for space in the
+   Actions column. */
+.status-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.switch-btn {
+  position: relative;
+  width: 34px;
+  height: 20px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 999px;
+  background: var(--gray-300);
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.18s ease;
+}
+
+.switch-btn::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.25);
+  transition: transform 0.18s ease;
+}
+
+.switch-btn.is-on {
+  background: var(--success);
+}
+
+.switch-btn.is-on::after {
+  transform: translateX(14px);
+}
+
+html[dir='rtl'] .switch-btn::after { left: auto; right: 2px; }
+html[dir='rtl'] .switch-btn.is-on::after { transform: translateX(-14px); }
+
+.switch-btn:hover:not(:disabled) { filter: brightness(0.94); }
+
+.switch-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(29,106,222,0.25);
+}
+
+.switch-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+/* Actions is always the last column — anchoring it to the right edge keeps
+   Edit/Delete in the same spot on every row, regardless of which optional
+   buttons (Activate, Assign, …) appear before them. `width: 1%` is the
+   standard shrink-to-content trick: it stops this column from soaking up
+   leftover table width (which produced a big empty gap on narrow tables
+   like Regions) so the buttons sit close to the row's other content instead
+   of floating off on their own at the far edge. */
+.data-table th.col-actions,
+.data-table td.col-actions {
+  width: 1%;
+  text-align: right;
+  white-space: nowrap;
 }
 
 /* ===== BADGE ===== */

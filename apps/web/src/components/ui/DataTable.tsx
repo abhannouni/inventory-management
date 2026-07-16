@@ -77,6 +77,7 @@ export default function DataTable<T>({
                     col.hideOnMobile ? 'hide-mobile' : '',
                     interactive ? 'is-sortable' : '',
                     active ? 'is-sorted' : '',
+                    col.key === 'actions' ? 'col-actions' : '',
                   ].filter(Boolean).join(' ') || undefined}
                   style={col.width ? { width: col.width } : undefined}
                   aria-sort={active ? (sortDir === 'asc' ? 'ascending' : 'descending') : undefined}
@@ -113,7 +114,13 @@ export default function DataTable<T>({
                   transition={{ duration: 0.15 }}
                 >
                   {columns.map((col) => (
-                    <td key={col.key} className={col.hideOnMobile ? 'hide-mobile' : undefined}>
+                    <td
+                      key={col.key}
+                      className={[
+                        col.hideOnMobile ? 'hide-mobile' : '',
+                        col.key === 'actions' ? 'col-actions' : '',
+                      ].filter(Boolean).join(' ') || undefined}
+                    >
                       {col.render ? col.render(row) : String((row as any)[col.key] ?? '')}
                     </td>
                   ))}

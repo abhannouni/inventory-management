@@ -173,9 +173,22 @@ export default function UsersPage() {
       header: t('table.status'),
       sortable: true,
       render: (u: User) => (
-        <Badge variant={u.is_active ? 'success' : 'gray'} dot>
-          {u.is_active ? tCommon('status.active') : tCommon('status.inactive')}
-        </Badge>
+        <div className="status-cell">
+          <Badge variant={u.is_active ? 'success' : 'gray'} dot>
+            {u.is_active ? tCommon('status.active') : tCommon('status.inactive')}
+          </Badge>
+          {p.canActivateUsers && (
+            <button
+              type="button"
+              className={`switch-btn ${u.is_active ? 'is-on' : ''}`}
+              role="switch"
+              aria-checked={u.is_active}
+              aria-label={u.is_active ? t('actions.deactivate') : t('actions.activate')}
+              title={u.is_active ? t('actions.deactivate') : t('actions.activate')}
+              onClick={() => setToggleUser(u)}
+            />
+          )}
+        </div>
       ),
     },
     {
@@ -198,24 +211,23 @@ export default function UsersPage() {
       ),
     },
     {
+      key: 'store_assignment',
+      header: t('table.storeAssignment'),
+      hideOnMobile: true,
+      render: (u: User) =>
+        ['supervisor', 'merchandiser'].includes(u.role) && p.can('users.assign_stores') ? (
+          <Button variant="secondary" size="sm" onClick={() => setAssignUser(u)}>
+            {t('actions.assignStores')}
+          </Button>
+        ) : (
+          <span style={{ color: 'var(--gray-300)' }}>—</span>
+        ),
+    },
+    {
       key: 'actions',
       header: tCommon('table.actions'),
       render: (u: User) => (
         <div className="table-actions">
-          {p.canActivateUsers && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setToggleUser(u)}
-            >
-              {u.is_active ? t('actions.deactivate') : t('actions.activate')}
-            </Button>
-          )}
-          {['supervisor', 'merchandiser'].includes(u.role) && p.can('users.assign_stores') && (
-            <Button variant="ghost" size="sm" onClick={() => setAssignUser(u)}>
-              {t('actions.assignStores')}
-            </Button>
-          )}
           {p.can('users.update') && (
             <Button variant="outline" size="sm" onClick={() => setEditUser(u)}>
               {tCommon('actions.edit')}

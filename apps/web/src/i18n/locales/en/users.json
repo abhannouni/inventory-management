@@ -14,7 +14,8 @@
     "joined": "Joined",
     "lastLogin": "Last login",
     "never": "Never",
-    "empty": "No users found"
+    "empty": "No users found",
+    "storeAssignment": "Points of Sale"
   },
   "filters": {
     "allRoles": "All roles",

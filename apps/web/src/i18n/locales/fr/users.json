@@ -14,7 +14,8 @@
     "joined": "Date d'adhésion",
     "lastLogin": "Dernière connexion",
     "never": "Jamais",
-    "empty": "Aucun utilisateur trouvé"
+    "empty": "Aucun utilisateur trouvé",
+    "storeAssignment": "Points de vente"
   },
   "filters": {
     "allRoles": "Tous les rôles",
