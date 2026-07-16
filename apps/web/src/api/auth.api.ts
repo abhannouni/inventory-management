@@ -22,4 +22,8 @@ export const authApi = {
     api.post<User>('/auth/register', payload),
 
   me: () => api.get<User>('/auth/me'),
+
+  refresh: () => api.post<{ access_token: string }>('/auth/refresh'),
+
+  logout: () => api.post<{ success: boolean }>('/auth/logout'),
 };

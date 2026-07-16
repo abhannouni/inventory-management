@@ -43,11 +43,25 @@ export const fetchMe = createAsyncThunk('auth/me', async (_, { rejectWithValue }
   }
 });
 
+// Revokes the refresh token server-side before clearing local state, so a
+// signed-out session can't be reused even if the httpOnly cookie were
+// somehow replayed. Best-effort: local state is cleared either way.
+export const logout = createAsyncThunk('auth/logout', async () => {
+  try {
+    await authApi.logout();
+  } catch {
+    // Ignore - the user is logging out regardless of whether the server call succeeds.
+  }
+});
+
 const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    logout(state) {
+    // Clears local session state without calling the server. Used when a
+    // request tells us the refresh token is already invalid/expired, so
+    // there is nothing left to revoke.
+    clearSession(state) {
       state.user = null;
       state.token = null;
       localStorage.removeItem('access_token');
@@ -83,9 +97,14 @@ const authSlice = createSlice({
         state.user = null;
         state.token = null;
         localStorage.removeItem('access_token');
+      })
+      .addCase(logout.fulfilled, (state) => {
+        state.user = null;
+        state.token = null;
+        localStorage.removeItem('access_token');
       });
   },
 });
 
-export const { logout, clearError } = authSlice.actions;
+export const { clearSession, clearError } = authSlice.actions;
 export default authSlice.reducer;

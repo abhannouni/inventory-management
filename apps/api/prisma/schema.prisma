@@ -112,10 +112,29 @@ model User {
   schedulesAssigned Schedule[] @relation("AssignedSchedules")
   schedulesCreated  Schedule[] @relation("CreatedSchedules")
   dashboards        Dashboard[]
+  refreshTokens     RefreshToken[]
 
   @@index([role_id])
   @@index([is_active])
   @@map("users")
+}
+
+/// A hashed, rotating refresh token backing a single browser/device session.
+/// Storing the hash (not the raw token) lets us revoke sessions server-side
+/// (logout, password change, deactivation) without invalidating the JWT
+/// signature check alone.
+model RefreshToken {
+  id         String    @id @default(uuid())
+  user       User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id    String
+  token_hash String    @unique
+  expires_at DateTime
+  revoked_at DateTime?
+  created_at DateTime  @default(now())
+
+  @@index([user_id])
+  @@index([expires_at])
+  @@map("refresh_tokens")
 }
 
 /// A Point of Sale (POS).

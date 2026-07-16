@@ -1,14 +1,61 @@
 const BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
+const AUTH_PATHS_WITHOUT_RETRY = ['/auth/login', '/auth/register', '/auth/refresh', '/auth/logout'];
+
 function getToken(): string | null {
   return localStorage.getItem('access_token');
+}
+
+function setToken(token: string) {
+  localStorage.setItem('access_token', token);
+}
+
+function clearToken() {
+  localStorage.removeItem('access_token');
+}
+
+function unwrap<T>(json: unknown): T {
+  return (json as { data?: T }).data !== undefined ? (json as { data: T }).data : (json as T);
+}
+
+// The access token is short-lived (15m) so it can be revoked quickly if
+// compromised. Sessions stay alive across that expiry via the httpOnly
+// refresh cookie: a single in-flight refresh is shared by every request that
+// hits a 401 at the same time, so a page with several parallel data fetches
+// doesn't fire a refresh per request or race writes to localStorage.
+let refreshPromise: Promise<string | null> | null = null;
+
+async function refreshAccessToken(): Promise<string | null> {
+  if (!refreshPromise) {
+    refreshPromise = fetch(`${BASE_URL}/auth/refresh`, {
+      method: 'POST',
+      credentials: 'include',
+    })
+      .then(async (res) => {
+        if (!res.ok) return null;
+        const text = await res.text();
+        if (!text) return null;
+        const data = unwrap<{ access_token: string }>(JSON.parse(text));
+        return data.access_token;
+      })
+      .catch(() => null)
+      .finally(() => {
+        refreshPromise = null;
+      });
+  }
+  return refreshPromise;
+}
+
+function notifySessionExpired() {
+  clearToken();
+  window.dispatchEvent(new Event('auth:session-expired'));
 }
 
 interface RequestOptions extends RequestInit {
   params?: Record<string, string | number | undefined | null>;
 }
 
-async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
+async function request<T>(path: string, options: RequestOptions = {}, isRetry = false): Promise<T> {
   const { params, ...init } = options;
 
   let url = `${BASE_URL}${path}`;
@@ -33,7 +80,17 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
     headers['Authorization'] = `Bearer ${token}`;
   }
 
-  const response = await fetch(url, { ...init, headers });
+  const response = await fetch(url, { ...init, headers, credentials: 'include' });
+
+  if (response.status === 401 && !isRetry && !AUTH_PATHS_WITHOUT_RETRY.includes(path)) {
+    const newToken = await refreshAccessToken();
+    if (newToken) {
+      setToken(newToken);
+      return request<T>(path, options, true);
+    }
+    notifySessionExpired();
+    throw new Error('Session expired. Please sign in again.');
+  }
 
   if (!response.ok) {
     const error = await response.json().catch(() => ({ message: response.statusText }));
@@ -49,8 +106,7 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
     return undefined as T;
   }
 
-  const json = JSON.parse(text);
-  return (json.data !== undefined ? json.data : json) as T;
+  return unwrap<T>(JSON.parse(text));
 }
 
 export const api = {

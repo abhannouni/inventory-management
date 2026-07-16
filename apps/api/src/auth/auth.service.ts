@@ -8,10 +8,22 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
+import { createHash, randomUUID } from 'crypto';
 import { PrismaService } from '../prisma/prisma.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { PermissionsService } from './permissions.service';
+
+interface RefreshPayload {
+  sub: string;
+  jti: string;
+}
+
+export interface IssuedTokens {
+  accessToken: string;
+  refreshToken: string;
+  refreshExpiresAt: Date;
+}
 
 @Injectable()
 export class AuthService {
@@ -39,7 +51,7 @@ export class AuthService {
     return this.sanitize(user);
   }
 
-  async login(dto: LoginDto) {
+  async login(dto: LoginDto): Promise<IssuedTokens> {
     const user = await this.prisma.user.findUnique({ where: { email: dto.email } });
     if (!user || !(await bcrypt.compare(dto.password, user.password))) {
       throw new UnauthorizedException('Invalid credentials');
@@ -53,7 +65,60 @@ export class AuthService {
       data: { last_login_at: new Date() },
     });
 
-    return { access_token: this.sign(user) };
+    return this.issueTokens(user);
+  }
+
+  /**
+   * Verifies the refresh token cookie, rotates it (old one is revoked, a new
+   * one is issued), and mints a fresh access token. Rotation means a stolen
+   * refresh token stops working the moment the legitimate client uses theirs
+   * next, instead of staying valid for its whole 7-day lifetime.
+   */
+  async refresh(rawToken: string | undefined): Promise<IssuedTokens> {
+    if (!rawToken) throw new UnauthorizedException('Missing refresh token');
+
+    let payload: RefreshPayload;
+    try {
+      payload = this.jwt.verify<RefreshPayload>(rawToken, {
+        secret: this.config.get<string>('JWT_REFRESH_SECRET'),
+      });
+    } catch {
+      throw new UnauthorizedException('Invalid or expired refresh token');
+    }
+
+    const tokenHash = this.hash(rawToken);
+    const stored = await this.prisma.refreshToken.findUnique({ where: { token_hash: tokenHash } });
+
+    if (!stored || stored.revoked_at || stored.expires_at < new Date()) {
+      // A validly-signed token that isn't the current one on file has
+      // already been rotated away - most likely reuse of a stolen/replayed
+      // token. Revoke every session for this user as a precaution.
+      await this.prisma.refreshToken.updateMany({
+        where: { user_id: payload.sub, revoked_at: null },
+        data: { revoked_at: new Date() },
+      });
+      throw new UnauthorizedException('Refresh token no longer valid');
+    }
+
+    const user = await this.prisma.user.findUnique({ where: { id: payload.sub } });
+    if (!user || !user.is_active) {
+      throw new UnauthorizedException('Account no longer active');
+    }
+
+    await this.prisma.refreshToken.update({
+      where: { id: stored.id },
+      data: { revoked_at: new Date() },
+    });
+
+    return this.issueTokens(user);
+  }
+
+  async logout(rawToken: string | undefined) {
+    if (!rawToken) return;
+    const tokenHash = this.hash(rawToken);
+    await this.prisma.refreshToken
+      .updateMany({ where: { token_hash: tokenHash, revoked_at: null }, data: { revoked_at: new Date() } })
+      .catch(() => undefined);
   }
 
   async me(id: string) {
@@ -67,7 +132,32 @@ export class AuthService {
     return { ...this.sanitize(user), permissions: [...permissions] };
   }
 
-  private sign(user: User): string {
+  private async issueTokens(user: User): Promise<IssuedTokens> {
+    const accessToken = this.signAccessToken(user);
+    const jti = randomUUID();
+    const refreshToken = this.jwt.sign(
+      { sub: user.id, jti },
+      {
+        secret: this.config.get<string>('JWT_REFRESH_SECRET'),
+        expiresIn: this.config.get('JWT_REFRESH_EXPIRES') as any,
+      },
+    );
+
+    const { exp } = this.jwt.decode(refreshToken) as { exp: number };
+    const refreshExpiresAt = new Date(exp * 1000);
+
+    await this.prisma.refreshToken.create({
+      data: {
+        user_id: user.id,
+        token_hash: this.hash(refreshToken),
+        expires_at: refreshExpiresAt,
+      },
+    });
+
+    return { accessToken, refreshToken, refreshExpiresAt };
+  }
+
+  private signAccessToken(user: User): string {
     return this.jwt.sign(
       { sub: user.id, email: user.email, role: user.role },
       {
@@ -75,6 +165,10 @@ export class AuthService {
         expiresIn: this.config.get('JWT_ACCESS_EXPIRES') as any,
       },
     );
+  }
+
+  private hash(token: string): string {
+    return createHash('sha256').update(token).digest('hex');
   }
 
   private sanitize<T extends User>(user: T) {
