@@ -35,6 +35,37 @@ function calcStatus(
   return                                          { label: labels.inStock,    color: '#16a34a', bg: '#dcfce7' };
 }
 
+/* ─────────── Schedule grouping (for the expanded visits panel) ─────────── */
+function startOfDay(d: Date): number {
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+}
+
+function groupSchedulesByDate<T extends { scheduled_at: string }>(
+  schedules: T[],
+  labels: { today: string; tomorrow: string; thisWeek: string; later: string },
+): { label: string; items: T[] }[] {
+  const today = startOfDay(new Date());
+  const tomorrow = today + 86_400_000;
+  const weekEnd = today + 7 * 86_400_000;
+
+  const buckets: { label: string; items: T[] }[] = [
+    { label: labels.today, items: [] },
+    { label: labels.tomorrow, items: [] },
+    { label: labels.thisWeek, items: [] },
+    { label: labels.later, items: [] },
+  ];
+
+  for (const sch of schedules) {
+    const day = startOfDay(new Date(sch.scheduled_at));
+    if (day === today) buckets[0].items.push(sch);
+    else if (day === tomorrow) buckets[1].items.push(sch);
+    else if (day < weekEnd) buckets[2].items.push(sch);
+    else buckets[3].items.push(sch);
+  }
+
+  return buckets.filter((b) => b.items.length > 0);
+}
+
 /* ─────────── Sub-components ─────────── */
 function StepIndicator({ current }: { current: Step }) {
   const { t } = useTranslation('visits');
@@ -90,6 +121,7 @@ export default function MerchandiserFlowPage() {
   const [scheduleId, setScheduleId] = useState<string | null>(null);
   const [storeErr, setStoreErr]   = useState('');
   const [busy, setBusy]           = useState(false);
+  const [visitsExpanded, setVisitsExpanded] = useState(false);
 
   const [visit, setVisit]         = useState<Visit | null>(null);
   const [auditRows, setAuditRows] = useState<AuditRow[]>([]);
@@ -109,6 +141,16 @@ export default function MerchandiserFlowPage() {
   const upcomingSchedules = [...schedules].sort(
     (a, b) => new Date(a.scheduled_at).getTime() - new Date(b.scheduled_at).getTime(),
   );
+  const COLLAPSED_COUNT = 3;
+  const hasMoreSchedules = upcomingSchedules.length > COLLAPSED_COUNT;
+  const scheduleGroups = visitsExpanded
+    ? groupSchedulesByDate(upcomingSchedules, {
+        today: t('merchandiserFlow.checkin.groups.today'),
+        tomorrow: t('merchandiserFlow.checkin.groups.tomorrow'),
+        thisWeek: t('merchandiserFlow.checkin.groups.thisWeek'),
+        later: t('merchandiserFlow.checkin.groups.later'),
+      })
+    : [];
 
   /* Resume an in-progress visit after a refresh, a re-login, or a switch of device.
      The server is the source of truth: it returns the open visit along with the
@@ -296,20 +338,61 @@ export default function MerchandiserFlowPage() {
             </div>
 
             {upcomingSchedules.length > 0 && (
-              <div className="mf-scheduled-list" style={{ marginTop: 16 }}>
+              <div style={{ marginTop: 16 }}>
                 <label className="form-label">{t('merchandiserFlow.checkin.scheduledLabel')}</label>
-                {upcomingSchedules.map((sch) => (
+
+                {!visitsExpanded && (
+                  <div className="mf-scheduled-list">
+                    {upcomingSchedules.slice(0, COLLAPSED_COUNT).map((sch) => (
+                      <button
+                        type="button"
+                        key={sch.id}
+                        className={`mf-scheduled-card${scheduleId === sch.id ? ' selected' : ''}`}
+                        onClick={() => { setStoreId(sch.store_id); setScheduleId(sch.id); setStoreErr(''); }}
+                      >
+                        <div className="mf-scheduled-store">{sch.store?.name ?? sch.store_id}</div>
+                        <div className="mf-scheduled-date">{formatDate(sch.scheduled_at, i18n.language)}</div>
+                        {sch.notes && <div className="mf-scheduled-notes">{sch.notes}</div>}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {visitsExpanded && (
+                  <div className="mf-scheduled-panel">
+                    {scheduleGroups.map((group) => (
+                      <div key={group.label} className="mf-scheduled-group">
+                        <div className="mf-scheduled-group-label">{group.label}</div>
+                        <div className="mf-scheduled-list">
+                          {group.items.map((sch) => (
+                            <button
+                              type="button"
+                              key={sch.id}
+                              className={`mf-scheduled-card${scheduleId === sch.id ? ' selected' : ''}`}
+                              onClick={() => { setStoreId(sch.store_id); setScheduleId(sch.id); setStoreErr(''); }}
+                            >
+                              <div className="mf-scheduled-store">{sch.store?.name ?? sch.store_id}</div>
+                              <div className="mf-scheduled-date">{formatDate(sch.scheduled_at, i18n.language)}</div>
+                              {sch.notes && <div className="mf-scheduled-notes">{sch.notes}</div>}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {hasMoreSchedules && (
                   <button
                     type="button"
-                    key={sch.id}
-                    className={`mf-scheduled-card${scheduleId === sch.id ? ' selected' : ''}`}
-                    onClick={() => { setStoreId(sch.store_id); setScheduleId(sch.id); setStoreErr(''); }}
+                    className="mf-scheduled-toggle"
+                    onClick={() => setVisitsExpanded((v) => !v)}
                   >
-                    <div className="mf-scheduled-store">{sch.store?.name ?? sch.store_id}</div>
-                    <div className="mf-scheduled-date">{formatDate(sch.scheduled_at, i18n.language)}</div>
-                    {sch.notes && <div className="mf-scheduled-notes">{sch.notes}</div>}
+                    {visitsExpanded
+                      ? t('merchandiserFlow.checkin.showLess')
+                      : t('merchandiserFlow.checkin.seeAllVisits', { count: upcomingSchedules.length })}
                   </button>
-                ))}
+                )}
               </div>
             )}
 

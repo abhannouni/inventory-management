@@ -99,6 +99,15 @@
       "sectionTitle": "اختر متجرًا",
       "sectionSubtitle": "اختر المتجر الذي تزوره اليوم",
       "scheduledLabel": "زياراتك المقررة",
+      "seeAllVisits_one": "عرض الزيارة ({{count}})",
+      "seeAllVisits_other": "عرض جميع الزيارات ({{count}})",
+      "showLess": "عرض أقل",
+      "groups": {
+        "today": "اليوم",
+        "tomorrow": "غدًا",
+        "thisWeek": "هذا الأسبوع",
+        "later": "لاحقًا"
+      },
       "storeLabel": "المتجر",
       "chooseStore": "اختر متجرًا…",
       "noCoordinatesSet": "لا توجد إحداثيات مضبوطة",

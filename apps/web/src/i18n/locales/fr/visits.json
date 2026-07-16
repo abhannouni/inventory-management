@@ -99,6 +99,15 @@
       "sectionTitle": "Sélectionner un magasin",
       "sectionSubtitle": "Choisissez le magasin que vous visitez aujourd'hui",
       "scheduledLabel": "Vos visites prévues",
+      "seeAllVisits_one": "Voir la visite ({{count}})",
+      "seeAllVisits_other": "Voir toutes les visites ({{count}})",
+      "showLess": "Réduire",
+      "groups": {
+        "today": "Aujourd'hui",
+        "tomorrow": "Demain",
+        "thisWeek": "Cette semaine",
+        "later": "Plus tard"
+      },
       "storeLabel": "Magasin",
       "chooseStore": "Choisir un magasin…",
       "noCoordinatesSet": "Aucune coordonnée définie",

@@ -99,6 +99,15 @@
       "sectionTitle": "Select a Store",
       "sectionSubtitle": "Choose the store you are visiting today",
       "scheduledLabel": "Your planned visits",
+      "seeAllVisits_one": "See visit ({{count}})",
+      "seeAllVisits_other": "See all visits ({{count}})",
+      "showLess": "Show less",
+      "groups": {
+        "today": "Today",
+        "tomorrow": "Tomorrow",
+        "thisWeek": "This week",
+        "later": "Later"
+      },
       "storeLabel": "Store",
       "chooseStore": "Choose a store…",
       "noCoordinatesSet": "No coordinates set",
