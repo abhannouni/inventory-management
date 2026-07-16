@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 import { useTranslation, Trans } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../../hooks/useAppDispatch';
 import { usePermissions } from '../../hooks/usePermissions';
+import { useClientPagination } from '../../hooks/useClientPagination';
 import { fetchProductStores, createProductStore, updateProductStore, deleteProductStore } from '../../store/slices/productStoresSlice';
 import { fetchStores } from '../../store/slices/storesSlice';
 import { fetchProducts } from '../../store/slices/productsSlice';
@@ -12,6 +13,7 @@ import Button from '../../components/ui/Button';
 import DataTable from '../../components/ui/DataTable';
 import Modal from '../../components/ui/Modal';
 import ConfirmDialog from '../../components/ui/ConfirmDialog';
+import Pagination from '../../components/ui/Pagination';
 import Select from '../../components/ui/Select';
 import Input from '../../components/ui/Input';
 import type { ProductStore, Store, Product } from '../../types';
@@ -30,6 +32,9 @@ export default function ProductStoresPage() {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [filterStore, setFilterStore] = useState('');
+  const [search, setSearch] = useState('');
+  const [filterProduct, setFilterProduct] = useState('');
+  const [filterCategory, setFilterCategory] = useState('');
 
   useEffect(() => {
     dispatch(fetchStores());
@@ -43,6 +48,35 @@ export default function ProductStoresPage() {
       dispatch(fetchProductStores(undefined));
     }
   }, [filterStore, dispatch]);
+
+  const categoryOptions = useMemo(
+    () =>
+      Array.from(new Set(products.map((p) => p.category).filter(Boolean)))
+        .sort((a, b) => a.localeCompare(b))
+        .map((c) => ({ value: c, label: c })),
+    [products]
+  );
+
+  const hasActiveFilters = !!search || !!filterProduct || !!filterCategory;
+
+  const clearFilters = () => {
+    setSearch('');
+    setFilterProduct('');
+    setFilterCategory('');
+  };
+
+  const filtered = items.filter((ps) => {
+    const q = search.toLowerCase();
+    const matchesSearch =
+      !q ||
+      ps.store?.name?.toLowerCase().includes(q) ||
+      ps.product?.name?.toLowerCase().includes(q) ||
+      ps.product?.sku?.toLowerCase().includes(q) ||
+      ps.product?.category?.toLowerCase().includes(q);
+    return matchesSearch && (!filterProduct || ps.product_id === filterProduct) && (!filterCategory || ps.product?.category === filterCategory);
+  });
+
+  const { pageItems, meta, setPage, setLimit } = useClientPagination(filtered);
 
   const handleCreate = async (data: any) => {
     const res = await dispatch(createProductStore(data));
@@ -113,17 +147,43 @@ export default function ProductStoresPage() {
       />
 
       <div className="filter-bar">
+        <div className="form-group" style={{ flex: 1, maxWidth: 320 }}>
+          <input
+            className="form-input"
+            placeholder={t('searchPlaceholder')}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
         <Select
           options={stores.map((s) => ({ value: s.id, label: s.name }))}
           placeholder={t('allStores')}
           value={filterStore}
           onChange={(e) => setFilterStore(e.target.value)}
-          label=""
+          style={{ minWidth: 160 }}
         />
+        <Select
+          options={products.map((p) => ({ value: p.id, label: `${p.name} (${p.sku})` }))}
+          placeholder={t('allProducts')}
+          value={filterProduct}
+          onChange={(e) => setFilterProduct(e.target.value)}
+          style={{ minWidth: 160 }}
+        />
+        <Select
+          options={categoryOptions}
+          placeholder={t('allCategories')}
+          value={filterCategory}
+          onChange={(e) => setFilterCategory(e.target.value)}
+          style={{ minWidth: 160 }}
+        />
+        {hasActiveFilters && (
+          <Button variant="ghost" size="sm" onClick={clearFilters}>{t('clearFilters')}</Button>
+        )}
       </div>
 
       <motion.div className="card" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
-        <DataTable columns={columns} data={items} loading={loading} keyExtractor={(ps) => ps.id} emptyMessage={t('table.empty')} />
+        <DataTable columns={columns} data={pageItems} loading={loading} keyExtractor={(ps) => ps.id} emptyMessage={t('table.empty')} />
+        <Pagination meta={meta} onPageChange={setPage} onLimitChange={setLimit} />
       </motion.div>
 
       <Modal open={createOpen} onClose={() => setCreateOpen(false)} title={t('assignProductToStore')} size="sm">

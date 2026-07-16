@@ -5,6 +5,10 @@
   "assignProductToStore": "تعيين منتج للمتجر",
   "updateExpectedQty": "تحديث الكمية المتوقعة",
   "allStores": "جميع المتاجر",
+  "allProducts": "جميع المنتجات",
+  "allCategories": "جميع الفئات",
+  "searchPlaceholder": "البحث بالمتجر أو المنتج أو SKU أو الفئة…",
+  "clearFilters": "مسح الفلاتر",
   "table": {
     "store": "المتجر",
     "product": "المنتج",

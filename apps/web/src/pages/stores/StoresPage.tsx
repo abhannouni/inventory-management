@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../../hooks/useAppDispatch';
 import { usePermissions } from '../../hooks/usePermissions';
+import { useClientPagination } from '../../hooks/useClientPagination';
 import { fetchStores, createStore, updateStore, deleteStore } from '../../store/slices/storesSlice';
 import { fetchRegions } from '../../store/slices/regionsSlice';
 import PageHeader from '../../components/ui/PageHeader';
@@ -13,6 +14,7 @@ import Badge from '../../components/ui/Badge';
 import DataTable from '../../components/ui/DataTable';
 import Modal from '../../components/ui/Modal';
 import ConfirmDialog from '../../components/ui/ConfirmDialog';
+import Pagination from '../../components/ui/Pagination';
 import DownloadDataButton from '../../components/charts/DownloadDataButton';
 import StoreForm from './StoreForm';
 import { externalMapLink } from '../../utils/maps';
@@ -37,6 +39,8 @@ export default function StoresPage() {
     dispatch(fetchStores());
     dispatch(fetchRegions());
   }, [dispatch]);
+
+  const { pageItems, meta, setPage, setLimit } = useClientPagination(stores);
 
   const handleCreate = async (data: any) => {
     const res = await dispatch(createStore(data));
@@ -200,7 +204,8 @@ export default function StoresPage() {
       />
 
       <motion.div className="card" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
-        <DataTable columns={columns} data={stores} loading={loading} keyExtractor={(s) => s.id} emptyMessage={t('emptyTable')} />
+        <DataTable columns={columns} data={pageItems} loading={loading} keyExtractor={(s) => s.id} emptyMessage={t('emptyTable')} />
+        <Pagination meta={meta} onPageChange={setPage} onLimitChange={setLimit} />
       </motion.div>
 
       {/* The profile form is three sections long — it needs the wide modal. */}

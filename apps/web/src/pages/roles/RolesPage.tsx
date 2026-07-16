@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../../hooks/useAppDispatch';
 import { usePermissions } from '../../hooks/usePermissions';
+import { useClientPagination } from '../../hooks/useClientPagination';
 import {
   fetchRoles,
   fetchRole,
@@ -19,6 +20,7 @@ import DataTable from '../../components/ui/DataTable';
 import Badge from '../../components/ui/Badge';
 import Modal from '../../components/ui/Modal';
 import ConfirmDialog from '../../components/ui/ConfirmDialog';
+import Pagination from '../../components/ui/Pagination';
 import RoleForm from './RoleForm';
 import PermissionMatrix from './PermissionMatrix';
 import type { RoleRecord } from '../../types';
@@ -41,6 +43,8 @@ export default function RolesPage() {
     dispatch(fetchRoles());
     dispatch(fetchPermissionCatalogue());
   }, [dispatch]);
+
+  const { pageItems, meta, setPage, setLimit } = useClientPagination(roles);
 
   // The list endpoint returns counts only; the grants come from the detail endpoint.
   const openMatrix = (role: RoleRecord) => {
@@ -187,11 +191,12 @@ export default function RolesPage() {
       >
         <DataTable
           columns={columns}
-          data={roles}
+          data={pageItems}
           loading={loading}
           keyExtractor={(r) => r.id}
           emptyMessage={t('table.empty')}
         />
+        <Pagination meta={meta} onPageChange={setPage} onLimitChange={setLimit} />
       </motion.div>
 
       <Modal open={createOpen} onClose={() => setCreateOpen(false)} title={t('createRole')} size="md">

@@ -4,12 +4,14 @@ import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../../hooks/useAppDispatch';
 import { usePermissions } from '../../hooks/usePermissions';
+import { useClientPagination } from '../../hooks/useClientPagination';
 import { fetchRegions, createRegion, updateRegion, deleteRegion } from '../../store/slices/regionsSlice';
 import PageHeader from '../../components/ui/PageHeader';
 import Button from '../../components/ui/Button';
 import DataTable from '../../components/ui/DataTable';
 import Modal from '../../components/ui/Modal';
 import ConfirmDialog from '../../components/ui/ConfirmDialog';
+import Pagination from '../../components/ui/Pagination';
 import Input from '../../components/ui/Input';
 import { formatDate } from '../../utils/format';
 import type { Region } from '../../types';
@@ -30,6 +32,8 @@ export default function RegionsPage() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => { dispatch(fetchRegions()); }, [dispatch]);
+
+  const { pageItems, meta, setPage, setLimit } = useClientPagination(regions);
 
   const openCreate = () => { setName(''); setNameError(''); setCreateOpen(true); };
   const openEdit = (r: Region) => { setName(r.name); setNameError(''); setEditRegion(r); };
@@ -125,7 +129,8 @@ export default function RegionsPage() {
       />
 
       <motion.div className="card" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
-        <DataTable columns={columns} data={regions} loading={loading} keyExtractor={(r) => r.id} emptyMessage={t('emptyTable')} />
+        <DataTable columns={columns} data={pageItems} loading={loading} keyExtractor={(r) => r.id} emptyMessage={t('emptyTable')} />
+        <Pagination meta={meta} onPageChange={setPage} onLimitChange={setLimit} />
       </motion.div>
 
       <Modal open={createOpen} onClose={() => setCreateOpen(false)} title={t('createRegion')} size="sm">

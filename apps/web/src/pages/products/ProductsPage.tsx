@@ -1,15 +1,18 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../../hooks/useAppDispatch';
 import { usePermissions } from '../../hooks/usePermissions';
+import { useClientPagination } from '../../hooks/useClientPagination';
 import { fetchProducts, createProduct, updateProduct, deleteProduct } from '../../store/slices/productsSlice';
 import PageHeader from '../../components/ui/PageHeader';
 import Button from '../../components/ui/Button';
 import DataTable from '../../components/ui/DataTable';
 import Modal from '../../components/ui/Modal';
 import ConfirmDialog from '../../components/ui/ConfirmDialog';
+import Pagination from '../../components/ui/Pagination';
+import Select from '../../components/ui/Select';
 import ProductForm from './ProductForm';
 import { formatDate } from '../../utils/format';
 import type { Product } from '../../types';
@@ -26,19 +29,57 @@ export default function ProductsPage() {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [search, setSearch] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('');
+  const [distributeurFilter, setDistributeurFilter] = useState('');
+  const [familleFilter, setFamilleFilter] = useState('');
+  const [sousFamilleFilter, setSousFamilleFilter] = useState('');
+  const [formatFilter, setFormatFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
 
   useEffect(() => { dispatch(fetchProducts()); }, [dispatch]);
 
+  const toOptions = (values: (string | null | undefined)[]) =>
+    Array.from(new Set(values.filter((v): v is string => !!v)))
+      .sort((a, b) => a.localeCompare(b))
+      .map((v) => ({ value: v, label: v }));
+
+  const categoryOptions = useMemo(() => toOptions(products.map((p) => p.category)), [products]);
+  const distributeurOptions = useMemo(() => toOptions(products.map((p) => p.distributeur)), [products]);
+  const familleOptions = useMemo(() => toOptions(products.map((p) => p.famille)), [products]);
+  const sousFamilleOptions = useMemo(() => toOptions(products.map((p) => p.sous_famille)), [products]);
+  const formatOptions = useMemo(() => toOptions(products.map((p) => p.format)), [products]);
+
+  const hasActiveFilters =
+    !!search || !!categoryFilter || !!distributeurFilter || !!familleFilter || !!sousFamilleFilter || !!formatFilter || !!statusFilter;
+
+  const clearFilters = () => {
+    setSearch('');
+    setCategoryFilter('');
+    setDistributeurFilter('');
+    setFamilleFilter('');
+    setSousFamilleFilter('');
+    setFormatFilter('');
+    setStatusFilter('');
+  };
+
   const filtered = products.filter(
     (p) =>
-      p.name.toLowerCase().includes(search.toLowerCase()) ||
-      p.sku.toLowerCase().includes(search.toLowerCase()) ||
-      p.category.toLowerCase().includes(search.toLowerCase()) ||
-      p.distributeur.toLowerCase().includes(search.toLowerCase()) ||
-      p.famille.toLowerCase().includes(search.toLowerCase()) ||
-      p.sous_famille.toLowerCase().includes(search.toLowerCase()) ||
-      p.format.toLowerCase().includes(search.toLowerCase())
+      (p.name.toLowerCase().includes(search.toLowerCase()) ||
+        p.sku.toLowerCase().includes(search.toLowerCase()) ||
+        p.category.toLowerCase().includes(search.toLowerCase()) ||
+        p.distributeur.toLowerCase().includes(search.toLowerCase()) ||
+        p.famille.toLowerCase().includes(search.toLowerCase()) ||
+        p.sous_famille.toLowerCase().includes(search.toLowerCase()) ||
+        p.format.toLowerCase().includes(search.toLowerCase())) &&
+      (!categoryFilter || p.category === categoryFilter) &&
+      (!distributeurFilter || p.distributeur === distributeurFilter) &&
+      (!familleFilter || p.famille === familleFilter) &&
+      (!sousFamilleFilter || p.sous_famille === sousFamilleFilter) &&
+      (!formatFilter || p.format === formatFilter) &&
+      (!statusFilter || (statusFilter === 'active' ? p.is_active : !p.is_active))
   );
+
+  const { pageItems, meta, setPage, setLimit } = useClientPagination(filtered);
 
   const handleCreate = async (data: any) => {
     const res = await dispatch(createProduct(data));
@@ -120,10 +161,59 @@ export default function ProductsPage() {
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
+        <Select
+          options={categoryOptions}
+          placeholder={t('filters.allCategories')}
+          value={categoryFilter}
+          onChange={(e) => setCategoryFilter(e.target.value)}
+          style={{ minWidth: 160 }}
+        />
+        <Select
+          options={distributeurOptions}
+          placeholder={t('filters.allDistributeurs')}
+          value={distributeurFilter}
+          onChange={(e) => setDistributeurFilter(e.target.value)}
+          style={{ minWidth: 160 }}
+        />
+        <Select
+          options={familleOptions}
+          placeholder={t('filters.allFamilles')}
+          value={familleFilter}
+          onChange={(e) => setFamilleFilter(e.target.value)}
+          style={{ minWidth: 160 }}
+        />
+        <Select
+          options={sousFamilleOptions}
+          placeholder={t('filters.allSousFamilles')}
+          value={sousFamilleFilter}
+          onChange={(e) => setSousFamilleFilter(e.target.value)}
+          style={{ minWidth: 160 }}
+        />
+        <Select
+          options={formatOptions}
+          placeholder={t('filters.allFormats')}
+          value={formatFilter}
+          onChange={(e) => setFormatFilter(e.target.value)}
+          style={{ minWidth: 160 }}
+        />
+        <Select
+          options={[
+            { value: 'active', label: tCommon('status.active') },
+            { value: 'inactive', label: tCommon('status.inactive') },
+          ]}
+          placeholder={t('filters.allStatuses')}
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          style={{ minWidth: 160 }}
+        />
+        {hasActiveFilters && (
+          <Button variant="ghost" size="sm" onClick={clearFilters}>{t('filters.clear')}</Button>
+        )}
       </div>
 
       <motion.div className="card" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
-        <DataTable columns={columns} data={filtered} loading={loading} keyExtractor={(p) => p.id} emptyMessage={t('table.empty')} />
+        <DataTable columns={columns} data={pageItems} loading={loading} keyExtractor={(p) => p.id} emptyMessage={t('table.empty')} />
+        <Pagination meta={meta} onPageChange={setPage} onLimitChange={setLimit} />
       </motion.div>
 
       <Modal open={createOpen} onClose={() => setCreateOpen(false)} title={t('createProduct')} size="sm">

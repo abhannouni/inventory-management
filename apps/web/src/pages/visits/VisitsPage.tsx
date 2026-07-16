@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../../hooks/useAppDispatch';
+import { useClientPagination } from '../../hooks/useClientPagination';
 import { fetchVisits, checkin } from '../../store/slices/visitsSlice';
 import { fetchStores } from '../../store/slices/storesSlice';
 import PageHeader from '../../components/ui/PageHeader';
@@ -11,6 +12,7 @@ import Button from '../../components/ui/Button';
 import DataTable from '../../components/ui/DataTable';
 import Modal from '../../components/ui/Modal';
 import Badge from '../../components/ui/Badge';
+import Pagination from '../../components/ui/Pagination';
 import CheckinForm from './CheckinForm';
 import MerchandiserFlowPage from './MerchandiserFlowPage';
 import VisitTimer from '../../components/ui/VisitTimer';
@@ -39,6 +41,8 @@ export default function VisitsPage() {
       dispatch(fetchStores());
     }
   }, [dispatch, statusFilter, activeTab]);
+
+  const { pageItems: visitPage, meta, setPage, setLimit } = useClientPagination(visits);
 
   const openVisit = visits.find((v) => v.status === 'open');
 
@@ -137,10 +141,10 @@ export default function VisitsPage() {
       <div className="visit-card-list">
         {loading ? (
           <p style={{ textAlign: 'center', color: 'var(--gray-400)', padding: '32px 0' }}>{t('list.loading')}</p>
-        ) : visits.length === 0 ? (
+        ) : visitPage.length === 0 ? (
           <p style={{ textAlign: 'center', color: 'var(--gray-400)', padding: '32px 0' }}>{t('list.empty')}</p>
         ) : (
-          visits.map((v) => (
+          visitPage.map((v) => (
             <motion.div
               key={v.id}
               className="visit-card"
@@ -177,9 +181,11 @@ export default function VisitsPage() {
       {/* Desktop table */}
       <div className="visit-table-wrap">
         <motion.div className="card" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
-          <DataTable columns={columns} data={visits} loading={loading} keyExtractor={(v) => v.id} emptyMessage={t('list.empty')} />
+          <DataTable columns={columns} data={visitPage} loading={loading} keyExtractor={(v) => v.id} emptyMessage={t('list.empty')} />
         </motion.div>
       </div>
+
+      <Pagination meta={meta} onPageChange={setPage} onLimitChange={setLimit} />
 
       {/* FAB for check-in (mobile, merchandisers only) */}
       {p.canCheckin && !openVisit && (

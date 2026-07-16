@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../../hooks/useAppDispatch';
 import { usePermissions } from '../../hooks/usePermissions';
+import { useClientPagination } from '../../hooks/useClientPagination';
 import { fetchAuditItems, createAuditItem, bulkUpsertAuditItems, updateAuditItem, deleteAuditItem } from '../../store/slices/auditItemsSlice';
 import { fetchVisits } from '../../store/slices/visitsSlice';
 import { fetchProducts } from '../../store/slices/productsSlice';
@@ -12,6 +13,7 @@ import Button from '../../components/ui/Button';
 import DataTable from '../../components/ui/DataTable';
 import Modal from '../../components/ui/Modal';
 import ConfirmDialog from '../../components/ui/ConfirmDialog';
+import Pagination from '../../components/ui/Pagination';
 import Badge from '../../components/ui/Badge';
 import AuditItemForm from './AuditItemForm';
 import BulkAuditForm from './BulkAuditForm';
@@ -49,6 +51,8 @@ export default function AuditItemsPage() {
   useEffect(() => {
     dispatch(fetchAuditItems(filterVisit ? { visit_id: filterVisit } : undefined));
   }, [filterVisit, dispatch]);
+
+  const { pageItems, meta, setPage, setLimit } = useClientPagination(items);
 
   const handleCreate = async (data: any) => {
     const res = await dispatch(createAuditItem(data));
@@ -159,7 +163,8 @@ export default function AuditItemsPage() {
       </div>
 
       <motion.div className="card" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
-        <DataTable columns={columns} data={items} loading={loading} keyExtractor={(ai) => ai.id} emptyMessage={t('table.empty')} />
+        <DataTable columns={columns} data={pageItems} loading={loading} keyExtractor={(ai) => ai.id} emptyMessage={t('table.empty')} />
+        <Pagination meta={meta} onPageChange={setPage} onLimitChange={setLimit} />
       </motion.div>
 
       <Modal open={createOpen} onClose={() => setCreateOpen(false)} title={t('modals.createTitle')} size="md">

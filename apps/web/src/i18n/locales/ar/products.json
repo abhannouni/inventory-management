@@ -6,6 +6,15 @@
   "editProduct": "تعديل المنتج",
   "updateProduct": "تحديث المنتج",
   "searchPlaceholder": "البحث بالاسم أو SKU أو الفئة…",
+  "filters": {
+    "allCategories": "كل الفئات",
+    "allDistributeurs": "كل الموزعين",
+    "allFamilles": "كل العائلات",
+    "allSousFamilles": "كل العائلات الفرعية",
+    "allFormats": "كل الأشكال",
+    "allStatuses": "كل الحالات",
+    "clear": "مسح الفلاتر"
+  },
   "table": {
     "product": "المنتج",
     "sku": "SKU",

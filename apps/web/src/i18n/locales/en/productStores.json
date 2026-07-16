@@ -5,6 +5,10 @@
   "assignProductToStore": "Assign Product to Store",
   "updateExpectedQty": "Update Expected Quantity",
   "allStores": "All stores",
+  "allProducts": "All products",
+  "allCategories": "All categories",
+  "searchPlaceholder": "Search by store, product, SKU or category…",
+  "clearFilters": "Clear filters",
   "table": {
     "store": "Store",
     "product": "Product",

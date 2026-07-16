@@ -5,6 +5,10 @@
   "assignProductToStore": "Assigner un produit à un magasin",
   "updateExpectedQty": "Mettre à jour la quantité attendue",
   "allStores": "Tous les magasins",
+  "allProducts": "Tous les produits",
+  "allCategories": "Toutes les catégories",
+  "searchPlaceholder": "Rechercher par magasin, produit, SKU ou catégorie…",
+  "clearFilters": "Effacer les filtres",
   "table": {
     "store": "Magasin",
     "product": "Produit",
