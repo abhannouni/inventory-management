@@ -20,7 +20,7 @@ function SectionLabel({ label }: { label: string }) {
   return <span className="sidebar-section-label">{label}</span>;
 }
 
-const SECTIONS: NavSection[] = ['menu', 'administration', 'management', 'general'];
+const SECTIONS: NavSection[] = ['menu', 'management', 'general', 'administration'];
 
 /**
  * Every link here comes from `NAV_PAGES` — the same list that generates the
