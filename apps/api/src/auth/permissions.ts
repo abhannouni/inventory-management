@@ -23,6 +23,9 @@ export const RESOURCES = [
   'schedules',
   'reports',
   'settings',
+  'sell_out',
+  'merchandising',
+  'marketing',
 ] as const;
 
 export type Resource = (typeof RESOURCES)[number];
@@ -113,6 +116,14 @@ export const PERMISSIONS: PermissionDef[] = [
     action: 'view_audit_log',
     description: 'View the administration audit log',
   },
+
+  // These three have no data model yet — read-only for now (mirroring `reports`,
+  // which likewise only has read+export). The page exists and is permission-gated
+  // like every other module; it renders an honest "not available yet" state until
+  // the underlying feature is built. Add create/update/delete here once it is.
+  { code: 'sell_out.read', resource: 'sell_out', action: 'read', description: 'View sell-out data' },
+  { code: 'merchandising.read', resource: 'merchandising', action: 'read', description: 'View merchandising execution (displays, TG, MEA, PLV)' },
+  { code: 'marketing.read', resource: 'marketing', action: 'read', description: 'View marketing & trade marketing analysis' },
 ];
 
 export const PERMISSION_CODES = PERMISSIONS.map((p) => p.code);
@@ -143,6 +154,9 @@ export const ROLE_PRESETS: Record<string, string[]> = {
     'dashboards.read',
     'reports.read',
     'reports.export',
+    'sell_out.read',
+    'merchandising.read',
+    'marketing.read',
   ],
 
   // Reads consolidated data, but only for the POS the Super Admin has exposed.
@@ -159,6 +173,9 @@ export const ROLE_PRESETS: Record<string, string[]> = {
     'reports.read',
     'reports.export',
     'users.read',
+    'sell_out.read',
+    'merchandising.read',
+    'marketing.read',
   ],
 
   supervisor: [
@@ -169,11 +186,21 @@ export const ROLE_PRESETS: Record<string, string[]> = {
     'inventory.read',
     ...crud('schedules', '').map((p) => p.code),
     'visits.read',
+    // A supervisor performs their own spot-check visits too (not just field
+    // audits by merchandisers), so they need the same create/update rights a
+    // merchandiser has for the visit lifecycle — previously only granted via
+    // an unconditional frontend `!!role` check with no backend permission
+    // behind it. This makes that already-working behavior explicit.
+    'visits.create',
+    'visits.update',
     'audit_items.read',
+    'audit_items.create',
     'audit_items.update',
     'reports.read',
     'kpis.read',
     'dashboards.read',
+    'sell_out.read',
+    'merchandising.read',
   ],
 
   merchandiser: [
@@ -186,5 +213,9 @@ export const ROLE_PRESETS: Record<string, string[]> = {
     'visits.update',
     ...crud('audit_items', '').map((p) => p.code),
     'dashboards.read',
+    // The reports service already scopes merchandisers to their own visits
+    // ("merchandiser → own visits" per its own doc comment); the endpoint was
+    // simply never gated. This formalizes access that already worked.
+    'reports.read',
   ],
 };

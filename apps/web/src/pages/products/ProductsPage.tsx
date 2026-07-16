@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../../hooks/useAppDispatch';
+import { usePermissions } from '../../hooks/usePermissions';
 import { fetchProducts, createProduct, updateProduct, deleteProduct } from '../../store/slices/productsSlice';
 import PageHeader from '../../components/ui/PageHeader';
 import Button from '../../components/ui/Button';
@@ -17,6 +18,7 @@ export default function ProductsPage() {
   const { t, i18n } = useTranslation('products');
   const { t: tCommon } = useTranslation('common');
   const dispatch = useAppDispatch();
+  const p = usePermissions();
   const { items: products, loading } = useAppSelector((s) => s.products);
 
   const [createOpen, setCreateOpen] = useState(false);
@@ -84,10 +86,14 @@ export default function ProductsPage() {
     {
       key: 'actions',
       header: tCommon('table.actions'),
-      render: (p: Product) => (
+      render: (row: Product) => (
         <div className="table-actions">
-          <Button variant="outline" size="sm" onClick={() => setEditProduct(p)}>{tCommon('actions.edit')}</Button>
-          <Button variant="danger" size="sm" onClick={() => setDeleteId(p.id)}>{tCommon('actions.delete')}</Button>
+          {p.can('products.update') && (
+            <Button variant="outline" size="sm" onClick={() => setEditProduct(row)}>{tCommon('actions.edit')}</Button>
+          )}
+          {p.can('products.delete') && (
+            <Button variant="danger" size="sm" onClick={() => setDeleteId(row.id)}>{tCommon('actions.delete')}</Button>
+          )}
         </div>
       ),
     },
@@ -98,7 +104,11 @@ export default function ProductsPage() {
       <PageHeader
         title={t('title')}
         subtitle={t('subtitle')}
-        actions={<Button icon={<PlusIcon />} onClick={() => setCreateOpen(true)}>{t('addProduct')}</Button>}
+        actions={
+          p.can('products.create') ? (
+            <Button icon={<PlusIcon />} onClick={() => setCreateOpen(true)}>{t('addProduct')}</Button>
+          ) : undefined
+        }
       />
 
       <div className="filter-bar">

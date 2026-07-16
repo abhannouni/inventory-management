@@ -19,44 +19,48 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import type { User } from '@prisma/client';
-import { UserRole } from '@prisma/client';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import { Roles } from '../auth/decorators/roles.decorator';
+import { RequirePermissions } from '../auth/decorators/require-permissions.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { RolesGuard } from '../auth/guards/roles.guard';
+import { PermissionsGuard } from '../auth/guards/permissions.guard';
 import { CreateProductStoreDto } from './dto/create-product-store.dto';
 import { FindProductStoresDto } from './dto/find-product-stores.dto';
 import { UpdateProductStoreDto } from './dto/update-product-store.dto';
 import { ProductStoreService } from './product-store.service';
 
+// This is the "Stock" module in the permission-to-page map (nav label "Stock",
+// permission resource `inventory` — the resource code predates that naming and
+// was kept to avoid an unrelated data-model rename).
 @ApiTags('product-stores')
 @ApiBearerAuth()
 @Controller('product-stores')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, PermissionsGuard)
 export class ProductStoreController {
   constructor(private readonly productStoreService: ProductStoreService) {}
 
   @Get()
+  @RequirePermissions('inventory.read')
   @ApiOperation({ summary: 'List product-store assignments, filter by store or product' })
   findAll(@Query() query: FindProductStoresDto, @CurrentUser() user: User) {
     return this.productStoreService.findAll(user, query);
   }
 
   @Get(':id')
+  @RequirePermissions('inventory.read')
   @ApiOperation({ summary: 'Get a single product-store assignment' })
   findOne(@Param('id', ParseUUIDPipe) id: string, @CurrentUser() user: User) {
     return this.productStoreService.findOne(id, user);
   }
 
   @Post()
-  @Roles(UserRole.super_admin, UserRole.admin)
+  @RequirePermissions('inventory.create')
   @ApiOperation({ summary: 'Assign a product to a store with expected quantity' })
   create(@Body() dto: CreateProductStoreDto, @CurrentUser() user: User) {
     return this.productStoreService.create(dto, user);
   }
 
   @Patch(':id')
-  @Roles(UserRole.super_admin, UserRole.admin)
+  @RequirePermissions('inventory.update')
   @ApiOperation({ summary: 'Update expected quantity for a product-store assignment' })
   update(
     @Param('id', ParseUUIDPipe) id: string,
@@ -68,7 +72,7 @@ export class ProductStoreController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @Roles(UserRole.super_admin, UserRole.admin)
+  @RequirePermissions('inventory.delete')
   @ApiOperation({ summary: 'Remove a product from a store' })
   @ApiNoContentResponse()
   remove(@Param('id', ParseUUIDPipe) id: string, @CurrentUser() user: User) {

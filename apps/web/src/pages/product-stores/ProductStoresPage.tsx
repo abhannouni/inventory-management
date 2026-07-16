@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 import { useTranslation, Trans } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../../hooks/useAppDispatch';
+import { usePermissions } from '../../hooks/usePermissions';
 import { fetchProductStores, createProductStore, updateProductStore, deleteProductStore } from '../../store/slices/productStoresSlice';
 import { fetchStores } from '../../store/slices/storesSlice';
 import { fetchProducts } from '../../store/slices/productsSlice';
@@ -19,6 +20,7 @@ export default function ProductStoresPage() {
   const { t } = useTranslation('productStores');
   const { t: tCommon } = useTranslation('common');
   const dispatch = useAppDispatch();
+  const p = usePermissions();
   const { items, loading } = useAppSelector((s) => s.productStores);
   const { items: stores } = useAppSelector((s) => s.stores);
   const { items: products } = useAppSelector((s) => s.products);
@@ -87,8 +89,12 @@ export default function ProductStoresPage() {
       header: tCommon('table.actions'),
       render: (ps: ProductStore) => (
         <div className="table-actions">
-          <Button variant="outline" size="sm" onClick={() => setEditItem(ps)}>{t('actions.editQty')}</Button>
-          <Button variant="danger" size="sm" onClick={() => setDeleteId(ps.id)}>{tCommon('actions.remove')}</Button>
+          {p.can('inventory.update') && (
+            <Button variant="outline" size="sm" onClick={() => setEditItem(ps)}>{t('actions.editQty')}</Button>
+          )}
+          {p.can('inventory.delete') && (
+            <Button variant="danger" size="sm" onClick={() => setDeleteId(ps.id)}>{tCommon('actions.remove')}</Button>
+          )}
         </div>
       ),
     },
@@ -99,7 +105,11 @@ export default function ProductStoresPage() {
       <PageHeader
         title={t('title')}
         subtitle={t('subtitle')}
-        actions={<Button icon={<PlusIcon />} onClick={() => setCreateOpen(true)}>{t('assignProduct')}</Button>}
+        actions={
+          p.can('inventory.create') ? (
+            <Button icon={<PlusIcon />} onClick={() => setCreateOpen(true)}>{t('assignProduct')}</Button>
+          ) : undefined
+        }
       />
 
       <div className="filter-bar">

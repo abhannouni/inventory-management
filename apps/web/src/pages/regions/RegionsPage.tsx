@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../../hooks/useAppDispatch';
+import { usePermissions } from '../../hooks/usePermissions';
 import { fetchRegions, createRegion, updateRegion, deleteRegion } from '../../store/slices/regionsSlice';
 import PageHeader from '../../components/ui/PageHeader';
 import Button from '../../components/ui/Button';
@@ -17,6 +18,7 @@ export default function RegionsPage() {
   const { t, i18n } = useTranslation('regions');
   const { t: tCommon } = useTranslation('common');
   const dispatch = useAppDispatch();
+  const p = usePermissions();
   const { items: regions, loading } = useAppSelector((s) => s.regions);
 
   const [createOpen, setCreateOpen] = useState(false);
@@ -82,8 +84,12 @@ export default function RegionsPage() {
       header: tCommon('table.actions'),
       render: (r: Region) => (
         <div className="table-actions">
-          <Button variant="outline" size="sm" onClick={() => openEdit(r)}>{tCommon('actions.edit')}</Button>
-          <Button variant="danger" size="sm" onClick={() => setDeleteId(r.id)}>{tCommon('actions.delete')}</Button>
+          {p.can('regions.update') && (
+            <Button variant="outline" size="sm" onClick={() => openEdit(r)}>{tCommon('actions.edit')}</Button>
+          )}
+          {p.can('regions.delete') && (
+            <Button variant="danger" size="sm" onClick={() => setDeleteId(r.id)}>{tCommon('actions.delete')}</Button>
+          )}
         </div>
       ),
     },
@@ -111,7 +117,11 @@ export default function RegionsPage() {
       <PageHeader
         title={t('title')}
         subtitle={t('subtitle')}
-        actions={<Button icon={<PlusIcon />} onClick={openCreate}>{t('addRegion')}</Button>}
+        actions={
+          p.can('regions.create') ? (
+            <Button icon={<PlusIcon />} onClick={openCreate}>{t('addRegion')}</Button>
+          ) : undefined
+        }
       />
 
       <motion.div className="card" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>

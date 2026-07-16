@@ -17,6 +17,7 @@ import frSchedule from './locales/fr/schedule.json';
 import frReports from './locales/fr/reports.json';
 import frRoles from './locales/fr/roles.json';
 import frPos from './locales/fr/pos.json';
+import frModules from './locales/fr/modules.json';
 
 import enCommon from './locales/en/common.json';
 import enSidebar from './locales/en/sidebar.json';
@@ -34,6 +35,7 @@ import enSchedule from './locales/en/schedule.json';
 import enReports from './locales/en/reports.json';
 import enRoles from './locales/en/roles.json';
 import enPos from './locales/en/pos.json';
+import enModules from './locales/en/modules.json';
 
 import arCommon from './locales/ar/common.json';
 import arSidebar from './locales/ar/sidebar.json';
@@ -51,6 +53,7 @@ import arSchedule from './locales/ar/schedule.json';
 import arReports from './locales/ar/reports.json';
 import arRoles from './locales/ar/roles.json';
 import arPos from './locales/ar/pos.json';
+import arModules from './locales/ar/modules.json';
 
 export const LANGUAGE_STORAGE_KEY = 'appLanguage';
 export const SUPPORTED_LANGUAGES = ['fr', 'en', 'ar'] as const;
@@ -75,6 +78,7 @@ export const NAMESPACES = [
   'reports',
   'roles',
   'pos',
+  'modules',
 ] as const;
 
 function getInitialLanguage(): SupportedLanguage {
@@ -113,6 +117,7 @@ i18n.use(initReactI18next).init({
       reports: frReports,
       roles: frRoles,
       pos: frPos,
+      modules: frModules,
     },
     en: {
       common: enCommon,
@@ -131,6 +136,7 @@ i18n.use(initReactI18next).init({
       reports: enReports,
       roles: enRoles,
       pos: enPos,
+      modules: enModules,
     },
     ar: {
       common: arCommon,
@@ -149,6 +155,7 @@ i18n.use(initReactI18next).init({
       reports: arReports,
       roles: arRoles,
       pos: arPos,
+      modules: arModules,
     },
   },
   ns: NAMESPACES,

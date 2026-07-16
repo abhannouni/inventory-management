@@ -317,7 +317,9 @@ export default function SchedulePage() {
   const currentUserId = useAppSelector(s => s.auth.user?.id);
   const p = usePermissions();
 
-  const canManage = p.isSupervisor; // super_admin + admin + supervisor (not merchandiser)
+  // Whoever can create/update/delete schedules gets the management UI; a
+  // merchandiser (schedules.read only) gets the read + self-complete view.
+  const canManage = p.canManageSchedules;
   const [startingId, setStartingId] = useState<string | null>(null);
 
   const [currentDate, setCurrentDate] = useState(() => {

@@ -17,6 +17,9 @@ import { AuditItemsModule } from './audit-items/audit-items.module';
 import { UploadModule } from './upload/upload.module';
 import { ReportsModule } from './reports/reports.module';
 import { SchedulesModule } from './schedules/schedules.module';
+import { SellOutModule } from './sell-out/sell-out.module';
+import { MerchandisingModule } from './merchandising/merchandising.module';
+import { MarketingModule } from './marketing/marketing.module';
 
 @Module({
   imports: [
@@ -41,6 +44,9 @@ import { SchedulesModule } from './schedules/schedules.module';
     UploadModule,
     ReportsModule,
     SchedulesModule,
+    SellOutModule,
+    MerchandisingModule,
+    MarketingModule,
   ],
   controllers: [AppController],
   providers: [AppService],

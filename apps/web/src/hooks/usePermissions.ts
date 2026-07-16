@@ -49,7 +49,11 @@ export function usePermissions() {
     canManageProducts: canManage('products'),
     canManageProductStores: canManage('inventory'),
     canManageSchedules: canManage('schedules'),
-    canCheckin: !!role,
+    // A visit is a create (check-in) followed by an update (check-out) — not
+    // something every authenticated role does. General Management, for
+    // instance, has no `visits.create` and correctly never sees a check-in
+    // button, where this used to be a blanket `!!role`.
+    canCheckin: can('visits.create'),
 
     // Administration modules
     canManageRoles,

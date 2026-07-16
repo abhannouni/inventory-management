@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../../hooks/useAppDispatch';
+import { usePermissions } from '../../hooks/usePermissions';
 import { fetchStores, createStore, updateStore, deleteStore } from '../../store/slices/storesSlice';
 import { fetchRegions } from '../../store/slices/regionsSlice';
 import PageHeader from '../../components/ui/PageHeader';
@@ -23,6 +24,7 @@ export default function StoresPage() {
   const { t: tCommon } = useTranslation('common');
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const p = usePermissions();
   const { items: stores, loading } = useAppSelector((s) => s.stores);
   const { items: regions } = useAppSelector((s) => s.regions);
 
@@ -143,8 +145,12 @@ export default function StoresPage() {
           <Button variant="ghost" size="sm" onClick={() => navigate(`/stores/${s.id}`)}>
             {t('columns.view')}
           </Button>
-          <Button variant="outline" size="sm" onClick={() => setEditStore(s)}>{tCommon('actions.edit')}</Button>
-          <Button variant="danger" size="sm" onClick={() => setDeleteId(s.id)}>{tCommon('actions.delete')}</Button>
+          {p.can('pos.update') && (
+            <Button variant="outline" size="sm" onClick={() => setEditStore(s)}>{tCommon('actions.edit')}</Button>
+          )}
+          {p.can('pos.delete') && (
+            <Button variant="danger" size="sm" onClick={() => setDeleteId(s.id)}>{tCommon('actions.delete')}</Button>
+          )}
         </div>
       ),
     },
@@ -186,7 +192,9 @@ export default function StoresPage() {
         actions={
           <div className="pos-header-actions">
             <DownloadDataButton size="md" datasets={[dataset]} fileName={t('title')} />
-            <Button icon={<PlusIcon />} onClick={() => setCreateOpen(true)}>{t('addStore')}</Button>
+            {p.can('pos.create') && (
+              <Button icon={<PlusIcon />} onClick={() => setCreateOpen(true)}>{t('addStore')}</Button>
+            )}
           </div>
         }
       />

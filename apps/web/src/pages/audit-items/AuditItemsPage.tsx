@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../../hooks/useAppDispatch';
+import { usePermissions } from '../../hooks/usePermissions';
 import { fetchAuditItems, createAuditItem, bulkUpsertAuditItems, updateAuditItem, deleteAuditItem } from '../../store/slices/auditItemsSlice';
 import { fetchVisits } from '../../store/slices/visitsSlice';
 import { fetchProducts } from '../../store/slices/productsSlice';
@@ -27,6 +28,7 @@ export default function AuditItemsPage() {
   const { t, i18n } = useTranslation('auditItems');
   const { t: tCommon } = useTranslation('common');
   const dispatch = useAppDispatch();
+  const p = usePermissions();
   const { items, loading } = useAppSelector((s) => s.auditItems);
   const { items: visits } = useAppSelector((s) => s.visits);
   const { items: products } = useAppSelector((s) => s.products);
@@ -118,8 +120,12 @@ export default function AuditItemsPage() {
       header: tCommon('table.actions'),
       render: (ai: AuditItem) => (
         <div className="table-actions">
-          <Button variant="outline" size="sm" onClick={() => setEditItem(ai)}>{tCommon('actions.edit')}</Button>
-          <Button variant="danger" size="sm" onClick={() => setDeleteId(ai.id)}>{tCommon('actions.delete')}</Button>
+          {p.can('audit_items.update') && (
+            <Button variant="outline" size="sm" onClick={() => setEditItem(ai)}>{tCommon('actions.edit')}</Button>
+          )}
+          {p.can('audit_items.delete') && (
+            <Button variant="danger" size="sm" onClick={() => setDeleteId(ai.id)}>{tCommon('actions.delete')}</Button>
+          )}
         </div>
       ),
     },
@@ -132,8 +138,12 @@ export default function AuditItemsPage() {
         subtitle={t('pageSubtitle')}
         actions={
           <div style={{ display: 'flex', gap: 8 }}>
-            <Button variant="secondary" onClick={() => setBulkOpen(true)}>{t('bulkAudit')}</Button>
-            <Button icon={<PlusIcon />} onClick={() => setCreateOpen(true)}>{t('addAuditItem')}</Button>
+            {p.can('audit_items.create') && (
+              <>
+                <Button variant="secondary" onClick={() => setBulkOpen(true)}>{t('bulkAudit')}</Button>
+                <Button icon={<PlusIcon />} onClick={() => setCreateOpen(true)}>{t('addAuditItem')}</Button>
+              </>
+            )}
           </div>
         }
       />

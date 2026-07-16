@@ -1,0 +1,18 @@
+{
+  "sellOut": {
+    "title": "Sell-Out",
+    "subtitle": "Données de vente au consommateur depuis le point de vente"
+  },
+  "merchandising": {
+    "title": "Merchandising",
+    "subtitle": "Displays, TG, MEA et PLV exécutés sur le terrain"
+  },
+  "marketing": {
+    "title": "Marketing & Trade Marketing",
+    "subtitle": "Analyse marketing et trade marketing sur votre périmètre autorisé"
+  },
+  "notAvailable": {
+    "title": "Pas encore disponible",
+    "hint": "Ce module est déjà relié aux rôles et permissions — seules les données ne sont pas encore connectées."
+  }
+}

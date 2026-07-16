@@ -18,8 +18,11 @@
     "storesManage": "Manage POS",
     "stores": "Points of Sale",
     "products": "Products",
-    "inventory": "Inventory",
+    "stock": "Stock",
     "reports": "Reports",
+    "sellOut": "Sell-Out",
+    "merchandising": "Merchandising",
+    "marketing": "Marketing",
     "home": "Home",
     "audit": "Audit",
     "more": "More"

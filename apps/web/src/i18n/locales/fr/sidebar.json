@@ -18,8 +18,11 @@
     "storesManage": "Gérer les PDV",
     "stores": "Points de vente",
     "products": "Produits",
-    "inventory": "Inventaire",
+    "stock": "Stock",
     "reports": "Rapports",
+    "sellOut": "Sell-Out",
+    "merchandising": "Merchandising",
+    "marketing": "Marketing",
     "home": "Accueil",
     "audit": "Audit",
     "more": "Plus"

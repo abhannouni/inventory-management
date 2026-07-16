@@ -18,8 +18,11 @@
     "storesManage": "إدارة نقاط البيع",
     "stores": "نقاط البيع",
     "products": "المنتجات",
-    "inventory": "المخزون",
+    "stock": "المخزون",
     "reports": "التقارير",
+    "sellOut": "المبيعات",
+    "merchandising": "التسويق الميداني",
+    "marketing": "التسويق",
     "home": "الرئيسية",
     "audit": "الجرد",
     "more": "المزيد"

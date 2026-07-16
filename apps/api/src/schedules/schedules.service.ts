@@ -1,5 +1,6 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { ScheduleStatus, User, UserRole } from '@prisma/client';
+import { PermissionsService } from '../auth/permissions.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateScheduleDto } from './dto/create-schedule.dto';
 import { FindSchedulesDto } from './dto/find-schedules.dto';
@@ -13,11 +14,14 @@ const SCHEDULE_INCLUDE = {
 
 @Injectable()
 export class SchedulesService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly permissions: PermissionsService,
+  ) {}
 
   async create(dto: CreateScheduleDto, actor: User) {
-    if (actor.role === UserRole.merchandiser)
-      throw new ForbiddenException('Merchandisers cannot create schedules');
+    // Coarse "can this caller create schedules at all" is the controller's
+    // `@RequirePermissions('schedules.create')` guard — no role check needed here.
 
     const [targetUser, store] = await Promise.all([
       this.prisma.user.findUnique({ where: { id: dto.user_id } }),
@@ -60,14 +64,23 @@ export class SchedulesService {
     });
     if (!record) throw new NotFoundException('Schedule not found');
 
-    if (actor.role === UserRole.merchandiser) {
+    // Whether this caller can edit ANY schedule in their scope (region-limited
+    // below) is decided by holding `schedules.update` — not by role identity.
+    // Someone without it can still act on their OWN schedule in one narrow way:
+    // marking it completed. That's a self-service action tied to ownership of
+    // the record, not a grantable permission, so it stays available regardless
+    // of the caller's permission set.
+    const granted = await this.permissions.forUser(actor);
+    const canManageSchedules = granted.has('schedules.update');
+
+    if (!canManageSchedules) {
       if (record.user_id !== actor.id)
         throw new ForbiddenException('You can only update your own schedule');
 
       const { status, ...rest } = dto;
       const hasOtherFields = Object.values(rest).some((v) => v !== undefined);
       if (hasOtherFields || status !== ScheduleStatus.completed)
-        throw new ForbiddenException('Merchandisers can only mark their own visit as completed');
+        throw new ForbiddenException('You can only mark your own visit as completed');
 
       return this.prisma.schedule.update({
         where: { id },
@@ -95,8 +108,8 @@ export class SchedulesService {
   }
 
   async remove(id: string, actor: User) {
-    if (actor.role === UserRole.merchandiser)
-      throw new ForbiddenException('Merchandisers cannot delete schedules');
+    // Coarse "can this caller delete schedules at all" is the controller's
+    // `@RequirePermissions('schedules.delete')` guard — no role check needed here.
 
     const record = await this.prisma.schedule.findUnique({
       where: { id },
