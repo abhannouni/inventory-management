@@ -74,6 +74,15 @@
         "photo": "Photo"
       },
       "photoAlt": "photo"
+    },
+    "report": {
+      "title": "Supervision Report",
+      "titleLabel": "Title",
+      "noteLabel": "Note",
+      "photosTitle_one": "Photo ({{count}})",
+      "photosTitle_other": "Photos ({{count}})",
+      "noPhotos": "No photos",
+      "photoAlt": "report"
     }
   },
   "checkin": {
@@ -174,6 +183,55 @@
       "subtitleAt": "at",
       "productsCount_one": "{{count}} product",
       "productsCount_other": "{{count}} products",
+      "viewHistory": "View Visit History"
+    }
+  },
+  "supervisorFlow": {
+    "steps": {
+      "checkin": "Check In",
+      "report": "Report",
+      "checkout": "Check Out"
+    },
+    "title": "Supervision Visit",
+    "report": {
+      "sectionSubtitle": "Add a photo, a title and a note",
+      "photoLabel": "Photo",
+      "takePhoto": "Take a photo",
+      "addPhoto": "Add a photo",
+      "removePhoto": "Remove photo",
+      "photoAlt": "report",
+      "uploading": "Uploading…",
+      "titleLabel": "Title",
+      "titlePlaceholder": "E.g. Out of stock — dairy aisle",
+      "noteLabel": "Note (optional)",
+      "notePlaceholder": "Additional observations…",
+      "saveAndContinue": "Save & Continue",
+      "camera": {
+        "capture": "Capture",
+        "cancel": "Cancel",
+        "accessDenied": "Camera access denied. Allow camera access in your browser settings to take a photo.",
+        "unsupported": "Camera is not available on this device or browser."
+      },
+      "toasts": {
+        "fileTooLarge": "File must be under 10 MB",
+        "uploadFailed": "Photo upload failed",
+        "reportSaved": "Report saved!",
+        "reportSaveFailed": "Failed to save report"
+      }
+    },
+    "confirm": {
+      "sectionTitle": "Review before you leave",
+      "sectionSubtitle": "Check your report, then confirm check-out",
+      "photosLabel": "Photos",
+      "confirmCheckOut": "Confirm Check Out",
+      "toasts": {
+        "visitCompleted": "Visit completed!",
+        "checkoutFailed": "Check-out failed"
+      }
+    },
+    "done": {
+      "title": "Visit Complete!",
+      "subtitle": "Your report was successfully saved at",
       "viewHistory": "View Visit History"
     }
   },

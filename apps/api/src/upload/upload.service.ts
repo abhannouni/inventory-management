@@ -1,34 +1,32 @@
-import { BadRequestException, Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { v2 as cloudinary, UploadApiErrorResponse, UploadApiResponse } from 'cloudinary';
+import { randomUUID } from 'crypto';
+import { promises as fs } from 'fs';
+import { extname, join, resolve } from 'path';
 
 @Injectable()
 export class UploadService implements OnModuleInit {
-  constructor(private readonly config: ConfigService) {}
+  private readonly uploadDir: string;
 
-  onModuleInit() {
-    cloudinary.config({
-      cloud_name: this.config.get<string>('CLOUDINARY_CLOUD_NAME'),
-      api_key: this.config.get<string>('CLOUDINARY_API_KEY'),
-      api_secret: this.config.get<string>('CLOUDINARY_API_SECRET'),
-    });
+  constructor(private readonly config: ConfigService) {
+    // In production this should point at a mounted persistent volume
+    // (e.g. a Railway volume) — plain container disk is wiped on every deploy.
+    this.uploadDir = resolve(this.config.get<string>('UPLOAD_DIR') || './uploads');
+  }
+
+  async onModuleInit() {
+    await fs.mkdir(this.uploadDir, { recursive: true });
   }
 
   async uploadImage(file: Express.Multer.File): Promise<{ url: string }> {
-    const result = await this.streamUpload(file.buffer);
-    return { url: result.secure_url };
-  }
-
-  private streamUpload(buffer: Buffer): Promise<UploadApiResponse> {
-    return new Promise((resolve, reject) => {
-      const stream = cloudinary.uploader.upload_stream(
-        { folder: 'inventory-management', resource_type: 'image' },
-        (error: UploadApiErrorResponse | undefined, result: UploadApiResponse | undefined) => {
-          if (error || !result) return reject(error ?? new Error('Upload failed'));
-          resolve(result);
-        },
-      );
-      stream.end(buffer);
-    });
+    const filename = `${randomUUID()}${extname(file.originalname) || '.jpg'}`;
+    await fs.writeFile(join(this.uploadDir, filename), file.buffer);
+    // Relative on purpose: an absolute URL (host + port) bypasses the Vite dev
+    // proxy and any reverse proxy in front of the API, requiring every client
+    // (including other devices on the LAN) to reach the API port directly —
+    // which routers/firewalls commonly block even when the proxied port works
+    // fine. A relative path always resolves against whatever origin actually
+    // served the page, exactly like the existing `/api` calls already do.
+    return { url: `/uploads/${filename}` };
   }
 }

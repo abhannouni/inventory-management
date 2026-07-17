@@ -148,6 +148,10 @@ export interface Visit {
   elapsed_seconds: number;
   /** How much of the POS product list has been audited. Check-out is blocked until complete. */
   audit_progress?: AuditProgress;
+  /** Supervisor spot-check report, filled in instead of a product audit. */
+  report_title: string | null;
+  report_note: string | null;
+  report_photos: string[];
   store?: Store;
   user?: User;
   audit_items?: AuditItem[];

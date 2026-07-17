@@ -21,7 +21,7 @@ import { PermissionsGuard } from '../auth/guards/permissions.guard';
 import { UploadService } from './upload.service';
 import { ImageTypeValidator } from './validators/image-type.validator';
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 
 // Only ever called from the audit-item photo flows (visit check-in / bulk audit
 // / single audit item form) — gated on the same permission that lets a caller
@@ -36,7 +36,7 @@ export class UploadController {
   @Post()
   @RequirePermissions('audit_items.create')
   @UseInterceptors(FileInterceptor('file', { limits: { fileSize: MAX_FILE_SIZE } }))
-  @ApiOperation({ summary: 'Upload an image to Cloudinary and get back a public URL' })
+  @ApiOperation({ summary: 'Upload an image to local/mounted disk storage and get back a public URL' })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {

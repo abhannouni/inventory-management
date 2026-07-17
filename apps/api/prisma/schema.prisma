@@ -263,6 +263,13 @@ model Visit {
   duration_seconds Int?
   status           VisitStatus @default(open)
 
+  /// Supervisor spot-check report (title + note + photos), filled in during the
+  /// visit in place of the merchandiser's product audit. Required before checkout
+  /// when the visitor is a supervisor.
+  report_title  String?
+  report_note   String?
+  report_photos String[] @default([])
+
   auditItems AuditItem[]
 
   /// Supports the "one open visit per merchandiser" lookup and the resume query.

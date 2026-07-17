@@ -1,4 +1,4 @@
-import { join } from 'path';
+import { join, resolve } from 'path';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
@@ -27,10 +27,19 @@ import { MarketingModule } from './marketing/marketing.module';
       isGlobal: true,
       envFilePath: '.env',
     }),
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', '..', '..', 'web', 'dist'),
-      exclude: ['/api{/*splat}', '/docs', '/docs-json', '/docs-yaml', '/docs{/*splat}'],
-    }),
+    ServeStaticModule.forRoot(
+      {
+        rootPath: join(__dirname, '..', '..', '..', 'web', 'dist'),
+        exclude: ['/api{/*splat}', '/docs', '/docs-json', '/docs-yaml', '/docs{/*splat}', '/uploads{/*splat}'],
+      },
+      {
+        // Serves whatever UploadService writes to — point UPLOAD_DIR at a
+        // mounted persistent volume in production (plain container disk is
+        // wiped on every deploy).
+        rootPath: resolve(process.env.UPLOAD_DIR || './uploads'),
+        serveRoot: '/uploads',
+      },
+    ),
     PrismaModule,
     AuthModule,
     UserModule,

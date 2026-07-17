@@ -3,6 +3,9 @@
 /node_modules
 /build
 
+# local file storage (production uses a mounted volume instead)
+/uploads
+
 # Logs
 logs
 *.log

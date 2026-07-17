@@ -74,6 +74,15 @@
         "photo": "Photo"
       },
       "photoAlt": "photo"
+    },
+    "report": {
+      "title": "Rapport de supervision",
+      "titleLabel": "Titre",
+      "noteLabel": "Note",
+      "photosTitle_one": "Photo ({{count}})",
+      "photosTitle_other": "Photos ({{count}})",
+      "noPhotos": "Aucune photo",
+      "photoAlt": "constat"
     }
   },
   "checkin": {
@@ -174,6 +183,55 @@
       "subtitleAt": "chez",
       "productsCount_one": "{{count}} produit",
       "productsCount_other": "{{count}} produits",
+      "viewHistory": "Voir l'historique des visites"
+    }
+  },
+  "supervisorFlow": {
+    "steps": {
+      "checkin": "Arrivée",
+      "report": "Constat",
+      "checkout": "Sortie"
+    },
+    "title": "Visite de supervision",
+    "report": {
+      "sectionSubtitle": "Ajoutez une photo, un titre et une note",
+      "photoLabel": "Photo",
+      "takePhoto": "Prendre une photo",
+      "addPhoto": "Ajouter une photo",
+      "removePhoto": "Supprimer la photo",
+      "photoAlt": "constat",
+      "uploading": "Envoi en cours…",
+      "titleLabel": "Titre",
+      "titlePlaceholder": "Ex : Rupture de stock rayon lait",
+      "noteLabel": "Note (facultatif)",
+      "notePlaceholder": "Observations complémentaires…",
+      "saveAndContinue": "Enregistrer et continuer",
+      "camera": {
+        "capture": "Capturer",
+        "cancel": "Annuler",
+        "accessDenied": "Accès à la caméra refusé. Autorisez l'accès à la caméra dans les paramètres de votre navigateur pour prendre une photo.",
+        "unsupported": "La caméra n'est pas disponible sur cet appareil ou ce navigateur."
+      },
+      "toasts": {
+        "fileTooLarge": "Le fichier doit faire moins de 10 Mo",
+        "uploadFailed": "Échec de l'envoi de la photo",
+        "reportSaved": "Constat enregistré !",
+        "reportSaveFailed": "Échec de l'enregistrement du constat"
+      }
+    },
+    "confirm": {
+      "sectionTitle": "Vérifier avant de sortir",
+      "sectionSubtitle": "Relisez votre constat puis confirmez la sortie",
+      "photosLabel": "Photos",
+      "confirmCheckOut": "Confirmer la sortie",
+      "toasts": {
+        "visitCompleted": "Visite terminée !",
+        "checkoutFailed": "Échec du pointage de sortie"
+      }
+    },
+    "done": {
+      "title": "Visite terminée !",
+      "subtitle": "Votre constat a été enregistré avec succès chez",
       "viewHistory": "Voir l'historique des visites"
     }
   },

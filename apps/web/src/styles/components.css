@@ -2437,6 +2437,110 @@ button.mobile-nav-item {
 .photo-thumb-wrap:hover .photo-thumb-change,
 .photo-thumb-wrap:active .photo-thumb-change { opacity: 1; }
 
+/* Supervisor report: multi-photo grid */
+.sf-photo-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.sf-photo-item {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 4px 4px 12px rgba(0,0,0,0.12), -2px -2px 8px rgba(255,255,255,0.8);
+}
+.sf-photo-item img { width: 100%; height: 100%; object-fit: cover; }
+.sf-photo-remove {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.55);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  line-height: 1;
+  border: none;
+  cursor: pointer;
+}
+.sf-add-photo-btn {
+  width: 100%;
+  min-height: 44px;
+  border: 1.5px dashed rgba(29,106,222,0.35);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--primary-medium);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 10px;
+}
+.sf-add-photo-btn:disabled { opacity: 0.6; cursor: default; }
+
+/* Supervisor report: live camera capture overlay (works on laptop + phone) */
+.sf-camera-overlay {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+}
+.sf-camera-frame {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.sf-camera-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.sf-camera-error {
+  color: white;
+  font-size: 14px;
+  text-align: center;
+  padding: 0 32px;
+}
+.sf-camera-actions {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 20px 24px calc(24px + env(safe-area-inset-bottom));
+  background: rgba(0,0,0,0.6);
+}
+.sf-camera-cancel {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.sf-camera-shutter {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: white;
+  border: 4px solid rgba(255,255,255,0.4);
+  margin: 0 auto;
+  cursor: pointer;
+}
+.sf-camera-shutter:disabled { opacity: 0.5; cursor: default; }
+.sf-camera-shutter:active { background: #e5e5e5; }
+
 /* FAB (Floating Action Button) */
 .fab {
   position: fixed;

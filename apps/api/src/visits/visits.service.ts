@@ -9,6 +9,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CheckinDto } from './dto/checkin.dto';
 import { CheckoutDto } from './dto/checkout.dto';
 import { FindVisitsDto } from './dto/find-visits.dto';
+import { SubmitVisitReportDto } from './dto/submit-visit-report.dto';
 
 /**
  * The single definition of visit duration: `checkout_at - checkin_at`, in whole seconds.
@@ -111,6 +112,34 @@ export class VisitsService {
     };
   }
 
+  /**
+   * Supervisor spot-check: saves the title/note/photos while the visit is still
+   * open. Kept separate from checkout so the supervisor can review what they
+   * entered (the "confirm" step) before the visit actually closes.
+   */
+  async submitReport(id: string, dto: SubmitVisitReportDto, user: User) {
+    const visit = await this.prisma.visit.findUnique({ where: { id } });
+    if (!visit) throw new NotFoundException('Visit not found');
+    if (visit.user_id !== user.id) throw new ForbiddenException('This visit does not belong to you');
+    if (visit.status === VisitStatus.completed) {
+      throw new ConflictException('Visit is already completed');
+    }
+
+    const updated = await this.prisma.visit.update({
+      where: { id },
+      data: {
+        report_title: dto.title,
+        report_note: dto.note ?? null,
+        report_photos: dto.photos,
+      },
+      include: VISIT_INCLUDE,
+    });
+    return {
+      ...this.serializeVisit(updated),
+      audit_progress: await this.auditProgress(updated.id, updated.store_id),
+    };
+  }
+
   async checkout(dto: CheckoutDto, user: User) {
     const visit = await this.prisma.visit.findUnique({
       where: { id: dto.visit_id },
@@ -122,14 +151,22 @@ export class VisitsService {
       throw new ConflictException('Visit is already completed');
     }
 
-    // A visit is finished by doing the work, not by pressing a button: every
-    // product expected at this POS must have been audited before we let the
-    // merchandiser check out.
-    const { audited, expected } = await this.auditProgress(visit.id, visit.store_id);
-    if (expected > 0 && audited < expected) {
-      throw new ConflictException(
-        `Complete the audit before checking out — ${expected - audited} of ${expected} product(s) still to be recorded`,
-      );
+    if (user.role === UserRole.supervisor) {
+      // A supervisor's visit is a spot-check report, not a product audit: it must
+      // have a title and at least one photo before the visit can be closed.
+      if (!visit.report_title || visit.report_photos.length === 0) {
+        throw new ConflictException('Add a report (photo and title) before checking out');
+      }
+    } else {
+      // A visit is finished by doing the work, not by pressing a button: every
+      // product expected at this POS must have been audited before we let the
+      // merchandiser check out.
+      const { audited, expected } = await this.auditProgress(visit.id, visit.store_id);
+      if (expected > 0 && audited < expected) {
+        throw new ConflictException(
+          `Complete the audit before checking out — ${expected - audited} of ${expected} product(s) still to be recorded`,
+        );
+      }
     }
 
     // Server clock again — and the duration is derived from the two stored

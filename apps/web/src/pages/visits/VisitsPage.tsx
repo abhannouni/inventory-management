@@ -16,6 +16,7 @@ import Pagination from '../../components/ui/Pagination';
 import Select from '../../components/ui/Select';
 import CheckinForm from './CheckinForm';
 import MerchandiserFlowPage from './MerchandiserFlowPage';
+import SupervisorFlowPage from './SupervisorFlowPage';
 import VisitTimer from '../../components/ui/VisitTimer';
 import { formatDate, formatDurationShort } from '../../utils/format';
 import type { Visit } from '../../types';
@@ -309,7 +310,11 @@ export default function VisitsPage() {
         </button>
       </div>
 
-      {activeTab === 'visit'    && <MerchandiserFlowPage onViewHistory={() => setActiveTab('history')} />}
+      {activeTab === 'visit' && (
+        p.role === 'supervisor'
+          ? <SupervisorFlowPage onViewHistory={() => setActiveTab('history')} />
+          : <MerchandiserFlowPage onViewHistory={() => setActiveTab('history')} />
+      )}
       {activeTab === 'history'  && historyPanel}
     </div>
   );

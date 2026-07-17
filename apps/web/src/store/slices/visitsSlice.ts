@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { visitsApi } from '../../api/visits.api';
-import type { CheckinPayload, CheckoutPayload, FindVisitsParams } from '../../api/visits.api';
+import type { CheckinPayload, CheckoutPayload, FindVisitsParams, SubmitReportPayload } from '../../api/visits.api';
 import type { Visit } from '../../types';
 
 interface VisitsState {
@@ -29,6 +29,14 @@ export const checkout = createAsyncThunk('visits/checkout', async (payload: Chec
   try { return await visitsApi.checkout(payload); }
   catch (err) { return rejectWithValue((err as Error).message); }
 });
+
+export const submitVisitReport = createAsyncThunk(
+  'visits/submitReport',
+  async ({ visitId, payload }: { visitId: string; payload: SubmitReportPayload }, { rejectWithValue }) => {
+    try { return await visitsApi.submitReport(visitId, payload); }
+    catch (err) { return rejectWithValue((err as Error).message); }
+  },
+);
 
 export const fetchVisits = createAsyncThunk('visits/fetchAll', async (params: FindVisitsParams | undefined, { rejectWithValue }) => {
   try { return await visitsApi.findAll(params); }
@@ -69,6 +77,10 @@ const visitsSlice = createSlice({
         state.active = action.payload;
       })
       .addCase(checkin.rejected, (state, action) => { state.loading = false; state.error = action.payload as string; })
+      .addCase(submitVisitReport.fulfilled, (state, action) => {
+        // The visit is still open — just refresh the local copy with the saved report.
+        if (state.active?.id === action.payload.id) state.active = action.payload;
+      })
       .addCase(checkout.pending, (state) => { state.loading = true; state.error = null; })
       .addCase(checkout.fulfilled, (state, action) => {
         state.loading = false;

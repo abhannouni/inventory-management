@@ -74,6 +74,19 @@
         "photo": "صورة"
       },
       "photoAlt": "صورة"
+    },
+    "report": {
+      "title": "تقرير الإشراف",
+      "titleLabel": "العنوان",
+      "noteLabel": "ملاحظة",
+      "photosTitle_zero": "لا توجد صور",
+      "photosTitle_one": "صورة واحدة",
+      "photosTitle_two": "صورتان",
+      "photosTitle_few": "{{count}} صور",
+      "photosTitle_many": "{{count}} صورة",
+      "photosTitle_other": "{{count}} صورة",
+      "noPhotos": "لا توجد صور",
+      "photoAlt": "ملاحظة"
     }
   },
   "checkin": {
@@ -180,6 +193,55 @@
       "productsCount_few": "{{count}} منتجات",
       "productsCount_many": "{{count}} منتجًا",
       "productsCount_other": "{{count}} منتج",
+      "viewHistory": "عرض سجل الزيارات"
+    }
+  },
+  "supervisorFlow": {
+    "steps": {
+      "checkin": "الدخول",
+      "report": "الملاحظة",
+      "checkout": "الخروج"
+    },
+    "title": "زيارة إشرافية",
+    "report": {
+      "sectionSubtitle": "أضف صورة وعنوانًا وملاحظة",
+      "photoLabel": "صورة",
+      "takePhoto": "التقاط صورة",
+      "addPhoto": "إضافة صورة",
+      "removePhoto": "حذف الصورة",
+      "photoAlt": "ملاحظة",
+      "uploading": "جارٍ الرفع…",
+      "titleLabel": "العنوان",
+      "titlePlaceholder": "مثال: نفاد مخزون رف الألبان",
+      "noteLabel": "ملاحظة (اختياري)",
+      "notePlaceholder": "ملاحظات إضافية…",
+      "saveAndContinue": "حفظ ومتابعة",
+      "camera": {
+        "capture": "التقاط",
+        "cancel": "إلغاء",
+        "accessDenied": "تم رفض الوصول إلى الكاميرا. يرجى السماح بالوصول إلى الكاميرا من إعدادات المتصفح لالتقاط صورة.",
+        "unsupported": "الكاميرا غير متوفرة على هذا الجهاز أو المتصفح."
+      },
+      "toasts": {
+        "fileTooLarge": "يجب ألا يتجاوز حجم الملف 10 ميغابايت",
+        "uploadFailed": "فشل رفع الصورة",
+        "reportSaved": "تم حفظ الملاحظة!",
+        "reportSaveFailed": "فشل حفظ الملاحظة"
+      }
+    },
+    "confirm": {
+      "sectionTitle": "راجع قبل المغادرة",
+      "sectionSubtitle": "راجع ملاحظتك ثم أكّد تسجيل الخروج",
+      "photosLabel": "الصور",
+      "confirmCheckOut": "تأكيد تسجيل الخروج",
+      "toasts": {
+        "visitCompleted": "اكتملت الزيارة!",
+        "checkoutFailed": "فشل تسجيل الخروج"
+      }
+    },
+    "done": {
+      "title": "اكتملت الزيارة!",
+      "subtitle": "تم حفظ ملاحظتك بنجاح في",
       "viewHistory": "عرض سجل الزيارات"
     }
   },

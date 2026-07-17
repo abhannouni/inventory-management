@@ -22,6 +22,12 @@ export interface FindVisitsParams {
   [key: string]: string | undefined;
 }
 
+export interface SubmitReportPayload {
+  title: string;
+  note?: string;
+  photos: string[];
+}
+
 export const visitsApi = {
   checkin: (payload: CheckinPayload) => api.post<Visit>('/visits/checkin', payload),
   checkout: (payload: CheckoutPayload) => api.post<Visit>('/visits/checkout', payload),
@@ -29,4 +35,7 @@ export const visitsApi = {
   /** The caller's open visit, or null — the source of truth when resuming the timer. */
   findActive: () => api.get<Visit | null>('/visits/active'),
   findOne: (id: string) => api.get<Visit>(`/visits/${id}`),
+  /** Supervisor spot-check: saves title/note/photos on an open visit before checkout. */
+  submitReport: (visitId: string, payload: SubmitReportPayload) =>
+    api.patch<Visit>(`/visits/${visitId}/report`, payload),
 };

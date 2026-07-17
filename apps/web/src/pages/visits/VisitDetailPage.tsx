@@ -101,29 +101,45 @@ export default function VisitDetailPage() {
           </div>
         </motion.div>
 
-        <motion.div className="card" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-          <div className="card-body">
-            <h3 style={{ fontSize: 14, fontWeight: 600, color: 'var(--gray-700)', marginBottom: 12 }}>{t('detail.auditSummary.title')}</h3>
-            <div className="summary-grid" style={{ background: 'transparent', padding: 0, gap: 16 }}>
-              <div className="summary-item">
-                <div className="summary-value" style={{ color: 'var(--gray-900)' }}>{total}</div>
-                <div className="summary-label">{t('detail.auditSummary.total')}</div>
+        {visit.report_title ? (
+          <motion.div className="card" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+            <div className="card-body">
+              <h3 style={{ fontSize: 14, fontWeight: 600, color: 'var(--gray-700)', marginBottom: 12 }}>{t('detail.report.title')}</h3>
+              <div className="detail-item" style={{ marginBottom: 12 }}>
+                <span className="detail-label">{t('detail.report.titleLabel')}</span>
+                <span className="detail-value">{visit.report_title}</span>
               </div>
-              <div className="summary-item">
-                <div className="summary-value" style={{ color: 'var(--success)' }}>{inStock}</div>
-                <div className="summary-label">{t('detail.auditSummary.inStock')}</div>
-              </div>
-              <div className="summary-item">
-                <div className="summary-value" style={{ color: 'var(--warning)' }}>{lowStock}</div>
-                <div className="summary-label">{t('detail.auditSummary.lowStock')}</div>
-              </div>
-              <div className="summary-item">
-                <div className="summary-value" style={{ color: 'var(--danger)' }}>{outOfStock}</div>
-                <div className="summary-label">{t('detail.auditSummary.outOfStock')}</div>
-              </div>
+              {visit.report_note && (
+                <div className="detail-item">
+                  <span className="detail-label">{t('detail.report.noteLabel')}</span>
+                  <span className="detail-value" style={{ whiteSpace: 'pre-wrap' }}>{visit.report_note}</span>
+                </div>
+              )}
             </div>
-            {total > 0 && (
-              <>
+          </motion.div>
+        ) : (
+          <motion.div className="card" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+            <div className="card-body">
+              <h3 style={{ fontSize: 14, fontWeight: 600, color: 'var(--gray-700)', marginBottom: 12 }}>{t('detail.auditSummary.title')}</h3>
+              <div className="summary-grid" style={{ background: 'transparent', padding: 0, gap: 16 }}>
+                <div className="summary-item">
+                  <div className="summary-value" style={{ color: 'var(--gray-900)' }}>{total}</div>
+                  <div className="summary-label">{t('detail.auditSummary.total')}</div>
+                </div>
+                <div className="summary-item">
+                  <div className="summary-value" style={{ color: 'var(--success)' }}>{inStock}</div>
+                  <div className="summary-label">{t('detail.auditSummary.inStock')}</div>
+                </div>
+                <div className="summary-item">
+                  <div className="summary-value" style={{ color: 'var(--warning)' }}>{lowStock}</div>
+                  <div className="summary-label">{t('detail.auditSummary.lowStock')}</div>
+                </div>
+                <div className="summary-item">
+                  <div className="summary-value" style={{ color: 'var(--danger)' }}>{outOfStock}</div>
+                  <div className="summary-label">{t('detail.auditSummary.outOfStock')}</div>
+                </div>
+              </div>
+              {total > 0 && (
                 <div style={{ marginTop: 16 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--gray-500)', marginBottom: 6 }}>
                     <span>{t('detail.auditSummary.completion')}</span>
@@ -133,54 +149,77 @@ export default function VisitDetailPage() {
                     <div className="progress-fill" style={{ width: `${(inStock / total) * 100}%` }} />
                   </div>
                 </div>
-              </>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </div>
+
+      {visit.report_title ? (
+        <motion.div className="card" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+          <div className="card-header" style={{ padding: '16px 20px' }}>
+            <h3 style={{ fontSize: 14, fontWeight: 600 }}>{t('detail.report.photosTitle', { count: visit.report_photos.length })}</h3>
+          </div>
+          <div className="card-body">
+            {visit.report_photos.length === 0 ? (
+              <div className="empty-state">
+                <div className="empty-state-title">{t('detail.report.noPhotos')}</div>
+              </div>
+            ) : (
+              <div className="sf-photo-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))' }}>
+                {visit.report_photos.map((url) => (
+                  <a key={url} href={url} target="_blank" rel="noopener noreferrer" className="sf-photo-item">
+                    <img src={url} alt={t('detail.report.photoAlt')} />
+                  </a>
+                ))}
+              </div>
             )}
           </div>
         </motion.div>
-      </div>
-
-      <motion.div className="card" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-        <div className="card-header" style={{ padding: '16px 20px' }}>
-          <h3 style={{ fontSize: 14, fontWeight: 600 }}>{t('detail.auditItems.title', { count: total })}</h3>
-        </div>
-        {items.length === 0 ? (
-          <div className="empty-state">
-            <div className="empty-state-title">{t('detail.auditItems.emptyTitle')}</div>
-            <div className="empty-state-subtitle">{t('detail.auditItems.emptySubtitle')}</div>
+      ) : (
+        <motion.div className="card" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+          <div className="card-header" style={{ padding: '16px 20px' }}>
+            <h3 style={{ fontSize: 14, fontWeight: 600 }}>{t('detail.auditItems.title', { count: total })}</h3>
           </div>
-        ) : (
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>{t('detail.auditItems.columns.product')}</th>
-                <th>{t('detail.auditItems.columns.sku')}</th>
-                <th>{t('detail.auditItems.columns.qtyFound')}</th>
-                <th>{t('detail.auditItems.columns.status')}</th>
-                <th>{t('detail.auditItems.columns.notes')}</th>
-                <th>{t('detail.auditItems.columns.photo')}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {items.map((item) => (
-                <tr key={item.id}>
-                  <td style={{ fontWeight: 500 }}>{item.product?.name || item.product_id}</td>
-                  <td style={{ fontFamily: 'monospace', fontSize: 12 }}>{item.product?.sku || '—'}</td>
-                  <td style={{ fontWeight: 600 }}>{item.qty_found}</td>
-                  <td><Badge variant={statusBadge[item.status]}>{statusLabel[item.status]}</Badge></td>
-                  <td style={{ color: 'var(--gray-500)' }}>{item.notes || '—'}</td>
-                  <td>
-                    {item.photo_url ? (
-                      <a href={item.photo_url} target="_blank" rel="noopener noreferrer">
-                        <img src={item.photo_url} alt={t('detail.auditItems.photoAlt')} style={{ width: 36, height: 36, objectFit: 'cover', borderRadius: 4, border: '1px solid var(--gray-200)' }} />
-                      </a>
-                    ) : '—'}
-                  </td>
+          {items.length === 0 ? (
+            <div className="empty-state">
+              <div className="empty-state-title">{t('detail.auditItems.emptyTitle')}</div>
+              <div className="empty-state-subtitle">{t('detail.auditItems.emptySubtitle')}</div>
+            </div>
+          ) : (
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>{t('detail.auditItems.columns.product')}</th>
+                  <th>{t('detail.auditItems.columns.sku')}</th>
+                  <th>{t('detail.auditItems.columns.qtyFound')}</th>
+                  <th>{t('detail.auditItems.columns.status')}</th>
+                  <th>{t('detail.auditItems.columns.notes')}</th>
+                  <th>{t('detail.auditItems.columns.photo')}</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </motion.div>
+              </thead>
+              <tbody>
+                {items.map((item) => (
+                  <tr key={item.id}>
+                    <td style={{ fontWeight: 500 }}>{item.product?.name || item.product_id}</td>
+                    <td style={{ fontFamily: 'monospace', fontSize: 12 }}>{item.product?.sku || '—'}</td>
+                    <td style={{ fontWeight: 600 }}>{item.qty_found}</td>
+                    <td><Badge variant={statusBadge[item.status]}>{statusLabel[item.status]}</Badge></td>
+                    <td style={{ color: 'var(--gray-500)' }}>{item.notes || '—'}</td>
+                    <td>
+                      {item.photo_url ? (
+                        <a href={item.photo_url} target="_blank" rel="noopener noreferrer">
+                          <img src={item.photo_url} alt={t('detail.auditItems.photoAlt')} style={{ width: 36, height: 36, objectFit: 'cover', borderRadius: 4, border: '1px solid var(--gray-200)' }} />
+                        </a>
+                      ) : '—'}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </motion.div>
+      )}
     </div>
   );
 }
