@@ -52,7 +52,7 @@
     "postalCodePlaceholder": "ex. 20250",
     "openingDateLabel": "Date d’ouverture",
     "contacts": {
-      "sectionManager": "Chef de rayon",
+      "sectionManager": "Chef de rayon liquid",
       "departmentManager": "Chef de département",
       "gds": "GDS",
       "name": "Nom",

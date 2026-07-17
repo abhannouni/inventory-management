@@ -64,5 +64,24 @@
   },
   "deleteConfirm": {
     "message": "Cette action supprimera définitivement le produit."
+  },
+  "bulkImport": {
+    "button": "Importer Excel",
+    "title": "Import en masse des produits",
+    "templateTitle": "Besoin du modèle ?",
+    "instructions": "Téléchargez le fichier exemple pour voir les noms de colonnes et le format exacts attendus, remplissez-le avec vos produits, puis importez-le ci-dessous.",
+    "downloadTemplate": "Télécharger l'exemple Excel",
+    "fileLabel": "Fichier Excel",
+    "chooseFile": "Cliquez pour choisir un fichier",
+    "fileHint": "Fichiers .xlsx ou .xls acceptés",
+    "import": "Importer",
+    "created": "Créés",
+    "failed": "Échoués",
+    "rowLabel": "Ligne {{row}}",
+    "allImported": "Toutes les lignes ont été importées avec succès",
+    "toasts": {
+      "importSuccess": "{{count}} produit(s) importé(s) avec succès",
+      "importError": "Échec de l'import des produits"
+    }
   }
 }

@@ -31,6 +31,16 @@ export const deleteProduct = createAsyncThunk('products/delete', async (id: stri
   catch (err) { return rejectWithValue((err as Error).message); }
 });
 
+export const bulkImportProducts = createAsyncThunk('products/bulkImport', async (file: File, { dispatch, rejectWithValue }) => {
+  try {
+    const result = await productsApi.bulkImport(file);
+    if (result.created > 0) dispatch(fetchProducts());
+    return result;
+  } catch (err) {
+    return rejectWithValue((err as Error).message);
+  }
+});
+
 const productsSlice = createSlice({
   name: 'products',
   initialState,

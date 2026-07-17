@@ -64,5 +64,24 @@
   },
   "deleteConfirm": {
     "message": "This will permanently delete the product."
+  },
+  "bulkImport": {
+    "button": "Import Excel",
+    "title": "Bulk Import Products",
+    "templateTitle": "Need the template?",
+    "instructions": "Download the example file to see the exact column names and format expected, fill it with your products, then upload it below.",
+    "downloadTemplate": "Download example Excel",
+    "fileLabel": "Excel file",
+    "chooseFile": "Click to choose a file",
+    "fileHint": "Supports .xlsx or .xls files",
+    "import": "Import",
+    "created": "Created",
+    "failed": "Failed",
+    "rowLabel": "Row {{row}}",
+    "allImported": "All rows imported successfully",
+    "toasts": {
+      "importSuccess": "{{count}} product(s) imported successfully",
+      "importError": "Failed to import products"
+    }
   }
 }

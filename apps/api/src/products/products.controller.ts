@@ -5,14 +5,21 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  MaxFileSizeValidator,
   Param,
+  ParseFilePipe,
   ParseUUIDPipe,
   Patch,
   Post,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import {
   ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
   ApiNoContentResponse,
   ApiOperation,
   ApiTags,
@@ -23,6 +30,9 @@ import { PermissionsGuard } from '../auth/guards/permissions.guard';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductsService } from './products.service';
+import { ExcelTypeValidator } from './validators/excel-type.validator';
+
+const MAX_IMPORT_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 
 @ApiTags('products')
 @ApiBearerAuth()
@@ -52,10 +62,40 @@ export class ProductsController {
     return this.productsService.create(dto);
   }
 
+  @Post('bulk-import')
+  @RequirePermissions('products.create')
+  @UseInterceptors(
+    FileInterceptor('file', { limits: { fileSize: MAX_IMPORT_FILE_SIZE } }),
+  )
+  @ApiOperation({ summary: 'Bulk-create products from an uploaded Excel file' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: { file: { type: 'string', format: 'binary' } },
+    },
+  })
+  bulkImport(
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: MAX_IMPORT_FILE_SIZE }),
+          new ExcelTypeValidator(),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
+  ) {
+    return this.productsService.bulkImportFromFile(file.buffer);
+  }
+
   @Patch(':id')
   @RequirePermissions('products.update')
   @ApiOperation({ summary: 'Update a catalog product' })
-  update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateProductDto) {
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: UpdateProductDto,
+  ) {
     return this.productsService.update(id, dto);
   }
 

@@ -12,6 +12,17 @@ export interface ProductPayload {
   format: string;
 }
 
+export interface BulkImportRowError {
+  row: number;
+  message: string;
+}
+
+export interface BulkImportResult {
+  created: number;
+  failed: number;
+  errors: BulkImportRowError[];
+}
+
 export const productsApi = {
   findAll: () => api.get<Product[]>('/products'),
   findOne: (id: string) => api.get<Product>(`/products/${id}`),
@@ -19,4 +30,9 @@ export const productsApi = {
   update: (id: string, payload: Partial<ProductPayload>) =>
     api.patch<Product>(`/products/${id}`, payload),
   remove: (id: string) => api.delete<void>(`/products/${id}`),
+  bulkImport: (file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return api.upload<BulkImportResult>('/products/bulk-import', formData);
+  },
 };
