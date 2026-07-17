@@ -1,6 +1,12 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { visitsApi } from '../../api/visits.api';
-import type { CheckinPayload, CheckoutPayload, FindVisitsParams, SubmitReportPayload } from '../../api/visits.api';
+import type {
+  CheckinPayload,
+  CheckoutPayload,
+  FindVisitsParams,
+  SubmitReportPayload,
+  SubmitStatePayload,
+} from '../../api/visits.api';
 import type { Visit } from '../../types';
 
 interface VisitsState {
@@ -34,6 +40,22 @@ export const submitVisitReport = createAsyncThunk(
   'visits/submitReport',
   async ({ visitId, payload }: { visitId: string; payload: SubmitReportPayload }, { rejectWithValue }) => {
     try { return await visitsApi.submitReport(visitId, payload); }
+    catch (err) { return rejectWithValue((err as Error).message); }
+  },
+);
+
+export const submitVisitInitialState = createAsyncThunk(
+  'visits/submitInitialState',
+  async ({ visitId, payload }: { visitId: string; payload: SubmitStatePayload }, { rejectWithValue }) => {
+    try { return await visitsApi.submitInitialState(visitId, payload); }
+    catch (err) { return rejectWithValue((err as Error).message); }
+  },
+);
+
+export const submitVisitFinalState = createAsyncThunk(
+  'visits/submitFinalState',
+  async ({ visitId, payload }: { visitId: string; payload: SubmitStatePayload }, { rejectWithValue }) => {
+    try { return await visitsApi.submitFinalState(visitId, payload); }
     catch (err) { return rejectWithValue((err as Error).message); }
   },
 );
@@ -79,6 +101,12 @@ const visitsSlice = createSlice({
       .addCase(checkin.rejected, (state, action) => { state.loading = false; state.error = action.payload as string; })
       .addCase(submitVisitReport.fulfilled, (state, action) => {
         // The visit is still open — just refresh the local copy with the saved report.
+        if (state.active?.id === action.payload.id) state.active = action.payload;
+      })
+      .addCase(submitVisitInitialState.fulfilled, (state, action) => {
+        if (state.active?.id === action.payload.id) state.active = action.payload;
+      })
+      .addCase(submitVisitFinalState.fulfilled, (state, action) => {
         if (state.active?.id === action.payload.id) state.active = action.payload;
       })
       .addCase(checkout.pending, (state) => { state.loading = true; state.error = null; })

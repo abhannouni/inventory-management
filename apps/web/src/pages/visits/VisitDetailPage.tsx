@@ -155,6 +155,46 @@ export default function VisitDetailPage() {
         )}
       </div>
 
+      {!visit.report_title && (visit.initial_photos.length > 0 || visit.final_photos.length > 0) && (
+        <motion.div className="card" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} style={{ marginBottom: 20 }}>
+          <div className="card-header" style={{ padding: '16px 20px' }}>
+            <h3 style={{ fontSize: 14, fontWeight: 600 }}>{t('detail.beforeAfter.title')}</h3>
+          </div>
+          <div className="card-body" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+            <div>
+              <h4 style={{ fontSize: 13, fontWeight: 600, color: 'var(--gray-700)', marginBottom: 8 }}>{t('detail.beforeAfter.initialLabel')}</h4>
+              {visit.initial_note && <p style={{ fontSize: 13, color: 'var(--gray-600)', marginBottom: 8, whiteSpace: 'pre-wrap' }}>{visit.initial_note}</p>}
+              {visit.initial_photos.length === 0 ? (
+                <p style={{ fontSize: 13, color: 'var(--gray-400)' }}>{t('detail.beforeAfter.noPhotos')}</p>
+              ) : (
+                <div className="sf-photo-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))' }}>
+                  {visit.initial_photos.map((url) => (
+                    <a key={url} href={url} target="_blank" rel="noopener noreferrer" className="sf-photo-item">
+                      <img src={url} alt={t('detail.beforeAfter.photoAlt')} />
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div>
+              <h4 style={{ fontSize: 13, fontWeight: 600, color: 'var(--gray-700)', marginBottom: 8 }}>{t('detail.beforeAfter.finalLabel')}</h4>
+              {visit.final_note && <p style={{ fontSize: 13, color: 'var(--gray-600)', marginBottom: 8, whiteSpace: 'pre-wrap' }}>{visit.final_note}</p>}
+              {visit.final_photos.length === 0 ? (
+                <p style={{ fontSize: 13, color: 'var(--gray-400)' }}>{t('detail.beforeAfter.noPhotos')}</p>
+              ) : (
+                <div className="sf-photo-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))' }}>
+                  {visit.final_photos.map((url) => (
+                    <a key={url} href={url} target="_blank" rel="noopener noreferrer" className="sf-photo-item">
+                      <img src={url} alt={t('detail.beforeAfter.photoAlt')} />
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </motion.div>
+      )}
+
       {visit.report_title ? (
         <motion.div className="card" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
           <div className="card-header" style={{ padding: '16px 20px' }}>

@@ -4,10 +4,18 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../../hooks/useAppDispatch';
-import { checkin, checkout, fetchVisits, fetchActiveVisit } from '../../store/slices/visitsSlice';
+import {
+  checkin,
+  checkout,
+  submitVisitInitialState,
+  submitVisitFinalState,
+  fetchVisits,
+  fetchActiveVisit,
+} from '../../store/slices/visitsSlice';
 import { fetchStores } from '../../store/slices/storesSlice';
 import { fetchSchedules } from '../../store/slices/schedulesSlice';
 import VisitTimer from '../../components/ui/VisitTimer';
+import PhotoNoteStep from './PhotoNoteStep';
 import { auditItemsApi } from '../../api/audit-items.api';
 import { productStoresApi } from '../../api/product-stores.api';
 import { uploadApi } from '../../api/upload.api';
@@ -15,7 +23,7 @@ import { formatDate } from '../../utils/format';
 import type { Visit, ProductStore } from '../../types';
 
 /* ─────────── Types ─────────── */
-type Step = 'checkin' | 'audit' | 'checkout' | 'done';
+type Step = 'checkin' | 'initial' | 'audit' | 'final' | 'checkout' | 'done';
 
 interface AuditRow extends ProductStore {
   qty_found: number;
@@ -71,10 +79,12 @@ function StepIndicator({ current }: { current: Step }) {
   const { t } = useTranslation('visits');
   const steps: { id: Step; label: string; icon: string }[] = [
     { id: 'checkin',  label: t('merchandiserFlow.steps.checkin'),  icon: '📍' },
+    { id: 'initial',  label: t('merchandiserFlow.steps.initial'),  icon: '🖼️' },
     { id: 'audit',    label: t('merchandiserFlow.steps.audit'),     icon: '📋' },
+    { id: 'final',    label: t('merchandiserFlow.steps.final'),    icon: '🖼️' },
     { id: 'checkout', label: t('merchandiserFlow.steps.checkout'), icon: '✅' },
   ];
-  const idx = ['checkin','audit','checkout','done'].indexOf(current);
+  const idx = ['checkin','initial','audit','final','checkout','done'].indexOf(current);
   return (
     <div className="mf-steps">
       {steps.map((s, i) => {
@@ -136,6 +146,11 @@ export default function MerchandiserFlowPage({ onViewHistory }: MerchandiserFlow
   const [loadingProducts, setLoadingProducts] = useState(false);
   const [, setAuditDone] = useState(false);
 
+  const [initialNote, setInitialNote]     = useState('');
+  const [initialPhotos, setInitialPhotos] = useState<string[]>([]);
+  const [finalNote, setFinalNote]         = useState('');
+  const [finalPhotos, setFinalPhotos]     = useState<string[]>([]);
+
   const fileRefs = useRef<Map<string, HTMLInputElement>>(new Map());
 
   /* Load stores + ask the server whether a visit is already running */
@@ -168,8 +183,21 @@ export default function MerchandiserFlowPage({ onViewHistory }: MerchandiserFlow
     if (activeVisit && step === 'checkin') {
       setVisit(activeVisit);
       setStoreId(activeVisit.store_id);
-      setStep('audit');
+      setInitialNote(activeVisit.initial_note ?? '');
+      setInitialPhotos(activeVisit.initial_photos ?? []);
+      setFinalNote(activeVisit.final_note ?? '');
+      setFinalPhotos(activeVisit.final_photos ?? []);
       loadProductsForStore(activeVisit.store_id, activeVisit);
+
+      if (!activeVisit.initial_photos?.length) {
+        setStep('initial');
+      } else if (!activeVisit.audit_progress?.is_complete) {
+        setStep('audit');
+      } else if (!activeVisit.final_photos?.length) {
+        setStep('final');
+      } else {
+        setStep('checkout');
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeVisit]);
@@ -228,13 +256,49 @@ export default function MerchandiserFlowPage({ onViewHistory }: MerchandiserFlow
       setVisit(newVisit);
       toast.success(t('merchandiserFlow.checkin.toasts.checkedIn'));
       await loadProductsForStore(storeId, newVisit);
-      setStep('audit');
+      setStep('initial');
     } else {
       toast.error((res.payload as string) || t('merchandiserFlow.checkin.toasts.checkinFailed'));
     }
   };
 
-  /* ── Step 2: Audit rows ── */
+  /* ── Step 2: Initial shelf state ── */
+  const handleInitialContinue = async () => {
+    if (!visit) return;
+    setBusy(true);
+    const res = await dispatch(submitVisitInitialState({
+      visitId: visit.id,
+      payload: { note: initialNote.trim() || undefined, photos: initialPhotos },
+    }));
+    setBusy(false);
+    if (submitVisitInitialState.fulfilled.match(res)) {
+      setVisit(res.payload as Visit);
+      toast.success(t('merchandiserFlow.initial.toasts.saved'));
+      setStep('audit');
+    } else {
+      toast.error((res.payload as string) || t('merchandiserFlow.initial.toasts.saveFailed'));
+    }
+  };
+
+  /* ── Step 4: Final shelf state ── */
+  const handleFinalContinue = async () => {
+    if (!visit) return;
+    setBusy(true);
+    const res = await dispatch(submitVisitFinalState({
+      visitId: visit.id,
+      payload: { note: finalNote.trim() || undefined, photos: finalPhotos },
+    }));
+    setBusy(false);
+    if (submitVisitFinalState.fulfilled.match(res)) {
+      setVisit(res.payload as Visit);
+      toast.success(t('merchandiserFlow.final.toasts.saved'));
+      setStep('checkout');
+    } else {
+      toast.error((res.payload as string) || t('merchandiserFlow.final.toasts.saveFailed'));
+    }
+  };
+
+  /* ── Step 3: Audit rows ── */
   const updateRow = (id: string, patch: Partial<AuditRow>) =>
     setAuditRows((r) => r.map((row) => (row.id === id ? { ...row, ...patch } : row)));
 
@@ -268,7 +332,7 @@ export default function MerchandiserFlowPage({ onViewHistory }: MerchandiserFlow
       await auditItemsApi.bulkUpsert({ visit_id: visit.id, items });
       setAuditDone(true);
       toast.success(t('merchandiserFlow.audit.toasts.auditSaved'));
-      setStep('checkout');
+      setStep('final');
     } catch {
       toast.error(t('merchandiserFlow.audit.toasts.auditSaveFailed'));
     } finally {
@@ -463,7 +527,46 @@ export default function MerchandiserFlowPage({ onViewHistory }: MerchandiserFlow
           </motion.div>
         )}
 
-        {/* ────────── STEP 2: AUDIT ────────── */}
+        {/* ────────── STEP 2: INITIAL SHELF STATE ────────── */}
+        {step === 'initial' && (
+          <motion.div key="initial" className="mf-panel" initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -24 }} transition={{ duration: 0.25 }}>
+            <div className="mf-store-banner">
+              <div className="mf-store-banner-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 9h18v10a2 2 0 01-2 2H5a2 2 0 01-2-2V9zM3 9l2.45-4.9A2 2 0 017.24 3h9.52a2 2 0 011.8 1.1L21 9M12 3v6"/>
+                </svg>
+              </div>
+              <div>
+                <div className="mf-store-name">{storeName}</div>
+                <div className="mf-store-sub">{t('merchandiserFlow.initial.sectionSubtitle')}</div>
+              </div>
+            </div>
+
+            <PhotoNoteStep
+              labels={{
+                photoLabel: t('merchandiserFlow.initial.photoLabel'),
+                takePhoto: t('merchandiserFlow.initial.takePhoto'),
+                addPhoto: t('merchandiserFlow.initial.addPhoto'),
+                removePhoto: t('merchandiserFlow.initial.removePhoto'),
+                photoAlt: t('merchandiserFlow.initial.photoAlt'),
+                uploading: t('merchandiserFlow.initial.uploading'),
+                noteLabel: t('merchandiserFlow.initial.noteLabel'),
+                notePlaceholder: t('merchandiserFlow.initial.notePlaceholder'),
+                continueLabel: t('merchandiserFlow.initial.continueLabel'),
+                fileTooLarge: t('merchandiserFlow.initial.toasts.fileTooLarge'),
+                uploadFailed: t('merchandiserFlow.initial.toasts.uploadFailed'),
+              }}
+              photos={initialPhotos}
+              onPhotosChange={setInitialPhotos}
+              note={initialNote}
+              onNoteChange={setInitialNote}
+              busy={busy}
+              onContinue={handleInitialContinue}
+            />
+          </motion.div>
+        )}
+
+        {/* ────────── STEP 3: AUDIT ────────── */}
         {step === 'audit' && (
           <motion.div key="audit" className="mf-panel" initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -24 }} transition={{ duration: 0.25 }}>
 
@@ -622,7 +725,46 @@ export default function MerchandiserFlowPage({ onViewHistory }: MerchandiserFlow
           </motion.div>
         )}
 
-        {/* ────────── STEP 3: CHECK OUT ────────── */}
+        {/* ────────── STEP 4: FINAL SHELF STATE ────────── */}
+        {step === 'final' && (
+          <motion.div key="final" className="mf-panel" initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -24 }} transition={{ duration: 0.25 }}>
+            <div className="mf-store-banner">
+              <div className="mf-store-banner-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 9h18v10a2 2 0 01-2 2H5a2 2 0 01-2-2V9zM3 9l2.45-4.9A2 2 0 017.24 3h9.52a2 2 0 011.8 1.1L21 9M12 3v6"/>
+                </svg>
+              </div>
+              <div>
+                <div className="mf-store-name">{storeName}</div>
+                <div className="mf-store-sub">{t('merchandiserFlow.final.sectionSubtitle')}</div>
+              </div>
+            </div>
+
+            <PhotoNoteStep
+              labels={{
+                photoLabel: t('merchandiserFlow.final.photoLabel'),
+                takePhoto: t('merchandiserFlow.final.takePhoto'),
+                addPhoto: t('merchandiserFlow.final.addPhoto'),
+                removePhoto: t('merchandiserFlow.final.removePhoto'),
+                photoAlt: t('merchandiserFlow.final.photoAlt'),
+                uploading: t('merchandiserFlow.final.uploading'),
+                noteLabel: t('merchandiserFlow.final.noteLabel'),
+                notePlaceholder: t('merchandiserFlow.final.notePlaceholder'),
+                continueLabel: t('merchandiserFlow.final.continueLabel'),
+                fileTooLarge: t('merchandiserFlow.final.toasts.fileTooLarge'),
+                uploadFailed: t('merchandiserFlow.final.toasts.uploadFailed'),
+              }}
+              photos={finalPhotos}
+              onPhotosChange={setFinalPhotos}
+              note={finalNote}
+              onNoteChange={setFinalNote}
+              busy={busy}
+              onContinue={handleFinalContinue}
+            />
+          </motion.div>
+        )}
+
+        {/* ────────── STEP 5: CHECK OUT ────────── */}
         {step === 'checkout' && (
           <motion.div key="checkout" className="mf-panel" initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -24 }} transition={{ duration: 0.25 }}>
 

@@ -53,6 +53,13 @@
       "gpsOut": "GPS الخروج",
       "duration": "المدة"
     },
+    "beforeAfter": {
+      "title": "الحالة الأولية / النهائية",
+      "initialLabel": "الحالة الأولية",
+      "finalLabel": "الحالة النهائية",
+      "noPhotos": "لا توجد صور",
+      "photoAlt": "حالة الرف"
+    },
     "auditSummary": {
       "title": "ملخص الجرد",
       "total": "الإجمالي",
@@ -109,7 +116,9 @@
   "merchandiserFlow": {
     "steps": {
       "checkin": "الدخول",
+      "initial": "الحالة الأولية",
       "audit": "الجرد",
+      "final": "الحالة النهائية",
       "checkout": "الخروج"
     },
     "title": "زيارة المتجر",
@@ -137,6 +146,42 @@
       "toasts": {
         "checkedIn": "تم تسجيل الدخول!",
         "checkinFailed": "فشل تسجيل الدخول"
+      }
+    },
+    "initial": {
+      "sectionSubtitle": "أضف صورة للحالة الأولية للرف قبل البدء",
+      "photoLabel": "صورة",
+      "takePhoto": "التقاط صورة",
+      "addPhoto": "إضافة صورة",
+      "removePhoto": "حذف الصورة",
+      "photoAlt": "الحالة الأولية",
+      "uploading": "جارٍ الرفع…",
+      "noteLabel": "ملاحظة (اختياري)",
+      "notePlaceholder": "ملاحظات قبل الجرد…",
+      "continueLabel": "متابعة",
+      "toasts": {
+        "fileTooLarge": "يجب ألا يتجاوز حجم الملف 10 ميغابايت",
+        "uploadFailed": "فشل رفع الصورة",
+        "saved": "تم حفظ الحالة الأولية!",
+        "saveFailed": "فشل حفظ الحالة الأولية"
+      }
+    },
+    "final": {
+      "sectionSubtitle": "أضف صورة للحالة النهائية للرف قبل المغادرة",
+      "photoLabel": "صورة",
+      "takePhoto": "التقاط صورة",
+      "addPhoto": "إضافة صورة",
+      "removePhoto": "حذف الصورة",
+      "photoAlt": "الحالة النهائية",
+      "uploading": "جارٍ الرفع…",
+      "noteLabel": "ملاحظة (اختياري)",
+      "notePlaceholder": "ملاحظات بعد الجرد…",
+      "continueLabel": "متابعة",
+      "toasts": {
+        "fileTooLarge": "يجب ألا يتجاوز حجم الملف 10 ميغابايت",
+        "uploadFailed": "فشل رفع الصورة",
+        "saved": "تم حفظ الحالة النهائية!",
+        "saveFailed": "فشل حفظ الحالة النهائية"
       }
     },
     "audit": {

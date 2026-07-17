@@ -270,6 +270,13 @@ model Visit {
   report_note   String?
   report_photos String[] @default([])
 
+  /// Merchandiser "before/after" shelf photos, bracketing the product audit.
+  /// Required before checkout for non-supervisor visits.
+  initial_note   String?
+  initial_photos String[] @default([])
+  final_note     String?
+  final_photos   String[] @default([])
+
   auditItems AuditItem[]
 
   /// Supports the "one open visit per merchandiser" lookup and the resume query.

@@ -152,6 +152,11 @@ export interface Visit {
   report_title: string | null;
   report_note: string | null;
   report_photos: string[];
+  /** Merchandiser "before/after" shelf photos, bracketing the product audit. */
+  initial_note: string | null;
+  initial_photos: string[];
+  final_note: string | null;
+  final_photos: string[];
   store?: Store;
   user?: User;
   audit_items?: AuditItem[];

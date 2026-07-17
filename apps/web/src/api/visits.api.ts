@@ -28,6 +28,11 @@ export interface SubmitReportPayload {
   photos: string[];
 }
 
+export interface SubmitStatePayload {
+  note?: string;
+  photos: string[];
+}
+
 export const visitsApi = {
   checkin: (payload: CheckinPayload) => api.post<Visit>('/visits/checkin', payload),
   checkout: (payload: CheckoutPayload) => api.post<Visit>('/visits/checkout', payload),
@@ -38,4 +43,10 @@ export const visitsApi = {
   /** Supervisor spot-check: saves title/note/photos on an open visit before checkout. */
   submitReport: (visitId: string, payload: SubmitReportPayload) =>
     api.patch<Visit>(`/visits/${visitId}/report`, payload),
+  /** Merchandiser "before" shelf state, saved before the product audit. */
+  submitInitialState: (visitId: string, payload: SubmitStatePayload) =>
+    api.patch<Visit>(`/visits/${visitId}/initial-state`, payload),
+  /** Merchandiser "after" shelf state, saved after the product audit and required before checkout. */
+  submitFinalState: (visitId: string, payload: SubmitStatePayload) =>
+    api.patch<Visit>(`/visits/${visitId}/final-state`, payload),
 };

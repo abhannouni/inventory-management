@@ -10,6 +10,7 @@ import { CheckinDto } from './dto/checkin.dto';
 import { CheckoutDto } from './dto/checkout.dto';
 import { FindVisitsDto } from './dto/find-visits.dto';
 import { SubmitVisitReportDto } from './dto/submit-visit-report.dto';
+import { SubmitVisitStateDto } from './dto/submit-visit-state.dto';
 
 /**
  * The single definition of visit duration: `checkout_at - checkin_at`, in whole seconds.
@@ -140,6 +141,44 @@ export class VisitsService {
     };
   }
 
+  /**
+   * Merchandiser "before" shelf state — photo(s) + optional note, saved before
+   * the product audit is shown.
+   */
+  submitInitialState(id: string, dto: SubmitVisitStateDto, user: User) {
+    return this.saveVisitState(id, dto, user, 'initial');
+  }
+
+  /**
+   * Merchandiser "after" shelf state — photo(s) + optional note, saved once the
+   * product audit is done and required before checkout.
+   */
+  submitFinalState(id: string, dto: SubmitVisitStateDto, user: User) {
+    return this.saveVisitState(id, dto, user, 'final');
+  }
+
+  private async saveVisitState(id: string, dto: SubmitVisitStateDto, user: User, stage: 'initial' | 'final') {
+    const visit = await this.prisma.visit.findUnique({ where: { id } });
+    if (!visit) throw new NotFoundException('Visit not found');
+    if (visit.user_id !== user.id) throw new ForbiddenException('This visit does not belong to you');
+    if (visit.status === VisitStatus.completed) {
+      throw new ConflictException('Visit is already completed');
+    }
+
+    const updated = await this.prisma.visit.update({
+      where: { id },
+      data:
+        stage === 'initial'
+          ? { initial_note: dto.note ?? null, initial_photos: dto.photos }
+          : { final_note: dto.note ?? null, final_photos: dto.photos },
+      include: VISIT_INCLUDE,
+    });
+    return {
+      ...this.serializeVisit(updated),
+      audit_progress: await this.auditProgress(updated.id, updated.store_id),
+    };
+  }
+
   async checkout(dto: CheckoutDto, user: User) {
     const visit = await this.prisma.visit.findUnique({
       where: { id: dto.visit_id },
@@ -166,6 +205,9 @@ export class VisitsService {
         throw new ConflictException(
           `Complete the audit before checking out — ${expected - audited} of ${expected} product(s) still to be recorded`,
         );
+      }
+      if (visit.final_photos.length === 0) {
+        throw new ConflictException('Add the final state photo before checking out');
       }
     }
 

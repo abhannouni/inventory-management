@@ -53,6 +53,13 @@
       "gpsOut": "GPS Out",
       "duration": "Duration"
     },
+    "beforeAfter": {
+      "title": "Initial / Final State",
+      "initialLabel": "Initial State",
+      "finalLabel": "Final State",
+      "noPhotos": "No photos",
+      "photoAlt": "shelf state"
+    },
     "auditSummary": {
       "title": "Audit Summary",
       "total": "Total",
@@ -105,7 +112,9 @@
   "merchandiserFlow": {
     "steps": {
       "checkin": "Check In",
+      "initial": "Initial State",
       "audit": "Audit",
+      "final": "Final State",
       "checkout": "Check Out"
     },
     "title": "Store Visit",
@@ -133,6 +142,42 @@
       "toasts": {
         "checkedIn": "Checked in!",
         "checkinFailed": "Check-in failed"
+      }
+    },
+    "initial": {
+      "sectionSubtitle": "Add a photo of the shelf's initial state before you start",
+      "photoLabel": "Photo",
+      "takePhoto": "Take a photo",
+      "addPhoto": "Add a photo",
+      "removePhoto": "Remove photo",
+      "photoAlt": "initial state",
+      "uploading": "Uploading…",
+      "noteLabel": "Note (optional)",
+      "notePlaceholder": "Observations before the audit…",
+      "continueLabel": "Continue",
+      "toasts": {
+        "fileTooLarge": "File must be under 10 MB",
+        "uploadFailed": "Photo upload failed",
+        "saved": "Initial state saved!",
+        "saveFailed": "Failed to save initial state"
+      }
+    },
+    "final": {
+      "sectionSubtitle": "Add a photo of the shelf's final state before you leave",
+      "photoLabel": "Photo",
+      "takePhoto": "Take a photo",
+      "addPhoto": "Add a photo",
+      "removePhoto": "Remove photo",
+      "photoAlt": "final state",
+      "uploading": "Uploading…",
+      "noteLabel": "Note (optional)",
+      "notePlaceholder": "Observations after the audit…",
+      "continueLabel": "Continue",
+      "toasts": {
+        "fileTooLarge": "File must be under 10 MB",
+        "uploadFailed": "Photo upload failed",
+        "saved": "Final state saved!",
+        "saveFailed": "Failed to save final state"
       }
     },
     "audit": {

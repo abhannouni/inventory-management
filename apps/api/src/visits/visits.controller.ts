@@ -19,6 +19,7 @@ import { CheckinDto } from './dto/checkin.dto';
 import { CheckoutDto } from './dto/checkout.dto';
 import { FindVisitsDto } from './dto/find-visits.dto';
 import { SubmitVisitReportDto } from './dto/submit-visit-report.dto';
+import { SubmitVisitStateDto } from './dto/submit-visit-state.dto';
 import { VisitsService } from './visits.service';
 
 @ApiTags('visits')
@@ -51,6 +52,28 @@ export class VisitsController {
     @CurrentUser() user: User,
   ) {
     return this.visitsService.submitReport(id, dto, user);
+  }
+
+  @Patch(':id/initial-state')
+  @RequirePermissions('visits.update')
+  @ApiOperation({ summary: "Save the merchandiser's before-audit shelf photo(s) and note on an open visit" })
+  submitInitialState(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: SubmitVisitStateDto,
+    @CurrentUser() user: User,
+  ) {
+    return this.visitsService.submitInitialState(id, dto, user);
+  }
+
+  @Patch(':id/final-state')
+  @RequirePermissions('visits.update')
+  @ApiOperation({ summary: "Save the merchandiser's after-audit shelf photo(s) and note on an open visit" })
+  submitFinalState(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: SubmitVisitStateDto,
+    @CurrentUser() user: User,
+  ) {
+    return this.visitsService.submitFinalState(id, dto, user);
   }
 
   @Get('active')

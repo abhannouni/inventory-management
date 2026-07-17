@@ -53,6 +53,13 @@
       "gpsOut": "GPS sortie",
       "duration": "Durée"
     },
+    "beforeAfter": {
+      "title": "État initial / final",
+      "initialLabel": "État initial",
+      "finalLabel": "État final",
+      "noPhotos": "Aucune photo",
+      "photoAlt": "état du rayon"
+    },
     "auditSummary": {
       "title": "Résumé de l'audit",
       "total": "Total",
@@ -105,7 +112,9 @@
   "merchandiserFlow": {
     "steps": {
       "checkin": "Arrivée",
+      "initial": "État initial",
       "audit": "Audit",
+      "final": "État final",
       "checkout": "Sortie"
     },
     "title": "Visite en magasin",
@@ -133,6 +142,42 @@
       "toasts": {
         "checkedIn": "Arrivée pointée !",
         "checkinFailed": "Échec du pointage d'arrivée"
+      }
+    },
+    "initial": {
+      "sectionSubtitle": "Ajoutez une photo de l'état initial du rayon avant de commencer",
+      "photoLabel": "Photo",
+      "takePhoto": "Prendre une photo",
+      "addPhoto": "Ajouter une photo",
+      "removePhoto": "Supprimer la photo",
+      "photoAlt": "état initial",
+      "uploading": "Envoi en cours…",
+      "noteLabel": "Note (facultatif)",
+      "notePlaceholder": "Observations avant l'audit…",
+      "continueLabel": "Continuer",
+      "toasts": {
+        "fileTooLarge": "Le fichier doit faire moins de 10 Mo",
+        "uploadFailed": "Échec de l'envoi de la photo",
+        "saved": "État initial enregistré !",
+        "saveFailed": "Échec de l'enregistrement de l'état initial"
+      }
+    },
+    "final": {
+      "sectionSubtitle": "Ajoutez une photo de l'état final du rayon avant de sortir",
+      "photoLabel": "Photo",
+      "takePhoto": "Prendre une photo",
+      "addPhoto": "Ajouter une photo",
+      "removePhoto": "Supprimer la photo",
+      "photoAlt": "état final",
+      "uploading": "Envoi en cours…",
+      "noteLabel": "Note (facultatif)",
+      "notePlaceholder": "Observations après l'audit…",
+      "continueLabel": "Continuer",
+      "toasts": {
+        "fileTooLarge": "Le fichier doit faire moins de 10 Mo",
+        "uploadFailed": "Échec de l'envoi de la photo",
+        "saved": "État final enregistré !",
+        "saveFailed": "Échec de l'enregistrement de l'état final"
       }
     },
     "audit": {
