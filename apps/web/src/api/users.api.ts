@@ -8,6 +8,7 @@ export interface CreateUserPayload {
   role: string;
   role_id?: string;
   region_id?: string;
+  supervisor_id?: string;
   is_active?: boolean;
 }
 
@@ -18,6 +19,7 @@ export interface UpdateUserPayload {
   role?: string;
   role_id?: string;
   region_id?: string;
+  supervisor_id?: string | null;
 }
 
 export interface ListUsersQuery {
@@ -26,6 +28,7 @@ export interface ListUsersQuery {
   search?: string;
   role?: string;
   region_id?: string;
+  supervisor_id?: string;
   is_active?: boolean;
   sort_by?: string;
   sort_dir?: 'asc' | 'desc';

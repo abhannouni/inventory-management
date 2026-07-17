@@ -29,6 +29,11 @@ export class ListUsersDto extends PaginationQueryDto {
   @IsUUID()
   role_id?: string;
 
+  @ApiPropertyOptional({ description: "Filter to a supervisor's direct team" })
+  @IsOptional()
+  @IsUUID()
+  supervisor_id?: string;
+
   @ApiPropertyOptional({ description: 'Filter by account status' })
   @IsOptional()
   @Transform(({ value }) => {

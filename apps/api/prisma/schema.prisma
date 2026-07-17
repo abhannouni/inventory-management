@@ -104,6 +104,11 @@ model User {
   last_login_at  DateTime?
   region         Region?  @relation(fields: [region_id], references: [id])
   region_id      String?
+  /// The supervisor who manages this user's field work (relevant for merchandisers).
+  /// Drives "my team" scoping for schedules — who a supervisor may plan for.
+  supervisor      User?    @relation("SupervisorTeam", fields: [supervisor_id], references: [id], onDelete: SetNull)
+  supervisor_id   String?
+  team            User[]   @relation("SupervisorTeam")
   created_at     DateTime @default(now())
   updated_at     DateTime @default(now()) @updatedAt
 
@@ -116,6 +121,7 @@ model User {
 
   @@index([role_id])
   @@index([is_active])
+  @@index([supervisor_id])
   @@map("users")
 }
 

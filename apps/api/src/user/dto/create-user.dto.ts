@@ -41,6 +41,14 @@ export class CreateUserDto {
   @IsOptional()
   region_id?: string;
 
+  @ApiPropertyOptional({
+    description: 'The supervisor managing this user (relevant for merchandisers).',
+    example: 'uuid-of-supervisor',
+  })
+  @IsUUID()
+  @IsOptional()
+  supervisor_id?: string;
+
   @ApiPropertyOptional({ default: true })
   @IsBoolean()
   @IsOptional()

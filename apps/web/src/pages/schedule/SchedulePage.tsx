@@ -314,7 +314,8 @@ export default function SchedulePage() {
   const { items: users } = useAppSelector(s => s.users);
   const { items: stores } = useAppSelector(s => s.stores);
   const activeVisit = useAppSelector(s => s.visits.active);
-  const currentUserId = useAppSelector(s => s.auth.user?.id);
+  const currentUser = useAppSelector(s => s.auth.user);
+  const currentUserId = currentUser?.id;
   const p = usePermissions();
 
   // Whoever can create/update/delete schedules gets the management UI; a
@@ -345,10 +346,17 @@ export default function SchedulePage() {
 
   useEffect(() => {
     if (canManage) {
-      dispatch(fetchUsers());
+      // A supervisor may only plan for their own direct team; scope the
+      // fetch to it so nothing outside that team ever reaches this page.
+      // Admins/super admins keep the unscoped list to manage everyone.
+      dispatch(fetchUsers(
+        currentUser?.role === 'supervisor'
+          ? { supervisor_id: currentUser.id, limit: 100 }
+          : { limit: 100 },
+      ));
       dispatch(fetchStores());
     }
-  }, [dispatch, canManage]);
+  }, [dispatch, canManage, currentUser?.role, currentUser?.id]);
 
   const calendarDays = buildCalendarDays(currentDate.getFullYear(), currentDate.getMonth());
   const today = new Date();
@@ -436,7 +444,12 @@ export default function SchedulePage() {
     }
   };
 
-  const merchandisers = users.filter(u => u.role === 'merchandiser' || u.role === 'supervisor');
+  // A supervisor plans for themself or their direct team — `users` is already
+  // scoped to that team above, so just add "myself" as an assignable option.
+  // Admins/super admins keep picking from every merchandiser/supervisor.
+  const merchandisers = currentUser?.role === 'supervisor'
+    ? [currentUser, ...users.filter(u => u.id !== currentUser.id)]
+    : users.filter(u => u.role === 'merchandiser' || u.role === 'supervisor');
 
   return (
     <div className="schedule-page">

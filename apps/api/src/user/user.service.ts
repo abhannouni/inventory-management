@@ -34,6 +34,7 @@ export class UserService {
     if (query.role) where.role = query.role;
     if (query.region_id) where.region_id = query.region_id;
     if (query.role_id) where.role_id = query.role_id;
+    if (query.supervisor_id) where.supervisor_id = query.supervisor_id;
     if (query.is_active !== undefined) where.is_active = query.is_active;
 
     const orderBy = safeOrderBy(query.sort_by, query.sort_dir, USER_SORT_FIELDS, {
@@ -45,7 +46,11 @@ export class UserService {
         where,
         orderBy,
         ...toSkipTake(query),
-        include: { region: true, custom_role: true },
+        include: {
+          region: true,
+          custom_role: true,
+          supervisor: { select: { id: true, full_name: true } },
+        },
       }),
       this.prisma.user.count({ where }),
     ]);
@@ -64,6 +69,7 @@ export class UserService {
       include: {
         region: true,
         custom_role: true,
+        supervisor: { select: { id: true, full_name: true } },
         userStores: { include: { store: { include: { region: true } } } },
       },
     });
@@ -77,6 +83,7 @@ export class UserService {
     if (exists) throw new ConflictException('Email already in use');
 
     const { role, role_id } = await this.resolveRole(dto.role, dto.role_id);
+    if (dto.supervisor_id) await this.assertValidSupervisor(dto.supervisor_id);
     const hashed = await bcrypt.hash(dto.password, 12);
 
     const user = await this.prisma.user.create({
@@ -87,6 +94,7 @@ export class UserService {
         role,
         role_id,
         region_id: dto.region_id ?? null,
+        supervisor_id: dto.supervisor_id ?? null,
         is_active: dto.is_active ?? true,
       },
       include: { region: true, custom_role: true },
@@ -112,6 +120,18 @@ export class UserService {
         : { disconnect: true };
     }
     if (dto.password) data.password = await bcrypt.hash(dto.password, 12);
+
+    if (dto.supervisor_id !== undefined) {
+      if (dto.supervisor_id === null) {
+        data.supervisor = { disconnect: true };
+      } else {
+        if (dto.supervisor_id === id) {
+          throw new BadRequestException('A user cannot be their own supervisor');
+        }
+        await this.assertValidSupervisor(dto.supervisor_id);
+        data.supervisor = { connect: { id: dto.supervisor_id } };
+      }
+    }
 
     if (dto.role !== undefined || dto.role_id !== undefined) {
       const resolved = await this.resolveRole(dto.role ?? user.role, dto.role_id);
@@ -222,6 +242,15 @@ export class UserService {
 
     const found = await this.prisma.role.findUnique({ where: { name: role } });
     return { role, role_id: found?.id ?? null };
+  }
+
+  /** The supervisor_id on a user must point to an actual supervisor, so schedule scoping stays meaningful. */
+  private async assertValidSupervisor(supervisorId: string) {
+    const supervisor = await this.prisma.user.findUnique({ where: { id: supervisorId } });
+    if (!supervisor) throw new NotFoundException('Supervisor not found');
+    if (supervisor.role !== UserRole.supervisor) {
+      throw new BadRequestException('supervisor_id must reference a user with the supervisor role');
+    }
   }
 
   private async assertNotLastSuperAdmin(id: string, action: string) {

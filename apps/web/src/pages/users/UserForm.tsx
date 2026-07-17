@@ -8,6 +8,7 @@ import type { Region, RoleRecord, User } from '../../types';
 interface UserFormProps {
   regions: Region[];
   roles: RoleRecord[];
+  supervisors: User[];
   initialData?: User;
   onSubmit: (data: any) => Promise<void>;
   onCancel: () => void;
@@ -19,6 +20,7 @@ const MIN_PASSWORD_LENGTH = 8;
 export default function UserForm({
   regions,
   roles,
+  supervisors,
   initialData,
   onSubmit,
   onCancel,
@@ -42,6 +44,7 @@ export default function UserForm({
     password: '',
     role_id: initialRoleId,
     region_id: initialData?.region_id || '',
+    supervisor_id: initialData?.supervisor_id || '',
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -70,6 +73,7 @@ export default function UserForm({
     setLoading(true);
 
     const selected = roles.find((r) => r.id === form.role_id);
+    const isMerchandiserRole = selected ? (!selected.is_system || selected.name === 'merchandiser') : false;
 
     const payload: any = {
       full_name: form.full_name,
@@ -79,8 +83,10 @@ export default function UserForm({
       // custom role the server re-resolves it to the least-privileged value.
       role: selected?.is_system ? selected.name : 'merchandiser',
       region_id: form.region_id || undefined,
+      supervisor_id: isMerchandiserRole && form.supervisor_id ? form.supervisor_id : (isEdit ? null : undefined),
     };
     if (!payload.region_id) delete payload.region_id;
+    if (payload.supervisor_id === undefined) delete payload.supervisor_id;
     if (form.password) payload.password = form.password;
 
     await onSubmit(payload);
@@ -88,6 +94,9 @@ export default function UserForm({
   };
 
   const regionOptions = regions.map((r) => ({ value: r.id, label: r.name }));
+  const selectedRole = roles.find((r) => r.id === form.role_id);
+  const showSupervisorField = selectedRole ? (!selectedRole.is_system || selectedRole.name === 'merchandiser') : false;
+  const supervisorOptions = supervisors.map((s) => ({ value: s.id, label: s.full_name }));
 
   return (
     <form onSubmit={handleSubmit}>
@@ -126,6 +135,18 @@ export default function UserForm({
           placeholder={t('fields.regionPlaceholder')}
         />
       </div>
+
+      {showSupervisorField && (
+        <div className="form-row">
+          <Select
+            label={t('fields.supervisor')}
+            value={form.supervisor_id}
+            onChange={(e) => setForm({ ...form, supervisor_id: e.target.value })}
+            options={supervisorOptions}
+            placeholder={t('fields.supervisorPlaceholder')}
+          />
+        </div>
+      )}
 
       <Input
         label={isEdit ? t('fields.newPassword') : t('fields.password')}

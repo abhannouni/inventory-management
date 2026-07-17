@@ -1,6 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { UserRole } from '@prisma/client';
-import { IsEmail, IsEnum, IsOptional, IsString, IsUUID, MinLength } from 'class-validator';
+import { IsEmail, IsEnum, IsOptional, IsString, IsUUID, MinLength, ValidateIf } from 'class-validator';
 
 export class UpdateUserDto {
   @ApiPropertyOptional({ example: 'John Smith' })
@@ -33,4 +33,13 @@ export class UpdateUserDto {
   @IsUUID()
   @IsOptional()
   region_id?: string;
+
+  @ApiPropertyOptional({
+    description: 'The supervisor managing this user (relevant for merchandisers). Pass null to clear.',
+    example: 'uuid-of-supervisor',
+  })
+  @IsOptional()
+  @ValidateIf((_, value) => value !== null)
+  @IsUUID()
+  supervisor_id?: string | null;
 }

@@ -2,9 +2,15 @@ import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/commo
 import { ScheduleStatus, User, UserRole } from '@prisma/client';
 import { PermissionsService } from '../auth/permissions.service';
 import { PrismaService } from '../prisma/prisma.service';
+import { assertStoreVisible } from '../stores/store-scope';
 import { CreateScheduleDto } from './dto/create-schedule.dto';
 import { FindSchedulesDto } from './dto/find-schedules.dto';
 import { UpdateScheduleDto } from './dto/update-schedule.dto';
+
+/** A supervisor may plan for themself or for a merchandiser on their direct team. */
+function isInSupervisorScope(actor: User, targetUser: { id: string; supervisor_id: string | null }) {
+  return targetUser.id === actor.id || targetUser.supervisor_id === actor.id;
+}
 
 const SCHEDULE_INCLUDE = {
   user: { select: { id: true, full_name: true, email: true, role: true } },
@@ -30,8 +36,12 @@ export class SchedulesService {
     if (!targetUser) throw new NotFoundException('User not found');
     if (!store) throw new NotFoundException('Store not found');
 
-    if (actor.role === UserRole.supervisor && targetUser.region_id !== actor.region_id)
-      throw new ForbiddenException('You can only schedule visits for users in your region');
+    if (actor.role === UserRole.supervisor) {
+      if (!isInSupervisorScope(actor, targetUser))
+        throw new ForbiddenException('You can only schedule visits for yourself or your team');
+      if (!(await assertStoreVisible(this.prisma, actor, dto.store_id)))
+        throw new ForbiddenException('You can only schedule visits at a POS you are responsible for');
+    }
 
     return this.prisma.schedule.create({
       data: {
@@ -58,7 +68,7 @@ export class SchedulesService {
     const record = await this.prisma.schedule.findUnique({
       where: { id },
       include: {
-        user: { select: { region_id: true } },
+        user: { select: { id: true, supervisor_id: true, region_id: true } },
         store: { select: { region_id: true } },
       },
     });
@@ -89,8 +99,15 @@ export class SchedulesService {
       });
     }
 
-    if (actor.role === UserRole.supervisor && record.user.region_id !== actor.region_id)
-      throw new ForbiddenException('Access denied: schedule belongs to a different region');
+    if (actor.role === UserRole.supervisor) {
+      if (!isInSupervisorScope(actor, record.user))
+        throw new ForbiddenException('Access denied: schedule belongs to someone outside your team');
+      if (
+        dto.store_id !== undefined &&
+        !(await assertStoreVisible(this.prisma, actor, dto.store_id))
+      )
+        throw new ForbiddenException('You can only schedule visits at a POS you are responsible for');
+    }
 
     if (actor.role === UserRole.admin && record.store.region_id !== actor.region_id)
       throw new ForbiddenException('Access denied: store is outside your region');
@@ -114,14 +131,14 @@ export class SchedulesService {
     const record = await this.prisma.schedule.findUnique({
       where: { id },
       include: {
-        user: { select: { region_id: true } },
+        user: { select: { id: true, supervisor_id: true } },
         store: { select: { region_id: true } },
       },
     });
     if (!record) throw new NotFoundException('Schedule not found');
 
-    if (actor.role === UserRole.supervisor && record.user.region_id !== actor.region_id)
-      throw new ForbiddenException('Access denied: schedule belongs to a different region');
+    if (actor.role === UserRole.supervisor && !isInSupervisorScope(actor, record.user))
+      throw new ForbiddenException('Access denied: schedule belongs to someone outside your team');
 
     if (actor.role === UserRole.admin && record.store.region_id !== actor.region_id)
       throw new ForbiddenException('Access denied: store is outside your region');
@@ -151,7 +168,8 @@ export class SchedulesService {
     }
 
     if (actor.role === UserRole.supervisor) {
-      where.user = { region_id: actor.region_id ?? undefined };
+      // Own schedules plus those of the merchandisers on their direct team.
+      where.user = { OR: [{ id: actor.id }, { supervisor_id: actor.id }] };
       return where;
     }
 

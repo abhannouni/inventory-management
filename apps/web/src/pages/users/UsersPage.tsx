@@ -16,6 +16,7 @@ import {
 import { fetchRegions } from '../../store/slices/regionsSlice';
 import { fetchStores } from '../../store/slices/storesSlice';
 import { fetchRoles } from '../../store/slices/rolesSlice';
+import { usersApi } from '../../api/users.api';
 import PageHeader from '../../components/ui/PageHeader';
 import Button from '../../components/ui/Button';
 import DataTable from '../../components/ui/DataTable';
@@ -65,6 +66,7 @@ export default function UsersPage() {
   const [assignUser, setAssignUser] = useState<User | null>(null);
   const [toggleUser, setToggleUser] = useState<User | null>(null);
   const [busy, setBusy] = useState(false);
+  const [supervisors, setSupervisors] = useState<User[]>([]);
 
   useEffect(() => {
     dispatch(fetchUsers(params));
@@ -74,6 +76,9 @@ export default function UsersPage() {
     dispatch(fetchRegions());
     dispatch(fetchStores());
     if (p.can('roles.read')) dispatch(fetchRoles());
+    // Options list for the "supervisor" picker on the merchandiser form — kept
+    // separate from the paginated table state above.
+    usersApi.findAll({ role: 'supervisor', limit: 100 }).then((res) => setSupervisors(res.items));
     // `p` is rebuilt each render; the permission set it reads from is stable.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch]);
@@ -313,6 +318,7 @@ export default function UsersPage() {
         <UserForm
           regions={regions}
           roles={roles}
+          supervisors={supervisors}
           onSubmit={handleCreate}
           onCancel={() => setCreateOpen(false)}
         />
@@ -323,6 +329,7 @@ export default function UsersPage() {
           <UserForm
             regions={regions}
             roles={roles}
+            supervisors={supervisors}
             initialData={editUser}
             onSubmit={handleUpdate}
             onCancel={() => setEditUser(null)}

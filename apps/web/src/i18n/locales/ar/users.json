@@ -37,6 +37,8 @@
     "rolePlaceholder": "اختر دورًا",
     "region": "المنطقة (اختياري)",
     "regionPlaceholder": "بدون منطقة",
+    "supervisor": "المشرف (اختياري)",
+    "supervisorPlaceholder": "بدون مشرف",
     "password": "كلمة المرور",
     "newPassword": "كلمة مرور جديدة",
     "passwordHint": "اتركها فارغة للاحتفاظ بكلمة المرور الحالية"

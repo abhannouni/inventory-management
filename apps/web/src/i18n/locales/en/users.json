@@ -37,6 +37,8 @@
     "rolePlaceholder": "Select a role",
     "region": "Region (optional)",
     "regionPlaceholder": "No region",
+    "supervisor": "Supervisor (optional)",
+    "supervisorPlaceholder": "No supervisor",
     "password": "Password",
     "newPassword": "New Password",
     "passwordHint": "Leave blank to keep the current password"

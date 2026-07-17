@@ -28,6 +28,9 @@ export interface User {
   last_login_at: string | null;
   region_id: string | null;
   region?: Region | null;
+  /** The supervisor managing this user (relevant for merchandisers). */
+  supervisor_id: string | null;
+  supervisor?: { id: string; full_name: string } | null;
   /** Only present on the `/auth/me` response — the caller's effective permissions. */
   permissions?: string[];
   stores?: Store[];

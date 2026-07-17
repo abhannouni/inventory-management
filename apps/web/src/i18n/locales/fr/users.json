@@ -37,6 +37,8 @@
     "rolePlaceholder": "Sélectionner un rôle",
     "region": "Région (facultatif)",
     "regionPlaceholder": "Aucune région",
+    "supervisor": "Superviseur (facultatif)",
+    "supervisorPlaceholder": "Aucun superviseur",
     "password": "Mot de passe",
     "newPassword": "Nouveau mot de passe",
     "passwordHint": "Laisser vide pour conserver le mot de passe actuel"
