@@ -213,6 +213,7 @@ model Product {
   name         String
   sku          String   @unique
   category     String
+  is_our_product Boolean @default(false)
   distributeur String
   famille      String
   sous_famille String

@@ -5,6 +5,7 @@ export interface ProductPayload {
   name: string;
   sku: string;
   category: string;
+  is_our_product: boolean;
   distributeur: string;
   famille: string;
   sous_famille: string;

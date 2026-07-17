@@ -141,6 +141,7 @@
   },
   "productReport": {
     "product": "المنتج",
+    "classification": "التصنيف",
     "selectProductPlaceholder": "اختر منتجًا",
     "selectProductToast": "يرجى اختيار منتج",
     "loadErrorToast": "فشل تحميل التقرير",

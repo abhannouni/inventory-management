@@ -13,9 +13,11 @@ import Modal from '../../components/ui/Modal';
 import ConfirmDialog from '../../components/ui/ConfirmDialog';
 import Pagination from '../../components/ui/Pagination';
 import Select from '../../components/ui/Select';
+import Badge from '../../components/ui/Badge';
 import ProductForm from './ProductForm';
 import { formatDate } from '../../utils/format';
 import type { Product } from '../../types';
+import { getProductClassificationLabel } from '../../utils/productClassification';
 
 export default function ProductsPage() {
   const { t, i18n } = useTranslation('products');
@@ -120,6 +122,14 @@ export default function ProductsPage() {
     { key: 'sku', header: t('table.sku'), render: (p: Product) => <span style={{ fontFamily: 'monospace', fontSize: 13, background: 'var(--gray-100)', padding: '2px 6px', borderRadius: 4 }}>{p.sku}</span> },
     { key: 'category', header: t('table.category'), render: (p: Product) => <span style={{ color: 'var(--gray-600)' }}>{p.category}</span> },
     { key: 'distributeur', header: t('table.distributeur'), render: (p: Product) => <span style={{ color: 'var(--gray-600)' }}>{p.distributeur}</span> },
+    {
+      key: 'classification',
+      header: t('table.classification'),
+      render: (p: Product) => {
+        const label = getProductClassificationLabel(p.is_our_product, p.distributeur);
+        return <Badge variant={label === 'Bourchanin' ? 'success' : 'gray'}>{label}</Badge>;
+      },
+    },
     { key: 'famille', header: t('table.famille'), render: (p: Product) => <span style={{ color: 'var(--gray-600)' }}>{p.famille}</span> },
     { key: 'sous_famille', header: t('table.sousFamille'), render: (p: Product) => <span style={{ color: 'var(--gray-600)' }}>{p.sous_famille}</span> },
     { key: 'format', header: t('table.format'), render: (p: Product) => <span style={{ color: 'var(--gray-600)' }}>{p.format}</span> },

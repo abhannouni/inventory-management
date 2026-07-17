@@ -132,6 +132,7 @@
   },
   "productReport": {
     "product": "Produit",
+    "classification": "Classification",
     "selectProductPlaceholder": "Sélectionner un produit",
     "selectProductToast": "Veuillez sélectionner un produit",
     "loadErrorToast": "Échec du chargement du rapport",

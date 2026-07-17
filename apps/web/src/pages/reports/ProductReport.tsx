@@ -18,6 +18,7 @@ import ReportFilters from './ReportFilters';
 import { formatDate } from '../../utils/format';
 import type { ExportDataset } from '../../utils/export';
 import type { AuditStatus } from '../../types';
+import { getProductClassificationLabel } from '../../utils/productClassification';
 
 const statusBadge: Record<AuditStatus, 'success' | 'warning' | 'danger'> = {
   in_stock: 'success',
@@ -213,6 +214,12 @@ export default function ProductReport() {
             <p className="report-subject-meta">
               <code className="report-sku">{productReport.product.sku}</code>
               <span>{productReport.product.category}</span>
+              <Badge variant={productReport.product.is_our_product ? 'success' : 'gray'}>
+                {getProductClassificationLabel(
+                  productReport.product.is_our_product,
+                  productReport.product.distributeur,
+                )}
+              </Badge>
             </p>
           </div>
 
