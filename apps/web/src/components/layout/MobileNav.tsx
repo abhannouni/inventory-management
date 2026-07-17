@@ -22,12 +22,15 @@ function IconGlyph({ d, d2 }: NavIcon) {
  * same permission list off the same config entry.
  */
 export default function MobileNav() {
-  const { permissions: granted } = usePermissions();
+  const { permissions: granted, role } = usePermissions();
   const { t } = useTranslation('sidebar');
   const [moreOpen, setMoreOpen] = useState(false);
   const location = useLocation();
+  const isSupervisor = role === 'supervisor';
 
-  const visible = NAV_PAGES.filter((page) => page.nav && hasPageAccess(granted, page.permissions));
+  const visible = NAV_PAGES.filter(
+    (page) => page.nav && !(page.nav.section === 'administration' && isSupervisor) && hasPageAccess(granted, page.permissions),
+  );
   const primaryItems = visible.filter((page) => page.nav!.mobilePrimary);
   const moreItems = visible.filter((page) => !page.nav!.mobilePrimary);
 

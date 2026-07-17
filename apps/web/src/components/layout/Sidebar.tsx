@@ -29,18 +29,24 @@ const SECTIONS: NavSection[] = ['menu', 'management', 'general', 'administration
  * per-item booleans to keep in sync by hand.
  */
 export default function Sidebar() {
-  const { permissions: granted } = usePermissions();
+  const { permissions: granted, role } = usePermissions();
   const { t } = useTranslation('sidebar');
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const isSupervisor = role === 'supervisor';
 
   const handleLogout = () => {
     dispatch(logout());
     navigate('/login');
   };
 
-  const visibleBySection = (section: NavSection) =>
-    NAV_PAGES.filter((page) => page.nav?.section === section && hasPageAccess(granted, page.permissions));
+  const visibleBySection = (section: NavSection) => {
+    if (section === 'administration' && isSupervisor) {
+      return [];
+    }
+
+    return NAV_PAGES.filter((page) => page.nav?.section === section && hasPageAccess(granted, page.permissions));
+  };
 
   return (
     <motion.aside
