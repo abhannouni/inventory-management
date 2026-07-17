@@ -37,6 +37,16 @@ export const deleteStore = createAsyncThunk('stores/delete', async (id: string, 
   catch (err) { return rejectWithValue((err as Error).message); }
 });
 
+export const bulkImportStores = createAsyncThunk('stores/bulkImport', async (file: File, { dispatch, rejectWithValue }) => {
+  try {
+    const result = await storesApi.bulkImport(file);
+    if (result.created > 0) dispatch(fetchStores());
+    return result;
+  } catch (err) {
+    return rejectWithValue((err as Error).message);
+  }
+});
+
 const storesSlice = createSlice({
   name: 'stores',
   initialState,

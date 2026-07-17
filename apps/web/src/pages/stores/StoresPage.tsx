@@ -17,6 +17,7 @@ import ConfirmDialog from '../../components/ui/ConfirmDialog';
 import Pagination from '../../components/ui/Pagination';
 import DownloadDataButton from '../../components/charts/DownloadDataButton';
 import StoreForm from './StoreForm';
+import StoreBulkImportModal from './StoreBulkImportModal';
 import { externalMapLink } from '../../utils/maps';
 import type { ExportDataset } from '../../utils/export';
 import type { Store } from '../../types';
@@ -31,6 +32,7 @@ export default function StoresPage() {
   const { items: regions } = useAppSelector((s) => s.regions);
 
   const [createOpen, setCreateOpen] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
   const [editStore, setEditStore] = useState<Store | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
@@ -197,7 +199,10 @@ export default function StoresPage() {
           <div className="pos-header-actions">
             <DownloadDataButton size="md" datasets={[dataset]} fileName={t('title')} />
             {p.can('pos.create') && (
-              <Button icon={<PlusIcon />} onClick={() => setCreateOpen(true)}>{t('addStore')}</Button>
+              <>
+                <Button variant="outline" icon={<UploadIcon />} onClick={() => setImportOpen(true)}>{t('bulkImport.button')}</Button>
+                <Button icon={<PlusIcon />} onClick={() => setCreateOpen(true)}>{t('addStore')}</Button>
+              </>
             )}
           </div>
         }
@@ -219,6 +224,10 @@ export default function StoresPage() {
         )}
       </Modal>
 
+      <Modal open={importOpen} onClose={() => setImportOpen(false)} title={t('bulkImport.title')} size="md">
+        <StoreBulkImportModal onClose={() => setImportOpen(false)} />
+      </Modal>
+
       <ConfirmDialog
         open={!!deleteId}
         onClose={() => setDeleteId(null)}
@@ -234,6 +243,15 @@ function PlusIcon() {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
       <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
+    </svg>
+  );
+}
+
+function UploadIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+      <polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" />
     </svg>
   );
 }

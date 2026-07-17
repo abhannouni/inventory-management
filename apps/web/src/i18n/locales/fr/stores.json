@@ -113,5 +113,24 @@
   },
   "deleteConfirm": {
     "message": "Cette action supprimera définitivement le point de vente et toutes ses données associées."
+  },
+  "bulkImport": {
+    "button": "Importer Excel",
+    "title": "Import en masse des points de vente",
+    "templateTitle": "Besoin du modèle ?",
+    "instructions": "Téléchargez le fichier exemple pour voir les noms de colonnes et le format exacts attendus, remplissez-le avec vos points de vente, puis importez-le ci-dessous. Toutes les colonnes sont obligatoires.",
+    "downloadTemplate": "Télécharger l'exemple Excel",
+    "fileLabel": "Fichier Excel",
+    "chooseFile": "Cliquez pour choisir un fichier",
+    "fileHint": "Fichiers .xlsx ou .xls acceptés",
+    "import": "Importer",
+    "created": "Créés",
+    "failed": "Échoués",
+    "rowLabel": "Ligne {{row}}",
+    "allImported": "Toutes les lignes ont été importées avec succès",
+    "toasts": {
+      "importSuccess": "{{count}} point(s) de vente importé(s) avec succès",
+      "importError": "Échec de l'import des points de vente"
+    }
   }
 }

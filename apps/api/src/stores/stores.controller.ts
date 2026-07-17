@@ -5,14 +5,21 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  MaxFileSizeValidator,
   Param,
+  ParseFilePipe,
   ParseUUIDPipe,
   Patch,
   Post,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import {
   ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
   ApiNoContentResponse,
   ApiOperation,
   ApiTags,
@@ -22,9 +29,12 @@ import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { RequirePermissions } from '../auth/decorators/require-permissions.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../auth/guards/permissions.guard';
+import { ExcelTypeValidator } from '../products/validators/excel-type.validator';
 import { CreateStoreDto } from './dto/create-store.dto';
 import { UpdateStoreDto } from './dto/update-store.dto';
 import { StoresService } from './stores.service';
+
+const MAX_IMPORT_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 
 @ApiTags('stores')
 @ApiBearerAuth()
@@ -62,6 +72,34 @@ export class StoresController {
   @ApiOperation({ summary: 'Create a store (admin restricted to their region)' })
   create(@Body() dto: CreateStoreDto, @CurrentUser() user: User) {
     return this.storesService.create(dto, user);
+  }
+
+  @Post('bulk-import')
+  @RequirePermissions('pos.create')
+  @UseInterceptors(
+    FileInterceptor('file', { limits: { fileSize: MAX_IMPORT_FILE_SIZE } }),
+  )
+  @ApiOperation({ summary: 'Bulk-create stores from an uploaded Excel file' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: { file: { type: 'string', format: 'binary' } },
+    },
+  })
+  bulkImport(
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: MAX_IMPORT_FILE_SIZE }),
+          new ExcelTypeValidator(),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
+    @CurrentUser() user: User,
+  ) {
+    return this.storesService.bulkImportFromFile(file.buffer, user);
   }
 
   @Patch(':id')

@@ -1,13 +1,27 @@
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { Prisma, User, UserRole } from '@prisma/client';
+import * as XLSX from 'xlsx';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateStoreDto } from './dto/create-store.dto';
 import { UpdateStoreDto } from './dto/update-store.dto';
 import { visibleStoresWhere } from './store-scope';
+import { parseStoreRow } from './store-import.util';
+
+export interface BulkImportRowError {
+  row: number;
+  message: string;
+}
+
+export interface BulkImportResult {
+  created: number;
+  failed: number;
+  errors: BulkImportRowError[];
+}
 
 /**
  * Maps a store DTO onto Prisma's shape.
@@ -243,6 +257,51 @@ export class StoresService {
     const store = await this.findOrFail(id);
     await this.assertRegionAccess(store, user);
     await this.prisma.store.delete({ where: { id } });
+  }
+
+  async bulkImportFromFile(
+    buffer: Buffer,
+    user: User,
+  ): Promise<BulkImportResult> {
+    const workbook = XLSX.read(buffer, { type: 'buffer' });
+    const sheetName = workbook.SheetNames[0];
+    if (!sheetName)
+      throw new BadRequestException('The uploaded file has no sheets');
+
+    const rows = XLSX.utils.sheet_to_json<Record<string, unknown>>(
+      workbook.Sheets[sheetName],
+      { defval: '' },
+    );
+    if (!rows.length)
+      throw new BadRequestException('The uploaded file has no data rows');
+
+    const regions = await this.prisma.region.findMany();
+    const regionsByName = new Map(
+      regions.map((r) => [r.name.trim().toLowerCase(), r.id]),
+    );
+
+    const errors: BulkImportRowError[] = [];
+    let created = 0;
+
+    for (let i = 0; i < rows.length; i++) {
+      const rowNumber = i + 2; // header occupies row 1
+      const { data, error } = parseStoreRow(rows[i], regionsByName);
+      if (error) {
+        errors.push({ row: rowNumber, message: error });
+        continue;
+      }
+
+      try {
+        await this.create(data!, user);
+        created++;
+      } catch (err) {
+        const message =
+          err instanceof Error ? err.message : 'Failed to import row';
+        errors.push({ row: rowNumber, message });
+      }
+    }
+
+    return { created, failed: errors.length, errors };
   }
 
   private assertRegionAccess(store: { region_id: string | null }, user: User) {

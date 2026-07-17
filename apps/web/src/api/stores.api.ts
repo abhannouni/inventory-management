@@ -34,6 +34,17 @@ export interface StorePayload {
   visible_to_gm?: boolean;
 }
 
+export interface BulkImportRowError {
+  row: number;
+  message: string;
+}
+
+export interface BulkImportResult {
+  created: number;
+  failed: number;
+  errors: BulkImportRowError[];
+}
+
 export const storesApi = {
   findAll: () => api.get<Store[]>('/stores'),
   findOne: (id: string) => api.get<Store>(`/stores/${id}`),
@@ -42,4 +53,9 @@ export const storesApi = {
   update: (id: string, payload: Partial<StorePayload>) =>
     api.patch<Store>(`/stores/${id}`, payload),
   remove: (id: string) => api.delete<Store>(`/stores/${id}`),
+  bulkImport: (file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return api.upload<BulkImportResult>('/stores/bulk-import', formData);
+  },
 };
