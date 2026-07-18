@@ -1,6 +1,7 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { AuditItemStatus, User, UserRole } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import { adminAssignedStoreIds } from '../stores/store-scope';
 import { ReportFiltersDto } from './dto/report-filters.dto';
 
 @Injectable()
@@ -44,7 +45,7 @@ export class ReportsService {
       include: { region: true },
     });
     if (!store) throw new NotFoundException('Store not found');
-    this.assertStoreAccess(store, user);
+    await this.assertStoreAccess(store, user);
 
     const dateFilter = buildDateFilter(filters);
 
@@ -152,7 +153,10 @@ export class ReportsService {
     if (user.role === UserRole.super_admin) return base;
 
     if (user.role === UserRole.admin) {
-      return { ...base, store: { region_id: user.region_id ?? undefined } };
+      const assigned = await adminAssignedStoreIds(this.prisma, user.id);
+      return assigned
+        ? { ...base, store_id: { in: assigned } }
+        : { ...base, store: { region_id: user.region_id ?? undefined } };
     }
 
     if (user.role === UserRole.supervisor) {
@@ -170,7 +174,10 @@ export class ReportsService {
   private async buildStoreScope(user: User) {
     if (user.role === UserRole.super_admin) return {};
     if (user.role === UserRole.admin) {
-      return { store: { region_id: user.region_id ?? undefined } };
+      const assigned = await adminAssignedStoreIds(this.prisma, user.id);
+      return assigned
+        ? { store_id: { in: assigned } }
+        : { store: { region_id: user.region_id ?? undefined } };
     }
     if (user.role === UserRole.supervisor) {
       const stores = await this.prisma.userStore.findMany({
@@ -182,10 +189,12 @@ export class ReportsService {
     return { user_id: user.id };
   }
 
-  private assertStoreAccess(store: { region_id: string | null }, user: User) {
+  private async assertStoreAccess(store: { id: string; region_id: string | null }, user: User) {
     if (user.role === UserRole.super_admin) return;
-    if (user.role === UserRole.admin && store.region_id !== user.region_id) {
-      throw new ForbiddenException('Access to this store is not allowed');
+    if (user.role === UserRole.admin) {
+      const assigned = await adminAssignedStoreIds(this.prisma, user.id);
+      const allowed = assigned ? assigned.includes(store.id) : store.region_id === user.region_id;
+      if (!allowed) throw new ForbiddenException('Access to this store is not allowed');
     }
   }
 }

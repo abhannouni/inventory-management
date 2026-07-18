@@ -220,7 +220,7 @@ export default function UsersPage() {
       header: t('table.storeAssignment'),
       hideOnMobile: true,
       render: (u: User) =>
-        ['supervisor', 'merchandiser'].includes(u.role) && p.can('users.assign_stores') ? (
+        ['supervisor', 'merchandiser', 'admin'].includes(u.role) && p.can('users.assign_stores') ? (
           <Button variant="secondary" size="sm" onClick={() => setAssignUser(u)}>
             {t('actions.assignStores')}
           </Button>

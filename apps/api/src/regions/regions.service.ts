@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { User, UserRole } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import { adminAssignedStoreIds } from '../stores/store-scope';
 import { CreateRegionDto } from './dto/create-region.dto';
 import { UpdateRegionDto } from './dto/update-region.dto';
 
@@ -14,6 +15,13 @@ export class RegionsService {
 
   async findAll(user: User) {
     if (user.role === UserRole.admin) {
+      const assignedRegionIds = await this.adminVisibleRegionIds(user);
+      if (assignedRegionIds) {
+        return this.prisma.region.findMany({
+          where: { id: { in: assignedRegionIds } },
+          orderBy: { name: 'asc' },
+        });
+      }
       if (!user.region_id) return [];
       const region = await this.prisma.region.findUnique({
         where: { id: user.region_id },
@@ -24,7 +32,7 @@ export class RegionsService {
   }
 
   async findOne(id: string, user: User) {
-    this.assertAccess(id, user);
+    await this.assertAccess(id, user);
     const region = await this.prisma.region.findUnique({ where: { id } });
     if (!region) throw new NotFoundException('Region not found');
     return region;
@@ -44,10 +52,24 @@ export class RegionsService {
     await this.prisma.region.delete({ where: { id } });
   }
 
-  private assertAccess(id: string, user: User) {
-    if (user.role === UserRole.admin && user.region_id !== id) {
-      throw new ForbiddenException('Access to this region is not allowed');
-    }
+  private async assertAccess(id: string, user: User) {
+    if (user.role !== UserRole.admin) return;
+
+    const assignedRegionIds = await this.adminVisibleRegionIds(user);
+    const allowed = assignedRegionIds ? assignedRegionIds.includes(id) : user.region_id === id;
+    if (!allowed) throw new ForbiddenException('Access to this region is not allowed');
+  }
+
+  /** Distinct regions covered by this admin's assigned PDVs, or `null` if none are assigned. */
+  private async adminVisibleRegionIds(user: User): Promise<string[] | null> {
+    const assigned = await adminAssignedStoreIds(this.prisma, user.id);
+    if (!assigned) return null;
+    const stores = await this.prisma.store.findMany({
+      where: { id: { in: assigned } },
+      select: { region_id: true },
+      distinct: ['region_id'],
+    });
+    return stores.map((s) => s.region_id).filter((id): id is string => !!id);
   }
 
   private async findOrFail(id: string) {

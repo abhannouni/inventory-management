@@ -7,6 +7,7 @@ import {
 import { Prisma, ScheduleStatus, User, UserRole, VisitStatus } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { SettingsService } from '../settings/settings.service';
+import { adminAssignedStoreIds } from '../stores/store-scope';
 import { CheckinDto } from './dto/checkin.dto';
 import { CheckoutDto } from './dto/checkout.dto';
 import { FindVisitsDto } from './dto/find-visits.dto';
@@ -280,7 +281,7 @@ export class VisitsService {
   }
 
   async findAll(user: User, query: FindVisitsDto) {
-    const where = this.buildFilter(user, query);
+    const where = await this.buildFilter(user, query);
     const visits = await this.prisma.visit.findMany({
       where,
       include: VISIT_INCLUDE,
@@ -295,7 +296,7 @@ export class VisitsService {
       include: VISIT_INCLUDE,
     });
     if (!visit) throw new NotFoundException('Visit not found');
-    this.assertReadAccess(visit, user);
+    await this.assertReadAccess(visit, user);
 
     return {
       ...this.serializeVisit(visit),
@@ -373,7 +374,7 @@ export class VisitsService {
     };
   }
 
-  private buildFilter(user: User, query: FindVisitsDto) {
+  private async buildFilter(user: User, query: FindVisitsDto) {
     const where: Record<string, unknown> = {};
     if (query.status) where.status = query.status;
     if (query.store_id) where.store_id = query.store_id;
@@ -381,7 +382,8 @@ export class VisitsService {
     if (user.role === UserRole.super_admin) return where;
 
     if (user.role === UserRole.admin) {
-      where.store = { region_id: user.region_id ?? undefined };
+      const assigned = await adminAssignedStoreIds(this.prisma, user.id);
+      where.store = assigned ? { id: { in: assigned } } : { region_id: user.region_id ?? undefined };
       return where;
     }
 
@@ -390,11 +392,15 @@ export class VisitsService {
     return where;
   }
 
-  private assertReadAccess(visit: { user_id: string; store: { region_id: string | null } }, user: User) {
+  private async assertReadAccess(
+    visit: { user_id: string; store: { id: string; region_id: string | null } },
+    user: User,
+  ) {
     if (user.role === UserRole.super_admin) return;
     if (user.role === UserRole.admin) {
-      if (visit.store.region_id !== user.region_id)
-        throw new ForbiddenException('Access to this visit is not allowed');
+      const assigned = await adminAssignedStoreIds(this.prisma, user.id);
+      const allowed = assigned ? assigned.includes(visit.store.id) : visit.store.region_id === user.region_id;
+      if (!allowed) throw new ForbiddenException('Access to this visit is not allowed');
       return;
     }
     if (visit.user_id !== user.id)

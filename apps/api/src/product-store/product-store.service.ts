@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { User, UserRole } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import { adminAssignedStoreIds } from '../stores/store-scope';
 import { CreateProductStoreDto } from './dto/create-product-store.dto';
 import { FindProductStoresDto } from './dto/find-product-stores.dto';
 import { UpdateProductStoreDto } from './dto/update-product-store.dto';
@@ -83,7 +84,9 @@ export class ProductStoreService {
         await this.assertStoreAccess(query.store_id, user);
         base.store_id = query.store_id;
       } else {
-        base.store = { region_id: user.region_id ?? undefined };
+        const assigned = await adminAssignedStoreIds(this.prisma, user.id);
+        if (assigned) base.store_id = { in: assigned };
+        else base.store = { region_id: user.region_id ?? undefined };
       }
       return base;
     }
@@ -112,8 +115,9 @@ export class ProductStoreService {
     if (!store) throw new NotFoundException('Store not found');
 
     if (user.role === UserRole.admin) {
-      if (store.region_id !== user.region_id)
-        throw new ForbiddenException('Access to this store is not allowed');
+      const assigned = await adminAssignedStoreIds(this.prisma, user.id);
+      const allowed = assigned ? assigned.includes(storeId) : store.region_id === user.region_id;
+      if (!allowed) throw new ForbiddenException('Access to this store is not allowed');
       return;
     }
 
@@ -127,6 +131,14 @@ export class ProductStoreService {
     if (user.role === UserRole.super_admin) return;
     const store = await this.prisma.store.findUnique({ where: { id: storeId } });
     if (!store) throw new NotFoundException('Store not found');
+
+    if (user.role === UserRole.admin) {
+      const assigned = await adminAssignedStoreIds(this.prisma, user.id);
+      const allowed = assigned ? assigned.includes(storeId) : store.region_id === user.region_id;
+      if (!allowed) throw new ForbiddenException('Access to this store is not allowed');
+      return;
+    }
+
     if (store.region_id !== user.region_id)
       throw new ForbiddenException('Access to this store is not allowed');
   }

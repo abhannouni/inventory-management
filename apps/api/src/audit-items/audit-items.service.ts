@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { AuditItemStatus, User, UserRole } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import { adminAssignedStoreIds } from '../stores/store-scope';
 import { BulkAuditDto, BulkAuditItemDto } from './dto/bulk-audit.dto';
 import { CreateAuditItemDto } from './dto/create-audit-item.dto';
 import { FindAuditItemsDto } from './dto/find-audit-items.dto';
@@ -75,7 +76,7 @@ export class AuditItemsService {
       include: { store: true },
     });
     if (!visit) throw new NotFoundException('Visit not found');
-    this.assertReadAccess(visit, user);
+    await this.assertReadAccess(visit, user);
 
     return this.prisma.auditItem.findMany({
       where: { visit_id: query.visit_id },
@@ -90,7 +91,7 @@ export class AuditItemsService {
       include: ITEM_INCLUDE,
     });
     if (!item) throw new NotFoundException('Audit item not found');
-    this.assertReadAccess(item.visit, user);
+    await this.assertReadAccess(item.visit, user);
     return item;
   }
 
@@ -184,14 +185,15 @@ export class AuditItemsService {
     }
   }
 
-  private assertReadAccess(
-    visit: { user_id: string; store: { region_id: string | null } },
+  private async assertReadAccess(
+    visit: { user_id: string; store: { id: string; region_id: string | null } },
     user: User,
   ) {
     if (user.role === UserRole.super_admin) return;
     if (user.role === UserRole.admin) {
-      if (visit.store.region_id !== user.region_id)
-        throw new ForbiddenException('Access to this visit is not allowed');
+      const assigned = await adminAssignedStoreIds(this.prisma, user.id);
+      const allowed = assigned ? assigned.includes(visit.store.id) : visit.store.region_id === user.region_id;
+      if (!allowed) throw new ForbiddenException('Access to this visit is not allowed');
       return;
     }
     if (visit.user_id !== user.id)

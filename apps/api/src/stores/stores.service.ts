@@ -85,7 +85,7 @@ export class StoresService {
    */
   async findAll(user: User) {
     return this.prisma.store.findMany({
-      where: visibleStoresWhere(user),
+      where: await visibleStoresWhere(this.prisma, user),
       include: { region: true },
       orderBy: { name: 'asc' },
     });
@@ -94,8 +94,9 @@ export class StoresService {
   async findOne(id: string, user: User) {
     // Fold the visibility rule into the lookup: a store outside the user's scope
     // is indistinguishable from one that does not exist — no id probing.
+    const scope = await visibleStoresWhere(this.prisma, user);
     const store = await this.prisma.store.findFirst({
-      where: { AND: [{ id }, visibleStoresWhere(user)] },
+      where: { AND: [{ id }, scope] },
       include: { region: true },
     });
     if (!store) throw new NotFoundException('Store not found');

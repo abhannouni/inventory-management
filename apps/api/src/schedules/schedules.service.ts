@@ -2,7 +2,7 @@ import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/commo
 import { ScheduleStatus, User, UserRole } from '@prisma/client';
 import { PermissionsService } from '../auth/permissions.service';
 import { PrismaService } from '../prisma/prisma.service';
-import { assertStoreVisible } from '../stores/store-scope';
+import { adminAssignedStoreIds, assertStoreVisible } from '../stores/store-scope';
 import { CreateScheduleDto } from './dto/create-schedule.dto';
 import { FindSchedulesDto } from './dto/find-schedules.dto';
 import { UpdateScheduleDto } from './dto/update-schedule.dto';
@@ -58,7 +58,7 @@ export class SchedulesService {
 
   async findAll(actor: User, query: FindSchedulesDto) {
     return this.prisma.schedule.findMany({
-      where: this.buildWhere(actor, query),
+      where: await this.buildWhere(actor, query),
       include: SCHEDULE_INCLUDE,
       orderBy: { scheduled_at: 'asc' },
     });
@@ -109,8 +109,7 @@ export class SchedulesService {
         throw new ForbiddenException('You can only schedule visits at a POS you are responsible for');
     }
 
-    if (actor.role === UserRole.admin && record.store.region_id !== actor.region_id)
-      throw new ForbiddenException('Access denied: store is outside your region');
+    if (actor.role === UserRole.admin) await this.assertAdminScheduleAccess(record, actor);
 
     return this.prisma.schedule.update({
       where: { id },
@@ -140,8 +139,7 @@ export class SchedulesService {
     if (actor.role === UserRole.supervisor && !isInSupervisorScope(actor, record.user))
       throw new ForbiddenException('Access denied: schedule belongs to someone outside your team');
 
-    if (actor.role === UserRole.admin && record.store.region_id !== actor.region_id)
-      throw new ForbiddenException('Access denied: store is outside your region');
+    if (actor.role === UserRole.admin) await this.assertAdminScheduleAccess(record, actor);
 
     await this.prisma.schedule.delete({ where: { id } });
     return { id };
@@ -149,7 +147,19 @@ export class SchedulesService {
 
   // ─── Private ───────────────────────────────────────────────────────────────
 
-  private buildWhere(actor: User, query: FindSchedulesDto): Record<string, unknown> {
+  /** Admin's PDV assignment (if any) overrides the region-wide default. */
+  private async assertAdminScheduleAccess(
+    record: { store_id: string; store: { region_id: string | null } },
+    actor: User,
+  ) {
+    const assigned = await adminAssignedStoreIds(this.prisma, actor.id);
+    const allowed = assigned
+      ? assigned.includes(record.store_id)
+      : record.store.region_id === actor.region_id;
+    if (!allowed) throw new ForbiddenException('Access denied: store is outside your assigned scope');
+  }
+
+  private async buildWhere(actor: User, query: FindSchedulesDto): Promise<Record<string, unknown>> {
     const where: Record<string, unknown> = {};
 
     if (query.status) where.status = query.status;
@@ -163,7 +173,9 @@ export class SchedulesService {
     if (actor.role === UserRole.super_admin) return where;
 
     if (actor.role === UserRole.admin) {
-      where.store = { region_id: actor.region_id ?? undefined };
+      const assigned = await adminAssignedStoreIds(this.prisma, actor.id);
+      where.store_id = assigned ? { in: assigned } : undefined;
+      if (!assigned) where.store = { region_id: actor.region_id ?? undefined };
       return where;
     }
 
