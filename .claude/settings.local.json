@@ -18,7 +18,19 @@
       "Bash(pnpm add *)",
       "Bash(grep -n \"photo-capture-btn\\\\|photo-thumb\\\\|\\\\.card \\\\|\\\\.card{\\\\|\\\\.card,\\\\|border-radius\\\\|box-shadow\" src/index.css)",
       "Bash(npx tsc *)",
-      "Bash(npx ts-node *)"
+      "Bash(npx ts-node *)",
+      "Bash(npx prisma *)",
+      "Bash(curl -s http://localhost:3001/sell-out -o /dev/null -w \"%{http_code}\\\\n\")",
+      "Bash(curl -s http://localhost:3001/ -o /dev/null -w \"%{http_code}\\\\n\")",
+      "Bash(curl -sI http://localhost:3001/)",
+      "Bash(curl -s http://localhost:3001/api/sell-out -o /dev/null -w \"%{http_code}\\\\n\")",
+      "Bash(curl -s http://localhost:3001/docs -o /dev/null -w \"%{http_code}\\\\n\")",
+      "Bash(curl -s -c /tmp/cookies.txt -X POST http://localhost:3001/api/auth/login -H \"Content-Type: application/json\" -d '{\"email\":\"admin.north@example.com\",\"password\":\"password123\"}')",
+      "PowerShell(Get-NetTCPConnection -LocalPort 3001 -State Listen -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess | ForEach-Object { Get-Process -Id $_ | Select-Object Id, ProcessName, Path, StartTime })",
+      "PowerShell(Stop-Process -Id 18088 -Force)",
+      "Bash(node -e ' *)",
+      "Bash(curl -s http://localhost:3001/api/sell-out -H 'Authorization: Bearer __CMDSUB_OUTPUT__')",
+      "Read(//c/Users/Dell/Desktop/New folder/**)"
     ]
   }
 }

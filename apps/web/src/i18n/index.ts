@@ -18,6 +18,7 @@ import frReports from './locales/fr/reports.json';
 import frRoles from './locales/fr/roles.json';
 import frPos from './locales/fr/pos.json';
 import frModules from './locales/fr/modules.json';
+import frSellOut from './locales/fr/sellOut.json';
 
 import enCommon from './locales/en/common.json';
 import enSidebar from './locales/en/sidebar.json';
@@ -36,6 +37,7 @@ import enReports from './locales/en/reports.json';
 import enRoles from './locales/en/roles.json';
 import enPos from './locales/en/pos.json';
 import enModules from './locales/en/modules.json';
+import enSellOut from './locales/en/sellOut.json';
 
 import arCommon from './locales/ar/common.json';
 import arSidebar from './locales/ar/sidebar.json';
@@ -54,6 +56,7 @@ import arReports from './locales/ar/reports.json';
 import arRoles from './locales/ar/roles.json';
 import arPos from './locales/ar/pos.json';
 import arModules from './locales/ar/modules.json';
+import arSellOut from './locales/ar/sellOut.json';
 
 export const LANGUAGE_STORAGE_KEY = 'appLanguage';
 export const SUPPORTED_LANGUAGES = ['fr', 'en', 'ar'] as const;
@@ -79,6 +82,7 @@ export const NAMESPACES = [
   'roles',
   'pos',
   'modules',
+  'sellOut',
 ] as const;
 
 function getInitialLanguage(): SupportedLanguage {
@@ -118,6 +122,7 @@ i18n.use(initReactI18next).init({
       roles: frRoles,
       pos: frPos,
       modules: frModules,
+      sellOut: frSellOut,
     },
     en: {
       common: enCommon,
@@ -137,6 +142,7 @@ i18n.use(initReactI18next).init({
       roles: enRoles,
       pos: enPos,
       modules: enModules,
+      sellOut: enSellOut,
     },
     ar: {
       common: arCommon,
@@ -156,6 +162,7 @@ i18n.use(initReactI18next).init({
       roles: arRoles,
       pos: arPos,
       modules: arModules,
+      sellOut: arSellOut,
     },
   },
   ns: NAMESPACES,

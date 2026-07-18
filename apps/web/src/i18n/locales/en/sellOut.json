@@ -1,0 +1,46 @@
+{
+  "title": "Sell-Out",
+  "subtitle": "Consumer purchase data from the point of sale",
+  "addButton": "Add Sell Out",
+  "modalTitle": "Add Sell Out",
+  "fields": {
+    "store": "Store",
+    "storePlaceholder": "Start typing a store name...",
+    "isBourchanin": "Is this a Bourchanin product?",
+    "isBourchaninHint": "Narrows the product search to Bourchanin products only, or excludes them.",
+    "product": "Product",
+    "productPlaceholder": "Start typing a product name or SKU...",
+    "quantity": "Quantity",
+    "price": "Price"
+  },
+  "search": {
+    "placeholder": "Search by product, SKU or store...",
+    "noResults": "No matching results",
+    "typeToSearch": "Type at least 1 letter to search"
+  },
+  "filters": {
+    "allClassifications": "All classifications",
+    "allStores": "All stores",
+    "clear": "Clear filters"
+  },
+  "errors": {
+    "storeRequired": "Select a store",
+    "productRequired": "Select a product",
+    "quantityRequired": "Enter a valid quantity",
+    "priceRequired": "Enter a valid price"
+  },
+  "table": {
+    "product": "Product",
+    "sku": "SKU",
+    "classification": "Classification",
+    "store": "Store",
+    "quantity": "Quantity",
+    "price": "Price",
+    "date": "Date",
+    "empty": "No sell-out entries yet"
+  },
+  "toasts": {
+    "createSuccess": "Sell-out entry recorded",
+    "createError": "Failed to record sell-out entry"
+  }
+}

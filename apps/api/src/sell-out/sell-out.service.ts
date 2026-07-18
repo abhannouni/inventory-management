@@ -1,21 +1,36 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import type { User } from '@prisma/client';
+import { PrismaService } from '../prisma/prisma.service';
+import { CreateSellOutDto } from './dto/create-sell-out.dto';
 
-export interface ModuleStatus {
-  available: boolean;
-  message: string;
-}
-
-/**
- * Sell-out (point-of-sale consumer purchase data) has no data model yet.
- * The endpoint exists — and is permission-gated like every other module — so
- * the page can be reached, denied, and wired up ahead of the real feature.
- */
 @Injectable()
 export class SellOutService {
-  status(): ModuleStatus {
-    return {
-      available: false,
-      message: 'Sell-out tracking is not yet integrated. This module will populate once sell-out data is connected.',
-    };
+  constructor(private readonly prisma: PrismaService) {}
+
+  findAll() {
+    return this.prisma.sellOut.findMany({
+      include: { product: true, store: true },
+      orderBy: { created_at: 'desc' },
+    });
+  }
+
+  async create(dto: CreateSellOutDto, user: User) {
+    const [product, store] = await Promise.all([
+      this.prisma.product.findUnique({ where: { id: dto.product_id } }),
+      this.prisma.store.findUnique({ where: { id: dto.store_id } }),
+    ]);
+    if (!product) throw new NotFoundException('Product not found');
+    if (!store) throw new NotFoundException('Store not found');
+
+    return this.prisma.sellOut.create({
+      data: {
+        product_id: dto.product_id,
+        store_id: dto.store_id,
+        quantity: dto.quantity,
+        price: dto.price,
+        created_by_id: user.id,
+      },
+      include: { product: true, store: true },
+    });
   }
 }

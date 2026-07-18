@@ -117,11 +117,12 @@ export const PERMISSIONS: PermissionDef[] = [
     description: 'View the administration audit log',
   },
 
-  // These three have no data model yet — read-only for now (mirroring `reports`,
+  ...crud('sell_out', 'sell-out records'),
+
+  // These two have no data model yet — read-only for now (mirroring `reports`,
   // which likewise only has read+export). The page exists and is permission-gated
   // like every other module; it renders an honest "not available yet" state until
   // the underlying feature is built. Add create/update/delete here once it is.
-  { code: 'sell_out.read', resource: 'sell_out', action: 'read', description: 'View sell-out data' },
   { code: 'merchandising.read', resource: 'merchandising', action: 'read', description: 'View merchandising execution (displays, TG, MEA, PLV)' },
   { code: 'marketing.read', resource: 'marketing', action: 'read', description: 'View marketing & trade marketing analysis' },
 ];
@@ -154,7 +155,7 @@ export const ROLE_PRESETS: Record<string, string[]> = {
     'dashboards.read',
     'reports.read',
     'reports.export',
-    'sell_out.read',
+    ...crud('sell_out', '').map((p) => p.code),
     'merchandising.read',
     'marketing.read',
   ],

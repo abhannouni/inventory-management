@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import type { ModuleStatus } from '../sell-out/sell-out.service';
+import type { ModuleStatus } from '../common/module-status';
 
 /**
  * Marketing & trade marketing analysis has no data model yet. The endpoint

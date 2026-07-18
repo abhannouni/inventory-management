@@ -1,0 +1,46 @@
+{
+  "title": "بيانات البيع للمستهلك",
+  "subtitle": "بيانات شراء المستهلك من نقطة البيع",
+  "addButton": "إضافة عملية بيع",
+  "modalTitle": "إضافة عملية بيع",
+  "fields": {
+    "store": "المتجر",
+    "storePlaceholder": "ابدأ بكتابة اسم المتجر...",
+    "isBourchanin": "هل هذا منتج بورشانين؟",
+    "isBourchaninHint": "يحصر البحث في منتجات بورشانين فقط، أو يستبعدها.",
+    "product": "المنتج",
+    "productPlaceholder": "ابدأ بكتابة اسم المنتج أو رمز SKU...",
+    "quantity": "الكمية",
+    "price": "السعر"
+  },
+  "search": {
+    "placeholder": "ابحث بالمنتج أو SKU أو المتجر...",
+    "noResults": "لا توجد نتائج مطابقة",
+    "typeToSearch": "اكتب حرفًا واحدًا على الأقل للبحث"
+  },
+  "filters": {
+    "allClassifications": "كل التصنيفات",
+    "allStores": "كل المتاجر",
+    "clear": "مسح الفلاتر"
+  },
+  "errors": {
+    "storeRequired": "اختر متجرًا",
+    "productRequired": "اختر منتجًا",
+    "quantityRequired": "أدخل كمية صحيحة",
+    "priceRequired": "أدخل سعرًا صحيحًا"
+  },
+  "table": {
+    "product": "المنتج",
+    "sku": "SKU",
+    "classification": "التصنيف",
+    "store": "المتجر",
+    "quantity": "الكمية",
+    "price": "السعر",
+    "date": "التاريخ",
+    "empty": "لا توجد عمليات بيع بعد"
+  },
+  "toasts": {
+    "createSuccess": "تم تسجيل عملية البيع",
+    "createError": "فشل تسجيل عملية البيع"
+  }
+}

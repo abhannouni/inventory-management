@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import type { ModuleStatus } from '../sell-out/sell-out.service';
+import type { ModuleStatus } from '../common/module-status';
 
 /**
  * Merchandising execution (displays, TG, MEA, PLV placements) has no data

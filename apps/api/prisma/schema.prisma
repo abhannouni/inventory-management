@@ -118,6 +118,7 @@ model User {
   schedulesCreated  Schedule[] @relation("CreatedSchedules")
   dashboards        Dashboard[]
   refreshTokens     RefreshToken[]
+  sellOuts          SellOut[]
 
   @@index([role_id])
   @@index([is_active])
@@ -190,6 +191,7 @@ model Store {
   productStores ProductStore[]
   visits        Visit[]
   schedules     Schedule[]
+  sellOuts      SellOut[]
 
   @@index([visible_to_gm])
   @@index([is_active])
@@ -227,9 +229,28 @@ model Product {
 
   productStores ProductStore[]
   auditItems    AuditItem[]
+  sellOuts      SellOut[]
 
   @@index([client_id])
   @@map("products")
+}
+
+// Consumer sell-out entry: quantity sold and price for a product at a store.
+model SellOut {
+  id             String   @id @default(uuid())
+  product        Product  @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  product_id     String
+  store          Store    @relation(fields: [store_id], references: [id], onDelete: Cascade)
+  store_id       String
+  quantity       Int
+  price          Decimal  @db.Decimal(10, 2)
+  created_by     User?    @relation(fields: [created_by_id], references: [id], onDelete: SetNull)
+  created_by_id  String?
+  created_at     DateTime @default(now())
+
+  @@index([product_id])
+  @@index([store_id])
+  @@map("sell_outs")
 }
 
 // Per-store quantity limit for a product

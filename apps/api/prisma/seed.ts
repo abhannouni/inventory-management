@@ -21,6 +21,7 @@ async function main() {
   console.log('🌱  Seeding database…');
 
   // ── 1. Clean ────────────────────────────────────────────────────────────────
+  await prisma.sellOut.deleteMany();
   await prisma.dashboardWidget.deleteMany();
   await prisma.dashboard.deleteMany();
   await prisma.subscription.deleteMany();
@@ -582,6 +583,21 @@ async function main() {
   await prisma.schedule.createMany({ data: scheduleData });
   console.log('  ✔  schedules');
 
+  // ── 10b. Sell-out entries — mix of Bourchanin and competitor products ───────
+  await prisma.sellOut.createMany({
+    data: [
+      { product_id: products[0].id, store_id: storeN1.id, quantity: 24, price: 18.5, created_by_id: adminNorth.id, created_at: dt(-6) },  // Bourchanin Milk 1L
+      { product_id: products[1].id, store_id: storeN2.id, quantity: 15, price: 12.9, created_by_id: adminNorth.id, created_at: dt(-5) },  // Bourchanin Yogurt 500g
+      { product_id: products[0].id, store_id: storeN1.id, quantity: 30, price: 18.5, created_by_id: merchNorth.id, created_at: dt(-3) },  // Bourchanin Milk 1L
+      { product_id: products[2].id, store_id: storeN3.id, quantity: 18, price: 14.0, created_by_id: merchNorth.id, created_at: dt(-4) },  // Orange Juice 1L
+      { product_id: products[3].id, store_id: storeS1.id, quantity: 40, price: 6.5,  created_by_id: supSouth.id,   created_at: dt(-2) },  // White Bread
+      { product_id: products[4].id, store_id: storeS2.id, quantity: 12, price: 22.0, created_by_id: merchSouth.id, created_at: dt(-2) },  // Cheddar Cheese
+      { product_id: products[1].id, store_id: storeS3.id, quantity: 20, price: 12.9, created_by_id: adminSouth.id, created_at: dt(-1) },  // Bourchanin Yogurt 500g
+      { product_id: products[9].id, store_id: storeS1.id, quantity: 50, price: 4.0,  created_by_id: merchSouth.id, created_at: dt(0)  },  // Mineral Water 1.5L
+    ],
+  });
+  console.log('  ✔  sell_outs');
+
   // ── 11. Plans ───────────────────────────────────────────────────────────────
   const [starter, pro, enterprise] = await Promise.all([
     prisma.plan.create({
@@ -684,6 +700,7 @@ async function main() {
     subscriptions: await prisma.subscription.count(),
     kpis:          await prisma.kpi.count(),
     dashboards:    await prisma.dashboard.count(),
+    sellOuts:      await prisma.sellOut.count(),
     permissions:   await prisma.permission.count(),
     visibleToGm:   await prisma.store.count({ where: { visible_to_gm: true } }),
   };
@@ -692,7 +709,7 @@ async function main() {
   console.log(`  Regions: ${counts.regions}  Stores: ${counts.stores} (${counts.visibleToGm} visible to GM)  Products: ${counts.products}`);
   console.log(`  Users: ${counts.users}  Visits: ${counts.visits}  Audit items: ${counts.audits}  Schedules: ${counts.schedules}`);
   console.log(`  Clients: ${counts.clients}  Plans: ${counts.plans}  Subscriptions: ${counts.subscriptions}`);
-  console.log(`  KPIs: ${counts.kpis}  Dashboards: ${counts.dashboards}  Permissions: ${counts.permissions}`);
+  console.log(`  KPIs: ${counts.kpis}  Dashboards: ${counts.dashboards}  Permissions: ${counts.permissions}  Sell-outs: ${counts.sellOuts}`);
   console.log('\n  Credentials (all passwords: password123)');
   console.log('  ┌──────────────────────────────────────┬────────────────────┐');
   console.log('  │ Email                                │ Role               │');

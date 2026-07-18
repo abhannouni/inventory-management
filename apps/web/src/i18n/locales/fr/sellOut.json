@@ -1,0 +1,46 @@
+{
+  "title": "Sell-Out",
+  "subtitle": "Données d'achat des consommateurs sur le point de vente",
+  "addButton": "Ajouter un sell-out",
+  "modalTitle": "Ajouter un sell-out",
+  "fields": {
+    "store": "Magasin",
+    "storePlaceholder": "Commencez à taper le nom d'un magasin...",
+    "isBourchanin": "Est-ce un produit Bourchanin ?",
+    "isBourchaninHint": "Limite la recherche de produits aux produits Bourchanin uniquement, ou les exclut.",
+    "product": "Produit",
+    "productPlaceholder": "Commencez à taper le nom ou le SKU d'un produit...",
+    "quantity": "Quantité",
+    "price": "Prix"
+  },
+  "search": {
+    "placeholder": "Rechercher par produit, SKU ou magasin...",
+    "noResults": "Aucun résultat correspondant",
+    "typeToSearch": "Tapez au moins 1 lettre pour rechercher"
+  },
+  "filters": {
+    "allClassifications": "Toutes les classifications",
+    "allStores": "Tous les magasins",
+    "clear": "Effacer les filtres"
+  },
+  "errors": {
+    "storeRequired": "Sélectionnez un magasin",
+    "productRequired": "Sélectionnez un produit",
+    "quantityRequired": "Entrez une quantité valide",
+    "priceRequired": "Entrez un prix valide"
+  },
+  "table": {
+    "product": "Produit",
+    "sku": "SKU",
+    "classification": "Classification",
+    "store": "Magasin",
+    "quantity": "Quantité",
+    "price": "Prix",
+    "date": "Date",
+    "empty": "Aucune entrée de sell-out pour le moment"
+  },
+  "toasts": {
+    "createSuccess": "Entrée de sell-out enregistrée",
+    "createError": "Échec de l'enregistrement de l'entrée de sell-out"
+  }
+}

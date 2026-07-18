@@ -10,6 +10,7 @@ import visitsReducer from './slices/visitsSlice';
 import auditItemsReducer from './slices/auditItemsSlice';
 import reportsReducer from './slices/reportsSlice';
 import schedulesReducer from './slices/schedulesSlice';
+import sellOutReducer from './slices/sellOutSlice';
 
 export const store = configureStore({
   reducer: {
@@ -24,6 +25,7 @@ export const store = configureStore({
     auditItems: auditItemsReducer,
     reports: reportsReducer,
     schedules: schedulesReducer,
+    sellOut: sellOutReducer,
   },
 });
 

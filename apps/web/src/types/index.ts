@@ -100,6 +100,18 @@ export interface Product {
   updated_at: string;
 }
 
+export interface SellOut {
+  id: string;
+  product_id: string;
+  product?: Product;
+  store_id: string;
+  store?: Store;
+  quantity: number;
+  price: number;
+  created_by_id: string | null;
+  created_at: string;
+}
+
 export interface ProductStore {
   id: string;
   product_id: string;
