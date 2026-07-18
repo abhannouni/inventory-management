@@ -3,17 +3,22 @@ import type { Visit } from '../types';
 
 // Timestamps are deliberately absent: the server stamps check-in and check-out
 // from its own clock and derives the duration from them.
+//
+// lat/lng are optional: when the super_admin-controlled `visits.gps_required`
+// flag is off, the client never requests device GPS, so nothing is sent. The
+// server enforces its own copy of that same flag, so this is not a security
+// boundary — just matching what the client actually has available.
 export interface CheckinPayload {
   store_id: string;
   schedule_id?: string;
-  lat: number;
-  lng: number;
+  lat?: number;
+  lng?: number;
 }
 
 export interface CheckoutPayload {
   visit_id: string;
-  lat: number;
-  lng: number;
+  lat?: number;
+  lng?: number;
 }
 
 export interface FindVisitsParams {

@@ -4,27 +4,40 @@ import Button from '../../components/ui/Button';
 import VisitTimer from '../../components/ui/VisitTimer';
 import { formatDate } from '../../utils/format';
 import { getCurrentPosition, geolocationErrorMessage } from '../../utils/geolocation';
+import { useFeatureFlag } from '../../hooks/useFeatureFlag';
 import type { Visit } from '../../types';
 
 interface Props {
   visit: Visit;
-  onSubmit: (data: { lat: number; lng: number }) => Promise<void>;
+  onSubmit: (data: { lat?: number; lng?: number }) => Promise<void>;
   onCancel: () => void;
 }
 
 export default function CheckoutForm({ visit, onSubmit, onCancel }: Props) {
   const { t, i18n } = useTranslation('visits');
+  // Super_admin-controlled — see the Settings page. Defaults to required
+  // (fail-safe) until the flag's real state loads.
+  const gpsRequired = useFeatureFlag('visits.gps_required', true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   const lat = visit.store?.latitude != null ? Number(visit.store.latitude) : null;
   const lng = visit.store?.longitude != null ? Number(visit.store.longitude) : null;
   const hasCoords = lat != null && lng != null;
+  const canSubmit = !gpsRequired || hasCoords;
 
   const handleCheckout = async () => {
-    if (!hasCoords) return;
+    if (!canSubmit) return;
     setError('');
     setLoading(true);
+
+    if (!gpsRequired) {
+      // The server stamps check-out and computes the stored duration.
+      await onSubmit({});
+      setLoading(false);
+      return;
+    }
+
     // The user's real device GPS is sent — the server checks it is within the
     // store's zone. Sending the store's own coordinates would defeat the check.
     let position;
@@ -35,7 +48,6 @@ export default function CheckoutForm({ visit, onSubmit, onCancel }: Props) {
       setLoading(false);
       return;
     }
-    // The server stamps check-out and computes the stored duration.
     await onSubmit({ lat: position.lat, lng: position.lng });
     setLoading(false);
   };
@@ -51,7 +63,7 @@ export default function CheckoutForm({ visit, onSubmit, onCancel }: Props) {
         </div>
       </div>
 
-      {hasCoords && (
+      {gpsRequired && hasCoords && (
         <div style={{
           display: 'flex', alignItems: 'center', gap: 10,
           background: 'var(--primary-light)', border: '1px solid var(--accent-light)',
@@ -70,7 +82,7 @@ export default function CheckoutForm({ visit, onSubmit, onCancel }: Props) {
       {error && <p className="form-error" style={{ marginBottom: 10 }}>{error}</p>}
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-        <Button size="lg" onClick={handleCheckout} loading={loading} disabled={!hasCoords} style={{ width: '100%' }}>
+        <Button size="lg" onClick={handleCheckout} loading={loading} disabled={!canSubmit} style={{ width: '100%' }}>
           {t('checkout.confirmCheckOut')}
         </Button>
         <Button variant="ghost" onClick={onCancel} disabled={loading} style={{ width: '100%' }}>

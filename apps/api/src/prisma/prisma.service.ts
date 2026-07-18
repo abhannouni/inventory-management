@@ -28,6 +28,7 @@ export class PrismaService implements OnModuleInit, OnModuleDestroy {
   readonly adminAuditLog: PrismaClient['adminAuditLog'];
   readonly refreshToken: PrismaClient['refreshToken'];
   readonly sellOut: PrismaClient['sellOut'];
+  readonly featureFlag: PrismaClient['featureFlag'];
 
   constructor(config: ConfigService) {
     const adapter = new PrismaPg(config.get<string>('DATABASE_URL')!);
@@ -55,6 +56,7 @@ export class PrismaService implements OnModuleInit, OnModuleDestroy {
     this.adminAuditLog = this.client.adminAuditLog;
     this.refreshToken = this.client.refreshToken;
     this.sellOut = this.client.sellOut;
+    this.featureFlag = this.client.featureFlag;
   }
 
   $transaction: PrismaClient['$transaction'] = (...args: any[]) =>

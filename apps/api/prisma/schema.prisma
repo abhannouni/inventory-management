@@ -536,3 +536,14 @@ model AdminAuditLog {
   @@index([created_at])
   @@map("admin_audit_logs")
 }
+
+/// Runtime-toggleable feature flags (e.g. whether GPS is required to check
+/// in/out of a store). Absent key = the flag's registered default applies.
+model FeatureFlag {
+  id         String   @id @default(uuid())
+  key        String   @unique
+  enabled    Boolean
+  updated_at DateTime @updatedAt
+
+  @@map("feature_flags")
+}

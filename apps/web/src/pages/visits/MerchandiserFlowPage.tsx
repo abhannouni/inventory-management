@@ -21,6 +21,7 @@ import { productStoresApi } from '../../api/product-stores.api';
 import { uploadApi } from '../../api/upload.api';
 import { formatDate } from '../../utils/format';
 import { getCurrentPosition, geolocationErrorMessage } from '../../utils/geolocation';
+import { useFeatureFlag } from '../../hooks/useFeatureFlag';
 import type { Visit, ProductStore } from '../../types';
 
 /* ─────────── Types ─────────── */
@@ -122,6 +123,9 @@ interface MerchandiserFlowPageProps {
 
 export default function MerchandiserFlowPage({ onViewHistory }: MerchandiserFlowPageProps) {
   const { t, i18n } = useTranslation('visits');
+  // Super_admin-controlled — see the Settings page. Defaults to required
+  // (fail-safe) until the flag's real state loads.
+  const gpsRequired = useFeatureFlag('visits.gps_required', true);
   const dispatch  = useAppDispatch();
   const navigate  = useNavigate();
   const { active: activeVisit } = useAppSelector((s) => s.visits);
@@ -238,21 +242,24 @@ export default function MerchandiserFlowPage({ onViewHistory }: MerchandiserFlow
   /* ── Step 1: Check In ── */
   const handleCheckin = async () => {
     if (!storeId) { setStoreErr(t('merchandiserFlow.checkin.errors.storeRequired')); return; }
-    if (!selectedStore?.latitude || !selectedStore?.longitude) {
+    if (gpsRequired && (!selectedStore?.latitude || !selectedStore?.longitude)) {
       setStoreErr(t('merchandiserFlow.checkin.errors.noGpsCoordinates'));
       return;
     }
     setStoreErr('');
     setBusy(true);
-    // The user's real device GPS is sent — the server checks it is within the
-    // store's zone. Sending the store's own coordinates would defeat the check.
-    let position;
-    try {
-      position = await getCurrentPosition();
-    } catch (err) {
-      setStoreErr(geolocationErrorMessage(err, t));
-      setBusy(false);
-      return;
+
+    let position: { lat?: number; lng?: number } = {};
+    if (gpsRequired) {
+      // The user's real device GPS is sent — the server checks it is within
+      // the store's zone. Sending the store's own coordinates would defeat it.
+      try {
+        position = await getCurrentPosition();
+      } catch (err) {
+        setStoreErr(geolocationErrorMessage(err, t));
+        setBusy(false);
+        return;
+      }
     }
     // The server starts the clock — no client timestamp is sent.
     const res = await dispatch(checkin({
@@ -355,15 +362,18 @@ export default function MerchandiserFlowPage({ onViewHistory }: MerchandiserFlow
   const handleCheckout = async () => {
     if (!visit) return;
     setBusy(true);
-    // The user's real device GPS is sent — the server checks it is within the
-    // store's zone. Sending the store's own coordinates would defeat the check.
-    let position;
-    try {
-      position = await getCurrentPosition();
-    } catch (err) {
-      toast.error(geolocationErrorMessage(err, t));
-      setBusy(false);
-      return;
+
+    let position: { lat?: number; lng?: number } = {};
+    if (gpsRequired) {
+      // The user's real device GPS is sent — the server checks it is within
+      // the store's zone. Sending the store's own coordinates would defeat it.
+      try {
+        position = await getCurrentPosition();
+      } catch (err) {
+        toast.error(geolocationErrorMessage(err, t));
+        setBusy(false);
+        return;
+      }
     }
     // The server stamps check-out and computes the stored duration.
     const res = await dispatch(checkout({
@@ -502,7 +512,7 @@ export default function MerchandiserFlowPage({ onViewHistory }: MerchandiserFlow
               {storeErr && <p className="form-error">{storeErr}</p>}
             </div>
 
-            {selectedStore && (
+            {selectedStore && gpsRequired && (
               <div style={{
                 display: 'flex', alignItems: 'center', gap: 10,
                 background: selectedStore.latitude != null ? 'var(--primary-light)' : 'var(--gray-100)',
@@ -531,7 +541,7 @@ export default function MerchandiserFlowPage({ onViewHistory }: MerchandiserFlow
 
             <button
               className="btn btn-primary btn-lg mf-full-btn"
-              disabled={!storeId || !selectedStore?.latitude || busy}
+              disabled={!storeId || (gpsRequired && !selectedStore?.latitude) || busy}
               onClick={handleCheckin}
               style={{ marginTop: 16 }}
             >

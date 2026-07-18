@@ -11,17 +11,22 @@ export class CheckinDto {
   @IsUUID()
   schedule_id?: string;
 
-  @ApiProperty({ example: 34.052200 })
+  // Optional: when the `visits.gps_required` flag is off, the client never
+  // requests device GPS, so nothing is sent. When the flag is on, the service
+  // rejects a missing lat/lng itself (see `assertWithinGeofence`).
+  @ApiPropertyOptional({ example: 34.0522 })
+  @IsOptional()
   @IsNumber()
   @Min(-90)
   @Max(90)
-  lat: number;
+  lat?: number;
 
-  @ApiProperty({ example: -118.243700 })
+  @ApiPropertyOptional({ example: -118.2437 })
+  @IsOptional()
   @IsNumber()
   @Min(-180)
   @Max(180)
-  lng: number;
+  lng?: number;
 
   // No `checkin_at`: the visit clock is started by the server. Accepting a
   // client timestamp would let a device with a wrong clock fake the duration.

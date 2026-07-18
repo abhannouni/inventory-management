@@ -6,11 +6,15 @@ import {
 } from '@nestjs/common';
 import { Prisma, ScheduleStatus, User, UserRole, VisitStatus } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import { SettingsService } from '../settings/settings.service';
 import { CheckinDto } from './dto/checkin.dto';
 import { CheckoutDto } from './dto/checkout.dto';
 import { FindVisitsDto } from './dto/find-visits.dto';
 import { SubmitVisitReportDto } from './dto/submit-visit-report.dto';
 import { SubmitVisitStateDto } from './dto/submit-visit-state.dto';
+
+/** Toggled from the super_admin Settings page — see `FEATURE_FLAGS` in settings. */
+const GPS_REQUIRED_FLAG = 'visits.gps_required';
 
 /**
  * The single definition of visit duration: `checkout_at - checkin_at`, in whole seconds.
@@ -55,7 +59,10 @@ const VISIT_INCLUDE = {
 
 @Injectable()
 export class VisitsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly settings: SettingsService,
+  ) {}
 
   async checkin(dto: CheckinDto, user: User) {
     let store_id = dto.store_id;
@@ -73,7 +80,7 @@ export class VisitsService {
     const store = await this.prisma.store.findUnique({ where: { id: store_id } });
     if (!store) throw new NotFoundException('Store not found');
 
-    this.assertWithinGeofence(store.latitude, store.longitude, dto.lat, dto.lng, store.name);
+    await this.assertWithinGeofence(store.latitude, store.longitude, dto.lat, dto.lng, store.name);
 
     // Verify the user is assigned to this store (supervisor/merchandiser)
     if (user.role === UserRole.supervisor || user.role === UserRole.merchandiser) {
@@ -213,7 +220,7 @@ export class VisitsService {
       throw new ConflictException('Visit is already completed');
     }
 
-    this.assertWithinGeofence(
+    await this.assertWithinGeofence(
       visit.store.latitude,
       visit.store.longitude,
       dto.lat,
@@ -300,17 +307,23 @@ export class VisitsService {
 
   /**
    * Rejects a check-in/check-out whose device GPS falls outside the store's
-   * geofence. Skipped when the store has no coordinates configured — there is
-   * nothing to fence against, and the admin UI already flags that separately.
+   * geofence. Skipped entirely when a super_admin has turned the
+   * `visits.gps_required` flag off, or when the store has no coordinates
+   * configured — there is nothing to fence against in either case.
    */
-  private assertWithinGeofence(
+  private async assertWithinGeofence(
     storeLat: Prisma.Decimal | null,
     storeLng: Prisma.Decimal | null,
-    deviceLat: number,
-    deviceLng: number,
+    deviceLat: number | undefined,
+    deviceLng: number | undefined,
     storeName: string,
   ) {
+    if (!(await this.settings.isEnabled(GPS_REQUIRED_FLAG))) return;
     if (storeLat == null || storeLng == null) return;
+
+    if (deviceLat == null || deviceLng == null) {
+      throw new ForbiddenException('Location access is required to do this — enable it and try again');
+    }
 
     const distance = haversineDistanceMeters(
       Number(storeLat),

@@ -1,0 +1,19 @@
+{
+  "title": "Paramètres",
+  "subtitle": "Activer ou désactiver des fonctionnalités de la plateforme",
+  "loading": "Chargement…",
+  "empty": "Aucune fonctionnalité configurable pour le moment",
+  "toasts": {
+    "enabled": "Fonctionnalité activée",
+    "disabled": "Fonctionnalité désactivée",
+    "updateFailed": "Impossible de mettre à jour le paramètre"
+  },
+  "flags": {
+    "visits": {
+      "gps_required": {
+        "label": "Exiger le GPS pour le pointage d'arrivée / de sortie",
+        "description": "Si activé, les marchandiseurs et superviseurs doivent se trouver à moins de 2 km du magasin pour pointer leur arrivée ou leur sortie. Si désactivé, le pointage fonctionne sans vérification de localisation."
+      }
+    }
+  }
+}

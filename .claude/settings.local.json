@@ -32,7 +32,12 @@
       "Bash(curl -s http://localhost:3001/api/sell-out -H 'Authorization: Bearer __CMDSUB_OUTPUT__')",
       "Read(//c/Users/Dell/Desktop/New folder/**)",
       "Bash(node -e \"JSON.parse\\(require\\('fs'\\).readFileSync\\('src/i18n/locales/en/visits.json','utf8'\\)\\); JSON.parse\\(require\\('fs'\\).readFileSync\\('src/i18n/locales/fr/visits.json','utf8'\\)\\); JSON.parse\\(require\\('fs'\\).readFileSync\\('src/i18n/locales/ar/visits.json','utf8'\\)\\); console.log\\('OK'\\)\")",
-      "Bash(npx eslint *)"
+      "Bash(npx eslint *)",
+      "Bash(xargs grep -l \"createBrowserRouter\\\\|<Routes>\\\\|Route path\")",
+      "Bash(pnpm db:seed:rbac)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3001/api/regions -H \"Authorization: Bearer invalid\")",
+      "Bash(curl -s http://localhost:3001/docs-json)",
+      "Bash(node -e \"let d='';process.stdin.on\\('data',c=>d+=c\\);process.stdin.on\\('end',\\(\\)=>{try{const j=JSON.parse\\(d\\);console.log\\(Object.keys\\(j.paths\\).filter\\(p=>p.includes\\('settings'\\)\\)\\)}catch\\(e\\){console.log\\('parse-fail', d.slice\\(0,200\\)\\)}}\\)\")"
     ]
   }
 }

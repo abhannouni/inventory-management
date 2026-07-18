@@ -2,31 +2,44 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Button from '../../components/ui/Button';
 import { getCurrentPosition, geolocationErrorMessage } from '../../utils/geolocation';
+import { useFeatureFlag } from '../../hooks/useFeatureFlag';
 import type { Store } from '../../types';
 
 interface Props {
   stores: Store[];
-  onSubmit: (data: { store_id: string; lat: number; lng: number }) => Promise<void>;
+  onSubmit: (data: { store_id: string; lat?: number; lng?: number }) => Promise<void>;
   onCancel: () => void;
 }
 
 export default function CheckinForm({ stores, onSubmit, onCancel }: Props) {
   const { t } = useTranslation('visits');
+  // Super_admin-controlled — see the Settings page. Defaults to required
+  // (fail-safe) until the flag's real state loads.
+  const gpsRequired = useFeatureFlag('visits.gps_required', true);
   const [storeId, setStoreId] = useState('');
   const [loading, setLoading] = useState(false);
   const [storeError, setStoreError] = useState('');
 
   const selectedStore = stores.find((s) => s.id === storeId) ?? null;
   const hasCoords = selectedStore?.latitude != null && selectedStore?.longitude != null;
+  const canSubmit = !gpsRequired || hasCoords;
 
   const handleSubmit = async () => {
     if (!storeId) { setStoreError(t('checkin.errors.storeRequired')); return; }
-    if (!selectedStore || !hasCoords) {
+    if (!selectedStore || !canSubmit) {
       setStoreError(t('checkin.errors.noGpsCoordinates'));
       return;
     }
     setStoreError('');
     setLoading(true);
+
+    if (!gpsRequired) {
+      // The server starts the visit clock — no client timestamp is sent.
+      await onSubmit({ store_id: storeId });
+      setLoading(false);
+      return;
+    }
+
     // The user's real device GPS is sent — the server checks it is within the
     // store's zone. Sending the store's own coordinates would defeat the check.
     let position;
@@ -37,7 +50,6 @@ export default function CheckinForm({ stores, onSubmit, onCancel }: Props) {
       setLoading(false);
       return;
     }
-    // The server starts the visit clock — no client timestamp is sent.
     await onSubmit({ store_id: storeId, lat: position.lat, lng: position.lng });
     setLoading(false);
   };
@@ -58,7 +70,7 @@ export default function CheckinForm({ stores, onSubmit, onCancel }: Props) {
         {storeError && <p className="form-error" style={{ marginTop: 6 }}>{storeError}</p>}
       </div>
 
-      {selectedStore && (
+      {selectedStore && gpsRequired && (
         <div style={{
           display: 'flex', alignItems: 'center', gap: 10,
           background: hasCoords ? 'var(--primary-light)' : 'var(--gray-100)',
@@ -86,7 +98,7 @@ export default function CheckinForm({ stores, onSubmit, onCancel }: Props) {
       )}
 
       <div style={{ display: 'flex', gap: 10, flexDirection: 'column', marginTop: 16 }}>
-        <Button size="lg" onClick={handleSubmit} loading={loading} disabled={!storeId || !hasCoords} style={{ width: '100%' }}>
+        <Button size="lg" onClick={handleSubmit} loading={loading} disabled={!storeId || !canSubmit} style={{ width: '100%' }}>
           {t('checkin.checkInNow')}
         </Button>
         <Button variant="ghost" onClick={onCancel} disabled={loading} style={{ width: '100%' }}>

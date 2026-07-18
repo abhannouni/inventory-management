@@ -20,6 +20,7 @@ import { SchedulesModule } from './schedules/schedules.module';
 import { SellOutModule } from './sell-out/sell-out.module';
 import { MerchandisingModule } from './merchandising/merchandising.module';
 import { MarketingModule } from './marketing/marketing.module';
+import { SettingsModule } from './settings/settings.module';
 
 @Module({
   imports: [
@@ -56,6 +57,7 @@ import { MarketingModule } from './marketing/marketing.module';
     SellOutModule,
     MerchandisingModule,
     MarketingModule,
+    SettingsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -92,7 +92,7 @@ export default function VisitsPage() {
 
   const { pageItems: visitPage, meta, setPage, setLimit } = useClientPagination(filteredVisits);
 
-  const handleCheckin = async (data: { store_id: string; lat: number; lng: number }) => {
+  const handleCheckin = async (data: { store_id: string; lat?: number; lng?: number }) => {
     const res = await dispatch(checkin(data));
     if (checkin.fulfilled.match(res)) {
       toast.success(t('list.toasts.checkinSuccess'));

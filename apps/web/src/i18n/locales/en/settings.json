@@ -1,0 +1,19 @@
+{
+  "title": "Settings",
+  "subtitle": "Turn platform features on or off",
+  "loading": "Loading…",
+  "empty": "No feature flags yet",
+  "toasts": {
+    "enabled": "Feature enabled",
+    "disabled": "Feature disabled",
+    "updateFailed": "Could not update the setting"
+  },
+  "flags": {
+    "visits": {
+      "gps_required": {
+        "label": "Require GPS for check-in / check-out",
+        "description": "When enabled, merchandisers and supervisors must be within 2 km of the store to check in or check out of a visit. When disabled, check-in/out works without a location check."
+      }
+    }
+  }
+}
