@@ -37,7 +37,15 @@
       "Bash(pnpm db:seed:rbac)",
       "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3001/api/regions -H \"Authorization: Bearer invalid\")",
       "Bash(curl -s http://localhost:3001/docs-json)",
-      "Bash(node -e \"let d='';process.stdin.on\\('data',c=>d+=c\\);process.stdin.on\\('end',\\(\\)=>{try{const j=JSON.parse\\(d\\);console.log\\(Object.keys\\(j.paths\\).filter\\(p=>p.includes\\('settings'\\)\\)\\)}catch\\(e\\){console.log\\('parse-fail', d.slice\\(0,200\\)\\)}}\\)\")"
+      "Bash(node -e \"let d='';process.stdin.on\\('data',c=>d+=c\\);process.stdin.on\\('end',\\(\\)=>{try{const j=JSON.parse\\(d\\);console.log\\(Object.keys\\(j.paths\\).filter\\(p=>p.includes\\('settings'\\)\\)\\)}catch\\(e\\){console.log\\('parse-fail', d.slice\\(0,200\\)\\)}}\\)\")",
+      "Bash(powershell -NoProfile -Command \"Test-NetConnection -ComputerName localhost -Port 5432 | Select-Object -ExpandProperty TcpTestSucceeded\")",
+      "Bash(powershell -NoProfile -Command \"Get-CimInstance Win32_Process -Filter \\\\\"ProcessId=21136\\\\\" | Select-Object ProcessId,CommandLine | Format-List\")",
+      "Bash(powershell -NoProfile -Command \"\\(Get-Process -Id 21136\\).Path; Get-CimInstance Win32_Process -Filter \\\\\"ProcessId=21136\\\\\" | Select-Object ExecutablePath\")",
+      "Bash(powershell -NoProfile -Command \"Stop-Process -Id 21136 -Force\")",
+      "Bash(curl -s -X POST http://localhost:3001/api/auth/login -H \"Content-Type: application/json\" -d '{\"email\":\"superadmin@example.com\",\"password\":\"password123\"}')",
+      "Bash(curl -s 'http://localhost:3001/api/users?role=merchandiser&limit=5' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmN2Y0OGU2Yy0xOGJjLTRlMjktODk4ZC1hMDZmZDg0YjIzNTMiLCJlbWFpbCI6InN1cGVyYWRtaW5AZXhhbXBsZS5jb20iLCJyb2xlIjoic3VwZXJfYWRtaW4iLCJpYXQiOjE3ODQ0MTUzOTgsImV4cCI6MTc4NDQxNjI5OH0.aF6jVK38Be3DjEBIrIWlBHVdGCCsuWR4WutUkXCq33k')",
+      "Bash(curl -s -X DELETE http://localhost:3001/api/schedules/3d28bcf0-4a5e-4717-b09f-5421413f1714 -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmN2Y0OGU2Yy0xOGJjLTRlMjktODk4ZC1hMDZmZDg0YjIzNTMiLCJlbWFpbCI6InN1cGVyYWRtaW5AZXhhbXBsZS5jb20iLCJyb2xlIjoic3VwZXJfYWRtaW4iLCJpYXQiOjE3ODQ0MTUzOTgsImV4cCI6MTc4NDQxNjI5OH0.aF6jVK38Be3DjEBIrIWlBHVdGCCsuWR4WutUkXCq33k')",
+      "Bash(curl -s -X DELETE http://localhost:3001/api/schedules/c85b8a8b-e963-48e0-9ce6-9006a0e7c231 -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmN2Y0OGU2Yy0xOGJjLTRlMjktODk4ZC1hMDZmZDg0YjIzNTMiLCJlbWFpbCI6InN1cGVyYWRtaW5AZXhhbXBsZS5jb20iLCJyb2xlIjoic3VwZXJfYWRtaW4iLCJpYXQiOjE3ODQ0MTUzOTgsImV4cCI6MTc4NDQxNjI5OH0.aF6jVK38Be3DjEBIrIWlBHVdGCCsuWR4WutUkXCq33k')"
     ]
   }
 }

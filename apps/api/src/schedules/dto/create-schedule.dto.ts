@@ -2,9 +2,13 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsDateString, IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class CreateScheduleDto {
-  @ApiProperty({ example: 'uuid-of-merchandiser' })
+  @ApiPropertyOptional({
+    example: 'uuid-of-merchandiser',
+    description: 'Required for admin/super_admin. Ignored for supervisors, who can only plan for themselves.',
+  })
+  @IsOptional()
   @IsUUID()
-  user_id: string;
+  user_id?: string;
 
   @ApiProperty({ example: 'uuid-of-store' })
   @IsUUID()

@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { ScheduleStatus, User, UserRole } from '@prisma/client';
 import { PermissionsService } from '../auth/permissions.service';
 import { PrismaService } from '../prisma/prisma.service';
@@ -29,23 +29,32 @@ export class SchedulesService {
     // Coarse "can this caller create schedules at all" is the controller's
     // `@RequirePermissions('schedules.create')` guard — no role check needed here.
 
+    // A supervisor may only plan visits for themself — team planning is an
+    // admin/super_admin responsibility. Ignore any user_id they send and
+    // reject an explicit attempt to target someone else outright.
+    if (actor.role === UserRole.supervisor) {
+      if (dto.user_id && dto.user_id !== actor.id)
+        throw new ForbiddenException('Supervisors can only plan visits for themselves');
+    } else if (!dto.user_id) {
+      throw new BadRequestException('user_id is required');
+    }
+    const targetUserId = actor.role === UserRole.supervisor ? actor.id : dto.user_id!;
+
     const [targetUser, store] = await Promise.all([
-      this.prisma.user.findUnique({ where: { id: dto.user_id } }),
+      this.prisma.user.findUnique({ where: { id: targetUserId } }),
       this.prisma.store.findUnique({ where: { id: dto.store_id } }),
     ]);
     if (!targetUser) throw new NotFoundException('User not found');
     if (!store) throw new NotFoundException('Store not found');
 
     if (actor.role === UserRole.supervisor) {
-      if (!isInSupervisorScope(actor, targetUser))
-        throw new ForbiddenException('You can only schedule visits for yourself or your team');
       if (!(await assertStoreVisible(this.prisma, actor, dto.store_id)))
         throw new ForbiddenException('You can only schedule visits at a POS you are responsible for');
     }
 
     return this.prisma.schedule.create({
       data: {
-        user_id: dto.user_id,
+        user_id: targetUserId,
         store_id: dto.store_id,
         created_by_id: actor.id,
         scheduled_at: new Date(dto.scheduled_at),

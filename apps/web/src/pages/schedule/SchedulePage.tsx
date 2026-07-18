@@ -69,16 +69,20 @@ interface ScheduleFormProps {
   editing: Schedule | null;
   merchandisers: { id: string; full_name: string }[];
   stores: { id: string; name: string }[];
+  /** Supervisors can only plan visits for themselves — no assignee picker. */
+  isSupervisor: boolean;
   onSubmit: (data: CreateSchedulePayload | UpdateSchedulePayload) => void;
   onCancel: () => void;
   loading: boolean;
 }
 
-function ScheduleForm({ initialDate, editing, merchandisers, stores, onSubmit, onCancel, loading }: ScheduleFormProps) {
+function ScheduleForm({ initialDate, editing, merchandisers, stores, isSupervisor, onSubmit, onCancel, loading }: ScheduleFormProps) {
   const { t } = useTranslation('schedule');
   const { t: tCommon } = useTranslation('common');
   const pad = (n: number) => String(n).padStart(2, '0');
   const defaultDatetime = `${initialDate.getFullYear()}-${pad(initialDate.getMonth()+1)}-${pad(initialDate.getDate())}T09:00`;
+
+  const showAssigneeField = !editing && !isSupervisor;
 
   const [userId, setUserId] = useState(editing?.user_id ?? '');
   const [storeId, setStoreId] = useState(editing?.store_id ?? '');
@@ -94,14 +98,19 @@ function ScheduleForm({ initialDate, editing, merchandisers, stores, onSubmit, o
     if (editing) {
       onSubmit({ store_id: storeId || undefined, scheduled_at, notes: notes || undefined, status });
     } else {
-      if (!userId || !storeId) return;
-      onSubmit({ user_id: userId, store_id: storeId, scheduled_at, notes: notes || undefined });
+      if (!storeId) return;
+      if (showAssigneeField) {
+        if (!userId) return;
+        onSubmit({ user_id: userId, store_id: storeId, scheduled_at, notes: notes || undefined });
+      } else {
+        onSubmit({ store_id: storeId, scheduled_at, notes: notes || undefined });
+      }
     }
   };
 
   return (
     <form className="schedule-form" onSubmit={handleSubmit}>
-      {!editing && (
+      {showAssigneeField && (
         <div className="form-group">
           <label className="form-label">{t('form.merchandiser')}</label>
           <select className="form-select" value={userId} onChange={e => setUserId(e.target.value)} required>
@@ -346,17 +355,13 @@ export default function SchedulePage() {
 
   useEffect(() => {
     if (canManage) {
-      // A supervisor may only plan for their own direct team; scope the
-      // fetch to it so nothing outside that team ever reaches this page.
-      // Admins/super admins keep the unscoped list to manage everyone.
-      dispatch(fetchUsers(
-        currentUser?.role === 'supervisor'
-          ? { supervisor_id: currentUser.id, limit: 100 }
-          : { limit: 100 },
-      ));
+      // A supervisor can only plan visits for themself, so they never need an
+      // assignee list. Admins/super admins pick who the visit is for, so they
+      // get the full merchandiser/supervisor list.
+      if (currentUser?.role !== 'supervisor') dispatch(fetchUsers({ limit: 100 }));
       dispatch(fetchStores());
     }
-  }, [dispatch, canManage, currentUser?.role, currentUser?.id]);
+  }, [dispatch, canManage, currentUser?.role]);
 
   const calendarDays = buildCalendarDays(currentDate.getFullYear(), currentDate.getMonth());
   const today = new Date();
@@ -444,11 +449,11 @@ export default function SchedulePage() {
     }
   };
 
-  // A supervisor plans for themself or their direct team — `users` is already
-  // scoped to that team above, so just add "myself" as an assignable option.
-  // Admins/super admins keep picking from every merchandiser/supervisor.
-  const merchandisers = currentUser?.role === 'supervisor'
-    ? [currentUser, ...users.filter(u => u.id !== currentUser.id)]
+  // Supervisors always plan for themself (no assignee picker shown at all).
+  // Admins/super admins pick from every merchandiser/supervisor.
+  const isSupervisor = currentUser?.role === 'supervisor';
+  const merchandisers = isSupervisor
+    ? []
     : users.filter(u => u.role === 'merchandiser' || u.role === 'supervisor');
 
   return (
@@ -594,6 +599,7 @@ export default function SchedulePage() {
           editing={editing}
           merchandisers={merchandisers}
           stores={stores}
+          isSupervisor={isSupervisor}
           onSubmit={handleFormSubmit}
           onCancel={closeForm}
           loading={formLoading}

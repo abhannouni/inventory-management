@@ -2,7 +2,8 @@ import { api } from './client';
 import type { Schedule, ScheduleStatus } from '../types';
 
 export interface CreateSchedulePayload {
-  user_id: string;
+  /** Required for admin/super_admin. Omit for supervisors — they can only plan for themselves. */
+  user_id?: string;
   store_id: string;
   scheduled_at: string;
   notes?: string;
