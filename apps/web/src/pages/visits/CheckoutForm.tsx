@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import Button from '../../components/ui/Button';
 import VisitTimer from '../../components/ui/VisitTimer';
 import { formatDate } from '../../utils/format';
+import { getCurrentPosition, geolocationErrorMessage } from '../../utils/geolocation';
 import type { Visit } from '../../types';
 
 interface Props {
@@ -14,6 +15,7 @@ interface Props {
 export default function CheckoutForm({ visit, onSubmit, onCancel }: Props) {
   const { t, i18n } = useTranslation('visits');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const lat = visit.store?.latitude != null ? Number(visit.store.latitude) : null;
   const lng = visit.store?.longitude != null ? Number(visit.store.longitude) : null;
@@ -21,9 +23,20 @@ export default function CheckoutForm({ visit, onSubmit, onCancel }: Props) {
 
   const handleCheckout = async () => {
     if (!hasCoords) return;
+    setError('');
     setLoading(true);
+    // The user's real device GPS is sent — the server checks it is within the
+    // store's zone. Sending the store's own coordinates would defeat the check.
+    let position;
+    try {
+      position = await getCurrentPosition();
+    } catch (err) {
+      setError(geolocationErrorMessage(err, t));
+      setLoading(false);
+      return;
+    }
     // The server stamps check-out and computes the stored duration.
-    await onSubmit({ lat: lat!, lng: lng! });
+    await onSubmit({ lat: position.lat, lng: position.lng });
     setLoading(false);
   };
 
@@ -53,6 +66,8 @@ export default function CheckoutForm({ visit, onSubmit, onCancel }: Props) {
           </div>
         </div>
       )}
+
+      {error && <p className="form-error" style={{ marginBottom: 10 }}>{error}</p>}
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         <Button size="lg" onClick={handleCheckout} loading={loading} disabled={!hasCoords} style={{ width: '100%' }}>

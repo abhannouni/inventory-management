@@ -31,14 +31,14 @@ export class VisitsController {
 
   @Post('checkin')
   @RequirePermissions('visits.create')
-  @ApiOperation({ summary: 'Check in to a store — validates GPS proximity (< 200 m)' })
+  @ApiOperation({ summary: 'Check in to a store — validates GPS proximity (< 2 km)' })
   checkin(@Body() dto: CheckinDto, @CurrentUser() user: User) {
     return this.visitsService.checkin(dto, user);
   }
 
   @Post('checkout')
   @RequirePermissions('visits.update')
-  @ApiOperation({ summary: 'Check out of a visit — closes it and records GPS' })
+  @ApiOperation({ summary: 'Check out of a visit — validates GPS proximity (< 2 km) and records it' })
   checkout(@Body() dto: CheckoutDto, @CurrentUser() user: User) {
     return this.visitsService.checkout(dto, user);
   }

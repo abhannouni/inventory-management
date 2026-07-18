@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Button from '../../components/ui/Button';
+import { getCurrentPosition, geolocationErrorMessage } from '../../utils/geolocation';
 import type { Store } from '../../types';
 
 interface Props {
@@ -26,12 +27,18 @@ export default function CheckinForm({ stores, onSubmit, onCancel }: Props) {
     }
     setStoreError('');
     setLoading(true);
+    // The user's real device GPS is sent — the server checks it is within the
+    // store's zone. Sending the store's own coordinates would defeat the check.
+    let position;
+    try {
+      position = await getCurrentPosition();
+    } catch (err) {
+      setStoreError(geolocationErrorMessage(err, t));
+      setLoading(false);
+      return;
+    }
     // The server starts the visit clock — no client timestamp is sent.
-    await onSubmit({
-      store_id: storeId,
-      lat: Number(selectedStore.latitude),
-      lng: Number(selectedStore.longitude),
-    });
+    await onSubmit({ store_id: storeId, lat: position.lat, lng: position.lng });
     setLoading(false);
   };
 

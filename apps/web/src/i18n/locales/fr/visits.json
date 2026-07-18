@@ -288,5 +288,14 @@
   "activeBar": {
     "resume": "Reprendre",
     "audited": "{{audited}}/{{expected}} audités"
+  },
+  "geolocation": {
+    "acquiring": "Localisation en cours…",
+    "errors": {
+      "unsupported": "Votre navigateur ne prend pas en charge la géolocalisation",
+      "denied": "Accès à la localisation refusé. Autorisez l'accès à la localisation dans les paramètres de votre navigateur pour pointer.",
+      "unavailable": "Impossible de déterminer votre position. Veuillez réessayer.",
+      "timeout": "La localisation a pris trop de temps. Veuillez réessayer."
+    }
   }
 }

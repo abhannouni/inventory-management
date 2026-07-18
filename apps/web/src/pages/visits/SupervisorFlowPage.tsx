@@ -11,6 +11,7 @@ import VisitTimer from '../../components/ui/VisitTimer';
 import CameraCapture from './CameraCapture';
 import { uploadApi } from '../../api/upload.api';
 import { formatDate } from '../../utils/format';
+import { getCurrentPosition, geolocationErrorMessage } from '../../utils/geolocation';
 import type { Visit } from '../../types';
 
 const MAX_PHOTO_SIZE = 10 * 1024 * 1024; // 10 MB — kept in sync with the API's upload limit
@@ -159,12 +160,22 @@ export default function SupervisorFlowPage({ onViewHistory }: SupervisorFlowPage
     }
     setStoreErr('');
     setBusy(true);
+    // The user's real device GPS is sent — the server checks it is within the
+    // store's zone. Sending the store's own coordinates would defeat the check.
+    let position;
+    try {
+      position = await getCurrentPosition();
+    } catch (err) {
+      setStoreErr(geolocationErrorMessage(err, t));
+      setBusy(false);
+      return;
+    }
     // The server starts the clock — no client timestamp is sent.
     const res = await dispatch(checkin({
       store_id: storeId,
       schedule_id: scheduleId ?? undefined,
-      lat: Number(selectedStore.latitude),
-      lng: Number(selectedStore.longitude),
+      lat: position.lat,
+      lng: position.lng,
     }));
     setBusy(false);
     if (checkin.fulfilled.match(res)) {
@@ -220,10 +231,20 @@ export default function SupervisorFlowPage({ onViewHistory }: SupervisorFlowPage
   const handleCheckout = async () => {
     if (!visit) return;
     setBusy(true);
+    // The user's real device GPS is sent — the server checks it is within the
+    // store's zone. Sending the store's own coordinates would defeat the check.
+    let position;
+    try {
+      position = await getCurrentPosition();
+    } catch (err) {
+      toast.error(geolocationErrorMessage(err, t));
+      setBusy(false);
+      return;
+    }
     const res = await dispatch(checkout({
       visit_id: visit.id,
-      lat: Number(visit.store?.latitude),
-      lng: Number(visit.store?.longitude),
+      lat: position.lat,
+      lng: position.lng,
     }));
     setBusy(false);
     if (checkout.fulfilled.match(res)) {

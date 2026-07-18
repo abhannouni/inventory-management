@@ -20,6 +20,7 @@ import { auditItemsApi } from '../../api/audit-items.api';
 import { productStoresApi } from '../../api/product-stores.api';
 import { uploadApi } from '../../api/upload.api';
 import { formatDate } from '../../utils/format';
+import { getCurrentPosition, geolocationErrorMessage } from '../../utils/geolocation';
 import type { Visit, ProductStore } from '../../types';
 
 /* ─────────── Types ─────────── */
@@ -243,12 +244,22 @@ export default function MerchandiserFlowPage({ onViewHistory }: MerchandiserFlow
     }
     setStoreErr('');
     setBusy(true);
+    // The user's real device GPS is sent — the server checks it is within the
+    // store's zone. Sending the store's own coordinates would defeat the check.
+    let position;
+    try {
+      position = await getCurrentPosition();
+    } catch (err) {
+      setStoreErr(geolocationErrorMessage(err, t));
+      setBusy(false);
+      return;
+    }
     // The server starts the clock — no client timestamp is sent.
     const res = await dispatch(checkin({
       store_id: storeId,
       schedule_id: scheduleId ?? undefined,
-      lat: Number(selectedStore.latitude),
-      lng: Number(selectedStore.longitude),
+      lat: position.lat,
+      lng: position.lng,
     }));
     setBusy(false);
     if (checkin.fulfilled.match(res)) {
@@ -344,11 +355,21 @@ export default function MerchandiserFlowPage({ onViewHistory }: MerchandiserFlow
   const handleCheckout = async () => {
     if (!visit) return;
     setBusy(true);
+    // The user's real device GPS is sent — the server checks it is within the
+    // store's zone. Sending the store's own coordinates would defeat the check.
+    let position;
+    try {
+      position = await getCurrentPosition();
+    } catch (err) {
+      toast.error(geolocationErrorMessage(err, t));
+      setBusy(false);
+      return;
+    }
     // The server stamps check-out and computes the stored duration.
     const res = await dispatch(checkout({
       visit_id: visit.id,
-      lat: Number(visit.store?.latitude),
-      lng: Number(visit.store?.longitude),
+      lat: position.lat,
+      lng: position.lng,
     }));
     setBusy(false);
     if (checkout.fulfilled.match(res)) {

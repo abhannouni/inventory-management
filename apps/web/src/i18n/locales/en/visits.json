@@ -288,5 +288,14 @@
   "activeBar": {
     "resume": "Resume",
     "audited": "{{audited}}/{{expected}} audited"
+  },
+  "geolocation": {
+    "acquiring": "Getting your location…",
+    "errors": {
+      "unsupported": "Your browser does not support location services",
+      "denied": "Location access denied. Allow location access in your browser settings to check in.",
+      "unavailable": "Could not determine your location. Please try again.",
+      "timeout": "Getting your location took too long. Please try again."
+    }
   }
 }

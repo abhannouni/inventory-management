@@ -24,6 +24,27 @@ export function computeDurationSeconds(checkinAt: Date, checkoutAt: Date): numbe
   return Math.max(0, Math.floor(ms / 1000));
 }
 
+/** How far a merchandiser/supervisor may be from a store and still check in/out. */
+export const CHECKIN_GEOFENCE_METERS = 2000;
+
+/** Great-circle distance between two lat/lng points, in meters. */
+export function haversineDistanceMeters(
+  lat1: number,
+  lng1: number,
+  lat2: number,
+  lng2: number,
+): number {
+  const EARTH_RADIUS_METERS = 6371000;
+  const toRad = (deg: number) => (deg * Math.PI) / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLng = toRad(lng2 - lng1);
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return EARTH_RADIUS_METERS * c;
+}
+
 const VISIT_INCLUDE = {
   user: { select: { id: true, full_name: true, email: true, role: true } },
   store: { include: { region: true } },
@@ -51,6 +72,8 @@ export class VisitsService {
 
     const store = await this.prisma.store.findUnique({ where: { id: store_id } });
     if (!store) throw new NotFoundException('Store not found');
+
+    this.assertWithinGeofence(store.latitude, store.longitude, dto.lat, dto.lng, store.name);
 
     // Verify the user is assigned to this store (supervisor/merchandiser)
     if (user.role === UserRole.supervisor || user.role === UserRole.merchandiser) {
@@ -190,6 +213,14 @@ export class VisitsService {
       throw new ConflictException('Visit is already completed');
     }
 
+    this.assertWithinGeofence(
+      visit.store.latitude,
+      visit.store.longitude,
+      dto.lat,
+      dto.lng,
+      visit.store.name,
+    );
+
     if (user.role === UserRole.supervisor) {
       // A supervisor's visit is a spot-check report, not a product audit: it must
       // have a title and at least one photo before the visit can be closed.
@@ -266,6 +297,33 @@ export class VisitsService {
   }
 
   // ─── Helpers ───────────────────────────────────────────────────────────────
+
+  /**
+   * Rejects a check-in/check-out whose device GPS falls outside the store's
+   * geofence. Skipped when the store has no coordinates configured — there is
+   * nothing to fence against, and the admin UI already flags that separately.
+   */
+  private assertWithinGeofence(
+    storeLat: Prisma.Decimal | null,
+    storeLng: Prisma.Decimal | null,
+    deviceLat: number,
+    deviceLng: number,
+    storeName: string,
+  ) {
+    if (storeLat == null || storeLng == null) return;
+
+    const distance = haversineDistanceMeters(
+      Number(storeLat),
+      Number(storeLng),
+      deviceLat,
+      deviceLng,
+    );
+    if (distance > CHECKIN_GEOFENCE_METERS) {
+      throw new ForbiddenException(
+        `You must be within ${(CHECKIN_GEOFENCE_METERS / 1000).toFixed(1)} km of ${storeName} to do this (you are ${(distance / 1000).toFixed(1)} km away)`,
+      );
+    }
+  }
 
   /**
    * How much of the visit's audit is done: how many of the products expected at
