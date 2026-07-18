@@ -40,7 +40,7 @@ export default function MultiSelectSearch<T>({
 }: MultiSelectSearchProps<T>) {
   const [query, setQuery] = useState('');
   const [open, setOpen] = useState(false);
-  const blurTimeout = useRef<ReturnType<typeof setTimeout>>();
+  const blurTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   useEffect(() => () => clearTimeout(blurTimeout.current), []);
 

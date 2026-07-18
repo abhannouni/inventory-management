@@ -8,8 +8,11 @@ export interface GeoPosition {
 export type GeolocationErrorCode = 'unsupported' | 'denied' | 'unavailable' | 'timeout';
 
 export class GeolocationError extends Error {
-  constructor(public code: GeolocationErrorCode, message: string) {
+  code: GeolocationErrorCode;
+
+  constructor(code: GeolocationErrorCode, message: string) {
     super(message);
+    this.code = code;
     this.name = 'GeolocationError';
   }
 }

@@ -45,7 +45,7 @@ function SearchField<T>({
   noResultsLabel,
 }: SearchFieldProps<T>) {
   const [open, setOpen] = useState(false);
-  const blurTimeout = useRef<ReturnType<typeof setTimeout>>();
+  const blurTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   useEffect(() => () => clearTimeout(blurTimeout.current), []);
 
