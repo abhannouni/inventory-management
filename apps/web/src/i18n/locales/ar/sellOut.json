@@ -42,5 +42,37 @@
   "toasts": {
     "createSuccess": "تم تسجيل عملية البيع",
     "createError": "فشل تسجيل عملية البيع"
+  },
+  "bulkImport": {
+    "button": "استيراد من Excel",
+    "title": "استيراد بيانات البيع بالجملة",
+    "templateTitle": "تحتاج إلى النموذج؟",
+    "instructions": "قم بتنزيل الملف النموذجي لمعرفة أسماء الأعمدة والتنسيق المطلوب بالضبط، ثم املأه ببياناتك وارفعه أدناه. جميع الأعمدة إلزامية.",
+    "downloadTemplate": "تنزيل نموذج Excel",
+    "fileLabel": "ملف Excel",
+    "chooseFile": "انقر لاختيار ملف",
+    "fileHint": "يدعم ملفات .xlsx أو .xls",
+    "import": "استيراد",
+    "created": "تم إنشاؤها",
+    "failed": "فشلت",
+    "rowLabel": "الصف {{row}}",
+    "allImported": "تم استيراد جميع الصفوف بنجاح",
+    "toasts": {
+      "importSuccess": "تم استيراد {{count}} من بيانات البيع بنجاح",
+      "importError": "فشل استيراد بيانات البيع"
+    }
+  },
+  "exportModal": {
+    "button": "تصدير Excel",
+    "title": "تصدير بيانات البيع",
+    "searchStores": "ابحث عن متاجر للتصفية...",
+    "searchProducts": "ابحث عن منتجات للتصفية...",
+    "from": "من",
+    "to": "إلى",
+    "rowCount": "سيتم تصدير {{count}} صف",
+    "download": "تنزيل Excel",
+    "toasts": {
+      "exportError": "فشل إنشاء ملف Excel"
+    }
   }
 }

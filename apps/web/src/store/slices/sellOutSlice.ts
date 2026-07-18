@@ -21,6 +21,16 @@ export const createSellOut = createAsyncThunk('sellOut/create', async (payload: 
   catch (err) { return rejectWithValue((err as Error).message); }
 });
 
+export const bulkImportSellOuts = createAsyncThunk('sellOut/bulkImport', async (file: File, { dispatch, rejectWithValue }) => {
+  try {
+    const result = await sellOutApi.bulkImport(file);
+    if (result.created > 0) dispatch(fetchSellOuts());
+    return result;
+  } catch (err) {
+    return rejectWithValue((err as Error).message);
+  }
+});
+
 const sellOutSlice = createSlice({
   name: 'sellOut',
   initialState,

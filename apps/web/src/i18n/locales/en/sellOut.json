@@ -42,5 +42,37 @@
   "toasts": {
     "createSuccess": "Sell-out entry recorded",
     "createError": "Failed to record sell-out entry"
+  },
+  "bulkImport": {
+    "button": "Import Excel",
+    "title": "Bulk Import Sell-Out",
+    "templateTitle": "Need the template?",
+    "instructions": "Download the example file to see the exact column names and format expected, fill it with your sell-out data, then upload it below. Every column is required.",
+    "downloadTemplate": "Download example Excel",
+    "fileLabel": "Excel file",
+    "chooseFile": "Click to choose a file",
+    "fileHint": "Supports .xlsx or .xls files",
+    "import": "Import",
+    "created": "Created",
+    "failed": "Failed",
+    "rowLabel": "Row {{row}}",
+    "allImported": "All rows imported successfully",
+    "toasts": {
+      "importSuccess": "{{count}} sell-out entrie(s) imported successfully",
+      "importError": "Failed to import sell-out data"
+    }
+  },
+  "exportModal": {
+    "button": "Export Excel",
+    "title": "Export Sell-Out Data",
+    "searchStores": "Search stores to filter by...",
+    "searchProducts": "Search products to filter by...",
+    "from": "From",
+    "to": "To",
+    "rowCount": "{{count}} row(s) will be exported",
+    "download": "Download Excel",
+    "toasts": {
+      "exportError": "Failed to generate the Excel file"
+    }
   }
 }

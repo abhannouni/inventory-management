@@ -42,5 +42,37 @@
   "toasts": {
     "createSuccess": "Entrée de sell-out enregistrée",
     "createError": "Échec de l'enregistrement de l'entrée de sell-out"
+  },
+  "bulkImport": {
+    "button": "Importer Excel",
+    "title": "Import en masse des sell-out",
+    "templateTitle": "Besoin du modèle ?",
+    "instructions": "Téléchargez le fichier exemple pour voir les noms de colonnes et le format exacts attendus, remplissez-le avec vos données de sell-out, puis importez-le ci-dessous. Toutes les colonnes sont obligatoires.",
+    "downloadTemplate": "Télécharger l'exemple Excel",
+    "fileLabel": "Fichier Excel",
+    "chooseFile": "Cliquez pour choisir un fichier",
+    "fileHint": "Fichiers .xlsx ou .xls acceptés",
+    "import": "Importer",
+    "created": "Créés",
+    "failed": "Échoués",
+    "rowLabel": "Ligne {{row}}",
+    "allImported": "Toutes les lignes ont été importées avec succès",
+    "toasts": {
+      "importSuccess": "{{count}} entrée(s) de sell-out importée(s) avec succès",
+      "importError": "Échec de l'import des données de sell-out"
+    }
+  },
+  "exportModal": {
+    "button": "Exporter Excel",
+    "title": "Exporter les données de sell-out",
+    "searchStores": "Rechercher des magasins à filtrer...",
+    "searchProducts": "Rechercher des produits à filtrer...",
+    "from": "Du",
+    "to": "Au",
+    "rowCount": "{{count}} ligne(s) seront exportées",
+    "download": "Télécharger Excel",
+    "toasts": {
+      "exportError": "Échec de la génération du fichier Excel"
+    }
   }
 }

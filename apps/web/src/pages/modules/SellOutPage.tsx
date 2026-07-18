@@ -14,6 +14,8 @@ import Badge from '../../components/ui/Badge';
 import Select from '../../components/ui/Select';
 import Pagination from '../../components/ui/Pagination';
 import SellOutForm from './SellOutForm';
+import SellOutBulkImportModal from './SellOutBulkImportModal';
+import SellOutExportModal from './SellOutExportModal';
 import { formatDateOnly } from '../../utils/format';
 import { getProductClassificationLabel, BOURCHANIN_CANONICAL_NAME } from '../../utils/productClassification';
 import type { SellOut } from '../../types';
@@ -26,6 +28,8 @@ export default function SellOutPage() {
   const p = usePermissions();
   const { items, loading } = useAppSelector((s) => s.sellOut);
   const [createOpen, setCreateOpen] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
+  const [exportOpen, setExportOpen] = useState(false);
   const [search, setSearch] = useState('');
   const [classificationFilter, setClassificationFilter] = useState('');
   const [storeFilter, setStoreFilter] = useState('');
@@ -118,9 +122,19 @@ export default function SellOutPage() {
         title={t('title')}
         subtitle={t('subtitle')}
         actions={
-          p.can('sell_out.create') ? (
-            <Button onClick={() => setCreateOpen(true)}>{t('addButton')}</Button>
-          ) : undefined
+          <div className="pos-header-actions">
+            <Button variant="outline" icon={<DownloadIcon />} onClick={() => setExportOpen(true)}>
+              {t('exportModal.button')}
+            </Button>
+            {p.can('sell_out.create') && (
+              <>
+                <Button variant="outline" icon={<UploadIcon />} onClick={() => setImportOpen(true)}>
+                  {t('bulkImport.button')}
+                </Button>
+                <Button onClick={() => setCreateOpen(true)}>{t('addButton')}</Button>
+              </>
+            )}
+          </div>
         }
       />
 
@@ -160,6 +174,32 @@ export default function SellOutPage() {
       <Modal open={createOpen} onClose={() => setCreateOpen(false)} title={t('modalTitle')} size="md">
         <SellOutForm onSubmit={handleCreate} onCancel={() => setCreateOpen(false)} />
       </Modal>
+
+      <Modal open={importOpen} onClose={() => setImportOpen(false)} title={t('bulkImport.title')} size="md">
+        <SellOutBulkImportModal onClose={() => setImportOpen(false)} />
+      </Modal>
+
+      <Modal open={exportOpen} onClose={() => setExportOpen(false)} title={t('exportModal.title')} size="md">
+        <SellOutExportModal items={items} onClose={() => setExportOpen(false)} />
+      </Modal>
     </div>
+  );
+}
+
+function UploadIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+      <polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" />
+    </svg>
+  );
+}
+
+function DownloadIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+      <polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" />
+    </svg>
   );
 }
