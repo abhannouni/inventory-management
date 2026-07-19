@@ -78,7 +78,8 @@
         "qtyFound": "الكمية الموجودة",
         "status": "الحالة",
         "notes": "ملاحظات",
-        "photo": "صورة"
+        "photo": "صورة",
+        "promo": "عرض ترويجي"
       },
       "photoAlt": "صورة"
     },
@@ -139,8 +140,9 @@
       "chooseStore": "اختر متجرًا…",
       "noCoordinatesSet": "لا توجد إحداثيات مضبوطة",
       "checkInNow": "تسجيل الدخول الآن",
+      "noScheduledVisits": "لم يتم تعيين أي زيارة لك. تواصل مع المشرف لجدولة زيارة.",
       "errors": {
-        "storeRequired": "يرجى اختيار متجر",
+        "storeRequired": "يرجى اختيار زيارة",
         "noGpsCoordinates": "لا توجد إحداثيات GPS مضبوطة لهذا المتجر"
       },
       "toasts": {
@@ -203,6 +205,7 @@
       "uploading": "جارٍ الرفع…",
       "takePhoto": "اضغط لالتقاط صورة للرف",
       "photoAlt": "صورة الرف",
+      "promoLabel": "عرض ترويجي",
       "saveAndContinue": "حفظ الجرد والمتابعة",
       "status": {
         "outOfStock": "نفد المخزون",

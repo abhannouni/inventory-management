@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-toastify';
@@ -16,6 +16,7 @@ import { fetchStores } from '../../store/slices/storesSlice';
 import { fetchSchedules } from '../../store/slices/schedulesSlice';
 import VisitTimer from '../../components/ui/VisitTimer';
 import PhotoNoteStep from './PhotoNoteStep';
+import CameraCapture from './CameraCapture';
 import { auditItemsApi } from '../../api/audit-items.api';
 import { productStoresApi } from '../../api/product-stores.api';
 import { uploadApi } from '../../api/upload.api';
@@ -32,6 +33,7 @@ interface AuditRow extends ProductStore {
   notes: string;
   photo_url: string;
   uploading: boolean;
+  has_promo: boolean;
 }
 
 /* ─────────── Helpers ─────────── */
@@ -156,7 +158,7 @@ export default function MerchandiserFlowPage({ onViewHistory }: MerchandiserFlow
   const [finalNote, setFinalNote]         = useState('');
   const [finalPhotos, setFinalPhotos]     = useState<string[]>([]);
 
-  const fileRefs = useRef<Map<string, HTMLInputElement>>(new Map());
+  const [cameraForRow, setCameraForRow] = useState<string | null>(null);
 
   /* Load stores + ask the server whether a visit is already running */
   useEffect(() => {
@@ -218,6 +220,7 @@ export default function MerchandiserFlowPage({ onViewHistory }: MerchandiserFlow
         notes:      '',
         photo_url:  '',
         uploading:  false,
+        has_promo:  false,
       }));
       setAuditRows(rows);
 
@@ -227,7 +230,7 @@ export default function MerchandiserFlowPage({ onViewHistory }: MerchandiserFlow
           prev.map((row) => {
             const existing = v.audit_items!.find((a) => a.product_id === row.product_id);
             return existing
-              ? { ...row, qty_found: existing.qty_found, notes: existing.notes ?? '', photo_url: existing.photo_url ?? '' }
+              ? { ...row, qty_found: existing.qty_found, notes: existing.notes ?? '', photo_url: existing.photo_url ?? '', has_promo: existing.has_promo ?? false }
               : row;
           })
         );
@@ -337,6 +340,15 @@ export default function MerchandiserFlowPage({ onViewHistory }: MerchandiserFlow
     }
   };
 
+  const handleCameraCapture = (file: File) => {
+    const rowId = cameraForRow;
+    setCameraForRow(null);
+    if (rowId) handleUpload(rowId, file);
+  };
+
+  const togglePromo = (id: string) =>
+    setAuditRows((r) => r.map((row) => (row.id === id ? { ...row, has_promo: !row.has_promo } : row)));
+
   const handleSubmitAudit = async () => {
     if (!visit) return;
     setBusy(true);
@@ -344,6 +356,7 @@ export default function MerchandiserFlowPage({ onViewHistory }: MerchandiserFlow
       const items = auditRows.map((r) => ({
         product_id: r.product_id,
         qty_found:  r.qty_found,
+        has_promo:  r.has_promo,
         ...(r.notes     ? { notes:     r.notes     } : {}),
         ...(r.photo_url ? { photo_url: r.photo_url } : {}),
       }));
@@ -405,7 +418,12 @@ export default function MerchandiserFlowPage({ onViewHistory }: MerchandiserFlow
     { inStock: 0, lowStock: 0, outStock: 0 }
   );
 
-  const selectedStore = stores.find((s) => s.id === storeId) ?? null;
+  // A scheduled visit can target a store outside the merchandiser's own
+  // `stores` list (e.g. a cross-region assignment), so fall back to the
+  // schedule's own populated store when the general list doesn't have it —
+  // otherwise the GPS check below sees no store and blocks check-in.
+  const selectedSchedule = upcomingSchedules.find((s) => s.id === scheduleId) ?? null;
+  const selectedStore = stores.find((s) => s.id === storeId) ?? selectedSchedule?.store ?? null;
   const storeName = selectedStore?.name ?? storeId;
 
   /* ════════════════════ RENDER ════════════════════ */
@@ -440,7 +458,7 @@ export default function MerchandiserFlowPage({ onViewHistory }: MerchandiserFlow
               </div>
             </div>
 
-            {upcomingSchedules.length > 0 && (
+            {upcomingSchedules.length > 0 ? (
               <div style={{ marginTop: 16 }}>
                 <label className="form-label">{t('merchandiserFlow.checkin.scheduledLabel')}</label>
 
@@ -496,21 +514,16 @@ export default function MerchandiserFlowPage({ onViewHistory }: MerchandiserFlow
                       : t('merchandiserFlow.checkin.seeAllVisits', { count: upcomingSchedules.length })}
                   </button>
                 )}
+                {storeErr && <p className="form-error">{storeErr}</p>}
+              </div>
+            ) : (
+              <div className="mf-empty" style={{ marginTop: 16 }}>
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                  <path d="M3 9h18v10a2 2 0 01-2 2H5a2 2 0 01-2-2V9zM3 9l2.45-4.9A2 2 0 017.24 3h9.52a2 2 0 011.8 1.1L21 9M12 3v6"/>
+                </svg>
+                <p>{t('merchandiserFlow.checkin.noScheduledVisits')}</p>
               </div>
             )}
-
-            <div className="form-group" style={{ marginTop: 16 }}>
-              <label className="form-label">{t('merchandiserFlow.checkin.storeLabel')}</label>
-              <select
-                className={`form-select ${storeErr ? 'is-error' : ''}`}
-                value={storeId}
-                onChange={(e) => { setStoreId(e.target.value); setScheduleId(null); setStoreErr(''); }}
-              >
-                <option value="">{t('merchandiserFlow.checkin.chooseStore')}</option>
-                {stores.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
-              </select>
-              {storeErr && <p className="form-error">{storeErr}</p>}
-            </div>
 
             {selectedStore && gpsRequired && (
               <div style={{
@@ -692,10 +705,10 @@ export default function MerchandiserFlowPage({ onViewHistory }: MerchandiserFlow
                       </div>
 
                       {/* Photo */}
-                      <div className="form-group" style={{ marginBottom: 0 }}>
+                      <div className="form-group" style={{ marginBottom: 12 }}>
                         <label className="form-label" style={{ fontSize: 12 }}>{t('merchandiserFlow.audit.photoLabel')}</label>
                         {row.photo_url ? (
-                          <div className="photo-thumb-wrap" onClick={() => fileRefs.current.get(row.id)?.click()}>
+                          <div className="photo-thumb-wrap" onClick={() => setCameraForRow(row.id)}>
                             <img src={row.photo_url} alt={t('merchandiserFlow.audit.photoAlt')} />
                             <div className="photo-thumb-change">{t('merchandiserFlow.audit.changePhoto')}</div>
                           </div>
@@ -703,7 +716,7 @@ export default function MerchandiserFlowPage({ onViewHistory }: MerchandiserFlow
                           <button
                             type="button"
                             className="photo-capture-btn"
-                            onClick={() => fileRefs.current.get(row.id)?.click()}
+                            onClick={() => setCameraForRow(row.id)}
                             disabled={row.uploading}
                           >
                             {row.uploading ? (
@@ -719,20 +732,25 @@ export default function MerchandiserFlowPage({ onViewHistory }: MerchandiserFlow
                             )}
                           </button>
                         )}
-                        <input
-                          type="file"
-                          accept="image/*"
-                          capture="environment"
-                          style={{ display: 'none' }}
-                          ref={(el) => { if (el) fileRefs.current.set(row.id, el); }}
-                          onChange={(e) => { const f = e.target.files?.[0]; if (f) handleUpload(row.id, f); }}
-                        />
                       </div>
+
+                      {/* Promo toggle */}
+                      <button
+                        type="button"
+                        className={`mf-promo-toggle${row.has_promo ? ' active' : ''}`}
+                        onClick={() => togglePromo(row.id)}
+                        aria-pressed={row.has_promo}
+                      >
+                        <span className="mf-promo-toggle-dot" />
+                        {t('merchandiserFlow.audit.promoLabel')}
+                      </button>
                     </motion.div>
                   );
                 })}
               </div>
             )}
+
+            {cameraForRow && <CameraCapture onCapture={handleCameraCapture} onClose={() => setCameraForRow(null)} />}
 
             {/* Submit audit button */}
             {!loadingProducts && auditRows.length > 0 && (
@@ -833,7 +851,10 @@ export default function MerchandiserFlowPage({ onViewHistory }: MerchandiserFlow
                 const status = calcStatus(row.qty_found, Number(row.expected_qty), statusLabels);
                 return (
                   <div key={row.id} className="mf-checkout-row">
-                    <div className="mf-checkout-name">{row.product?.name}</div>
+                    <div className="mf-checkout-name">
+                      {row.product?.name}
+                      {row.has_promo && <span className="mf-promo-badge">{t('merchandiserFlow.audit.promoLabel')}</span>}
+                    </div>
                     <div className="mf-checkout-qty">
                       <span style={{ color: 'var(--gray-400)', fontSize: 12 }}>{t('merchandiserFlow.checkout.found')} </span>
                       <strong style={{ color: status.color }}>{row.qty_found}</strong>

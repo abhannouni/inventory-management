@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsInt, IsOptional, IsString, IsUUID, Min } from 'class-validator';
+import { IsBoolean, IsInt, IsOptional, IsString, IsUUID, Min } from 'class-validator';
 
 export class CreateAuditItemDto {
   @ApiProperty({ example: 'uuid-of-visit' })
@@ -24,4 +24,9 @@ export class CreateAuditItemDto {
   @IsString()
   @IsOptional()
   notes?: string;
+
+  @ApiPropertyOptional({ example: false, description: 'Whether this product currently has an in-store promotion' })
+  @IsBoolean()
+  @IsOptional()
+  has_promo?: boolean;
 }

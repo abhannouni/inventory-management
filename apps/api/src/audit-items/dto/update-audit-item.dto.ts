@@ -1,5 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsInt, IsOptional, IsString, Min } from 'class-validator';
+import { IsBoolean, IsInt, IsOptional, IsString, Min } from 'class-validator';
 
 export class UpdateAuditItemDto {
   @ApiPropertyOptional({ example: 20 })
@@ -17,4 +17,9 @@ export class UpdateAuditItemDto {
   @IsString()
   @IsOptional()
   notes?: string;
+
+  @ApiPropertyOptional({ example: false, description: 'Whether this product currently has an in-store promotion' })
+  @IsBoolean()
+  @IsOptional()
+  has_promo?: boolean;
 }

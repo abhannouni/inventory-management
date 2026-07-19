@@ -236,6 +236,7 @@ export default function VisitDetailPage() {
                   <th>{t('detail.auditItems.columns.status')}</th>
                   <th>{t('detail.auditItems.columns.notes')}</th>
                   <th>{t('detail.auditItems.columns.photo')}</th>
+                  <th>{t('detail.auditItems.columns.promo')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -253,6 +254,7 @@ export default function VisitDetailPage() {
                         </a>
                       ) : '—'}
                     </td>
+                    <td>{item.has_promo ? <span className="mf-promo-badge" style={{ marginLeft: 0 }}>{t('merchandiserFlow.audit.promoLabel')}</span> : '—'}</td>
                   </tr>
                 ))}
               </tbody>

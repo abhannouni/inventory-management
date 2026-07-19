@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsArray, IsInt, IsOptional, IsString, IsUUID, Min, ValidateNested } from 'class-validator';
+import { IsArray, IsBoolean, IsInt, IsOptional, IsString, IsUUID, Min, ValidateNested } from 'class-validator';
 
 export class BulkAuditItemDto {
   @ApiProperty({ example: 'uuid-of-product' })
@@ -21,6 +21,11 @@ export class BulkAuditItemDto {
   @IsString()
   @IsOptional()
   notes?: string;
+
+  @ApiPropertyOptional({ example: false, description: 'Whether this product currently has an in-store promotion' })
+  @IsBoolean()
+  @IsOptional()
+  has_promo?: boolean;
 }
 
 export class BulkAuditDto {

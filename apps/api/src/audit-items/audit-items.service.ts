@@ -38,6 +38,7 @@ export class AuditItemsService {
         status: deriveStatus(dto.qty_found, expected_qty),
         photo_url: dto.photo_url,
         notes: dto.notes,
+        has_promo: dto.has_promo ?? false,
       },
       include: ITEM_INCLUDE,
     });
@@ -114,6 +115,7 @@ export class AuditItemsService {
         status: deriveStatus(qty_found, item.expected_qty),
         ...(dto.photo_url !== undefined && { photo_url: dto.photo_url }),
         ...(dto.notes !== undefined && { notes: dto.notes }),
+        ...(dto.has_promo !== undefined && { has_promo: dto.has_promo }),
       },
       include: ITEM_INCLUDE,
     });
@@ -167,6 +169,7 @@ export class AuditItemsService {
         status,
         photo_url: item.photo_url,
         notes: item.notes,
+        has_promo: item.has_promo ?? false,
       },
       update: {
         qty_found: item.qty_found,
@@ -174,6 +177,7 @@ export class AuditItemsService {
         status,
         ...(item.photo_url !== undefined && { photo_url: item.photo_url }),
         ...(item.notes !== undefined && { notes: item.notes }),
+        ...(item.has_promo !== undefined && { has_promo: item.has_promo }),
       },
       include: ITEM_INCLUDE,
     });

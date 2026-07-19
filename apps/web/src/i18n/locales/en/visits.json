@@ -78,7 +78,8 @@
         "qtyFound": "Qty Found",
         "status": "Status",
         "notes": "Notes",
-        "photo": "Photo"
+        "photo": "Photo",
+        "promo": "Promo"
       },
       "photoAlt": "photo"
     },
@@ -135,8 +136,9 @@
       "chooseStore": "Choose a store…",
       "noCoordinatesSet": "No coordinates set",
       "checkInNow": "Check In Now",
+      "noScheduledVisits": "No visits have been assigned to you. Contact your supervisor to schedule a visit.",
       "errors": {
-        "storeRequired": "Please select a store",
+        "storeRequired": "Please select a visit",
         "noGpsCoordinates": "This store has no GPS coordinates configured"
       },
       "toasts": {
@@ -196,6 +198,7 @@
       "uploading": "Uploading…",
       "takePhoto": "Tap to take a shelf photo",
       "photoAlt": "shelf",
+      "promoLabel": "Promo",
       "saveAndContinue": "Save Audit & Continue",
       "status": {
         "outOfStock": "Out of stock",

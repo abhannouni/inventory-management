@@ -7,10 +7,12 @@ interface CameraCaptureProps {
 }
 
 /** Camera warm-up + auto-exposure calibration time before the shutter arms. */
-const SETTLE_DELAY_MS = 500;
-/** How many times to silently retry a capture that comes back blank. */
-const MAX_RETRIES = 6;
-const RETRY_DELAY_MS = 200;
+const SETTLE_DELAY_MS = 700;
+/** How many times to silently retry a capture that comes back blank. Mobile
+ *  rear cameras can take noticeably longer than a laptop webcam to finish
+ *  auto-exposure/focus, so this budget (up to ~4.5s) is generous on purpose. */
+const MAX_RETRIES = 15;
+const RETRY_DELAY_MS = 300;
 
 /**
  * A real photo has some contrast; a camera still calibrating exposure hands

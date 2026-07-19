@@ -7,6 +7,7 @@ export interface AuditItemPayload {
   qty_found: number;
   notes?: string;
   photo_url?: string;
+  has_promo?: boolean;
 }
 
 export interface BulkAuditPayload {
@@ -16,6 +17,7 @@ export interface BulkAuditPayload {
     qty_found: number;
     notes?: string;
     photo_url?: string;
+    has_promo?: boolean;
   }>;
 }
 

@@ -1,0 +1,2 @@
+ALTER TABLE "audit_items"
+ADD COLUMN "has_promo" BOOLEAN NOT NULL DEFAULT FALSE;

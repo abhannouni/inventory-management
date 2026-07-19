@@ -318,6 +318,9 @@ model AuditItem {
   status       AuditItemStatus
   photo_url    String?
   notes        String?
+  /// Whether this product is currently running an in-store promotion, flagged
+  /// by the merchandiser during the audit.
+  has_promo    Boolean         @default(false)
 
   @@unique([visit_id, product_id])
   @@map("audit_items")

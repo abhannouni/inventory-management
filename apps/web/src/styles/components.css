@@ -3438,6 +3438,53 @@ button.mobile-nav-item {
   box-shadow: 0 0 5px currentColor;
 }
 
+/* ── Promo toggle (audit card) ── */
+.mf-promo-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gray-600);
+  background: var(--gray-100);
+  border: 1px solid var(--gray-200);
+  border-radius: 10px;
+  padding: 10px 14px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.mf-promo-toggle-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid var(--gray-300);
+  flex-shrink: 0;
+  transition: background 0.15s, border-color 0.15s;
+}
+.mf-promo-toggle.active {
+  background: #fff7ed;
+  border-color: #fdba74;
+  color: #c2410c;
+}
+.mf-promo-toggle.active .mf-promo-toggle-dot {
+  background: #f97316;
+  border-color: #f97316;
+}
+
+.mf-promo-badge {
+  display: inline-block;
+  margin-left: 8px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #c2410c;
+  background: #fff7ed;
+  border: 1px solid #fdba74;
+  border-radius: 20px;
+  padding: 1px 8px;
+  vertical-align: middle;
+}
+
 /* ── Sticky submit footer ── */
 .mf-sticky-footer {
   position: sticky;

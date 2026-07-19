@@ -134,6 +134,7 @@ export interface AuditItem {
   variance: number;
   notes: string | null;
   photo_url: string | null;
+  has_promo: boolean;
   status: AuditStatus;
   product?: Product;
   created_at: string;
