@@ -2215,6 +2215,11 @@ html[dir='rtl'] .form-input.has-action { padding-right: 12px; padding-left: 36px
   }
   .header-search { display: none; }
   .header-icon-btn { width: 36px; height: 36px; }
+  .header-right { gap: 4px; }
+
+  /* Name/email don't fit next to the icon row below ~480px — avatar-only chip. */
+  .user-details { display: none; }
+  .user-menu { padding: 5px; margin-left: 2px; gap: 0; }
 
   /* Anchor to the viewport, not the trigger — on mobile the trigger sits
      near the left edge, so a right:0 offset pushes most of the menu
@@ -2266,6 +2271,9 @@ html[dir='rtl'] .form-input.has-action { padding-right: 12px; padding-left: 36px
 
   .page-header { flex-direction: column; gap: 12px; }
   .page-header-actions { width: 100%; }
+  /* Pages that pass multiple buttons wrap them in their own flex-row div —
+     force that wrapper to stack too, or the buttons overflow the viewport. */
+  .page-header-actions > div { display: flex; flex-direction: column; width: 100%; }
   .page-header-actions .btn { width: 100%; }
 
   .filter-bar .form-select { min-height: 44px; font-size: 16px; }
