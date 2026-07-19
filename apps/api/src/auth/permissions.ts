@@ -26,6 +26,7 @@ export const RESOURCES = [
   'sell_out',
   'merchandising',
   'marketing',
+  'hr',
 ] as const;
 
 export type Resource = (typeof RESOURCES)[number];
@@ -125,6 +126,10 @@ export const PERMISSIONS: PermissionDef[] = [
   // the underlying feature is built. Add create/update/delete here once it is.
   { code: 'merchandising.read', resource: 'merchandising', action: 'read', description: 'View merchandising execution (displays, TG, MEA, PLV)' },
   { code: 'marketing.read', resource: 'marketing', action: 'read', description: 'View marketing & trade marketing analysis' },
+
+  // Not included in any ROLE_PRESETS entry — only super_admin (which bypasses
+  // the preset table and gets every permission) can reach the HR module.
+  { code: 'hr.read', resource: 'hr', action: 'read', description: 'View HR module (super admin only)' },
 ];
 
 export const PERMISSION_CODES = PERMISSIONS.map((p) => p.code);

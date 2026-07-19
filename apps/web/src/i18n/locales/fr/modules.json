@@ -11,7 +11,12 @@
     "title": "Marketing & Trade Marketing",
     "subtitle": "Analyse marketing et trade marketing sur votre périmètre autorisé"
   },
+  "hr": {
+    "title": "RH",
+    "subtitle": "Gestion des ressources humaines de votre organisation"
+  },
   "notAvailable": {
+    "badge": "Bientôt disponible",
     "title": "Pas encore disponible",
     "hint": "Ce module est déjà relié aux rôles et permissions — seules les données ne sont pas encore connectées."
   }

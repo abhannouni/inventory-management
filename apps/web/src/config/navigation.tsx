@@ -18,6 +18,7 @@ import SellOutPage from '../pages/modules/SellOutPage';
 import MerchandisingPage from '../pages/modules/MerchandisingPage';
 import MarketingPage from '../pages/modules/MarketingPage';
 import SettingsPage from '../pages/settings/SettingsPage';
+import HrPage from '../pages/modules/HrPage';
 
 /**
  * The permission-to-page map. This is the single source of truth for the
@@ -178,6 +179,23 @@ export const NAV_PAGES: NavPage[] = [
       icon: {
         d: 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z',
         d2: 'M15 12a3 3 0 11-6 0 3 3 0 016 0z',
+      },
+      section: 'administration',
+    },
+  },
+  {
+    id: 'hr',
+    path: '/hr',
+    element: HrPage,
+    // `hr.read` is granted to no ROLE_PRESETS entry, so only super_admin
+    // (which bypasses the permission table entirely) can reach this page —
+    // same pattern as `settings` above.
+    permissions: ['hr.read'],
+    nav: {
+      labelKey: 'nav.hr',
+      icon: {
+        d: 'M4 7h16a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V9a2 2 0 012-2z',
+        d2: 'M9 7V5a2 2 0 012-2h2a2 2 0 012 2v2M2 13h20',
       },
       section: 'administration',
     },

@@ -11,7 +11,12 @@
     "title": "Marketing & Trade Marketing",
     "subtitle": "Campaign and trade marketing analysis across your authorized scope"
   },
+  "hr": {
+    "title": "HR",
+    "subtitle": "Human resources management across your organization"
+  },
   "notAvailable": {
+    "badge": "Coming soon",
     "title": "Not available yet",
     "hint": "This module is already wired into roles and permissions — the underlying data just isn't connected yet."
   }
