@@ -80,7 +80,20 @@ export default function MarketingPage() {
       key: 'photo',
       header: t('table.photo'),
       render: (pr: ProductRequest) => (
-        <img src={pr.image_url} alt={pr.sous_famille} style={{ width: 44, height: 44, objectFit: 'cover', borderRadius: 6 }} />
+        <div style={{ position: 'relative', width: 44, height: 44 }}>
+          <img src={pr.image_urls[0]} alt={pr.sous_famille} style={{ width: 44, height: 44, objectFit: 'cover', borderRadius: 6 }} />
+          {pr.image_urls.length > 1 && (
+            <span
+              style={{
+                position: 'absolute', bottom: -4, right: -4, minWidth: 18, height: 18, padding: '0 4px', borderRadius: 9,
+                background: 'var(--primary)', color: '#fff', fontSize: 10, fontWeight: 600,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}
+            >
+              +{pr.image_urls.length - 1}
+            </span>
+          )}
+        </div>
       ),
     },
     { key: 'store', header: t('table.store'), render: (pr: ProductRequest) => <span style={{ fontWeight: 500 }}>{pr.store?.name || pr.store_id}</span> },

@@ -32,7 +32,7 @@ export class ProductRequestsService {
         width: dto.width,
         height: dto.height,
         depth: dto.depth,
-        image_url: dto.image_url,
+        image_urls: dto.image_urls,
         created_by_id: user.id,
       },
       include: {

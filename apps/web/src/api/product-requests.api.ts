@@ -7,7 +7,7 @@ export interface CreateProductRequestPayload {
   width: number;
   height: number;
   depth: number;
-  image_url: string;
+  image_urls: string[];
 }
 
 export const productRequestsApi = {

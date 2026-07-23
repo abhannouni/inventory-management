@@ -278,7 +278,8 @@ model ProductRequest {
   width         Decimal  @db.Decimal(10, 2)
   height        Decimal  @db.Decimal(10, 2)
   depth         Decimal  @db.Decimal(10, 2)
-  image_url     String
+  /// Up to 5 reference photos — enforced in CreateProductRequestDto/UpdateProductRequestDto, not the DB.
+  image_urls    String[]
   created_by    User?    @relation(fields: [created_by_id], references: [id], onDelete: SetNull)
   created_by_id String?
   created_at    DateTime @default(now())

@@ -1,5 +1,15 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, IsUUID } from 'class-validator';
+import {
+  ArrayMaxSize,
+  ArrayMinSize,
+  IsArray,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsPositive,
+  IsString,
+  IsUUID,
+} from 'class-validator';
 
 export class UpdateProductRequestDto {
   @ApiPropertyOptional({ example: 'uuid-of-store' })
@@ -31,9 +41,16 @@ export class UpdateProductRequestDto {
   @IsOptional()
   depth?: number;
 
-  @ApiPropertyOptional({ example: '/uploads/abc123.jpg', description: 'URL returned by POST /upload' })
-  @IsString()
-  @IsNotEmpty()
+  @ApiPropertyOptional({
+    example: ['/uploads/abc123.jpg'],
+    description: 'URLs returned by POST /upload — 1 to 5 photos',
+    type: [String],
+  })
+  @IsArray()
+  @ArrayMinSize(1)
+  @ArrayMaxSize(5)
+  @IsString({ each: true })
+  @IsNotEmpty({ each: true })
   @IsOptional()
-  image_url?: string;
+  image_urls?: string[];
 }

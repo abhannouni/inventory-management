@@ -20,10 +20,9 @@
     "width": "Largeur (cm)",
     "height": "Hauteur (cm)",
     "depth": "Profondeur (cm)",
-    "photoLabel": "Photo",
-    "photoUploadHint": "Cliquez pour téléverser une photo",
-    "photoFormatsHint": "JPG, PNG ou WEBP, jusqu'à 5 Mo",
-    "photoChangeHint": "Cliquez pour changer la photo",
+    "photoLabel": "Photos",
+    "photoUploadHint": "Cliquez pour téléverser des photos",
+    "photoFormatsHint": "JPG, PNG ou WEBP, jusqu'à 5 Mo chacune — 5 photos maximum",
     "photoUploading": "Téléversement…",
     "takePhoto": "Prendre une photo"
   },
@@ -36,11 +35,12 @@
     "heightInvalid": "Hauteur invalide",
     "depthRequired": "La profondeur est requise",
     "depthInvalid": "Profondeur invalide",
-    "photoRequired": "La photo est requise"
+    "photoRequired": "Au moins une photo est requise"
   },
   "toasts": {
     "fileTooLarge": "Image trop volumineuse (max 5 Mo)",
     "invalidFileType": "Type de fichier non pris en charge",
+    "maxPhotosReached": "Vous pouvez téléverser jusqu'à {{max}} photos",
     "photoUploaded": "Photo téléversée",
     "photoUploadError": "Échec du téléversement de la photo",
     "createSuccess": "Demande soumise",

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsPositive, IsString, IsUUID } from 'class-validator';
+import { ArrayMaxSize, ArrayMinSize, IsArray, IsNotEmpty, IsNumber, IsPositive, IsString, IsUUID } from 'class-validator';
 
 export class CreateProductRequestDto {
   @ApiProperty({ example: 'uuid-of-store' })
@@ -26,8 +26,15 @@ export class CreateProductRequestDto {
   @IsPositive()
   depth: number;
 
-  @ApiProperty({ example: '/uploads/abc123.jpg', description: 'URL returned by POST /upload' })
-  @IsString()
-  @IsNotEmpty()
-  image_url: string;
+  @ApiProperty({
+    example: ['/uploads/abc123.jpg'],
+    description: 'URLs returned by POST /upload — 1 to 5 photos',
+    type: [String],
+  })
+  @IsArray()
+  @ArrayMinSize(1)
+  @ArrayMaxSize(5)
+  @IsString({ each: true })
+  @IsNotEmpty({ each: true })
+  image_urls: string[];
 }

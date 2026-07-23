@@ -20,10 +20,9 @@
     "width": "العرض (سم)",
     "height": "الارتفاع (سم)",
     "depth": "العمق (سم)",
-    "photoLabel": "الصورة",
-    "photoUploadHint": "انقر لتحميل صورة",
-    "photoFormatsHint": "JPG أو PNG أو WEBP، حتى 5 ميجابايت",
-    "photoChangeHint": "انقر لتغيير الصورة",
+    "photoLabel": "الصور",
+    "photoUploadHint": "انقر لتحميل صور",
+    "photoFormatsHint": "JPG أو PNG أو WEBP، حتى 5 ميجابايت لكل صورة — 5 صور كحد أقصى",
     "photoUploading": "جارٍ التحميل…",
     "takePhoto": "التقاط صورة"
   },
@@ -36,11 +35,12 @@
     "heightInvalid": "ارتفاع غير صالح",
     "depthRequired": "العمق مطلوب",
     "depthInvalid": "عمق غير صالح",
-    "photoRequired": "الصورة مطلوبة"
+    "photoRequired": "صورة واحدة على الأقل مطلوبة"
   },
   "toasts": {
     "fileTooLarge": "الصورة كبيرة جداً (الحد الأقصى 5 ميجابايت)",
     "invalidFileType": "نوع ملف غير مدعوم",
+    "maxPhotosReached": "يمكنك تحميل حتى {{max}} صور",
     "photoUploaded": "تم تحميل الصورة",
     "photoUploadError": "فشل تحميل الصورة",
     "createSuccess": "تم إرسال الطلب",

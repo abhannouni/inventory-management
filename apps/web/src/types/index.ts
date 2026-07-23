@@ -131,7 +131,7 @@ export interface ProductRequest {
   width: number;
   height: number;
   depth: number;
-  image_url: string;
+  image_urls: string[];
   created_by_id: string | null;
   created_by?: { id: string; full_name: string };
   created_at: string;

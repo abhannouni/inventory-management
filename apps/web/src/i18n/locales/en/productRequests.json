@@ -20,10 +20,9 @@
     "width": "Width (cm)",
     "height": "Height (cm)",
     "depth": "Depth (cm)",
-    "photoLabel": "Photo",
-    "photoUploadHint": "Click to upload a photo",
-    "photoFormatsHint": "JPG, PNG or WEBP, up to 5MB",
-    "photoChangeHint": "Click to change photo",
+    "photoLabel": "Photos",
+    "photoUploadHint": "Click to upload photos",
+    "photoFormatsHint": "JPG, PNG or WEBP, up to 5MB each — up to 5 photos",
     "photoUploading": "Uploading…",
     "takePhoto": "Take Photo"
   },
@@ -36,11 +35,12 @@
     "heightInvalid": "Invalid height",
     "depthRequired": "Depth is required",
     "depthInvalid": "Invalid depth",
-    "photoRequired": "Photo is required"
+    "photoRequired": "At least one photo is required"
   },
   "toasts": {
     "fileTooLarge": "Image is too large (max 5MB)",
     "invalidFileType": "Unsupported file type",
+    "maxPhotosReached": "You can upload up to {{max}} photos",
     "photoUploaded": "Photo uploaded",
     "photoUploadError": "Failed to upload photo",
     "createSuccess": "Request submitted",
