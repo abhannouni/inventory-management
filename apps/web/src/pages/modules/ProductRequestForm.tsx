@@ -9,10 +9,11 @@ import Select from '../../components/ui/Select';
 import Button from '../../components/ui/Button';
 import CameraCapture from '../visits/CameraCapture';
 import type { CreateProductRequestPayload } from '../../api/product-requests.api';
-import type { Store } from '../../types';
+import type { ProductRequest, Store } from '../../types';
 
 interface ProductRequestFormProps {
   stores: Store[];
+  initialData?: ProductRequest;
   onSubmit: (data: CreateProductRequestPayload) => Promise<void>;
   onCancel: () => void;
 }
@@ -20,29 +21,39 @@ interface ProductRequestFormProps {
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
 
-export default function ProductRequestForm({ stores, onSubmit, onCancel }: ProductRequestFormProps) {
+export default function ProductRequestForm({ stores, initialData, onSubmit, onCancel }: ProductRequestFormProps) {
   const { t } = useTranslation('productRequests');
   const { t: tCommon } = useTranslation('common');
   const dispatch = useAppDispatch();
   const { items: products } = useAppSelector((s) => s.products);
 
-  const [form, setForm] = useState({ store_id: '', sous_famille: '', width: '', height: '', depth: '', image_url: '' });
+  const [form, setForm] = useState({
+    store_id: initialData?.store_id || '',
+    sous_famille: initialData?.sous_famille || '',
+    width: initialData?.width?.toString() || '',
+    height: initialData?.height?.toString() || '',
+    depth: initialData?.depth?.toString() || '',
+    image_url: initialData?.image_url || '',
+  });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [preview, setPreview] = useState('');
+  const [preview, setPreview] = useState(initialData?.image_url || '');
   const [cameraOpen, setCameraOpen] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => { dispatch(fetchProducts()); }, [dispatch]);
 
-  const sousFamilleOptions = useMemo(
-    () =>
-      Array.from(new Set(products.map((prod) => prod.sous_famille).filter(Boolean)))
-        .sort((a, b) => a.localeCompare(b))
-        .map((v) => ({ value: v, label: v })),
-    [products],
-  );
+  const sousFamilleOptions = useMemo(() => {
+    const values = new Set(products.map((prod) => prod.sous_famille).filter(Boolean));
+    // Editing a request whose sous_famille isn't (or no longer is) in the
+    // product catalogue would otherwise render as a blank select — include it
+    // explicitly so the current value is always visible, not silently hidden.
+    if (initialData?.sous_famille) values.add(initialData.sous_famille);
+    return Array.from(values)
+      .sort((a, b) => a.localeCompare(b))
+      .map((v) => ({ value: v, label: v }));
+  }, [products, initialData?.sous_famille]);
 
   const validate = () => {
     const errs: Record<string, string> = {};
@@ -157,7 +168,7 @@ export default function ProductRequestForm({ stores, onSubmit, onCancel }: Produ
 
       <div className="form-actions">
         <Button variant="ghost" type="button" onClick={onCancel} disabled={loading || uploading}>{tCommon('actions.cancel')}</Button>
-        <Button type="submit" loading={loading} disabled={uploading}>{tCommon('actions.create')}</Button>
+        <Button type="submit" loading={loading} disabled={uploading}>{initialData ? tCommon('actions.update') : tCommon('actions.create')}</Button>
       </div>
 
       {cameraOpen && <CameraCapture onCapture={handleCameraCapture} onClose={() => setCameraOpen(false)} />}

@@ -5,12 +5,13 @@ import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../../hooks/useAppDispatch';
 import { usePermissions } from '../../hooks/usePermissions';
 import { useClientPagination } from '../../hooks/useClientPagination';
-import { fetchProductRequests, createProductRequest } from '../../store/slices/productRequestsSlice';
+import { fetchProductRequests, createProductRequest, updateProductRequest, deleteProductRequest } from '../../store/slices/productRequestsSlice';
 import { fetchStores } from '../../store/slices/storesSlice';
 import PageHeader from '../../components/ui/PageHeader';
 import Button from '../../components/ui/Button';
 import DataTable from '../../components/ui/DataTable';
 import Modal from '../../components/ui/Modal';
+import ConfirmDialog from '../../components/ui/ConfirmDialog';
 import Pagination from '../../components/ui/Pagination';
 import Select from '../../components/ui/Select';
 import ProductRequestForm from './ProductRequestForm';
@@ -20,12 +21,16 @@ import type { ProductRequest, Store } from '../../types';
 
 export default function MarketingPage() {
   const { t, i18n } = useTranslation('productRequests');
+  const { t: tCommon } = useTranslation('common');
   const dispatch = useAppDispatch();
   const p = usePermissions();
   const { items, loading } = useAppSelector((s) => s.productRequests);
   const { items: stores } = useAppSelector((s) => s.stores);
 
   const [createOpen, setCreateOpen] = useState(false);
+  const [editItem, setEditItem] = useState<ProductRequest | null>(null);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
   const [filterStore, setFilterStore] = useState('');
 
   useEffect(() => { dispatch(fetchStores()); }, [dispatch]);
@@ -46,6 +51,30 @@ export default function MarketingPage() {
     }
   };
 
+  const handleUpdate = async (data: CreateProductRequestPayload) => {
+    if (!editItem) return;
+    const res = await dispatch(updateProductRequest({ id: editItem.id, payload: data }));
+    if (updateProductRequest.fulfilled.match(res)) {
+      toast.success(t('toasts.updateSuccess'));
+      setEditItem(null);
+    } else {
+      toast.error((res.payload as string) || t('toasts.updateError'));
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!deleteId) return;
+    setDeleting(true);
+    const res = await dispatch(deleteProductRequest(deleteId));
+    setDeleting(false);
+    if (deleteProductRequest.fulfilled.match(res)) {
+      toast.success(t('toasts.removeSuccess'));
+      setDeleteId(null);
+    } else {
+      toast.error((res.payload as string) || t('toasts.removeError'));
+    }
+  };
+
   const columns = [
     {
       key: 'photo',
@@ -59,6 +88,20 @@ export default function MarketingPage() {
     { key: 'dimensions', header: t('table.dimensions'), render: (pr: ProductRequest) => <span>{pr.width} × {pr.height} × {pr.depth} cm</span> },
     { key: 'requestedBy', header: t('table.requestedBy'), render: (pr: ProductRequest) => <span>{pr.created_by?.full_name || '—'}</span> },
     { key: 'date', header: t('table.date'), render: (pr: ProductRequest) => <span style={{ color: 'var(--gray-500)' }}>{formatDate(pr.created_at, i18n.language)}</span> },
+    {
+      key: 'actions',
+      header: '',
+      render: (pr: ProductRequest) => (
+        <div className="table-actions">
+          {p.can('product_requests.update') && (
+            <Button variant="outline" size="sm" onClick={() => setEditItem(pr)}>{tCommon('actions.edit')}</Button>
+          )}
+          {p.can('product_requests.delete') && (
+            <Button variant="danger" size="sm" onClick={() => setDeleteId(pr.id)}>{tCommon('actions.remove')}</Button>
+          )}
+        </div>
+      ),
+    },
   ];
 
   return (
@@ -91,6 +134,21 @@ export default function MarketingPage() {
       <Modal open={createOpen} onClose={() => setCreateOpen(false)} title={t('modal.newTitle')} size="md">
         <ProductRequestForm stores={stores} onSubmit={handleCreate} onCancel={() => setCreateOpen(false)} />
       </Modal>
+
+      <Modal open={!!editItem} onClose={() => setEditItem(null)} title={t('modal.editTitle')} size="md">
+        {editItem && (
+          <ProductRequestForm stores={stores} initialData={editItem} onSubmit={handleUpdate} onCancel={() => setEditItem(null)} />
+        )}
+      </Modal>
+
+      <ConfirmDialog
+        open={!!deleteId}
+        onClose={() => setDeleteId(null)}
+        onConfirm={handleDelete}
+        loading={deleting}
+        confirmLabel={tCommon('actions.remove')}
+        message={t('deleteConfirm.message')}
+      />
     </div>
   );
 }

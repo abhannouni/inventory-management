@@ -44,9 +44,17 @@
     "photoUploaded": "تم تحميل الصورة",
     "photoUploadError": "فشل تحميل الصورة",
     "createSuccess": "تم إرسال الطلب",
-    "createError": "فشل إرسال الطلب"
+    "createError": "فشل إرسال الطلب",
+    "updateSuccess": "تم تحديث الطلب",
+    "updateError": "فشل تحديث الطلب",
+    "removeSuccess": "تم حذف الطلب",
+    "removeError": "فشل حذف الطلب"
   },
   "modal": {
-    "newTitle": "طلب منتج جديد"
+    "newTitle": "طلب منتج جديد",
+    "editTitle": "تعديل طلب المنتج"
+  },
+  "deleteConfirm": {
+    "message": "سيتم حذف طلب المنتج هذا نهائياً."
   }
 }

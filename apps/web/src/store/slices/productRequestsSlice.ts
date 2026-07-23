@@ -27,6 +27,22 @@ export const createProductRequest = createAsyncThunk(
   },
 );
 
+export const updateProductRequest = createAsyncThunk(
+  'productRequests/update',
+  async ({ id, payload }: { id: string; payload: Partial<CreateProductRequestPayload> }, { rejectWithValue }) => {
+    try { return await productRequestsApi.update(id, payload); }
+    catch (err) { return rejectWithValue((err as Error).message); }
+  },
+);
+
+export const deleteProductRequest = createAsyncThunk(
+  'productRequests/delete',
+  async (id: string, { rejectWithValue }) => {
+    try { await productRequestsApi.remove(id); return id; }
+    catch (err) { return rejectWithValue((err as Error).message); }
+  },
+);
+
 const productRequestsSlice = createSlice({
   name: 'productRequests',
   initialState,
@@ -36,7 +52,14 @@ const productRequestsSlice = createSlice({
       .addCase(fetchProductRequests.pending, (state) => { state.loading = true; state.error = null; })
       .addCase(fetchProductRequests.fulfilled, (state, action) => { state.loading = false; state.items = action.payload; })
       .addCase(fetchProductRequests.rejected, (state, action) => { state.loading = false; state.error = action.payload as string; })
-      .addCase(createProductRequest.fulfilled, (state, action) => { state.items.unshift(action.payload); });
+      .addCase(createProductRequest.fulfilled, (state, action) => { state.items.unshift(action.payload); })
+      .addCase(updateProductRequest.fulfilled, (state, action) => {
+        const idx = state.items.findIndex((pr) => pr.id === action.payload.id);
+        if (idx !== -1) state.items[idx] = action.payload;
+      })
+      .addCase(deleteProductRequest.fulfilled, (state, action) => {
+        state.items = state.items.filter((pr) => pr.id !== action.payload);
+      });
   },
 });
 

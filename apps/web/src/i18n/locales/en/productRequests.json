@@ -44,9 +44,17 @@
     "photoUploaded": "Photo uploaded",
     "photoUploadError": "Failed to upload photo",
     "createSuccess": "Request submitted",
-    "createError": "Failed to submit request"
+    "createError": "Failed to submit request",
+    "updateSuccess": "Request updated",
+    "updateError": "Failed to update request",
+    "removeSuccess": "Request removed",
+    "removeError": "Failed to remove request"
   },
   "modal": {
-    "newTitle": "New Product Request"
+    "newTitle": "New Product Request",
+    "editTitle": "Edit Product Request"
+  },
+  "deleteConfirm": {
+    "message": "This will permanently remove this product request."
   }
 }

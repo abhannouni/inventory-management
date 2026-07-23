@@ -4,6 +4,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { adminAssignedStoreIds } from '../stores/store-scope';
 import { CreateProductRequestDto } from './dto/create-product-request.dto';
 import { FindProductRequestsDto } from './dto/find-product-requests.dto';
+import { UpdateProductRequestDto } from './dto/update-product-request.dto';
 
 @Injectable()
 export class ProductRequestsService {
@@ -41,9 +42,36 @@ export class ProductRequestsService {
     });
   }
 
+  async update(id: string, dto: UpdateProductRequestDto, user: User) {
+    const existing = await this.findOrFail(id);
+    await this.assertStoreAccess(existing.store_id, user);
+    if (dto.store_id) await this.assertStoreAccess(dto.store_id, user);
+
+    return this.prisma.productRequest.update({
+      where: { id },
+      data: dto,
+      include: {
+        store: { include: { region: true } },
+        created_by: { select: { id: true, full_name: true, role: true } },
+      },
+    });
+  }
+
+  async remove(id: string, user: User) {
+    const existing = await this.findOrFail(id);
+    await this.assertStoreAccess(existing.store_id, user);
+    await this.prisma.productRequest.delete({ where: { id } });
+  }
+
   // ─── Helpers ───────────────────────────────────────────────────────────────
   // Same store-visibility rules as ProductStoreService — a request can only
   // reference a store the caller can already see.
+
+  private async findOrFail(id: string) {
+    const existing = await this.prisma.productRequest.findUnique({ where: { id } });
+    if (!existing) throw new NotFoundException('Product request not found');
+    return existing;
+  }
 
   private async buildFilter(user: User, query: FindProductRequestsDto) {
     const base: Record<string, unknown> = {};

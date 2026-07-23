@@ -44,9 +44,17 @@
     "photoUploaded": "Photo téléversée",
     "photoUploadError": "Échec du téléversement de la photo",
     "createSuccess": "Demande soumise",
-    "createError": "Échec de la soumission de la demande"
+    "createError": "Échec de la soumission de la demande",
+    "updateSuccess": "Demande mise à jour",
+    "updateError": "Échec de la mise à jour de la demande",
+    "removeSuccess": "Demande supprimée",
+    "removeError": "Échec de la suppression de la demande"
   },
   "modal": {
-    "newTitle": "Nouvelle demande de produit"
+    "newTitle": "Nouvelle demande de produit",
+    "editTitle": "Modifier la demande de produit"
+  },
+  "deleteConfirm": {
+    "message": "Cette demande de produit sera définitivement supprimée."
   }
 }
