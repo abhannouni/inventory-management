@@ -1,0 +1,52 @@
+{
+  "title": "التسويق",
+  "subtitle": "اطلب منتجاً بمقاس مخصص لتشكيلة أحد المتاجر",
+  "newRequest": "طلب جديد",
+  "allStores": "جميع المتاجر",
+  "table": {
+    "store": "المتجر",
+    "sousFamille": "العائلة الفرعية",
+    "dimensions": "الأبعاد",
+    "photo": "الصورة",
+    "requestedBy": "طلبها",
+    "date": "التاريخ",
+    "empty": "لا توجد طلبات منتجات"
+  },
+  "fields": {
+    "store": "المتجر",
+    "storePlaceholder": "اختر متجراً",
+    "sousFamille": "العائلة الفرعية",
+    "sousFamillePlaceholder": "اختر عائلة فرعية",
+    "width": "العرض (سم)",
+    "height": "الارتفاع (سم)",
+    "depth": "العمق (سم)",
+    "photoLabel": "الصورة",
+    "photoUploadHint": "انقر لتحميل صورة",
+    "photoFormatsHint": "JPG أو PNG أو WEBP، حتى 5 ميجابايت",
+    "photoChangeHint": "انقر لتغيير الصورة",
+    "photoUploading": "جارٍ التحميل…",
+    "takePhoto": "التقاط صورة"
+  },
+  "errors": {
+    "storeRequired": "المتجر مطلوب",
+    "sousFamilleRequired": "العائلة الفرعية مطلوبة",
+    "widthRequired": "العرض مطلوب",
+    "widthInvalid": "عرض غير صالح",
+    "heightRequired": "الارتفاع مطلوب",
+    "heightInvalid": "ارتفاع غير صالح",
+    "depthRequired": "العمق مطلوب",
+    "depthInvalid": "عمق غير صالح",
+    "photoRequired": "الصورة مطلوبة"
+  },
+  "toasts": {
+    "fileTooLarge": "الصورة كبيرة جداً (الحد الأقصى 5 ميجابايت)",
+    "invalidFileType": "نوع ملف غير مدعوم",
+    "photoUploaded": "تم تحميل الصورة",
+    "photoUploadError": "فشل تحميل الصورة",
+    "createSuccess": "تم إرسال الطلب",
+    "createError": "فشل إرسال الطلب"
+  },
+  "modal": {
+    "newTitle": "طلب منتج جديد"
+  }
+}

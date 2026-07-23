@@ -1,0 +1,52 @@
+{
+  "title": "Marketing",
+  "subtitle": "Demandez un produit sur mesure pour l'assortiment d'un magasin",
+  "newRequest": "Nouvelle demande",
+  "allStores": "Tous les magasins",
+  "table": {
+    "store": "Magasin",
+    "sousFamille": "Sous Famille",
+    "dimensions": "Dimensions",
+    "photo": "Photo",
+    "requestedBy": "Demandé par",
+    "date": "Date",
+    "empty": "Aucune demande de produit trouvée"
+  },
+  "fields": {
+    "store": "Magasin",
+    "storePlaceholder": "Sélectionner un magasin",
+    "sousFamille": "Sous Famille",
+    "sousFamillePlaceholder": "Sélectionner une sous famille",
+    "width": "Largeur (cm)",
+    "height": "Hauteur (cm)",
+    "depth": "Profondeur (cm)",
+    "photoLabel": "Photo",
+    "photoUploadHint": "Cliquez pour téléverser une photo",
+    "photoFormatsHint": "JPG, PNG ou WEBP, jusqu'à 5 Mo",
+    "photoChangeHint": "Cliquez pour changer la photo",
+    "photoUploading": "Téléversement…",
+    "takePhoto": "Prendre une photo"
+  },
+  "errors": {
+    "storeRequired": "Le magasin est requis",
+    "sousFamilleRequired": "La sous famille est requise",
+    "widthRequired": "La largeur est requise",
+    "widthInvalid": "Largeur invalide",
+    "heightRequired": "La hauteur est requise",
+    "heightInvalid": "Hauteur invalide",
+    "depthRequired": "La profondeur est requise",
+    "depthInvalid": "Profondeur invalide",
+    "photoRequired": "La photo est requise"
+  },
+  "toasts": {
+    "fileTooLarge": "Image trop volumineuse (max 5 Mo)",
+    "invalidFileType": "Type de fichier non pris en charge",
+    "photoUploaded": "Photo téléversée",
+    "photoUploadError": "Échec du téléversement de la photo",
+    "createSuccess": "Demande soumise",
+    "createError": "Échec de la soumission de la demande"
+  },
+  "modal": {
+    "newTitle": "Nouvelle demande de produit"
+  }
+}

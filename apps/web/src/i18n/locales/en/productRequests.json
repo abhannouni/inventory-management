@@ -1,0 +1,52 @@
+{
+  "title": "Marketing",
+  "subtitle": "Request a custom-sized product for a store's assortment",
+  "newRequest": "New Request",
+  "allStores": "All stores",
+  "table": {
+    "store": "Store",
+    "sousFamille": "Sous Famille",
+    "dimensions": "Dimensions",
+    "photo": "Photo",
+    "requestedBy": "Requested by",
+    "date": "Date",
+    "empty": "No product requests found"
+  },
+  "fields": {
+    "store": "Store",
+    "storePlaceholder": "Select store",
+    "sousFamille": "Sous Famille",
+    "sousFamillePlaceholder": "Select sub-family",
+    "width": "Width (cm)",
+    "height": "Height (cm)",
+    "depth": "Depth (cm)",
+    "photoLabel": "Photo",
+    "photoUploadHint": "Click to upload a photo",
+    "photoFormatsHint": "JPG, PNG or WEBP, up to 5MB",
+    "photoChangeHint": "Click to change photo",
+    "photoUploading": "Uploading…",
+    "takePhoto": "Take Photo"
+  },
+  "errors": {
+    "storeRequired": "Store is required",
+    "sousFamilleRequired": "Sub-family is required",
+    "widthRequired": "Width is required",
+    "widthInvalid": "Invalid width",
+    "heightRequired": "Height is required",
+    "heightInvalid": "Invalid height",
+    "depthRequired": "Depth is required",
+    "depthInvalid": "Invalid depth",
+    "photoRequired": "Photo is required"
+  },
+  "toasts": {
+    "fileTooLarge": "Image is too large (max 5MB)",
+    "invalidFileType": "Unsupported file type",
+    "photoUploaded": "Photo uploaded",
+    "photoUploadError": "Failed to upload photo",
+    "createSuccess": "Request submitted",
+    "createError": "Failed to submit request"
+  },
+  "modal": {
+    "newTitle": "New Product Request"
+  }
+}

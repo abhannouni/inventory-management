@@ -16,7 +16,7 @@ interface ComingSoonModulePageProps {
 /**
  * Shared shell for modules that are permission-gated end-to-end (nav, route,
  * and a real guarded API endpoint) but have no data model yet. Used by
- * Sell-Out, Merchandising, Marketing & Trade Marketing, and HR.
+ * Sell-Out, Merchandising, and HR.
  *
  * This is deliberately honest rather than showing fabricated data: the page is
  * fully wired into the permission system today, and only the feature body is

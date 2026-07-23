@@ -123,6 +123,20 @@ export interface ProductStore {
   updated_at: string;
 }
 
+export interface ProductRequest {
+  id: string;
+  store_id: string;
+  store?: Store;
+  sous_famille: string;
+  width: number;
+  height: number;
+  depth: number;
+  image_url: string;
+  created_by_id: string | null;
+  created_by?: { id: string; full_name: string };
+  created_at: string;
+}
+
 export interface AuditItem {
   id: string;
   visit_id: string;

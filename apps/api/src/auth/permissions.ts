@@ -25,8 +25,8 @@ export const RESOURCES = [
   'settings',
   'sell_out',
   'merchandising',
-  'marketing',
   'hr',
+  'product_requests',
 ] as const;
 
 export type Resource = (typeof RESOURCES)[number];
@@ -120,12 +120,19 @@ export const PERMISSIONS: PermissionDef[] = [
 
   ...crud('sell_out', 'sell-out records'),
 
-  // These two have no data model yet — read-only for now (mirroring `reports`,
-  // which likewise only has read+export). The page exists and is permission-gated
+  // Has no data model yet — read-only for now (mirroring `reports`, which
+  // likewise only has read+export). The page exists and is permission-gated
   // like every other module; it renders an honest "not available yet" state until
   // the underlying feature is built. Add create/update/delete here once it is.
   { code: 'merchandising.read', resource: 'merchandising', action: 'read', description: 'View merchandising execution (displays, TG, MEA, PLV)' },
-  { code: 'marketing.read', resource: 'marketing', action: 'read', description: 'View marketing & trade marketing analysis' },
+
+  // Custom Product Requests: a simple field-submitted log (store, sub-family,
+  // dimensions, photo) — no approval workflow, so no `.update`/`.delete`.
+  // Shown to users under the "Marketing" nav label/page title — the resource
+  // code predates that display name and was kept to avoid an unrelated rename
+  // (same reasoning as `inventory` staying `inventory` under the "Stock" label).
+  { code: 'product_requests.read', resource: 'product_requests', action: 'read', description: 'View custom product requests (Marketing)' },
+  { code: 'product_requests.create', resource: 'product_requests', action: 'create', description: 'Submit a custom product request (Marketing)' },
 
   // Not included in any ROLE_PRESETS entry — only super_admin (which bypasses
   // the preset table and gets every permission) can reach the HR module.
@@ -162,7 +169,8 @@ export const ROLE_PRESETS: Record<string, string[]> = {
     'reports.export',
     ...crud('sell_out', '').map((p) => p.code),
     'merchandising.read',
-    'marketing.read',
+    'product_requests.read',
+    'product_requests.create',
   ],
 
   // Reads consolidated data, but only for the POS the Super Admin has exposed.
@@ -181,7 +189,7 @@ export const ROLE_PRESETS: Record<string, string[]> = {
     'users.read',
     'sell_out.read',
     'merchandising.read',
-    'marketing.read',
+    'product_requests.read',
   ],
 
   supervisor: [
@@ -207,6 +215,8 @@ export const ROLE_PRESETS: Record<string, string[]> = {
     'dashboards.read',
     'sell_out.read',
     'merchandising.read',
+    'product_requests.read',
+    'product_requests.create',
   ],
 
   merchandiser: [
@@ -223,5 +233,7 @@ export const ROLE_PRESETS: Record<string, string[]> = {
     // ("merchandiser → own visits" per its own doc comment); the endpoint was
     // simply never gated. This formalizes access that already worked.
     'reports.read',
+    'product_requests.read',
+    'product_requests.create',
   ],
 };

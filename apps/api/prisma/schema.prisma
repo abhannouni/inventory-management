@@ -119,6 +119,7 @@ model User {
   dashboards        Dashboard[]
   refreshTokens     RefreshToken[]
   sellOuts          SellOut[]
+  productRequests   ProductRequest[]
 
   @@index([role_id])
   @@index([is_active])
@@ -187,11 +188,12 @@ model Store {
   created_at    DateTime @default(now())
   updated_at    DateTime @default(now()) @updatedAt
 
-  userStores    UserStore[]
-  productStores ProductStore[]
-  visits        Visit[]
-  schedules     Schedule[]
-  sellOuts      SellOut[]
+  userStores      UserStore[]
+  productStores   ProductStore[]
+  visits          Visit[]
+  schedules       Schedule[]
+  sellOuts        SellOut[]
+  productRequests ProductRequest[]
 
   @@index([visible_to_gm])
   @@index([is_active])
@@ -264,6 +266,25 @@ model ProductStore {
 
   @@unique([product_id, store_id])
   @@map("product_stores")
+}
+
+// A field-submitted request for a custom-sized product: a store, any product
+// sub-family (Sous Famille), physical dimensions, and a reference photo.
+model ProductRequest {
+  id            String   @id @default(uuid())
+  store         Store    @relation(fields: [store_id], references: [id], onDelete: Cascade)
+  store_id      String
+  sous_famille  String
+  width         Decimal  @db.Decimal(10, 2)
+  height        Decimal  @db.Decimal(10, 2)
+  depth         Decimal  @db.Decimal(10, 2)
+  image_url     String
+  created_by    User?    @relation(fields: [created_by_id], references: [id], onDelete: SetNull)
+  created_by_id String?
+  created_at    DateTime @default(now())
+
+  @@index([store_id])
+  @@map("product_requests")
 }
 
 model Visit {

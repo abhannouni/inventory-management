@@ -306,7 +306,10 @@ export const NAV_PAGES: NavPage[] = [
     id: 'marketing',
     path: '/marketing',
     element: MarketingPage,
-    permissions: ['marketing.read'],
+    // Permission resource is `product_requests` (predates the "Marketing"
+    // naming) — see the comment on this permission in auth/permissions.ts,
+    // same reasoning as `inventory` staying `inventory` under the "Stock" label.
+    permissions: ['product_requests.read'],
     nav: {
       labelKey: 'nav.marketing',
       icon: {

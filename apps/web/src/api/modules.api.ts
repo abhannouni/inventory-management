@@ -9,6 +9,5 @@ export interface ModuleStatus {
 export const modulesApi = {
   sellOut: () => api.get<ModuleStatus>('/sell-out'),
   merchandising: () => api.get<ModuleStatus>('/merchandising'),
-  marketing: () => api.get<ModuleStatus>('/marketing'),
   hr: () => api.get<ModuleStatus>('/hr'),
 };

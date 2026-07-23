@@ -19,9 +19,9 @@ import { ReportsModule } from './reports/reports.module';
 import { SchedulesModule } from './schedules/schedules.module';
 import { SellOutModule } from './sell-out/sell-out.module';
 import { MerchandisingModule } from './merchandising/merchandising.module';
-import { MarketingModule } from './marketing/marketing.module';
 import { SettingsModule } from './settings/settings.module';
 import { HrModule } from './hr/hr.module';
+import { ProductRequestsModule } from './product-requests/product-requests.module';
 
 @Module({
   imports: [
@@ -57,9 +57,9 @@ import { HrModule } from './hr/hr.module';
     SchedulesModule,
     SellOutModule,
     MerchandisingModule,
-    MarketingModule,
     SettingsModule,
     HrModule,
+    ProductRequestsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -20,6 +20,7 @@ import frPos from './locales/fr/pos.json';
 import frModules from './locales/fr/modules.json';
 import frSellOut from './locales/fr/sellOut.json';
 import frSettings from './locales/fr/settings.json';
+import frProductRequests from './locales/fr/productRequests.json';
 
 import enCommon from './locales/en/common.json';
 import enSidebar from './locales/en/sidebar.json';
@@ -40,6 +41,7 @@ import enPos from './locales/en/pos.json';
 import enModules from './locales/en/modules.json';
 import enSellOut from './locales/en/sellOut.json';
 import enSettings from './locales/en/settings.json';
+import enProductRequests from './locales/en/productRequests.json';
 
 import arCommon from './locales/ar/common.json';
 import arSidebar from './locales/ar/sidebar.json';
@@ -60,6 +62,7 @@ import arPos from './locales/ar/pos.json';
 import arModules from './locales/ar/modules.json';
 import arSellOut from './locales/ar/sellOut.json';
 import arSettings from './locales/ar/settings.json';
+import arProductRequests from './locales/ar/productRequests.json';
 
 export const LANGUAGE_STORAGE_KEY = 'appLanguage';
 export const SUPPORTED_LANGUAGES = ['fr', 'en', 'ar'] as const;
@@ -87,6 +90,7 @@ export const NAMESPACES = [
   'modules',
   'sellOut',
   'settings',
+  'productRequests',
 ] as const;
 
 function getInitialLanguage(): SupportedLanguage {
@@ -128,6 +132,7 @@ i18n.use(initReactI18next).init({
       modules: frModules,
       sellOut: frSellOut,
       settings: frSettings,
+      productRequests: frProductRequests,
     },
     en: {
       common: enCommon,
@@ -149,6 +154,7 @@ i18n.use(initReactI18next).init({
       modules: enModules,
       sellOut: enSellOut,
       settings: enSettings,
+      productRequests: enProductRequests,
     },
     ar: {
       common: arCommon,
@@ -170,6 +176,7 @@ i18n.use(initReactI18next).init({
       modules: arModules,
       sellOut: arSellOut,
       settings: arSettings,
+      productRequests: arProductRequests,
     },
   },
   ns: NAMESPACES,

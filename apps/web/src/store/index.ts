@@ -12,6 +12,7 @@ import reportsReducer from './slices/reportsSlice';
 import schedulesReducer from './slices/schedulesSlice';
 import sellOutReducer from './slices/sellOutSlice';
 import settingsReducer from './slices/settingsSlice';
+import productRequestsReducer from './slices/productRequestsSlice';
 
 export const store = configureStore({
   reducer: {
@@ -28,6 +29,7 @@ export const store = configureStore({
     schedules: schedulesReducer,
     sellOut: sellOutReducer,
     settings: settingsReducer,
+    productRequests: productRequestsReducer,
   },
 });
 
