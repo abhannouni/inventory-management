@@ -56,5 +56,24 @@
   },
   "deleteConfirm": {
     "message": "Cette demande de produit sera définitivement supprimée."
+  },
+  "detail": {
+    "title": "Demande de produit",
+    "back": "Retour",
+    "notFound": "Demande de produit introuvable",
+    "info": {
+      "title": "Informations de la demande",
+      "store": "Magasin",
+      "sousFamille": "Sous Famille",
+      "dimensions": "Dimensions",
+      "requestedBy": "Demandé par",
+      "date": "Date",
+      "region": "Région"
+    },
+    "photos": {
+      "title": "Photos ({{count}})",
+      "empty": "Aucune photo jointe",
+      "photoAlt": "Photo {{index}}"
+    }
   }
 }

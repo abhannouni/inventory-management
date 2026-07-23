@@ -5,16 +5,25 @@ import type { ProductRequest } from '../../types';
 
 interface ProductRequestsState {
   items: ProductRequest[];
+  selected: ProductRequest | null;
   loading: boolean;
   error: string | null;
 }
 
-const initialState: ProductRequestsState = { items: [], loading: false, error: null };
+const initialState: ProductRequestsState = { items: [], selected: null, loading: false, error: null };
 
 export const fetchProductRequests = createAsyncThunk(
   'productRequests/fetchAll',
   async (params: { store_id?: string } | undefined, { rejectWithValue }) => {
     try { return await productRequestsApi.findAll(params); }
+    catch (err) { return rejectWithValue((err as Error).message); }
+  },
+);
+
+export const fetchProductRequest = createAsyncThunk(
+  'productRequests/fetchOne',
+  async (id: string, { rejectWithValue }) => {
+    try { return await productRequestsApi.findOne(id); }
     catch (err) { return rejectWithValue((err as Error).message); }
   },
 );
@@ -46,16 +55,23 @@ export const deleteProductRequest = createAsyncThunk(
 const productRequestsSlice = createSlice({
   name: 'productRequests',
   initialState,
-  reducers: { clearError(state) { state.error = null; } },
+  reducers: {
+    clearError(state) { state.error = null; },
+    clearSelected(state) { state.selected = null; },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchProductRequests.pending, (state) => { state.loading = true; state.error = null; })
       .addCase(fetchProductRequests.fulfilled, (state, action) => { state.loading = false; state.items = action.payload; })
       .addCase(fetchProductRequests.rejected, (state, action) => { state.loading = false; state.error = action.payload as string; })
+      .addCase(fetchProductRequest.pending, (state) => { state.loading = true; state.error = null; })
+      .addCase(fetchProductRequest.fulfilled, (state, action) => { state.loading = false; state.selected = action.payload; })
+      .addCase(fetchProductRequest.rejected, (state, action) => { state.loading = false; state.error = action.payload as string; })
       .addCase(createProductRequest.fulfilled, (state, action) => { state.items.unshift(action.payload); })
       .addCase(updateProductRequest.fulfilled, (state, action) => {
         const idx = state.items.findIndex((pr) => pr.id === action.payload.id);
         if (idx !== -1) state.items[idx] = action.payload;
+        if (state.selected?.id === action.payload.id) state.selected = action.payload;
       })
       .addCase(deleteProductRequest.fulfilled, (state, action) => {
         state.items = state.items.filter((pr) => pr.id !== action.payload);
@@ -63,5 +79,5 @@ const productRequestsSlice = createSlice({
   },
 });
 
-export const { clearError } = productRequestsSlice.actions;
+export const { clearError, clearSelected } = productRequestsSlice.actions;
 export default productRequestsSlice.reducer;

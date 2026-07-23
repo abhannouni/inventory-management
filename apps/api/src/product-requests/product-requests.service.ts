@@ -22,6 +22,19 @@ export class ProductRequestsService {
     });
   }
 
+  async findOne(id: string, user: User) {
+    const existing = await this.prisma.productRequest.findUnique({
+      where: { id },
+      include: {
+        store: { include: { region: true } },
+        created_by: { select: { id: true, full_name: true, role: true } },
+      },
+    });
+    if (!existing) throw new NotFoundException('Product request not found');
+    await this.assertStoreAccess(existing.store_id, user);
+    return existing;
+  }
+
   async create(dto: CreateProductRequestDto, user: User) {
     await this.assertStoreAccess(dto.store_id, user);
 

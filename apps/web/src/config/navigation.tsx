@@ -17,6 +17,7 @@ import SchedulePage from '../pages/schedule/SchedulePage';
 import SellOutPage from '../pages/modules/SellOutPage';
 import MerchandisingPage from '../pages/modules/MerchandisingPage';
 import MarketingPage from '../pages/modules/MarketingPage';
+import MarketingDetailPage from '../pages/modules/MarketingDetailPage';
 import SettingsPage from '../pages/settings/SettingsPage';
 import HrPage from '../pages/modules/HrPage';
 
@@ -318,6 +319,7 @@ export const NAV_PAGES: NavPage[] = [
       section: 'general',
     },
   },
+  { id: 'marketing-detail', path: '/marketing/:id', element: MarketingDetailPage, permissions: ['product_requests.read'] },
 ];
 
 /**

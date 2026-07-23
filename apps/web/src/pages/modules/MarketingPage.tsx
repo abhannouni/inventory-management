@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
@@ -23,6 +24,7 @@ export default function MarketingPage() {
   const { t, i18n } = useTranslation('productRequests');
   const { t: tCommon } = useTranslation('common');
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const p = usePermissions();
   const { items, loading } = useAppSelector((s) => s.productRequests);
   const { items: stores } = useAppSelector((s) => s.stores);
@@ -106,6 +108,7 @@ export default function MarketingPage() {
       header: '',
       render: (pr: ProductRequest) => (
         <div className="table-actions">
+          <Button variant="outline" size="sm" onClick={() => navigate(`/marketing/${pr.id}`)}>{tCommon('actions.view')}</Button>
           {p.can('product_requests.update') && (
             <Button variant="outline" size="sm" onClick={() => setEditItem(pr)}>{tCommon('actions.edit')}</Button>
           )}

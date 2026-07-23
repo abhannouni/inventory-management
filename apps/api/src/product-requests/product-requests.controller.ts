@@ -37,6 +37,13 @@ export class ProductRequestsController {
     return this.productRequestsService.findAll(user, query);
   }
 
+  @Get(':id')
+  @RequirePermissions('product_requests.read')
+  @ApiOperation({ summary: 'Get a single custom product request' })
+  findOne(@Param('id', ParseUUIDPipe) id: string, @CurrentUser() user: User) {
+    return this.productRequestsService.findOne(id, user);
+  }
+
   @Post()
   @RequirePermissions('product_requests.create')
   @ApiOperation({ summary: 'Submit a custom product request (store, sub-family, dimensions, photo)' })

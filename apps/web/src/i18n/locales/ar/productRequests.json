@@ -56,5 +56,24 @@
   },
   "deleteConfirm": {
     "message": "سيتم حذف طلب المنتج هذا نهائياً."
+  },
+  "detail": {
+    "title": "طلب المنتج",
+    "back": "رجوع",
+    "notFound": "طلب المنتج غير موجود",
+    "info": {
+      "title": "معلومات الطلب",
+      "store": "المتجر",
+      "sousFamille": "العائلة الفرعية",
+      "dimensions": "الأبعاد",
+      "requestedBy": "طلبها",
+      "date": "التاريخ",
+      "region": "المنطقة"
+    },
+    "photos": {
+      "title": "الصور ({{count}})",
+      "empty": "لا توجد صور مرفقة",
+      "photoAlt": "صورة {{index}}"
+    }
   }
 }

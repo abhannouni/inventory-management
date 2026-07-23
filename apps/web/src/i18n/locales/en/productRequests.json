@@ -56,5 +56,24 @@
   },
   "deleteConfirm": {
     "message": "This will permanently remove this product request."
+  },
+  "detail": {
+    "title": "Product Request",
+    "back": "Back",
+    "notFound": "Product request not found",
+    "info": {
+      "title": "Request Information",
+      "store": "Store",
+      "sousFamille": "Sous Famille",
+      "dimensions": "Dimensions",
+      "requestedBy": "Requested by",
+      "date": "Date",
+      "region": "Region"
+    },
+    "photos": {
+      "title": "Photos ({{count}})",
+      "empty": "No photos attached",
+      "photoAlt": "Photo {{index}}"
+    }
   }
 }
