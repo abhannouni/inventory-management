@@ -23,6 +23,7 @@ enum VisitStatus {
 
 enum AuditItemStatus {
   in_stock
+  stock_disponible
   low_stock
   out_of_stock
 }

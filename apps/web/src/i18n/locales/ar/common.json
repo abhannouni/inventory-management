@@ -25,6 +25,7 @@
     "active": "نشط",
     "inactive": "غير نشط",
     "in_stock": "متوفر",
+    "stock_disponible": "مخزون متاح",
     "low_stock": "مخزون منخفض",
     "out_of_stock": "نفد المخزون"
   },

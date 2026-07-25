@@ -64,6 +64,7 @@
       "title": "Résumé de l'audit",
       "total": "Total",
       "inStock": "En stock",
+      "stockDisponible": "Stock disponible",
       "lowStock": "Stock faible",
       "outOfStock": "Rupture de stock",
       "completion": "Progression"
@@ -203,6 +204,7 @@
       "status": {
         "outOfStock": "Rupture de stock",
         "lowStock": "Stock faible",
+        "stockDisponible": "Stock disponible",
         "inStock": "En stock"
       },
       "toasts": {
@@ -216,6 +218,7 @@
       "sectionTitle": "Audit terminé",
       "sectionSubtitle": "Vérifiez le résumé puis pointez la sortie",
       "inStock": "En stock",
+      "stockDisponible": "Stock disponible",
       "lowStock": "Stock faible",
       "outOfStock": "Rupture de stock",
       "found": "Trouvé",

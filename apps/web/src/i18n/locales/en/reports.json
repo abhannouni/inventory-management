@@ -52,6 +52,7 @@
     "summary": {
       "total": "Audited",
       "inStock": "In stock",
+      "stockDisponible": "Available stock",
       "lowStock": "Low stock",
       "outOfStock": "Out of stock"
     },

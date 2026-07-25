@@ -5,17 +5,22 @@
  *
  *  - identity of a single measure  → one hue (the brand blue), every bar the same.
  *    Never a value-ramp across nominal categories — bar length already shows size.
- *  - state (in / low / out of stock) → the reserved STATUS scale below. It is never
- *    used for a non-status series, and always ships with an icon + label, because
- *    amber sits below 3:1 on white by design.
+ *  - state (out of / low / available / in stock) → the reserved STATUS scale below.
+ *    It is never used for a non-status series, and always ships with an icon +
+ *    label, because amber sits below 3:1 on white by design.
  *  - polarity (found vs expected)   → the DIVERGING pair: two hues that read as
  *    opposite, with a neutral grey midpoint.
  *
  * Validated with the dataviz validator against the white card surface:
  *   blue alone            → all checks pass
  *   blue ↔ red (diverging) → all pass, worst CVD ΔE 85.5
- *   status trio           → CVD ΔE 16.9 (clear of the ≥12 target); amber's low
+ *   status trio (3-state)  → CVD ΔE 16.9 (clear of the ≥12 target); amber's low
  *                           contrast is mitigated by icon + label + table view.
+ *
+ * `stock_disponible` was added when the status scale went from 3 states to 4 and
+ * `in_stock` was moved onto the brand blue to keep it visually distinct from the
+ * new green tier — re-run the dataviz validator against this 4-colour set before
+ * relying on colour alone anywhere it isn't paired with an icon/label.
  */
 
 /** Single-series hue — the app's brand blue. */
@@ -23,7 +28,8 @@ export const SERIES = '#1D6ADE';
 
 /** Reserved status scale. Never reused as "series 3". */
 export const STATUS = {
-  in_stock: '#0ca30c',
+  in_stock: '#1D6ADE',
+  stock_disponible: '#0ca30c',
   low_stock: '#fab219',
   out_of_stock: '#d03b3b',
 } as const;

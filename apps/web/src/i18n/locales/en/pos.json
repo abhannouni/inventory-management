@@ -45,6 +45,7 @@
   "stock": {
     "expected": "Expected products",
     "inStock": "In stock",
+    "stockDisponible": "Available stock",
     "lowStock": "Low stock",
     "outOfStock": "Out of stock",
     "product": "Product",

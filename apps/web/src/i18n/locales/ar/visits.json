@@ -64,6 +64,7 @@
       "title": "ملخص الجرد",
       "total": "الإجمالي",
       "inStock": "متوفر",
+      "stockDisponible": "مخزون متاح",
       "lowStock": "مخزون منخفض",
       "outOfStock": "نفد المخزون",
       "completion": "نسبة الإنجاز"
@@ -210,6 +211,7 @@
       "status": {
         "outOfStock": "نفد المخزون",
         "lowStock": "مخزون منخفض",
+        "stockDisponible": "مخزون متاح",
         "inStock": "متوفر"
       },
       "toasts": {
@@ -223,6 +225,7 @@
       "sectionTitle": "اكتمل الجرد",
       "sectionSubtitle": "راجع الملخص ثم سجّل الخروج",
       "inStock": "متوفر",
+      "stockDisponible": "مخزون متاح",
       "lowStock": "مخزون منخفض",
       "outOfStock": "نفد المخزون",
       "found": "موجود",

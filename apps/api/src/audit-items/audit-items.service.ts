@@ -209,6 +209,7 @@ export class AuditItemsService {
 
 function deriveStatus(qty_found: number, expected_qty: number): AuditItemStatus {
   if (qty_found === 0) return AuditItemStatus.out_of_stock;
-  if (qty_found < expected_qty) return AuditItemStatus.low_stock;
+  if (qty_found < expected_qty * 0.5) return AuditItemStatus.low_stock;
+  if (qty_found < expected_qty) return AuditItemStatus.stock_disponible;
   return AuditItemStatus.in_stock;
 }

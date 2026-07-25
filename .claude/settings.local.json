@@ -52,7 +52,9 @@
       "PowerShell(\"stopped\")",
       "Bash(nohup node --enable-source-maps dist/src/main)",
       "Read(//c/Users/Dell/AppData/Local/Temp/claude/**)",
-      "Bash(ls -la /c/Users/Dell/AppData/Local/Temp/claude/ 2>&1 | head -5; cat /c/Users/Dell/AppData/Local/Temp/claude/api-restart.log 2>&1)"
+      "Bash(ls -la /c/Users/Dell/AppData/Local/Temp/claude/ 2>&1 | head -5; cat /c/Users/Dell/AppData/Local/Temp/claude/api-restart.log 2>&1)",
+      "Bash(cd \"C:\\\\Users\\\\Dell\\\\Desktop\\\\New folder\\\\inventory-management\\\\apps\\\\api\" && cat package.json | head -40 && echo \"---WEB---\" && cat \"../web/package.json\" | head -60)",
+      "Bash(xargs -I{} echo {})"
     ]
   }
 }

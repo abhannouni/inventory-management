@@ -47,6 +47,7 @@ export default function VisitsReport() {
 
   const statusLabels = {
     inStock: t('visitsReport.summary.inStock'),
+    stockDisponible: t('visitsReport.summary.stockDisponible'),
     lowStock: t('visitsReport.summary.lowStock'),
     outOfStock: t('visitsReport.summary.outOfStock'),
   };
@@ -54,11 +55,12 @@ export default function VisitsReport() {
   /* ── Derived series ───────────────────────────────────────────────────── */
 
   const totals = useMemo(() => {
-    const acc = { visits: 0, audited: 0, inStock: 0, lowStock: 0, outOfStock: 0 };
+    const acc = { visits: 0, audited: 0, inStock: 0, stockDisponible: 0, lowStock: 0, outOfStock: 0 };
     for (const v of visitsReport) {
       acc.visits += 1;
       acc.audited += v.summary?.total ?? 0;
       acc.inStock += v.summary?.inStock ?? 0;
+      acc.stockDisponible += v.summary?.stockDisponible ?? 0;
       acc.lowStock += v.summary?.lowStock ?? 0;
       acc.outOfStock += v.summary?.outOfStock ?? 0;
     }
@@ -149,6 +151,7 @@ export default function VisitsReport() {
       { header: t('table.status'), value: (v) => v.status },
       { header: t('visitsReport.summary.total'), value: (v) => v.summary?.total ?? 0 },
       { header: t('visitsReport.summary.inStock'), value: (v) => v.summary?.inStock ?? 0 },
+      { header: t('visitsReport.summary.stockDisponible'), value: (v) => v.summary?.stockDisponible ?? 0 },
       { header: t('visitsReport.summary.lowStock'), value: (v) => v.summary?.lowStock ?? 0 },
       { header: t('visitsReport.summary.outOfStock'), value: (v) => v.summary?.outOfStock ?? 0 },
       { header: t('visitsReport.availability'), value: (v) => v.summary?.completionPct ?? 0 },
@@ -190,6 +193,11 @@ export default function VisitsReport() {
     ],
     rows: [
       { label: statusLabels.inStock, count: totals.inStock, pct: availability },
+      {
+        label: statusLabels.stockDisponible,
+        count: totals.stockDisponible,
+        pct: totals.audited ? Math.round((totals.stockDisponible / totals.audited) * 100) : 0,
+      },
       {
         label: statusLabels.lowStock,
         count: totals.lowStock,
@@ -266,6 +274,7 @@ export default function VisitsReport() {
             dataset={statusDataset}
             legend={[
               { label: statusLabels.inStock, color: STATUS.in_stock },
+              { label: statusLabels.stockDisponible, color: STATUS.stock_disponible },
               { label: statusLabels.lowStock, color: STATUS.low_stock },
               { label: statusLabels.outOfStock, color: STATUS.out_of_stock },
             ]}
@@ -275,6 +284,7 @@ export default function VisitsReport() {
               labels={statusLabels}
               counts={{
                 inStock: totals.inStock,
+                stockDisponible: totals.stockDisponible,
                 lowStock: totals.lowStock,
                 outOfStock: totals.outOfStock,
               }}
@@ -323,6 +333,7 @@ export default function VisitsReport() {
                         labels={statusLabels}
                         counts={{
                           inStock: v.summary.inStock,
+                          stockDisponible: v.summary.stockDisponible,
                           lowStock: v.summary.lowStock,
                           outOfStock: v.summary.outOfStock,
                         }}

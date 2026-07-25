@@ -55,6 +55,7 @@
     "summary": {
       "total": "تم تدقيقها",
       "inStock": "متوفر",
+      "stockDisponible": "مخزون متاح",
       "lowStock": "مخزون منخفض",
       "outOfStock": "نفد المخزون"
     },

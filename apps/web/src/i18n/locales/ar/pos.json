@@ -48,6 +48,7 @@
   "stock": {
     "expected": "المنتجات المتوقعة",
     "inStock": "متوفر",
+    "stockDisponible": "مخزون متاح",
     "lowStock": "مخزون منخفض",
     "outOfStock": "نفد",
     "product": "المنتج",

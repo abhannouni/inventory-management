@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
@@ -7,6 +7,8 @@ import { useAppDispatch, useAppSelector } from '../../hooks/useAppDispatch';
 import { usePermissions } from '../../hooks/usePermissions';
 import { fetchStore, updateStore } from '../../store/slices/storesSlice';
 import { fetchRegions } from '../../store/slices/regionsSlice';
+import { fetchProducts } from '../../store/slices/productsSlice';
+import { bulkAssignProductStores } from '../../store/slices/productStoresSlice';
 import PageHeader from '../../components/ui/PageHeader';
 import Button from '../../components/ui/Button';
 import Badge from '../../components/ui/Badge';
@@ -14,6 +16,8 @@ import Modal from '../../components/ui/Modal';
 import Spinner from '../../components/ui/Spinner';
 import StoreForm from './StoreForm';
 import StoreMap from './StoreMap';
+import StoreProductsPicker from './StoreProductsPicker';
+import type { ProductAssignmentValue } from './StoreProductsPicker';
 import PosOverviewSections from './PosOverviewSections';
 import { storesApi } from '../../api/stores.api';
 import { formatDateOnly } from '../../utils/format';
@@ -77,7 +81,11 @@ export default function StoreDetailPage() {
 
   const { selected: store, loading } = useAppSelector((s) => s.stores);
   const { items: regions } = useAppSelector((s) => s.regions);
+  const { items: products } = useAppSelector((s) => s.products);
   const [editOpen, setEditOpen] = useState(false);
+  const [addProductsOpen, setAddProductsOpen] = useState(false);
+  const [addProductsValue, setAddProductsValue] = useState<ProductAssignmentValue[]>([]);
+  const [savingProducts, setSavingProducts] = useState(false);
 
   // The rich aggregate (team, visits, stock, photos…) is loaded alongside the
   // base store, in local state rather than Redux — nothing else needs it. Tagged
@@ -87,6 +95,7 @@ export default function StoreDetailPage() {
   useEffect(() => {
     if (id) dispatch(fetchStore(id));
     dispatch(fetchRegions());
+    dispatch(fetchProducts());
   }, [dispatch, id]);
 
   useEffect(() => {
@@ -115,11 +124,46 @@ export default function StoreDetailPage() {
     if (!store) return;
     const res = await dispatch(updateStore({ id: store.id, payload: data }));
     if (updateStore.fulfilled.match(res)) {
+      const productAssignments = data.product_assignments as { product_id: string; expected_qty: number }[] | undefined;
+      const assignRes = await dispatch(
+        bulkAssignProductStores({ store_id: store.id, items: productAssignments ?? [] }),
+      );
+      if (bulkAssignProductStores.rejected.match(assignRes)) {
+        toast.error((assignRes.payload as string) || t('toasts.assignProductsError'));
+      }
       toast.success(t('toasts.updateSuccess'));
       setEditOpen(false);
       reloadOverview();
     } else {
       toast.error((res.payload as string) || t('toasts.updateError'));
+    }
+  };
+
+  const initialProductAssignments: ProductAssignmentValue[] = useMemo(
+    () =>
+      (overview?.product_availability ?? []).map((row) => ({
+        product_id: row.product.id,
+        expected_qty: row.expected_qty,
+      })),
+    [overview],
+  );
+
+  const openAddProducts = () => {
+    setAddProductsValue(initialProductAssignments);
+    setAddProductsOpen(true);
+  };
+
+  const handleSaveProducts = async () => {
+    if (!store) return;
+    setSavingProducts(true);
+    const res = await dispatch(bulkAssignProductStores({ store_id: store.id, items: addProductsValue }));
+    setSavingProducts(false);
+    if (bulkAssignProductStores.fulfilled.match(res)) {
+      toast.success(t('toasts.assignProductsSuccess'));
+      setAddProductsOpen(false);
+      reloadOverview();
+    } else {
+      toast.error((res.payload as string) || t('toasts.assignProductsError'));
     }
   };
 
@@ -144,8 +188,15 @@ export default function StoreDetailPage() {
         title={s.name}
         subtitle={[s.brand, s.city, s.region?.name].filter(Boolean).join(' · ')}
         actions={
-          p.canManageStores ? (
-            <Button onClick={() => setEditOpen(true)}>{t('detail.edit')}</Button>
+          p.can('inventory.create') || p.canManageStores ? (
+            <div style={{ display: 'flex', gap: 8 }}>
+              {p.can('inventory.create') && (
+                <Button variant="outline" onClick={openAddProducts}>{t('detail.addProducts')}</Button>
+              )}
+              {p.canManageStores && (
+                <Button onClick={() => setEditOpen(true)}>{t('detail.edit')}</Button>
+              )}
+            </div>
           ) : undefined
         }
       />
@@ -167,6 +218,9 @@ export default function StoreDetailPage() {
             {s.is_active ? tCommon('status.active') : tCommon('status.inactive')}
           </Badge>
           {s.visible_to_gm && <Badge variant="gray">{t('detail.visibleToGm')}</Badge>}
+          {overview && overview.stock_summary.expected_products === 0 && (
+            <Badge variant="gray" dot>{t('noProductsTag')}</Badge>
+          )}
         </div>
 
         {/* ── 1. General information ───────────────────────────────────────── */}
@@ -242,10 +296,29 @@ export default function StoreDetailPage() {
       <Modal open={editOpen} onClose={() => setEditOpen(false)} title={t('detail.editTitle')} size="lg">
         <StoreForm
           regions={regions}
+          products={products}
           initialData={s}
+          initialProductAssignments={initialProductAssignments}
           onSubmit={handleUpdate}
           onCancel={() => setEditOpen(false)}
         />
+      </Modal>
+
+      <Modal
+        open={addProductsOpen}
+        onClose={() => setAddProductsOpen(false)}
+        title={t('detail.addProductsTitle', { name: s.name })}
+        size="lg"
+      >
+        <StoreProductsPicker products={products} value={addProductsValue} onChange={setAddProductsValue} />
+        <div className="form-actions">
+          <Button variant="ghost" type="button" onClick={() => setAddProductsOpen(false)} disabled={savingProducts}>
+            {tCommon('actions.cancel')}
+          </Button>
+          <Button type="button" onClick={handleSaveProducts} loading={savingProducts}>
+            {tCommon('actions.save')}
+          </Button>
+        </div>
       </Modal>
     </div>
   );

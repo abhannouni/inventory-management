@@ -198,6 +198,7 @@ export class StoresService {
 
     const audited = productAvailability.filter((p) => p.last_status);
     const inStock = audited.filter((p) => p.last_status === 'in_stock').length;
+    const stockDisponible = audited.filter((p) => p.last_status === 'stock_disponible').length;
     const lowStock = audited.filter((p) => p.last_status === 'low_stock').length;
     const outOfStock = audited.filter((p) => p.last_status === 'out_of_stock').length;
 
@@ -218,6 +219,7 @@ export class StoresService {
         expected_products: productStores.length,
         audited: audited.length,
         in_stock: inStock,
+        stock_disponible: stockDisponible,
         low_stock: lowStock,
         out_of_stock: outOfStock,
       },

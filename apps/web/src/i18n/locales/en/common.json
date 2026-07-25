@@ -25,6 +25,7 @@
     "active": "Active",
     "inactive": "Inactive",
     "in_stock": "In Stock",
+    "stock_disponible": "Available Stock",
     "low_stock": "Low Stock",
     "out_of_stock": "Out of Stock"
   },

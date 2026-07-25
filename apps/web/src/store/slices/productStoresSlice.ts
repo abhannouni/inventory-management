@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { productStoresApi } from '../../api/product-stores.api';
-import type { ProductStorePayload } from '../../api/product-stores.api';
+import type { ProductAssignmentItem, ProductStorePayload } from '../../api/product-stores.api';
 import type { ProductStore } from '../../types';
 
 interface ProductStoresState {
@@ -34,6 +34,14 @@ export const deleteProductStore = createAsyncThunk('productStores/delete', async
   catch (err) { return rejectWithValue((err as Error).message); }
 });
 
+export const bulkAssignProductStores = createAsyncThunk(
+  'productStores/bulkAssign',
+  async ({ store_id, items }: { store_id: string; items: ProductAssignmentItem[] }, { rejectWithValue }) => {
+    try { return { store_id, items: await productStoresApi.bulkAssign(store_id, items) }; }
+    catch (err) { return rejectWithValue((err as Error).message); }
+  },
+);
+
 const productStoresSlice = createSlice({
   name: 'productStores',
   initialState,
@@ -50,6 +58,10 @@ const productStoresSlice = createSlice({
       })
       .addCase(deleteProductStore.fulfilled, (state, action) => {
         state.items = state.items.filter((ps) => ps.id !== action.payload);
+      })
+      .addCase(bulkAssignProductStores.fulfilled, (state, action) => {
+        const { store_id, items } = action.payload;
+        state.items = [...state.items.filter((ps) => ps.store_id !== store_id), ...items];
       });
   },
 });

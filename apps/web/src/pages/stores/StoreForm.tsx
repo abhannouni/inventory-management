@@ -5,12 +5,16 @@ import Input from '../../components/ui/Input';
 import Select from '../../components/ui/Select';
 import Button from '../../components/ui/Button';
 import StoreMap from './StoreMap';
+import StoreProductsPicker from './StoreProductsPicker';
+import type { ProductAssignmentValue } from './StoreProductsPicker';
 import { parseCoordsFromUrl } from '../../utils/maps';
-import type { Region, Store } from '../../types';
+import type { Product, Region, Store } from '../../types';
 
 interface StoreFormProps {
   regions: Region[];
+  products: Product[];
   initialData?: Store;
+  initialProductAssignments?: ProductAssignmentValue[];
   onSubmit: (data: Record<string, unknown>) => Promise<void>;
   onCancel: () => void;
 }
@@ -21,9 +25,20 @@ const POSTAL_RE = /^[A-Za-z0-9][A-Za-z0-9\s-]{2,9}$/;
 
 const str = (v: unknown) => (v == null ? '' : String(v));
 
-export default function StoreForm({ regions, initialData, onSubmit, onCancel }: StoreFormProps) {
+export default function StoreForm({
+  regions,
+  products,
+  initialData,
+  initialProductAssignments,
+  onSubmit,
+  onCancel,
+}: StoreFormProps) {
   const { t } = useTranslation('stores');
   const { t: tCommon } = useTranslation('common');
+
+  const [productAssignments, setProductAssignments] = useState<ProductAssignmentValue[]>(
+    initialProductAssignments ?? [],
+  );
 
   const [form, setForm] = useState({
     // General
@@ -174,6 +189,7 @@ export default function StoreForm({ regions, initialData, onSubmit, onCancel }: 
     }
     if (form.latitude.trim()) payload.latitude = Number(form.latitude);
     if (form.longitude.trim()) payload.longitude = Number(form.longitude);
+    payload.product_assignments = productAssignments;
 
     await onSubmit(payload);
     setLoading(false);
@@ -371,6 +387,20 @@ export default function StoreForm({ regions, initialData, onSubmit, onCancel }: 
 
         {/* Live preview — the surest way to catch a swapped lat/lng before saving. */}
         <StoreMap store={preview} height={200} label={form.name || t('form.mapPreview')} />
+      </fieldset>
+
+      {/* ── 4. Products assigned to this store ─────────────────────────────── */}
+      <fieldset className="form-section">
+        <legend className="form-section-title">
+          <span className="form-section-step">4</span>
+          {t('form.sections.products')}
+        </legend>
+
+        <StoreProductsPicker
+          products={products}
+          value={productAssignments}
+          onChange={setProductAssignments}
+        />
       </fieldset>
 
       <div className="form-actions">

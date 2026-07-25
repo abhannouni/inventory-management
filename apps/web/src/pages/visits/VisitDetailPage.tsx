@@ -13,8 +13,9 @@ import VisitTimer from '../../components/ui/VisitTimer';
 import { formatDate, formatDurationShort } from '../../utils/format';
 import type { AuditStatus } from '../../types';
 
-const statusBadge: Record<AuditStatus, 'success' | 'warning' | 'danger'> = {
-  in_stock: 'success',
+const statusBadge: Record<AuditStatus, 'success' | 'warning' | 'danger' | 'primary'> = {
+  in_stock: 'primary',
+  stock_disponible: 'success',
   low_stock: 'warning',
   out_of_stock: 'danger',
 };
@@ -30,6 +31,7 @@ export default function VisitDetailPage() {
 
   const statusLabel: Record<AuditStatus, string> = {
     in_stock: tCommon('status.in_stock'),
+    stock_disponible: tCommon('status.stock_disponible'),
     low_stock: tCommon('status.low_stock'),
     out_of_stock: tCommon('status.out_of_stock'),
   };
@@ -47,6 +49,7 @@ export default function VisitDetailPage() {
   const items = visit.audit_items || auditItems;
   const total = items.length;
   const inStock = items.filter((i) => i.status === 'in_stock').length;
+  const stockDisponible = items.filter((i) => i.status === 'stock_disponible').length;
   const lowStock = items.filter((i) => i.status === 'low_stock').length;
   const outOfStock = items.filter((i) => i.status === 'out_of_stock').length;
 
@@ -127,8 +130,12 @@ export default function VisitDetailPage() {
                   <div className="summary-label">{t('detail.auditSummary.total')}</div>
                 </div>
                 <div className="summary-item">
-                  <div className="summary-value" style={{ color: 'var(--success)' }}>{inStock}</div>
+                  <div className="summary-value" style={{ color: 'var(--primary)' }}>{inStock}</div>
                   <div className="summary-label">{t('detail.auditSummary.inStock')}</div>
+                </div>
+                <div className="summary-item">
+                  <div className="summary-value" style={{ color: 'var(--success)' }}>{stockDisponible}</div>
+                  <div className="summary-label">{t('detail.auditSummary.stockDisponible')}</div>
                 </div>
                 <div className="summary-item">
                   <div className="summary-value" style={{ color: 'var(--warning)' }}>{lowStock}</div>

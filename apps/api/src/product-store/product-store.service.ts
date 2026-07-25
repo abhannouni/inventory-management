@@ -7,6 +7,7 @@ import {
 import { User, UserRole } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { adminAssignedStoreIds } from '../stores/store-scope';
+import { BulkAssignProductStoreDto } from './dto/bulk-assign-product-store.dto';
 import { CreateProductStoreDto } from './dto/create-product-store.dto';
 import { FindProductStoresDto } from './dto/find-product-stores.dto';
 import { UpdateProductStoreDto } from './dto/update-product-store.dto';
@@ -66,6 +67,48 @@ export class ProductStoreService {
     const ps = await this.findOrFail(id);
     await this.assertStoreWriteAccess(ps.store_id, user);
     await this.prisma.productStore.delete({ where: { id } });
+  }
+
+  /**
+   * Replaces the full product list assigned to a store: anything already
+   * assigned that isn't in `items` is removed, the rest are created or have
+   * their `expected_qty` updated to match — one round trip for the whole list.
+   */
+  async bulkAssign(dto: BulkAssignProductStoreDto, user: User) {
+    await this.assertStoreWriteAccess(dto.store_id, user);
+
+    const existing = await this.prisma.productStore.findMany({
+      where: { store_id: dto.store_id },
+    });
+    const existingByProduct = new Map(existing.map((e) => [e.product_id, e]));
+    const desiredIds = new Set(dto.items.map((i) => i.product_id));
+
+    await this.prisma.$transaction([
+      ...existing
+        .filter((e) => !desiredIds.has(e.product_id))
+        .map((e) => this.prisma.productStore.delete({ where: { id: e.id } })),
+      ...dto.items.map((i) => {
+        const current = existingByProduct.get(i.product_id);
+        return current
+          ? this.prisma.productStore.update({
+              where: { id: current.id },
+              data: { expected_qty: i.expected_qty },
+            })
+          : this.prisma.productStore.create({
+              data: {
+                store_id: dto.store_id,
+                product_id: i.product_id,
+                expected_qty: i.expected_qty,
+              },
+            });
+      }),
+    ]);
+
+    return this.prisma.productStore.findMany({
+      where: { store_id: dto.store_id },
+      include: { product: true, store: { include: { region: true } } },
+      orderBy: { product: { name: 'asc' } },
+    });
   }
 
   // ─── Helpers ───────────────────────────────────────────────────────────────

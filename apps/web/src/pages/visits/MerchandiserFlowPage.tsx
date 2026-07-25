@@ -37,14 +37,17 @@ interface AuditRow extends ProductStore {
 }
 
 /* ─────────── Helpers ─────────── */
+type AuditStatusKey = 'out_of_stock' | 'low_stock' | 'stock_disponible' | 'in_stock';
+
 function calcStatus(
   found: number,
   expected: number,
-  labels: { outOfStock: string; lowStock: string; inStock: string },
-): { label: string; color: string; bg: string } {
-  if (found === 0)                         return { label: labels.outOfStock, color: '#dc2626', bg: '#fee2e2' };
-  if (found < Math.ceil(expected * 0.5))   return { label: labels.lowStock,   color: '#d97706', bg: '#fef3c7' };
-  return                                          { label: labels.inStock,    color: '#16a34a', bg: '#dcfce7' };
+  labels: { outOfStock: string; lowStock: string; stockDisponible: string; inStock: string },
+): { key: AuditStatusKey; label: string; color: string; bg: string } {
+  if (found === 0)                       return { key: 'out_of_stock',     label: labels.outOfStock,       color: '#dc2626', bg: '#fee2e2' };
+  if (found < expected * 0.5)            return { key: 'low_stock',        label: labels.lowStock,         color: '#d97706', bg: '#fef3c7' };
+  if (found < expected)                  return { key: 'stock_disponible', label: labels.stockDisponible,  color: '#16a34a', bg: '#dcfce7' };
+  return                                        { key: 'in_stock',         label: labels.inStock,          color: '#1D6ADE', bg: '#dbeafe' };
 }
 
 /* ─────────── Schedule grouping (for the expanded visits panel) ─────────── */
@@ -138,6 +141,7 @@ export default function MerchandiserFlowPage({ onViewHistory }: MerchandiserFlow
   const statusLabels = {
     outOfStock: t('merchandiserFlow.audit.status.outOfStock'),
     lowStock: t('merchandiserFlow.audit.status.lowStock'),
+    stockDisponible: t('merchandiserFlow.audit.status.stockDisponible'),
     inStock: t('merchandiserFlow.audit.status.inStock'),
   };
 
@@ -410,12 +414,13 @@ export default function MerchandiserFlowPage({ onViewHistory }: MerchandiserFlow
   const summary = auditRows.reduce(
     (acc, r) => {
       const s = calcStatus(r.qty_found, Number(r.expected_qty), statusLabels);
-      if (s.label === statusLabels.inStock)     acc.inStock++;
-      else if (s.label === statusLabels.lowStock) acc.lowStock++;
-      else acc.outStock++;
+      if (s.key === 'in_stock')             acc.inStock++;
+      else if (s.key === 'stock_disponible') acc.stockDisponible++;
+      else if (s.key === 'low_stock')        acc.lowStock++;
+      else                                    acc.outStock++;
       return acc;
     },
-    { inStock: 0, lowStock: 0, outStock: 0 }
+    { inStock: 0, stockDisponible: 0, lowStock: 0, outStock: 0 }
   );
 
   // A scheduled visit can target a store outside the merchandiser's own
@@ -831,9 +836,13 @@ export default function MerchandiserFlowPage({ onViewHistory }: MerchandiserFlow
 
             {/* Audit summary */}
             <div className="mf-summary-cards">
-              <div className="mf-summary-card" style={{ borderColor: '#bbf7d0' }}>
-                <div className="mf-summary-num" style={{ color: '#16a34a' }}>{summary.inStock}</div>
+              <div className="mf-summary-card" style={{ borderColor: '#bfdbfe' }}>
+                <div className="mf-summary-num" style={{ color: '#1D6ADE' }}>{summary.inStock}</div>
                 <div className="mf-summary-lbl">{t('merchandiserFlow.checkout.inStock')}</div>
+              </div>
+              <div className="mf-summary-card" style={{ borderColor: '#bbf7d0' }}>
+                <div className="mf-summary-num" style={{ color: '#16a34a' }}>{summary.stockDisponible}</div>
+                <div className="mf-summary-lbl">{t('merchandiserFlow.checkout.stockDisponible')}</div>
               </div>
               <div className="mf-summary-card" style={{ borderColor: '#fde68a' }}>
                 <div className="mf-summary-num" style={{ color: '#d97706' }}>{summary.lowStock}</div>
@@ -899,9 +908,13 @@ export default function MerchandiserFlowPage({ onViewHistory }: MerchandiserFlow
               {t('merchandiserFlow.done.subtitlePrefix')} <strong>{t('merchandiserFlow.done.productsCount', { count: auditRows.length })}</strong> {t('merchandiserFlow.done.subtitleAt')} <strong>{storeName}</strong>.
             </p>
             <div className="mf-summary-cards" style={{ marginBottom: 24 }}>
-              <div className="mf-summary-card" style={{ borderColor: '#bbf7d0' }}>
-                <div className="mf-summary-num" style={{ color: '#16a34a' }}>{summary.inStock}</div>
+              <div className="mf-summary-card" style={{ borderColor: '#bfdbfe' }}>
+                <div className="mf-summary-num" style={{ color: '#1D6ADE' }}>{summary.inStock}</div>
                 <div className="mf-summary-lbl">{t('merchandiserFlow.checkout.inStock')}</div>
+              </div>
+              <div className="mf-summary-card" style={{ borderColor: '#bbf7d0' }}>
+                <div className="mf-summary-num" style={{ color: '#16a34a' }}>{summary.stockDisponible}</div>
+                <div className="mf-summary-lbl">{t('merchandiserFlow.checkout.stockDisponible')}</div>
               </div>
               <div className="mf-summary-card" style={{ borderColor: '#fde68a' }}>
                 <div className="mf-summary-num" style={{ color: '#d97706' }}>{summary.lowStock}</div>

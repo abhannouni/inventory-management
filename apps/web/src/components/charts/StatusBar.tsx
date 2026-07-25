@@ -2,6 +2,7 @@ import { STATUS } from './tokens';
 
 export interface StatusCounts {
   inStock: number;
+  stockDisponible: number;
   lowStock: number;
   outOfStock: number;
 }
@@ -10,23 +11,24 @@ interface StatusBarProps {
   counts: StatusCounts;
   /** `row` renders one compact bar (inside a list); `block` is the standalone card version. */
   variant?: 'row' | 'block';
-  labels: { inStock: string; lowStock: string; outOfStock: string };
+  labels: { inStock: string; stockDisponible: string; lowStock: string; outOfStock: string };
 }
 
 /**
  * Part-to-whole for stock state — a stacked bar, not a pie: segments are easy to
- * compare against a shared baseline, and 3 segments never need a donut.
+ * compare against a shared baseline, and 4 segments never need a donut.
  *
  * Colour comes from the reserved STATUS scale, and every segment is labelled with
  * its count, because amber sits below 3:1 on white — the label is what keeps the
  * meaning from resting on colour alone.
  */
 export default function StatusBar({ counts, variant = 'row', labels }: StatusBarProps) {
-  const total = counts.inStock + counts.lowStock + counts.outOfStock;
+  const total = counts.inStock + counts.stockDisponible + counts.lowStock + counts.outOfStock;
   if (total === 0) return null;
 
   const segments = [
     { key: 'in', value: counts.inStock, color: STATUS.in_stock, label: labels.inStock },
+    { key: 'disp', value: counts.stockDisponible, color: STATUS.stock_disponible, label: labels.stockDisponible },
     { key: 'low', value: counts.lowStock, color: STATUS.low_stock, label: labels.lowStock },
     { key: 'out', value: counts.outOfStock, color: STATUS.out_of_stock, label: labels.outOfStock },
   ].filter((s) => s.value > 0);

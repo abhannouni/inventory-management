@@ -458,6 +458,7 @@ async function main() {
       const status: AuditItemStatus =
         qtyFound === 0                    ? AuditItemStatus.out_of_stock
         : qtyFound < expectedQty * 0.5   ? AuditItemStatus.low_stock
+        : qtyFound < expectedQty         ? AuditItemStatus.stock_disponible
         :                                   AuditItemStatus.in_stock;
       return { visit_id: visitId, product_id: product.id, qty_found: qtyFound, expected_qty: expectedQty, variance, status };
     });

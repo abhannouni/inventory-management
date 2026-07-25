@@ -125,10 +125,13 @@ export class ReportsService {
     const lowStockCount = auditItems.filter(
       (i) => i.status === AuditItemStatus.low_stock,
     ).length;
+    const stockDisponibleCount = auditItems.filter(
+      (i) => i.status === AuditItemStatus.stock_disponible,
+    ).length;
 
     return {
       product,
-      summary: { totalScans, avgQtyFound, outOfStockCount, lowStockCount },
+      summary: { totalScans, avgQtyFound, outOfStockCount, lowStockCount, stockDisponibleCount },
       history: auditItems.map((item) => ({
         visit_id: item.visit.id,
         store: item.visit.store,
@@ -205,10 +208,11 @@ function buildSummary(auditItems: { status: AuditItemStatus }[]) {
   const total = auditItems.length;
   const outOfStock = auditItems.filter((i) => i.status === AuditItemStatus.out_of_stock).length;
   const lowStock = auditItems.filter((i) => i.status === AuditItemStatus.low_stock).length;
+  const stockDisponible = auditItems.filter((i) => i.status === AuditItemStatus.stock_disponible).length;
   const inStock = auditItems.filter((i) => i.status === AuditItemStatus.in_stock).length;
   const completionPct = total === 0 ? 0 : Math.round((inStock / total) * 100);
 
-  return { total, inStock, lowStock, outOfStock, completionPct };
+  return { total, inStock, stockDisponible, lowStock, outOfStock, completionPct };
 }
 
 function buildDateFilter(filters: ReportFiltersDto) {

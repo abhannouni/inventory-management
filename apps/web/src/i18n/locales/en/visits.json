@@ -64,6 +64,7 @@
       "title": "Audit Summary",
       "total": "Total",
       "inStock": "In Stock",
+      "stockDisponible": "Available Stock",
       "lowStock": "Low Stock",
       "outOfStock": "Out of Stock",
       "completion": "Completion"
@@ -203,6 +204,7 @@
       "status": {
         "outOfStock": "Out of stock",
         "lowStock": "Low stock",
+        "stockDisponible": "Available stock",
         "inStock": "In stock"
       },
       "toasts": {
@@ -216,6 +218,7 @@
       "sectionTitle": "Audit Complete",
       "sectionSubtitle": "Review the summary and check out",
       "inStock": "In Stock",
+      "stockDisponible": "Available Stock",
       "lowStock": "Low Stock",
       "outOfStock": "Out of Stock",
       "found": "Found",

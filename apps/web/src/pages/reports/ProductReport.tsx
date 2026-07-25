@@ -20,8 +20,9 @@ import type { ExportDataset } from '../../utils/export';
 import type { AuditStatus } from '../../types';
 import { getProductClassificationLabel } from '../../utils/productClassification';
 
-const statusBadge: Record<AuditStatus, 'success' | 'warning' | 'danger'> = {
-  in_stock: 'success',
+const statusBadge: Record<AuditStatus, 'success' | 'warning' | 'danger' | 'primary'> = {
+  in_stock: 'primary',
+  stock_disponible: 'success',
   low_stock: 'warning',
   out_of_stock: 'danger',
 };
@@ -65,6 +66,7 @@ export default function ProductReport() {
 
   const statusLabels = {
     inStock: t('visitsReport.summary.inStock'),
+    stockDisponible: t('visitsReport.summary.stockDisponible'),
     lowStock: t('visitsReport.summary.lowStock'),
     outOfStock: t('visitsReport.summary.outOfStock'),
   };
@@ -72,9 +74,10 @@ export default function ProductReport() {
   const history = useMemo(() => productReport?.history ?? [], [productReport]);
 
   const counts = useMemo(() => {
-    const acc = { inStock: 0, lowStock: 0, outOfStock: 0 };
+    const acc = { inStock: 0, stockDisponible: 0, lowStock: 0, outOfStock: 0 };
     for (const h of history) {
       if (h.status === 'in_stock') acc.inStock += 1;
+      else if (h.status === 'stock_disponible') acc.stockDisponible += 1;
       else if (h.status === 'low_stock') acc.lowStock += 1;
       else acc.outOfStock += 1;
     }
@@ -265,12 +268,14 @@ export default function ProductReport() {
                   ],
                   rows: [
                     { label: statusLabels.inStock, count: counts.inStock },
+                    { label: statusLabels.stockDisponible, count: counts.stockDisponible },
                     { label: statusLabels.lowStock, count: counts.lowStock },
                     { label: statusLabels.outOfStock, count: counts.outOfStock },
                   ],
                 }}
                 legend={[
                   { label: statusLabels.inStock, color: STATUS.in_stock },
+                  { label: statusLabels.stockDisponible, color: STATUS.stock_disponible },
                   { label: statusLabels.lowStock, color: STATUS.low_stock },
                   { label: statusLabels.outOfStock, color: STATUS.out_of_stock },
                 ]}

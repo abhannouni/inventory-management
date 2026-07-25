@@ -20,8 +20,9 @@ import BulkAuditForm from './BulkAuditForm';
 import Select from '../../components/ui/Select';
 import type { AuditItem, AuditStatus } from '../../types';
 
-const statusBadge: Record<AuditStatus, 'success' | 'warning' | 'danger'> = {
-  in_stock: 'success',
+const statusBadge: Record<AuditStatus, 'success' | 'warning' | 'danger' | 'primary'> = {
+  in_stock: 'primary',
+  stock_disponible: 'success',
   low_stock: 'warning',
   out_of_stock: 'danger',
 };
@@ -100,6 +101,7 @@ export default function AuditItemsPage() {
 
   const statusLabel: Record<AuditStatus, string> = {
     in_stock: tCommon('status.in_stock'),
+    stock_disponible: tCommon('status.stock_disponible'),
     low_stock: tCommon('status.low_stock'),
     out_of_stock: tCommon('status.out_of_stock'),
   };

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
@@ -8,6 +8,8 @@ import { usePermissions } from '../../hooks/usePermissions';
 import { useClientPagination } from '../../hooks/useClientPagination';
 import { fetchStores, createStore, updateStore, deleteStore } from '../../store/slices/storesSlice';
 import { fetchRegions } from '../../store/slices/regionsSlice';
+import { fetchProducts } from '../../store/slices/productsSlice';
+import { fetchProductStores, bulkAssignProductStores } from '../../store/slices/productStoresSlice';
 import PageHeader from '../../components/ui/PageHeader';
 import Button from '../../components/ui/Button';
 import Badge from '../../components/ui/Badge';
@@ -15,6 +17,7 @@ import DataTable from '../../components/ui/DataTable';
 import Modal from '../../components/ui/Modal';
 import ConfirmDialog from '../../components/ui/ConfirmDialog';
 import Pagination from '../../components/ui/Pagination';
+import TableToolbar from '../../components/ui/TableToolbar';
 import DownloadDataButton from '../../components/charts/DownloadDataButton';
 import StoreForm from './StoreForm';
 import StoreBulkImportModal from './StoreBulkImportModal';
@@ -30,23 +33,64 @@ export default function StoresPage() {
   const p = usePermissions();
   const { items: stores, loading } = useAppSelector((s) => s.stores);
   const { items: regions } = useAppSelector((s) => s.regions);
+  const { items: products } = useAppSelector((s) => s.products);
+  const { items: productStores } = useAppSelector((s) => s.productStores);
 
   const [createOpen, setCreateOpen] = useState(false);
   const [importOpen, setImportOpen] = useState(false);
   const [editStore, setEditStore] = useState<Store | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [search, setSearch] = useState('');
+  const [productsFilter, setProductsFilter] = useState('');
 
   useEffect(() => {
     dispatch(fetchStores());
     dispatch(fetchRegions());
+    dispatch(fetchProducts());
+    dispatch(fetchProductStores(undefined));
   }, [dispatch]);
 
-  const { pageItems, meta, setPage, setLimit } = useClientPagination(stores);
+  const assignedStoreIds = useMemo(
+    () => new Set(productStores.map((ps) => ps.store_id)),
+    [productStores],
+  );
+
+  const productAssignmentsByStore = useMemo(() => {
+    const map = new Map<string, { product_id: string; expected_qty: number }[]>();
+    for (const ps of productStores) {
+      const list = map.get(ps.store_id) ?? [];
+      list.push({ product_id: ps.product_id, expected_qty: ps.expected_qty });
+      map.set(ps.store_id, list);
+    }
+    return map;
+  }, [productStores]);
+
+  const filteredStores = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    return stores.filter((s) => {
+      if (q) {
+        const matches =
+          s.name.toLowerCase().includes(q) ||
+          (s.brand ?? '').toLowerCase().includes(q) ||
+          (s.city ?? '').toLowerCase().includes(q);
+        if (!matches) return false;
+      }
+      if (productsFilter === 'yes' && !assignedStoreIds.has(s.id)) return false;
+      if (productsFilter === 'no' && assignedStoreIds.has(s.id)) return false;
+      return true;
+    });
+  }, [stores, search, productsFilter, assignedStoreIds]);
+
+  const { pageItems, meta, setPage, setLimit } = useClientPagination(filteredStores);
 
   const handleCreate = async (data: any) => {
     const res = await dispatch(createStore(data));
     if (createStore.fulfilled.match(res)) {
+      const productAssignments = data.product_assignments as { product_id: string; expected_qty: number }[] | undefined;
+      if (productAssignments?.length) {
+        await dispatch(bulkAssignProductStores({ store_id: res.payload.id, items: productAssignments }));
+      }
       toast.success(t('toasts.createSuccess'));
       setCreateOpen(false);
     } else {
@@ -58,6 +102,13 @@ export default function StoresPage() {
     if (!editStore) return;
     const res = await dispatch(updateStore({ id: editStore.id, payload: data }));
     if (updateStore.fulfilled.match(res)) {
+      const productAssignments = data.product_assignments as { product_id: string; expected_qty: number }[] | undefined;
+      const assignRes = await dispatch(
+        bulkAssignProductStores({ store_id: editStore.id, items: productAssignments ?? [] }),
+      );
+      if (bulkAssignProductStores.rejected.match(assignRes)) {
+        toast.error((assignRes.payload as string) || t('toasts.assignProductsError'));
+      }
       toast.success(t('toasts.updateSuccess'));
       setEditStore(null);
     } else {
@@ -86,6 +137,9 @@ export default function StoresPage() {
         <button type="button" className="pos-name-link" onClick={() => navigate(`/stores/${s.id}`)}>
           <span className="pos-name">{s.name}</span>
           {s.brand && <span className="pos-brand">{s.brand}</span>}
+          {!assignedStoreIds.has(s.id) && (
+            <Badge variant="gray" dot>{t('noProductsTag')}</Badge>
+          )}
         </button>
       ),
     },
@@ -209,18 +263,43 @@ export default function StoresPage() {
       />
 
       <motion.div className="card" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
+        <TableToolbar
+          search={search}
+          onSearchChange={setSearch}
+          searchPlaceholder={tCommon('search.placeholder')}
+          filters={[
+            {
+              key: 'productsAssigned',
+              label: t('filters.productsAssigned'),
+              value: productsFilter,
+              options: [
+                { value: 'yes', label: t('filters.yes') },
+                { value: 'no', label: t('filters.no') },
+              ],
+            },
+          ]}
+          onFilterChange={(key, value) => { if (key === 'productsAssigned') setProductsFilter(value); }}
+          onReset={() => { setSearch(''); setProductsFilter(''); }}
+        />
         <DataTable columns={columns} data={pageItems} loading={loading} keyExtractor={(s) => s.id} emptyMessage={t('emptyTable')} />
         <Pagination meta={meta} onPageChange={setPage} onLimitChange={setLimit} />
       </motion.div>
 
-      {/* The profile form is three sections long — it needs the wide modal. */}
+      {/* The profile form is four sections long — it needs the wide modal. */}
       <Modal open={createOpen} onClose={() => setCreateOpen(false)} title={t('createStore')} size="lg">
-        <StoreForm regions={regions} onSubmit={handleCreate} onCancel={() => setCreateOpen(false)} />
+        <StoreForm regions={regions} products={products} onSubmit={handleCreate} onCancel={() => setCreateOpen(false)} />
       </Modal>
 
       <Modal open={!!editStore} onClose={() => setEditStore(null)} title={t('editStore')} size="lg">
         {editStore && (
-          <StoreForm regions={regions} initialData={editStore} onSubmit={handleUpdate} onCancel={() => setEditStore(null)} />
+          <StoreForm
+            regions={regions}
+            products={products}
+            initialData={editStore}
+            initialProductAssignments={productAssignmentsByStore.get(editStore.id) ?? []}
+            onSubmit={handleUpdate}
+            onCancel={() => setEditStore(null)}
+          />
         )}
       </Modal>
 

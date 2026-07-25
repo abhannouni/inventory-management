@@ -32,7 +32,8 @@
     "sections": {
       "general": "المعلومات العامة",
       "contacts": "جهات اتصال المتجر",
-      "location": "الموقع والإحداثيات"
+      "location": "الموقع والإحداثيات",
+      "products": "المنتجات"
     },
     "nameLabel": "اسم نقطة البيع",
     "namePlaceholder": "مثال: مرجان كاليفورنيا",
@@ -72,7 +73,17 @@
     "geolocationUnsupported": "هذا المتصفح لا يدعم تحديد الموقع",
     "mapPreview": "معاينة الخريطة",
     "createSubmit": "إنشاء نقطة البيع",
-    "updateSubmit": "حفظ التغييرات"
+    "updateSubmit": "حفظ التغييرات",
+    "productsPicker": {
+      "label": "البحث عن المنتجات",
+      "placeholder": "ابحث بالاسم أو رمز SKU…",
+      "noResults": "لم يتم العثور على منتجات",
+      "typeToSearch": "اكتب للبحث عن المنتجات…",
+      "selectedCount_one": "تم تعيين {{count}} منتج",
+      "selectedCount_other": "تم تعيين {{count}} منتجات",
+      "expectedQtyLabel": "الكمية المتوقعة",
+      "expectedQtyAriaLabel": "الكمية المتوقعة لـ {{name}}"
+    }
   },
   "map": {
     "title": "موقع نقطة البيع",
@@ -88,7 +99,16 @@
     "notFound": "نقطة البيع غير موجودة",
     "noContact": "غير محدد",
     "classShort": "الفئة {{value}}",
-    "visibleToGm": "مرئية للإدارة العامة"
+    "visibleToGm": "مرئية للإدارة العامة",
+    "addProducts": "إضافة منتجات",
+    "addProductsTitle": "المنتجات — {{name}}"
+  },
+  "noProductsTag": "لا توجد منتجات معينة",
+  "filters": {
+    "productsAssigned": "المنتجات المعينة",
+    "all": "الكل",
+    "yes": "نعم",
+    "no": "لا"
   },
   "errors": {
     "nameRequired": "الاسم مطلوب",
@@ -109,7 +129,9 @@
     "updateSuccess": "تم تحديث نقطة البيع",
     "updateError": "فشل تحديث نقطة البيع",
     "deleteSuccess": "تم حذف نقطة البيع",
-    "deleteError": "فشل حذف نقطة البيع"
+    "deleteError": "فشل حذف نقطة البيع",
+    "assignProductsSuccess": "تم تحديث قائمة المنتجات",
+    "assignProductsError": "فشل تحديث قائمة المنتجات"
   },
   "deleteConfirm": {
     "message": "سيؤدي هذا إلى حذف نقطة البيع وجميع بياناتها نهائيًا."

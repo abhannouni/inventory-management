@@ -32,7 +32,8 @@
     "sections": {
       "general": "General information",
       "contacts": "Store contacts",
-      "location": "Location & geolocation"
+      "location": "Location & geolocation",
+      "products": "Products"
     },
     "nameLabel": "Point of sale name",
     "namePlaceholder": "e.g. Marjane Californie",
@@ -72,7 +73,17 @@
     "geolocationUnsupported": "This browser does not support geolocation",
     "mapPreview": "Map preview",
     "createSubmit": "Create POS",
-    "updateSubmit": "Save changes"
+    "updateSubmit": "Save changes",
+    "productsPicker": {
+      "label": "Search products",
+      "placeholder": "Search by name or SKU…",
+      "noResults": "No products found",
+      "typeToSearch": "Type to search products…",
+      "selectedCount_one": "{{count}} product assigned",
+      "selectedCount_other": "{{count}} products assigned",
+      "expectedQtyLabel": "Expected qty",
+      "expectedQtyAriaLabel": "Expected quantity for {{name}}"
+    }
   },
   "map": {
     "title": "Point of sale location",
@@ -88,7 +99,16 @@
     "notFound": "Point of sale not found",
     "noContact": "Not provided",
     "classShort": "Class {{value}}",
-    "visibleToGm": "Visible to General Management"
+    "visibleToGm": "Visible to General Management",
+    "addProducts": "Add Products",
+    "addProductsTitle": "Products — {{name}}"
+  },
+  "noProductsTag": "No products assigned",
+  "filters": {
+    "productsAssigned": "Products assigned",
+    "all": "All",
+    "yes": "Yes",
+    "no": "No"
   },
   "errors": {
     "nameRequired": "Name is required",
@@ -109,7 +129,9 @@
     "updateSuccess": "Point of sale updated",
     "updateError": "Failed to update the point of sale",
     "deleteSuccess": "Point of sale deleted",
-    "deleteError": "Failed to delete the point of sale"
+    "deleteError": "Failed to delete the point of sale",
+    "assignProductsSuccess": "Product list updated",
+    "assignProductsError": "Failed to update the product list"
   },
   "deleteConfirm": {
     "message": "This will permanently delete the point of sale and all associated data."

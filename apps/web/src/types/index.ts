@@ -7,7 +7,7 @@ export type Role =
 
 export type VisitStatus = 'open' | 'closed';
 
-export type AuditStatus = 'in_stock' | 'low_stock' | 'out_of_stock';
+export type AuditStatus = 'in_stock' | 'stock_disponible' | 'low_stock' | 'out_of_stock';
 
 export interface Region {
   id: string;
@@ -216,6 +216,7 @@ export interface StoreOverview {
     expected_products: number;
     audited: number;
     in_stock: number;
+    stock_disponible: number;
     low_stock: number;
     out_of_stock: number;
   };
@@ -242,6 +243,7 @@ export interface AuditProgress {
 export interface VisitSummary {
   total: number;
   inStock: number;
+  stockDisponible: number;
   lowStock: number;
   outOfStock: number;
   completionPct: number;

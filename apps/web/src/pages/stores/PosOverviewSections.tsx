@@ -5,8 +5,9 @@ import { usePermissions } from '../../hooks/usePermissions';
 import { formatDate, formatDurationShort } from '../../utils/format';
 import type { AuditStatus, StoreOverview } from '../../types';
 
-const statusVariant: Record<AuditStatus, 'success' | 'warning' | 'danger'> = {
-  in_stock: 'success',
+const statusVariant: Record<AuditStatus, 'success' | 'warning' | 'danger' | 'primary'> = {
+  in_stock: 'primary',
+  stock_disponible: 'success',
   low_stock: 'warning',
   out_of_stock: 'danger',
 };
@@ -80,7 +81,8 @@ export default function PosOverviewSections({
 
           <div className="pos-stat-row">
             <div className="pos-stat"><span className="pos-stat-val">{stock_summary.expected_products}</span><span className="pos-stat-label">{t('stock.expected')}</span></div>
-            <div className="pos-stat"><span className="pos-stat-val" style={{ color: 'var(--success)' }}>{stock_summary.in_stock}</span><span className="pos-stat-label">{t('stock.inStock')}</span></div>
+            <div className="pos-stat"><span className="pos-stat-val" style={{ color: 'var(--primary)' }}>{stock_summary.in_stock}</span><span className="pos-stat-label">{t('stock.inStock')}</span></div>
+            <div className="pos-stat"><span className="pos-stat-val" style={{ color: 'var(--success)' }}>{stock_summary.stock_disponible}</span><span className="pos-stat-label">{t('stock.stockDisponible')}</span></div>
             <div className="pos-stat"><span className="pos-stat-val" style={{ color: '#b07600' }}>{stock_summary.low_stock}</span><span className="pos-stat-label">{t('stock.lowStock')}</span></div>
             <div className="pos-stat"><span className="pos-stat-val" style={{ color: 'var(--danger)' }}>{stock_summary.out_of_stock}</span><span className="pos-stat-label">{t('stock.outOfStock')}</span></div>
           </div>

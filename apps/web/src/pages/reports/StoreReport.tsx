@@ -57,6 +57,7 @@ export default function StoreReport() {
 
   const statusLabels = {
     inStock: t('visitsReport.summary.inStock'),
+    stockDisponible: t('visitsReport.summary.stockDisponible'),
     lowStock: t('visitsReport.summary.lowStock'),
     outOfStock: t('visitsReport.summary.outOfStock'),
   };
@@ -65,10 +66,11 @@ export default function StoreReport() {
   const mapsLink = storeReport ? externalMapLink(storeReport.store) : null;
 
   const totals = useMemo(() => {
-    const acc = { audited: 0, inStock: 0, lowStock: 0, outOfStock: 0 };
+    const acc = { audited: 0, inStock: 0, stockDisponible: 0, lowStock: 0, outOfStock: 0 };
     for (const v of visits) {
       acc.audited += v.summary?.total ?? 0;
       acc.inStock += v.summary?.inStock ?? 0;
+      acc.stockDisponible += v.summary?.stockDisponible ?? 0;
       acc.lowStock += v.summary?.lowStock ?? 0;
       acc.outOfStock += v.summary?.outOfStock ?? 0;
     }
@@ -179,6 +181,7 @@ export default function StoreReport() {
     ],
     rows: [
       { label: statusLabels.inStock, count: totals.inStock },
+      { label: statusLabels.stockDisponible, count: totals.stockDisponible },
       { label: statusLabels.lowStock, count: totals.lowStock },
       { label: statusLabels.outOfStock, count: totals.outOfStock },
     ],
@@ -294,6 +297,7 @@ export default function StoreReport() {
               dataset={statusDataset}
               legend={[
                 { label: statusLabels.inStock, color: STATUS.in_stock },
+                { label: statusLabels.stockDisponible, color: STATUS.stock_disponible },
                 { label: statusLabels.lowStock, color: STATUS.low_stock },
                 { label: statusLabels.outOfStock, color: STATUS.out_of_stock },
               ]}
@@ -303,6 +307,7 @@ export default function StoreReport() {
                 labels={statusLabels}
                 counts={{
                   inStock: totals.inStock,
+                  stockDisponible: totals.stockDisponible,
                   lowStock: totals.lowStock,
                   outOfStock: totals.outOfStock,
                 }}
@@ -351,6 +356,7 @@ export default function StoreReport() {
                         labels={statusLabels}
                         counts={{
                           inStock: v.summary.inStock,
+                          stockDisponible: v.summary.stockDisponible,
                           lowStock: v.summary.lowStock,
                           outOfStock: v.summary.outOfStock,
                         }}

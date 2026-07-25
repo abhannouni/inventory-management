@@ -32,7 +32,8 @@
     "sections": {
       "general": "Informations générales",
       "contacts": "Contacts du magasin",
-      "location": "Localisation et géolocalisation"
+      "location": "Localisation et géolocalisation",
+      "products": "Produits"
     },
     "nameLabel": "Nom du point de vente",
     "namePlaceholder": "ex. Marjane Californie",
@@ -72,7 +73,17 @@
     "geolocationUnsupported": "Ce navigateur ne prend pas en charge la géolocalisation",
     "mapPreview": "Aperçu de la carte",
     "createSubmit": "Créer le PDV",
-    "updateSubmit": "Enregistrer"
+    "updateSubmit": "Enregistrer",
+    "productsPicker": {
+      "label": "Rechercher des produits",
+      "placeholder": "Rechercher par nom ou référence…",
+      "noResults": "Aucun produit trouvé",
+      "typeToSearch": "Tapez pour rechercher des produits…",
+      "selectedCount_one": "{{count}} produit assigné",
+      "selectedCount_other": "{{count}} produits assignés",
+      "expectedQtyLabel": "Qté attendue",
+      "expectedQtyAriaLabel": "Quantité attendue pour {{name}}"
+    }
   },
   "map": {
     "title": "Localisation du point de vente",
@@ -88,7 +99,16 @@
     "notFound": "Point de vente introuvable",
     "noContact": "Non renseigné",
     "classShort": "Classe {{value}}",
-    "visibleToGm": "Visible par la Direction générale"
+    "visibleToGm": "Visible par la Direction générale",
+    "addProducts": "Ajouter des produits",
+    "addProductsTitle": "Produits — {{name}}"
+  },
+  "noProductsTag": "Aucun produit assigné",
+  "filters": {
+    "productsAssigned": "Produits assignés",
+    "all": "Tous",
+    "yes": "Oui",
+    "no": "Non"
   },
   "errors": {
     "nameRequired": "Le nom est requis",
@@ -109,7 +129,9 @@
     "updateSuccess": "Point de vente mis à jour",
     "updateError": "Échec de la mise à jour du point de vente",
     "deleteSuccess": "Point de vente supprimé",
-    "deleteError": "Échec de la suppression du point de vente"
+    "deleteError": "Échec de la suppression du point de vente",
+    "assignProductsSuccess": "Liste de produits mise à jour",
+    "assignProductsError": "Échec de la mise à jour de la liste de produits"
   },
   "deleteConfirm": {
     "message": "Cette action supprimera définitivement le point de vente et toutes ses données associées."

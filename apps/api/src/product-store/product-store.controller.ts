@@ -23,6 +23,7 @@ import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { RequirePermissions } from '../auth/decorators/require-permissions.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../auth/guards/permissions.guard';
+import { BulkAssignProductStoreDto } from './dto/bulk-assign-product-store.dto';
 import { CreateProductStoreDto } from './dto/create-product-store.dto';
 import { FindProductStoresDto } from './dto/find-product-stores.dto';
 import { UpdateProductStoreDto } from './dto/update-product-store.dto';
@@ -57,6 +58,13 @@ export class ProductStoreController {
   @ApiOperation({ summary: 'Assign a product to a store with expected quantity' })
   create(@Body() dto: CreateProductStoreDto, @CurrentUser() user: User) {
     return this.productStoreService.create(dto, user);
+  }
+
+  @Post('bulk-assign')
+  @RequirePermissions('inventory.create')
+  @ApiOperation({ summary: 'Replace the full product list assigned to a store' })
+  bulkAssign(@Body() dto: BulkAssignProductStoreDto, @CurrentUser() user: User) {
+    return this.productStoreService.bulkAssign(dto, user);
   }
 
   @Patch(':id')
