@@ -9,7 +9,9 @@ interface ComingSoonModulePageProps {
   titleKey: string;
   subtitleKey: string;
   /** Fetches this module's status from its own guarded backend endpoint — proves
-   *  the permission gate is real, not just a static frontend page. */
+   *  the permission gate is real, not just a static frontend page. Its `message`
+   *  is English-only backend copy, so it's never shown directly — only the
+   *  translated hint below is, keeping the page correct in every language. */
   fetchStatus: () => Promise<ModuleStatus>;
 }
 
@@ -27,14 +29,13 @@ export default function ComingSoonModulePage({
   fetchStatus,
 }: ComingSoonModulePageProps) {
   const { t } = useTranslation('modules');
-  const [status, setStatus] = useState<ModuleStatus | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
     fetchStatus()
-      .then((s) => !cancelled && setStatus(s))
-      .finally(() => !cancelled && setLoading(false));
+      .catch(() => undefined as ModuleStatus | undefined)
+      .then(() => !cancelled && setLoading(false));
     return () => {
       cancelled = true;
     };
@@ -84,7 +85,7 @@ export default function ComingSoonModulePage({
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.35, delay: 0.1 }}
           >
-            {status?.message || t('notAvailable.hint')}
+            {t('notAvailable.hint')}
           </motion.div>
 
           <div className="module-soon-dots">

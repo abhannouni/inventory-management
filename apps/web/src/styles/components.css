@@ -2271,6 +2271,12 @@ html[dir='rtl'] .form-input.has-action { padding-right: 12px; padding-left: 36px
   .data-table th.hide-mobile,
   .data-table td.hide-mobile { display: none; }
 
+  /* Actions is often the 4th+ column, but it must stay reachable on mobile —
+     hiding it by position leaves every row with no way to edit/delete/act on it.
+     The table wrapper already scrolls horizontally, so re-showing it is safe. */
+  .data-table th.col-actions,
+  .data-table td.col-actions { display: table-cell !important; }
+
   .user-cell-info { max-width: 150px; overflow: hidden; }
   .user-cell-info > div { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 

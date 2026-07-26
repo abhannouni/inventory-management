@@ -73,5 +73,11 @@
   },
   "errors": {
     "generic": "Something went wrong"
+  },
+  "errorBoundary": {
+    "title": "Something went wrong",
+    "message": "An unexpected error interrupted this page. You can try again or go back to the dashboard.",
+    "reload": "Reload page",
+    "backHome": "Back to dashboard"
   }
 }

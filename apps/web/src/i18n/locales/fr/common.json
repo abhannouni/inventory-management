@@ -73,5 +73,11 @@
   },
   "errors": {
     "generic": "Une erreur est survenue"
+  },
+  "errorBoundary": {
+    "title": "Un problème est survenu",
+    "message": "Une erreur inattendue a interrompu l’affichage de cette page. Vous pouvez réessayer ou revenir au tableau de bord.",
+    "reload": "Recharger la page",
+    "backHome": "Retour au tableau de bord"
   }
 }

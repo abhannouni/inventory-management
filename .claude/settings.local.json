@@ -66,7 +66,8 @@
       "Bash(pnpm --filter web add pptxgenjs html-to-image)",
       "Bash(node -e \"console.log\\(require\\('pptxgenjs/package.json'\\).version\\)\")",
       "Bash(node -e \"console.log\\(require\\('pptxgenjs/types/index.d.ts'\\)\\)\")",
-      "Bash(npm run *)"
+      "Bash(npm run *)",
+      "Bash(grep -n \"^\\\\.app-layout\\\\|^\\\\.sidebar \\\\|^\\\\.sidebar{\\\\|^\\\\.sidebar,\\\\|\\\\.sidebar {\\\\|\\\\.main-content\\\\|\\\\.mobile-nav \\\\|\\\\.mobile-nav{\\\\|\\\\.header {\\\\|\\\\.page-content\" components.css)"
     ]
   }
 }
