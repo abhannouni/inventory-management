@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { toast } from 'react-toastify';
 import CameraCapture from './CameraCapture';
 import { uploadApi } from '../../api/upload.api';
@@ -30,10 +30,9 @@ interface PhotoNoteStepProps {
 }
 
 /**
- * A required-camera-photo + optional-gallery-photos + optional-note block.
- * Shared by the supervisor's spot-check report and the merchandiser's
- * before/after shelf state: the first photo must come straight from the
- * camera (not the gallery), and any additional photos can come from either.
+ * A camera-only photos + optional-note block. Shared by the supervisor's
+ * spot-check report and the merchandiser's before/after shelf state: every
+ * photo must come straight from the camera, never the gallery.
  */
 export default function PhotoNoteStep({
   labels,
@@ -46,7 +45,6 @@ export default function PhotoNoteStep({
 }: PhotoNoteStepProps) {
   const [uploading, setUploading] = useState(false);
   const [cameraOpen, setCameraOpen] = useState(false);
-  const galleryInputRef = useRef<HTMLInputElement>(null);
 
   const handlePhotoFile = async (file: File) => {
     if (file.size > MAX_PHOTO_SIZE) { toast.error(labels.fileTooLarge); return; }
@@ -72,7 +70,7 @@ export default function PhotoNoteStep({
 
   return (
     <>
-      {/* Photos — the first one must come straight from the camera, not the gallery */}
+      {/* Photos — all must come straight from the camera */}
       <div className="form-group" style={{ marginBottom: 16 }}>
         <label className="form-label">{labels.photoLabel} *</label>
 
@@ -115,22 +113,13 @@ export default function PhotoNoteStep({
             <button
               type="button"
               className="sf-add-photo-btn"
-              onClick={() => galleryInputRef.current?.click()}
+              onClick={() => setCameraOpen(true)}
               disabled={uploading}
             >
               {uploading ? labels.uploading : `+ ${labels.addPhoto}`}
             </button>
           </>
         )}
-
-        {/* Additional photos: lets the device offer camera or gallery */}
-        <input
-          type="file"
-          accept="image/*"
-          style={{ display: 'none' }}
-          ref={galleryInputRef}
-          onChange={(e) => { const f = e.target.files?.[0]; if (f) handlePhotoFile(f); e.target.value = ''; }}
-        />
       </div>
 
       <div className="form-group" style={{ marginBottom: 0 }}>

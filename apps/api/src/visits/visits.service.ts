@@ -30,7 +30,7 @@ export function computeDurationSeconds(checkinAt: Date, checkoutAt: Date): numbe
 }
 
 /** How far a merchandiser/supervisor may be from a store and still check in/out. */
-export const CHECKIN_GEOFENCE_METERS = 2000;
+export const CHECKIN_GEOFENCE_METERS = 50;
 
 /** Great-circle distance between two lat/lng points, in meters. */
 export function haversineDistanceMeters(
@@ -347,7 +347,7 @@ export class VisitsService {
     );
     if (distance > CHECKIN_GEOFENCE_METERS) {
       throw new ForbiddenException(
-        `You must be within ${(CHECKIN_GEOFENCE_METERS / 1000).toFixed(1)} km of ${storeName} to do this (you are ${(distance / 1000).toFixed(1)} km away)`,
+        `You must be within ${CHECKIN_GEOFENCE_METERS} m of ${storeName} to do this (you are ${Math.round(distance)} m away)`,
       );
     }
   }
