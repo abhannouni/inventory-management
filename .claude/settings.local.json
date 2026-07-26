@@ -55,7 +55,12 @@
       "Bash(ls -la /c/Users/Dell/AppData/Local/Temp/claude/ 2>&1 | head -5; cat /c/Users/Dell/AppData/Local/Temp/claude/api-restart.log 2>&1)",
       "Bash(cd \"C:\\\\Users\\\\Dell\\\\Desktop\\\\New folder\\\\inventory-management\\\\apps\\\\api\" && cat package.json | head -40 && echo \"---WEB---\" && cat \"../web/package.json\" | head -60)",
       "Bash(xargs -I{} echo {})",
-      "Bash(./node_modules/.bin/tsc --noEmit)"
+      "Bash(./node_modules/.bin/tsc --noEmit)",
+      "Bash(xargs -I{} sh -c 'echo ==={}===; grep -n \"@Get\\\\|@Controller\" {}')",
+      "Bash(pnpm --filter web exec tsc -b --noEmit)",
+      "Bash(pnpm --filter web exec eslint src/pages/dashboard src/pages/DashboardPage.tsx src/components/charts/DonutChart.tsx)",
+      "Bash(pnpm --filter web exec eslint src/pages/dashboard src/pages/DashboardPage.tsx src/components/charts/DonutChart.tsx src/hooks/useCountUp.ts)",
+      "Bash(pnpm --filter web exec eslint src)"
     ]
   }
 }

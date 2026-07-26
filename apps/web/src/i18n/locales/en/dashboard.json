@@ -1,31 +1,9 @@
 {
   "weekDaysShort": ["S", "M", "T", "W", "T", "F", "S"],
   "greeting": "Good day, {{name}} 👋",
-  "stats": {
-    "totalStores": "Total Stores",
-    "totalProducts": "Total Products",
-    "totalVisits": "Total Visits",
-    "openVisits": "Open Visits"
-  },
-  "changes": {
-    "retailNetwork": "↑ Retail network",
-    "skusTracked": "↑ SKUs tracked",
-    "completed": "{{count}} completed",
-    "inProgress": "In progress now",
-    "allClosed": "All closed"
-  },
-  "visitActivity": {
-    "title": "Visit Activity",
-    "thisWeek": "This week",
-    "subtitle": "Daily check-in frequency across all stores"
-  },
-  "auditProgress": {
-    "title": "Audit Progress",
-    "subtitle": "Overall visit completion rate",
-    "completion": "completion"
-  },
   "legend": {
     "inStock": "In Stock",
+    "stockDisponible": "Available",
     "lowStock": "Low Stock",
     "outOfStock": "Out of Stock"
   },
@@ -34,11 +12,6 @@
     "activeVisit": "Active Visit",
     "noActiveVisit": "No active visit",
     "checkout": "End visit"
-  },
-  "stores": {
-    "title": "Stores",
-    "viewAll": "View all",
-    "empty": "No stores yet"
   },
   "team": {
     "titleMembers": "Team Members",
@@ -50,5 +23,122 @@
     "title": "Recent Visits",
     "seeAll": "See all",
     "empty": "No visits recorded yet"
+  },
+  "schedule": {
+    "upcomingTitle": "Upcoming Visits",
+    "upcomingSubtitle": "Next scheduled stops",
+    "empty": "Nothing scheduled"
+  },
+  "quickActions": {
+    "title": "Quick Actions",
+    "subtitle": "Jump straight to what you manage",
+    "manageUsers": "Manage Users",
+    "manageStores": "Manage Stores",
+    "manageStock": "Manage Stock",
+    "schedule": "Schedule"
+  },
+  "kpis": {
+    "stores": "Stores",
+    "storesHint": "↑ Retail network",
+    "products": "Products",
+    "productsHint": "↑ SKUs tracked",
+    "users": "Users",
+    "usersHint": "Active accounts",
+    "availability": "Availability",
+    "availabilityHint": "Share of stock found on shelf",
+    "stockouts": "Stockouts",
+    "stockoutsHint": "{{pct}}% of audits",
+    "teamMembers": "Team Members",
+    "teamMembersHint": "Active accounts",
+    "myStores": "My Stores",
+    "myStoresHint": "Assigned to you",
+    "teamCheckins": "Team Check-ins",
+    "teamCheckinsHint": "Last 7 days",
+    "openIssues": "Open Issues",
+    "openIssuesHint": "Stockouts flagged",
+    "outOfStockRate": "Out-of-Stock Rate",
+    "sellOutUnits": "Sell-Out Units",
+    "myVisits": "My Visits",
+    "myVisitsHint": "All time",
+    "completedThisWeek": "Completed This Week",
+    "completedThisWeekHint": "Closed visits",
+    "myScore": "My Score",
+    "myScoreHint": "Stock availability",
+    "myStockouts": "Stockouts Reported",
+    "myStockoutsHint": "Across my visits"
+  },
+  "charts": {
+    "status": "Status",
+    "count": "Count",
+    "share": "Share %",
+    "date": "Date",
+    "region": "Region",
+    "store": "Store",
+    "visits": "Visits",
+    "merchandiser": "Merchandiser",
+    "availability": "Availability %",
+    "stockoutCount": "Stockouts",
+    "stockoutUnit": "stockouts",
+    "visitsUnit": "visits",
+    "storeHint": "{{visits}} visits",
+    "stockHealth": {
+      "title": "Network Stock Health",
+      "subtitle": "Every audited product, by what was found on the shelf",
+      "myStoresSubtitle": "Across the stores you supervise",
+      "centerLabel": "available"
+    },
+    "stockoutTrend": {
+      "title": "Stockout Trend",
+      "subtitle": "Out-of-stock findings per day, last 14 days"
+    },
+    "storesAttention": {
+      "title": "Stores Needing Attention",
+      "subtitle": "Ranked by stockouts found — worst first"
+    },
+    "regionalHealth": {
+      "title": "Regional Health",
+      "subtitle": "Stock availability by region, lowest first"
+    },
+    "recentStockouts": {
+      "title": "Recent Stockouts",
+      "subtitle": "Latest visits that turned up an empty shelf",
+      "empty": "No stockouts recorded — the network is clean"
+    },
+    "visitActivityTrend": {
+      "title": "Visit Activity",
+      "subtitle": "Visits completed per day, last 14 days"
+    },
+    "availabilityTrend": {
+      "title": "Availability Trend",
+      "subtitle": "Daily stock availability, last 14 days"
+    }
+  },
+  "superAdmin": {
+    "subtitle": "Network overview",
+    "sectionTitle": "Stock intelligence"
+  },
+  "admin": {
+    "subtitle": "Operations overview",
+    "sectionTitle": "Team & actions",
+    "teamSubtitle": "Latest accounts"
+  },
+  "gm": {
+    "subtitle": "Consolidated overview",
+    "sectionTitle": "Latest visits"
+  },
+  "supervisor": {
+    "subtitle": "Your stores & team",
+    "sectionTitle": "Team & schedule",
+    "teamActivityTitle": "Team Activity",
+    "teamActivitySubtitle": "Recent visits at your stores"
+  },
+  "merchandiser": {
+    "subtitle": "Your field activity",
+    "weeklyTitle": "This Week",
+    "weeklySubtitle": "Your check-ins by day",
+    "myAuditsTitle": "My Audits",
+    "myAuditsSubtitle": "What you've found on the shelf",
+    "noAudits": "No audits recorded yet",
+    "recentSubtitle": "Your last visits"
   }
 }

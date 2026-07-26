@@ -1,31 +1,9 @@
 {
   "weekDaysShort": ["ح", "ن", "ث", "ر", "خ", "ج", "س"],
   "greeting": "مرحبًا بك، {{name}} 👋",
-  "stats": {
-    "totalStores": "إجمالي المتاجر",
-    "totalProducts": "إجمالي المنتجات",
-    "totalVisits": "إجمالي الزيارات",
-    "openVisits": "الزيارات الجارية"
-  },
-  "changes": {
-    "retailNetwork": "↑ شبكة البيع بالتجزئة",
-    "skusTracked": "↑ مراجع متتبَّعة",
-    "completed": "{{count}} مكتملة",
-    "inProgress": "قيد التنفيذ الآن",
-    "allClosed": "جميعها مغلقة"
-  },
-  "visitActivity": {
-    "title": "نشاط الزيارات",
-    "thisWeek": "هذا الأسبوع",
-    "subtitle": "معدل تسجيل الدخول اليومي في جميع المتاجر"
-  },
-  "auditProgress": {
-    "title": "تقدم الجرد",
-    "subtitle": "معدل إتمام الزيارات الإجمالي",
-    "completion": "نسبة الإتمام"
-  },
   "legend": {
     "inStock": "متوفر",
+    "stockDisponible": "متاح",
     "lowStock": "مخزون منخفض",
     "outOfStock": "نفد المخزون"
   },
@@ -34,11 +12,6 @@
     "activeVisit": "زيارة جارية",
     "noActiveVisit": "لا توجد زيارة جارية",
     "checkout": "إنهاء الزيارة"
-  },
-  "stores": {
-    "title": "المتاجر",
-    "viewAll": "عرض الكل",
-    "empty": "لا توجد متاجر بعد"
   },
   "team": {
     "titleMembers": "أعضاء الفريق",
@@ -50,5 +23,122 @@
     "title": "الزيارات الأخيرة",
     "seeAll": "عرض الكل",
     "empty": "لم يتم تسجيل أي زيارات بعد"
+  },
+  "schedule": {
+    "upcomingTitle": "الزيارات القادمة",
+    "upcomingSubtitle": "المحطات المبرمجة القادمة",
+    "empty": "لا شيء مبرمج"
+  },
+  "quickActions": {
+    "title": "إجراءات سريعة",
+    "subtitle": "انتقل مباشرة إلى ما تديره",
+    "manageUsers": "إدارة المستخدمين",
+    "manageStores": "إدارة المتاجر",
+    "manageStock": "إدارة المخزون",
+    "schedule": "الجدولة"
+  },
+  "kpis": {
+    "stores": "المتاجر",
+    "storesHint": "↑ شبكة البيع بالتجزئة",
+    "products": "المنتجات",
+    "productsHint": "↑ مراجع متتبَّعة",
+    "users": "المستخدمون",
+    "usersHint": "حسابات نشطة",
+    "availability": "التوفر",
+    "availabilityHint": "نسبة المخزون الموجود في الرف",
+    "stockouts": "حالات النفاد",
+    "stockoutsHint": "{{pct}}% من عمليات الجرد",
+    "teamMembers": "أعضاء الفريق",
+    "teamMembersHint": "حسابات نشطة",
+    "myStores": "متاجري",
+    "myStoresHint": "المسندة إليك",
+    "teamCheckins": "زيارات الفريق",
+    "teamCheckinsHint": "آخر 7 أيام",
+    "openIssues": "مشاكل مفتوحة",
+    "openIssuesHint": "حالات نفاد تم الإبلاغ عنها",
+    "outOfStockRate": "معدل نفاد المخزون",
+    "sellOutUnits": "وحدات البيع (Sell-Out)",
+    "myVisits": "زياراتي",
+    "myVisitsHint": "منذ البداية",
+    "completedThisWeek": "المكتملة هذا الأسبوع",
+    "completedThisWeekHint": "زيارات مغلقة",
+    "myScore": "نقاطي",
+    "myScoreHint": "توفر المخزون",
+    "myStockouts": "حالات النفاد المُبلَّغ عنها",
+    "myStockoutsHint": "خلال زياراتي"
+  },
+  "charts": {
+    "status": "الحالة",
+    "count": "العدد",
+    "share": "النسبة %",
+    "date": "التاريخ",
+    "region": "المنطقة",
+    "store": "المتجر",
+    "visits": "الزيارات",
+    "merchandiser": "المندوب الميداني",
+    "availability": "التوفر %",
+    "stockoutCount": "حالات النفاد",
+    "stockoutUnit": "حالات نفاد",
+    "visitsUnit": "زيارات",
+    "storeHint": "{{visits}} زيارة",
+    "stockHealth": {
+      "title": "صحة المخزون الشبكي",
+      "subtitle": "كل منتج تم جرده، حسب ما تم العثور عليه في الرف",
+      "myStoresSubtitle": "عبر المتاجر التي تشرف عليها",
+      "centerLabel": "متوفر"
+    },
+    "stockoutTrend": {
+      "title": "اتجاه حالات النفاد",
+      "subtitle": "حالات النفاد المسجلة يوميًا، آخر 14 يومًا"
+    },
+    "storesAttention": {
+      "title": "متاجر تحتاج إلى اهتمام",
+      "subtitle": "مرتبة حسب حالات النفاد المسجلة — الأسوأ أولاً"
+    },
+    "regionalHealth": {
+      "title": "الصحة حسب المنطقة",
+      "subtitle": "توفر المخزون حسب المنطقة، الأضعف أولاً"
+    },
+    "recentStockouts": {
+      "title": "حالات النفاد الأخيرة",
+      "subtitle": "آخر الزيارات التي كشفت عن رف فارغ",
+      "empty": "لا توجد حالات نفاد مسجلة — الشبكة سليمة"
+    },
+    "visitActivityTrend": {
+      "title": "نشاط الزيارات",
+      "subtitle": "الزيارات المنجزة يوميًا، آخر 14 يومًا"
+    },
+    "availabilityTrend": {
+      "title": "اتجاه التوفر",
+      "subtitle": "توفر المخزون اليومي، آخر 14 يومًا"
+    }
+  },
+  "superAdmin": {
+    "subtitle": "نظرة عامة على الشبكة",
+    "sectionTitle": "ذكاء المخزون"
+  },
+  "admin": {
+    "subtitle": "نظرة عامة على العمليات",
+    "sectionTitle": "الفريق والإجراءات",
+    "teamSubtitle": "أحدث الحسابات"
+  },
+  "gm": {
+    "subtitle": "نظرة موحّدة",
+    "sectionTitle": "أحدث الزيارات"
+  },
+  "supervisor": {
+    "subtitle": "متاجرك وفريقك",
+    "sectionTitle": "الفريق والجدولة",
+    "teamActivityTitle": "نشاط الفريق",
+    "teamActivitySubtitle": "الزيارات الأخيرة في متاجرك"
+  },
+  "merchandiser": {
+    "subtitle": "نشاطك الميداني",
+    "weeklyTitle": "هذا الأسبوع",
+    "weeklySubtitle": "زياراتك حسب اليوم",
+    "myAuditsTitle": "عمليات الجرد الخاصة بي",
+    "myAuditsSubtitle": "ما وجدته في الرف",
+    "noAudits": "لم يتم تسجيل أي جرد بعد",
+    "recentSubtitle": "زياراتك الأخيرة"
   }
 }

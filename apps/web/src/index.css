@@ -70,6 +70,7 @@
   --tone-teal:   linear-gradient(135deg, #5EEAD4 0%, #0D9488 100%);
   --tone-violet: linear-gradient(135deg, #C4B5FD 0%, #7C3AED 100%);
   --tone-amber:  linear-gradient(135deg, #FCD34D 0%, #D97706 100%);
+  --tone-rose:   linear-gradient(135deg, #FCA5A5 0%, #DC2626 100%);
 
   /* ── Auth / marketing panel ── */
   --auth-bg-deep:  #0b1221;

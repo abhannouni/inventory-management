@@ -1,31 +1,9 @@
 {
   "weekDaysShort": ["D", "L", "M", "M", "J", "V", "S"],
   "greeting": "Bonjour, {{name}} 👋",
-  "stats": {
-    "totalStores": "Total magasins",
-    "totalProducts": "Total produits",
-    "totalVisits": "Total visites",
-    "openVisits": "Visites en cours"
-  },
-  "changes": {
-    "retailNetwork": "↑ Réseau de vente",
-    "skusTracked": "↑ Références suivies",
-    "completed": "{{count}} terminées",
-    "inProgress": "En cours",
-    "allClosed": "Toutes clôturées"
-  },
-  "visitActivity": {
-    "title": "Activité des visites",
-    "thisWeek": "Cette semaine",
-    "subtitle": "Fréquence quotidienne des passages en magasin"
-  },
-  "auditProgress": {
-    "title": "Progression de l'audit",
-    "subtitle": "Taux global de complétion des visites",
-    "completion": "complétion"
-  },
   "legend": {
     "inStock": "En stock",
+    "stockDisponible": "Disponible",
     "lowStock": "Stock faible",
     "outOfStock": "Rupture de stock"
   },
@@ -34,11 +12,6 @@
     "activeVisit": "Visite en cours",
     "noActiveVisit": "Aucune visite en cours",
     "checkout": "Terminer la visite"
-  },
-  "stores": {
-    "title": "Magasins",
-    "viewAll": "Voir tout",
-    "empty": "Aucun magasin pour le moment"
   },
   "team": {
     "titleMembers": "Membres de l'équipe",
@@ -50,5 +23,122 @@
     "title": "Visites récentes",
     "seeAll": "Tout voir",
     "empty": "Aucune visite enregistrée pour le moment"
+  },
+  "schedule": {
+    "upcomingTitle": "Visites à venir",
+    "upcomingSubtitle": "Prochains passages programmés",
+    "empty": "Rien de programmé"
+  },
+  "quickActions": {
+    "title": "Actions rapides",
+    "subtitle": "Accédez directement à ce que vous gérez",
+    "manageUsers": "Gérer les utilisateurs",
+    "manageStores": "Gérer les magasins",
+    "manageStock": "Gérer le stock",
+    "schedule": "Planning"
+  },
+  "kpis": {
+    "stores": "Magasins",
+    "storesHint": "↑ Réseau de vente",
+    "products": "Produits",
+    "productsHint": "↑ Références suivies",
+    "users": "Utilisateurs",
+    "usersHint": "Comptes actifs",
+    "availability": "Disponibilité",
+    "availabilityHint": "Part du stock trouvée en rayon",
+    "stockouts": "Ruptures",
+    "stockoutsHint": "{{pct}}% des audits",
+    "teamMembers": "Membres de l'équipe",
+    "teamMembersHint": "Comptes actifs",
+    "myStores": "Mes magasins",
+    "myStoresHint": "Qui vous sont assignés",
+    "teamCheckins": "Passages équipe",
+    "teamCheckinsHint": "7 derniers jours",
+    "openIssues": "Problèmes ouverts",
+    "openIssuesHint": "Ruptures signalées",
+    "outOfStockRate": "Taux de rupture",
+    "sellOutUnits": "Unités vendues (sell-out)",
+    "myVisits": "Mes visites",
+    "myVisitsHint": "Depuis le début",
+    "completedThisWeek": "Terminées cette semaine",
+    "completedThisWeekHint": "Visites clôturées",
+    "myScore": "Mon score",
+    "myScoreHint": "Disponibilité du stock",
+    "myStockouts": "Ruptures signalées",
+    "myStockoutsHint": "Sur mes visites"
+  },
+  "charts": {
+    "status": "Statut",
+    "count": "Nombre",
+    "share": "Part %",
+    "date": "Date",
+    "region": "Région",
+    "store": "Magasin",
+    "visits": "Visites",
+    "merchandiser": "Marchandiseur",
+    "availability": "Disponibilité %",
+    "stockoutCount": "Ruptures",
+    "stockoutUnit": "ruptures",
+    "visitsUnit": "visites",
+    "storeHint": "{{visits}} visites",
+    "stockHealth": {
+      "title": "Santé du stock réseau",
+      "subtitle": "Chaque produit audité, selon ce qui a été trouvé en rayon",
+      "myStoresSubtitle": "Sur les magasins que vous supervisez",
+      "centerLabel": "disponible"
+    },
+    "stockoutTrend": {
+      "title": "Tendance des ruptures",
+      "subtitle": "Ruptures constatées par jour, 14 derniers jours"
+    },
+    "storesAttention": {
+      "title": "Magasins à surveiller",
+      "subtitle": "Classés par ruptures constatées — les pires d'abord"
+    },
+    "regionalHealth": {
+      "title": "Santé par région",
+      "subtitle": "Disponibilité du stock par région, la plus faible d'abord"
+    },
+    "recentStockouts": {
+      "title": "Ruptures récentes",
+      "subtitle": "Dernières visites ayant révélé un rayon vide",
+      "empty": "Aucune rupture enregistrée — le réseau est sain"
+    },
+    "visitActivityTrend": {
+      "title": "Activité des visites",
+      "subtitle": "Visites réalisées par jour, 14 derniers jours"
+    },
+    "availabilityTrend": {
+      "title": "Tendance de disponibilité",
+      "subtitle": "Disponibilité quotidienne du stock, 14 derniers jours"
+    }
+  },
+  "superAdmin": {
+    "subtitle": "Vue d'ensemble du réseau",
+    "sectionTitle": "Intelligence stock"
+  },
+  "admin": {
+    "subtitle": "Vue d'ensemble des opérations",
+    "sectionTitle": "Équipe & actions",
+    "teamSubtitle": "Derniers comptes"
+  },
+  "gm": {
+    "subtitle": "Vue consolidée",
+    "sectionTitle": "Dernières visites"
+  },
+  "supervisor": {
+    "subtitle": "Vos magasins et votre équipe",
+    "sectionTitle": "Équipe & planning",
+    "teamActivityTitle": "Activité de l'équipe",
+    "teamActivitySubtitle": "Visites récentes dans vos magasins"
+  },
+  "merchandiser": {
+    "subtitle": "Votre activité terrain",
+    "weeklyTitle": "Cette semaine",
+    "weeklySubtitle": "Vos passages par jour",
+    "myAuditsTitle": "Mes audits",
+    "myAuditsSubtitle": "Ce que vous avez trouvé en rayon",
+    "noAudits": "Aucun audit enregistré pour le moment",
+    "recentSubtitle": "Vos dernières visites"
   }
 }
