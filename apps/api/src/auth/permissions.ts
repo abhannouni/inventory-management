@@ -24,7 +24,6 @@ export const RESOURCES = [
   'reports',
   'settings',
   'sell_out',
-  'merchandising',
   'hr',
   'product_requests',
 ] as const;
@@ -120,12 +119,6 @@ export const PERMISSIONS: PermissionDef[] = [
 
   ...crud('sell_out', 'sell-out records'),
 
-  // Has no data model yet — read-only for now (mirroring `reports`, which
-  // likewise only has read+export). The page exists and is permission-gated
-  // like every other module; it renders an honest "not available yet" state until
-  // the underlying feature is built. Add create/update/delete here once it is.
-  { code: 'merchandising.read', resource: 'merchandising', action: 'read', description: 'View merchandising execution (displays, TG, MEA, PLV)' },
-
   // Custom Product Requests: a field-submitted log (store, sub-family,
   // dimensions, photo). Shown to users under the "Marketing" nav label/page
   // title — the resource code predates that display name and was kept to
@@ -167,7 +160,6 @@ export const ROLE_PRESETS: Record<string, string[]> = {
     'reports.read',
     'reports.export',
     ...crud('sell_out', '').map((p) => p.code),
-    'merchandising.read',
     ...crud('product_requests', '').map((p) => p.code),
   ],
 
@@ -186,7 +178,6 @@ export const ROLE_PRESETS: Record<string, string[]> = {
     'reports.export',
     'users.read',
     'sell_out.read',
-    'merchandising.read',
     'product_requests.read',
   ],
 
@@ -212,7 +203,6 @@ export const ROLE_PRESETS: Record<string, string[]> = {
     'kpis.read',
     'dashboards.read',
     'sell_out.read',
-    'merchandising.read',
     'product_requests.read',
     'product_requests.create',
     'product_requests.update',

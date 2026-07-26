@@ -15,7 +15,7 @@ import AuditItemsPage from '../pages/audit-items/AuditItemsPage';
 import ReportsPage from '../pages/reports/ReportsPage';
 import SchedulePage from '../pages/schedule/SchedulePage';
 import SellOutPage from '../pages/modules/SellOutPage';
-import MerchandisingPage from '../pages/modules/MerchandisingPage';
+import TrainingPage from '../pages/modules/TrainingPage';
 import MarketingPage from '../pages/modules/MarketingPage';
 import MarketingDetailPage from '../pages/modules/MarketingDetailPage';
 import SettingsPage from '../pages/settings/SettingsPage';
@@ -291,14 +291,15 @@ export const NAV_PAGES: NavPage[] = [
     },
   },
   {
-    id: 'merchandising',
-    path: '/merchandising',
-    element: MerchandisingPage,
-    permissions: ['merchandising.read'],
+    id: 'training',
+    path: '/training',
+    element: TrainingPage,
+    permissions: [],
     nav: {
-      labelKey: 'nav.merchandising',
+      labelKey: 'nav.training',
       icon: {
-        d: 'M3 3h18v4H3zM3 21V9h18v12M9 21v-6h6v6',
+        d: 'M12 14l9-5-9-5-9 5 9 5z',
+        d2: 'M12 14l6.16-3.42A12.02 12.02 0 0121 12v5M12 14v7',
       },
       section: 'general',
     },

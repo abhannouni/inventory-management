@@ -18,7 +18,7 @@ import { UploadModule } from './upload/upload.module';
 import { ReportsModule } from './reports/reports.module';
 import { SchedulesModule } from './schedules/schedules.module';
 import { SellOutModule } from './sell-out/sell-out.module';
-import { MerchandisingModule } from './merchandising/merchandising.module';
+import { TrainingModule } from './training/training.module';
 import { SettingsModule } from './settings/settings.module';
 import { HrModule } from './hr/hr.module';
 import { ProductRequestsModule } from './product-requests/product-requests.module';
@@ -56,7 +56,7 @@ import { ProductRequestsModule } from './product-requests/product-requests.modul
     ReportsModule,
     SchedulesModule,
     SellOutModule,
-    MerchandisingModule,
+    TrainingModule,
     SettingsModule,
     HrModule,
     ProductRequestsModule,
