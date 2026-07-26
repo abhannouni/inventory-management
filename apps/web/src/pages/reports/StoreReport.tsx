@@ -7,10 +7,12 @@ import { fetchStoreReport } from '../../store/slices/reportsSlice';
 import { fetchStores } from '../../store/slices/storesSlice';
 import Spinner from '../../components/ui/Spinner';
 import ChartCard from '../../components/charts/ChartCard';
-import DownloadDataButton from '../../components/charts/DownloadDataButton';
+import { ChartExportProvider } from '../../components/charts/ChartExportContext';
+import ReportDownloadMenu from '../../components/charts/ReportDownloadMenu';
 import StatTile from '../../components/charts/StatTile';
 import TrendChart from '../../components/charts/TrendChart';
 import StatusBar from '../../components/charts/StatusBar';
+import DonutChart from '../../components/charts/DonutChart';
 import VarianceChart from '../../components/charts/VarianceChart';
 import { STATUS } from '../../components/charts/tokens';
 import ReportFilters from './ReportFilters';
@@ -188,6 +190,7 @@ export default function StoreReport() {
   };
 
   return (
+    <ChartExportProvider>
     <div className={loading ? 'is-refetching' : undefined}>
       <ReportFilters
         from={from}
@@ -198,9 +201,7 @@ export default function StoreReport() {
         onReset={reset}
         actions={
           storeReport ? (
-            <DownloadDataButton
-              size="md"
-              datasets={[itemsDataset, trendDataset, varianceDataset, statusDataset]}
+            <ReportDownloadMenu
               fileName={`${storeReport.store.name} ${t('storeReport.datasets.workbook')}`}
             />
           ) : undefined
@@ -282,6 +283,7 @@ export default function StoreReport() {
 
           {trend.length > 0 && (
             <ChartCard
+              id="trend"
               title={t('storeReport.charts.trendTitle')}
               subtitle={t('storeReport.charts.trendSub')}
               dataset={trendDataset}
@@ -291,32 +293,60 @@ export default function StoreReport() {
           )}
 
           {totals.audited > 0 && (
-            <ChartCard
-              title={t('storeReport.charts.statusTitle')}
-              subtitle={t('storeReport.charts.statusSub')}
-              dataset={statusDataset}
-              legend={[
-                { label: statusLabels.inStock, color: STATUS.in_stock },
-                { label: statusLabels.stockDisponible, color: STATUS.stock_disponible },
-                { label: statusLabels.lowStock, color: STATUS.low_stock },
-                { label: statusLabels.outOfStock, color: STATUS.out_of_stock },
-              ]}
-            >
-              <StatusBar
-                variant="block"
-                labels={statusLabels}
-                counts={{
-                  inStock: totals.inStock,
-                  stockDisponible: totals.stockDisponible,
-                  lowStock: totals.lowStock,
-                  outOfStock: totals.outOfStock,
-                }}
-              />
-            </ChartCard>
+            <div className="chart-card-pair">
+              <ChartCard
+                id="status"
+                title={t('storeReport.charts.statusTitle')}
+                subtitle={t('storeReport.charts.statusSub')}
+                dataset={statusDataset}
+                legend={[
+                  { label: statusLabels.inStock, color: STATUS.in_stock },
+                  { label: statusLabels.stockDisponible, color: STATUS.stock_disponible },
+                  { label: statusLabels.lowStock, color: STATUS.low_stock },
+                  { label: statusLabels.outOfStock, color: STATUS.out_of_stock },
+                ]}
+              >
+                <StatusBar
+                  variant="block"
+                  labels={statusLabels}
+                  counts={{
+                    inStock: totals.inStock,
+                    stockDisponible: totals.stockDisponible,
+                    lowStock: totals.lowStock,
+                    outOfStock: totals.outOfStock,
+                  }}
+                />
+              </ChartCard>
+
+              <ChartCard
+                id="distribution"
+                title={t('storeReport.charts.distributionTitle')}
+                subtitle={t('storeReport.charts.distributionSub')}
+                dataset={statusDataset}
+                legend={[
+                  { label: statusLabels.inStock, color: STATUS.in_stock },
+                  { label: statusLabels.stockDisponible, color: STATUS.stock_disponible },
+                  { label: statusLabels.lowStock, color: STATUS.low_stock },
+                  { label: statusLabels.outOfStock, color: STATUS.out_of_stock },
+                ]}
+              >
+                <DonutChart
+                  centerValue={`${availability}%`}
+                  centerLabel={t('visitsReport.kpis.availability')}
+                  data={[
+                    { label: statusLabels.inStock, value: totals.inStock, color: STATUS.in_stock },
+                    { label: statusLabels.stockDisponible, value: totals.stockDisponible, color: STATUS.stock_disponible },
+                    { label: statusLabels.lowStock, value: totals.lowStock, color: STATUS.low_stock },
+                    { label: statusLabels.outOfStock, value: totals.outOfStock, color: STATUS.out_of_stock },
+                  ]}
+                />
+              </ChartCard>
+            </div>
           )}
 
           {variance.length > 0 && (
             <ChartCard
+              id="variance"
               title={t('storeReport.charts.varianceTitle')}
               subtitle={t('storeReport.charts.varianceSub')}
               dataset={varianceDataset}
@@ -332,6 +362,7 @@ export default function StoreReport() {
           )}
 
           <ChartCard
+            id="history"
             title={t('storeReport.charts.historyTitle')}
             subtitle={t('storeReport.visitHistory', { count: visits.length })}
             dataset={itemsDataset}
@@ -374,5 +405,6 @@ export default function StoreReport() {
         </motion.div>
       )}
     </div>
+    </ChartExportProvider>
   );
 }

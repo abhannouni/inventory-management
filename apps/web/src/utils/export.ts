@@ -135,3 +135,90 @@ export async function downloadXlsx(
   });
   triggerDownload(blob, `${slug(fileName)}-${stamp()}.xlsx`);
 }
+
+export interface PptxChartItem {
+  title: string;
+  subtitle?: string;
+  /** The rendered chart DOM node to rasterize onto its slide, or null if unavailable. */
+  node: HTMLElement | null;
+}
+
+/**
+ * One slide per chart: title, subtitle, and a rasterized snapshot of the chart
+ * exactly as it renders on screen. pptxgenjs and html-to-image are both pulled
+ * in on demand — most users only ever touch the CSV/Excel path.
+ */
+export async function downloadPptx(
+  items: PptxChartItem[],
+  fileName: string,
+  labels: { coverSubtitle: string; unavailable: string },
+) {
+  const [{ default: PptxGenJS }, { toPng }] = await Promise.all([
+    import('pptxgenjs'),
+    import('html-to-image'),
+  ]);
+
+  const pptx = new PptxGenJS();
+  pptx.defineLayout({ name: 'REPORT_16X9', width: 10, height: 5.63 });
+  pptx.layout = 'REPORT_16X9';
+
+  const cover = pptx.addSlide();
+  cover.background = { color: 'FFFFFF' };
+  cover.addText(fileName, {
+    x: 0.5, y: 2.1, w: 9, h: 1, fontSize: 28, bold: true, color: '0B0B0B', align: 'center',
+  });
+  cover.addText(`${labels.coverSubtitle} · ${new Date().toLocaleDateString()}`, {
+    x: 0.5, y: 3.05, w: 9, h: 0.5, fontSize: 13, color: '6B7280', align: 'center',
+  });
+
+  for (const item of items) {
+    const slide = pptx.addSlide();
+    slide.background = { color: 'FFFFFF' };
+    slide.addText(item.title, {
+      x: 0.4, y: 0.3, w: 9.2, h: 0.5, fontSize: 20, bold: true, color: '0B0B0B',
+    });
+    if (item.subtitle) {
+      slide.addText(item.subtitle, {
+        x: 0.4, y: 0.78, w: 9.2, h: 0.35, fontSize: 12, color: '6B7280',
+      });
+    }
+
+    let imageData: string | null = null;
+    if (item.node) {
+      try {
+        imageData = await Promise.race([
+          toPng(item.node, {
+            backgroundColor: '#ffffff',
+            pixelRatio: 2,
+            cacheBust: true,
+            // The app's fonts load from Google Fonts; inlining them means fetching
+            // that stylesheet cross-origin, which hangs indefinitely wherever that
+            // request is blocked (offline, strict CSP). The chart is legible in the
+            // system fallback, so skip the fetch rather than risk a stuck export.
+            skipFonts: true,
+          }),
+          new Promise<never>((_, reject) =>
+            setTimeout(() => reject(new Error('capture timed out')), 15000),
+          ),
+        ]);
+      } catch {
+        imageData = null;
+      }
+    }
+
+    if (imageData) {
+      slide.addImage({
+        data: imageData,
+        x: 0.6, y: 1.3, w: 8.8, h: 3.9,
+        sizing: { type: 'contain', w: 8.8, h: 3.9 },
+      });
+    } else {
+      slide.addText(labels.unavailable, {
+        x: 0.6, y: 2.8, w: 8.8, h: 0.6, fontSize: 14, color: '9CA3AF', align: 'center',
+      });
+    }
+  }
+
+  const blob = (await pptx.write({ outputType: 'blob' })) as Blob;
+  triggerDownload(blob, `${slug(fileName)}-${stamp()}.pptx`);
+}

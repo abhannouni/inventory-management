@@ -8,11 +8,13 @@ import { fetchProducts } from '../../store/slices/productsSlice';
 import Spinner from '../../components/ui/Spinner';
 import Badge from '../../components/ui/Badge';
 import ChartCard from '../../components/charts/ChartCard';
-import DownloadDataButton from '../../components/charts/DownloadDataButton';
+import { ChartExportProvider } from '../../components/charts/ChartExportContext';
+import ReportDownloadMenu from '../../components/charts/ReportDownloadMenu';
 import StatTile from '../../components/charts/StatTile';
 import TrendChart from '../../components/charts/TrendChart';
 import BarChart from '../../components/charts/BarChart';
 import StatusBar from '../../components/charts/StatusBar';
+import DonutChart from '../../components/charts/DonutChart';
 import { STATUS } from '../../components/charts/tokens';
 import ReportFilters from './ReportFilters';
 import { formatDate } from '../../utils/format';
@@ -164,6 +166,7 @@ export default function ProductReport() {
   };
 
   return (
+    <ChartExportProvider>
     <div className={loading ? 'is-refetching' : undefined}>
       <ReportFilters
         from={from}
@@ -174,9 +177,7 @@ export default function ProductReport() {
         onReset={reset}
         actions={
           productReport ? (
-            <DownloadDataButton
-              size="md"
-              datasets={[historyDataset, trendDataset, storeDataset]}
+            <ReportDownloadMenu
               fileName={`${productReport.product.name} ${t('productReport.datasets.workbook')}`}
             />
           ) : undefined
@@ -250,6 +251,7 @@ export default function ProductReport() {
           ) : (
             <>
               <ChartCard
+                id="trend"
                 title={t('productReport.charts.trendTitle')}
                 subtitle={t('productReport.charts.trendSub')}
                 dataset={trendDataset}
@@ -257,33 +259,73 @@ export default function ProductReport() {
                 <TrendChart data={trend} />
               </ChartCard>
 
-              <ChartCard
-                title={t('productReport.charts.statusTitle')}
-                subtitle={t('productReport.charts.statusSub')}
-                dataset={{
-                  name: t('productReport.datasets.status'),
-                  columns: [
-                    { header: t('table.status'), value: (r: { label: string; count: number }) => r.label },
-                    { header: t('productReport.datasets.scans'), value: (r: { label: string; count: number }) => r.count },
-                  ],
-                  rows: [
-                    { label: statusLabels.inStock, count: counts.inStock },
-                    { label: statusLabels.stockDisponible, count: counts.stockDisponible },
-                    { label: statusLabels.lowStock, count: counts.lowStock },
-                    { label: statusLabels.outOfStock, count: counts.outOfStock },
-                  ],
-                }}
-                legend={[
-                  { label: statusLabels.inStock, color: STATUS.in_stock },
-                  { label: statusLabels.stockDisponible, color: STATUS.stock_disponible },
-                  { label: statusLabels.lowStock, color: STATUS.low_stock },
-                  { label: statusLabels.outOfStock, color: STATUS.out_of_stock },
-                ]}
-              >
-                <StatusBar variant="block" labels={statusLabels} counts={counts} />
-              </ChartCard>
+              <div className="chart-card-pair">
+                <ChartCard
+                  id="status"
+                  title={t('productReport.charts.statusTitle')}
+                  subtitle={t('productReport.charts.statusSub')}
+                  dataset={{
+                    name: t('productReport.datasets.status'),
+                    columns: [
+                      { header: t('table.status'), value: (r: { label: string; count: number }) => r.label },
+                      { header: t('productReport.datasets.scans'), value: (r: { label: string; count: number }) => r.count },
+                    ],
+                    rows: [
+                      { label: statusLabels.inStock, count: counts.inStock },
+                      { label: statusLabels.stockDisponible, count: counts.stockDisponible },
+                      { label: statusLabels.lowStock, count: counts.lowStock },
+                      { label: statusLabels.outOfStock, count: counts.outOfStock },
+                    ],
+                  }}
+                  legend={[
+                    { label: statusLabels.inStock, color: STATUS.in_stock },
+                    { label: statusLabels.stockDisponible, color: STATUS.stock_disponible },
+                    { label: statusLabels.lowStock, color: STATUS.low_stock },
+                    { label: statusLabels.outOfStock, color: STATUS.out_of_stock },
+                  ]}
+                >
+                  <StatusBar variant="block" labels={statusLabels} counts={counts} />
+                </ChartCard>
+
+                <ChartCard
+                  id="distribution"
+                  title={t('productReport.charts.distributionTitle')}
+                  subtitle={t('productReport.charts.distributionSub')}
+                  dataset={{
+                    name: t('productReport.datasets.status'),
+                    columns: [
+                      { header: t('table.status'), value: (r: { label: string; count: number }) => r.label },
+                      { header: t('productReport.datasets.scans'), value: (r: { label: string; count: number }) => r.count },
+                    ],
+                    rows: [
+                      { label: statusLabels.inStock, count: counts.inStock },
+                      { label: statusLabels.stockDisponible, count: counts.stockDisponible },
+                      { label: statusLabels.lowStock, count: counts.lowStock },
+                      { label: statusLabels.outOfStock, count: counts.outOfStock },
+                    ],
+                  }}
+                  legend={[
+                    { label: statusLabels.inStock, color: STATUS.in_stock },
+                    { label: statusLabels.stockDisponible, color: STATUS.stock_disponible },
+                    { label: statusLabels.lowStock, color: STATUS.low_stock },
+                    { label: statusLabels.outOfStock, color: STATUS.out_of_stock },
+                  ]}
+                >
+                  <DonutChart
+                    centerValue={history.length - counts.outOfStock}
+                    centerLabel={t('productReport.datasets.scans')}
+                    data={[
+                      { label: statusLabels.inStock, value: counts.inStock, color: STATUS.in_stock },
+                      { label: statusLabels.stockDisponible, value: counts.stockDisponible, color: STATUS.stock_disponible },
+                      { label: statusLabels.lowStock, value: counts.lowStock, color: STATUS.low_stock },
+                      { label: statusLabels.outOfStock, value: counts.outOfStock, color: STATUS.out_of_stock },
+                    ]}
+                  />
+                </ChartCard>
+              </div>
 
               <ChartCard
+                id="store"
                 title={t('productReport.charts.storeTitle')}
                 subtitle={t('productReport.charts.storeSub')}
                 dataset={storeDataset}
@@ -301,6 +343,7 @@ export default function ProductReport() {
               </ChartCard>
 
               <ChartCard
+                id="history"
                 title={t('productReport.charts.historyTitle')}
                 subtitle={t('productReport.charts.historySub')}
                 dataset={historyDataset}
@@ -339,5 +382,6 @@ export default function ProductReport() {
         </motion.div>
       )}
     </div>
+    </ChartExportProvider>
   );
 }

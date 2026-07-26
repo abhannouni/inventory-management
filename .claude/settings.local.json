@@ -60,7 +60,13 @@
       "Bash(pnpm --filter web exec tsc -b --noEmit)",
       "Bash(pnpm --filter web exec eslint src/pages/dashboard src/pages/DashboardPage.tsx src/components/charts/DonutChart.tsx)",
       "Bash(pnpm --filter web exec eslint src/pages/dashboard src/pages/DashboardPage.tsx src/components/charts/DonutChart.tsx src/hooks/useCountUp.ts)",
-      "Bash(pnpm --filter web exec eslint src)"
+      "Bash(pnpm --filter web exec eslint src)",
+      "Skill(dataviz)",
+      "Skill(dataviz:*)",
+      "Bash(pnpm --filter web add pptxgenjs html-to-image)",
+      "Bash(node -e \"console.log\\(require\\('pptxgenjs/package.json'\\).version\\)\")",
+      "Bash(node -e \"console.log\\(require\\('pptxgenjs/types/index.d.ts'\\)\\)\")",
+      "Bash(npm run *)"
     ]
   }
 }

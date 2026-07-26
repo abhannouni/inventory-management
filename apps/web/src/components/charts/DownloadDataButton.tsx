@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
-import { downloadCsv, downloadXlsx } from '../../utils/export';
+import { downloadCsv, downloadPptx, downloadXlsx } from '../../utils/export';
 import type { AnyExportDataset } from '../../utils/export';
 
 interface DownloadDataButtonProps {
@@ -11,12 +11,19 @@ interface DownloadDataButtonProps {
   fileName?: string;
   /** `sm` sits in a chart-card header; `md` sits in a page header. */
   size?: 'sm' | 'md';
+  /** When set, adds a "PowerPoint" option that snapshots this one chart onto a slide. */
+  chartNode?: () => HTMLElement | null;
+  chartTitle?: string;
+  chartSubtitle?: string;
 }
 
 export default function DownloadDataButton({
   datasets,
   fileName,
   size = 'sm',
+  chartNode,
+  chartTitle,
+  chartSubtitle,
 }: DownloadDataButtonProps) {
   const { t } = useTranslation('reports');
   const [open, setOpen] = useState(false);
@@ -50,6 +57,23 @@ export default function DownloadDataButton({
     setBusy(true);
     try {
       await downloadXlsx(datasets, fileName ?? datasets[0]?.name ?? 'report');
+      setOpen(false);
+    } catch {
+      toast.error(t('download.failed'));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handlePptx = async () => {
+    if (!chartNode) return;
+    setBusy(true);
+    try {
+      await downloadPptx(
+        [{ title: chartTitle ?? fileName ?? '', subtitle: chartSubtitle, node: chartNode() }],
+        fileName ?? chartTitle ?? 'chart',
+        { coverSubtitle: t('download.pptxCoverSubtitle'), unavailable: t('download.pptxUnavailable') },
+      );
       setOpen(false);
     } catch {
       toast.error(t('download.failed'));
@@ -95,6 +119,20 @@ export default function DownloadDataButton({
             </span>
             <span className="dl-item-hint">{t('download.excelHint')}</span>
           </button>
+          {chartNode && (
+            <button
+              type="button"
+              className="dl-item"
+              role="menuitem"
+              onClick={handlePptx}
+              disabled={busy}
+            >
+              <span className="dl-item-name">
+                {busy ? t('download.preparing') : t('download.pptx')}
+              </span>
+              <span className="dl-item-hint">{t('download.pptxHint')}</span>
+            </button>
+          )}
           <div className="dl-foot">{t('download.rowCount', { count: rowCount })}</div>
         </div>
       )}

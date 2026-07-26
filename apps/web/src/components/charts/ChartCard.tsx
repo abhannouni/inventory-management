@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import DownloadDataButton from './DownloadDataButton';
+import { useRegisterChart } from './useChartExport';
 import type { AnyExportDataset, ExportColumn } from '../../utils/export';
 
 export interface LegendItem {
@@ -12,6 +13,13 @@ export interface LegendItem {
 }
 
 interface ChartCardProps {
+  /**
+   * Unique within the page — keys this chart into the page-level download picker.
+   * Optional: dashboards that don't wrap in a ChartExportProvider have nothing to
+   * register with, so falling back to the title is enough to keep the prop terse
+   * on pages that only need the per-card CSV/Excel download.
+   */
+  id?: string;
   title: string;
   subtitle?: string;
   legend?: LegendItem[];
@@ -28,6 +36,7 @@ interface ChartCardProps {
  * gated behind a tooltip or a colour), and a download of the exact rows plotted.
  */
 export default function ChartCard({
+  id,
   title,
   subtitle,
   legend,
@@ -36,6 +45,9 @@ export default function ChartCard({
 }: ChartCardProps) {
   const { t } = useTranslation('reports');
   const [showTable, setShowTable] = useState(false);
+  const captureRef = useRef<HTMLDivElement>(null);
+
+  useRegisterChart(id ?? title, title, subtitle, dataset, captureRef);
 
   return (
     <section className="chart-card viz-root">
@@ -54,25 +66,35 @@ export default function ChartCard({
           >
             {showTable ? t('chart.showChart') : t('chart.showTable')}
           </button>
-          <DownloadDataButton datasets={[dataset]} fileName={dataset.name} />
+          <DownloadDataButton
+            datasets={[dataset]}
+            fileName={dataset.name}
+            chartNode={() => captureRef.current}
+            chartTitle={title}
+            chartSubtitle={subtitle}
+          />
         </div>
       </header>
 
-      {/* A single series needs no legend — the title already names what is plotted. */}
-      {legend && legend.length > 1 && !showTable && (
-        <ul className="chart-legend">
-          {legend.map((item) => (
-            <li key={item.label} className="chart-legend-item">
-              <span className="chart-legend-swatch" style={{ background: item.color }} />
-              {item.icon && <span className="chart-legend-icon">{item.icon}</span>}
-              <span className="chart-legend-label">{item.label}</span>
-            </li>
-          ))}
-        </ul>
-      )}
+      {/* Everything below the header is what gets captured for a PowerPoint slide —
+          the toggle and download buttons never end up in the exported image. */}
+      <div ref={captureRef} className="chart-card-capture">
+        {/* A single series needs no legend — the title already names what is plotted. */}
+        {legend && legend.length > 1 && !showTable && (
+          <ul className="chart-legend">
+            {legend.map((item) => (
+              <li key={item.label} className="chart-legend-item">
+                <span className="chart-legend-swatch" style={{ background: item.color }} />
+                {item.icon && <span className="chart-legend-icon">{item.icon}</span>}
+                <span className="chart-legend-label">{item.label}</span>
+              </li>
+            ))}
+          </ul>
+        )}
 
-      <div className="chart-card-body">
-        {showTable ? <ChartTable dataset={dataset} /> : children}
+        <div className="chart-card-body">
+          {showTable ? <ChartTable dataset={dataset} /> : children}
+        </div>
       </div>
     </section>
   );
