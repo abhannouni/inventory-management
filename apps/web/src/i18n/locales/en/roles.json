@@ -48,7 +48,10 @@
     "audit_items": "Audit items",
     "schedules": "Schedules",
     "reports": "Reports",
-    "settings": "Settings"
+    "settings": "Settings",
+    "sell_out": "Sell-out",
+    "hr": "HR",
+    "product_requests": "Marketing"
   },
   "matrix": {
     "superAdminLocked": "The Super Administrator always holds every permission. This role cannot be edited — it is what guarantees you can never be locked out of the platform.",
