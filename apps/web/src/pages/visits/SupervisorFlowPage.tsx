@@ -8,16 +8,22 @@ import { checkin, checkout, submitVisitReport, fetchVisits, fetchActiveVisit } f
 import { fetchStores } from '../../store/slices/storesSlice';
 import { fetchSchedules } from '../../store/slices/schedulesSlice';
 import VisitTimer from '../../components/ui/VisitTimer';
-import CameraCapture from './CameraCapture';
-import { uploadApi } from '../../api/upload.api';
+import ReportCard from './ReportCard';
+import type { ReportCardLabels } from './ReportCard';
 import { formatDate } from '../../utils/format';
 import { getCurrentPosition, geolocationErrorMessage } from '../../utils/geolocation';
 import { useFeatureFlag } from '../../hooks/useFeatureFlag';
-import type { Visit } from '../../types';
-
-const MAX_PHOTO_SIZE = 10 * 1024 * 1024; // 10 MB — kept in sync with the API's upload limit
+import type { Visit, VisitReportCategory } from '../../types';
 
 /* ─────────── Types ─────────── */
+
+/** Client-side state for one report card, before it's been saved to the server. */
+interface CardState {
+  key: number;
+  category: VisitReportCategory | null;
+  note: string;
+  photos: string[];
+}
 type Step = 'checkin' | 'report' | 'confirm' | 'done';
 
 /* ─────────── Schedule grouping (for the expanded visits panel) ─────────── */
@@ -112,13 +118,9 @@ export default function SupervisorFlowPage({ onViewHistory }: SupervisorFlowPage
 
   const [visit, setVisit] = useState<Visit | null>(null);
 
-  const [title, setTitle]   = useState('');
-  const [note, setNote]     = useState('');
-  const [photos, setPhotos] = useState<string[]>([]);
-  const [uploading, setUploading] = useState(false);
-  const [cameraOpen, setCameraOpen] = useState(false);
-
-  const galleryInputRef = useRef<HTMLInputElement>(null);
+  const nextCardKey = useRef(0);
+  const blankCard = (): CardState => ({ key: nextCardKey.current++, category: null, note: '', photos: [] });
+  const [cards, setCards] = useState<CardState[]>(() => [blankCard()]);
 
   /* Load stores + ask the server whether a visit is already running */
   useEffect(() => {
@@ -147,10 +149,18 @@ export default function SupervisorFlowPage({ onViewHistory }: SupervisorFlowPage
     if (activeVisit && step === 'checkin') {
       setVisit(activeVisit);
       setStoreId(activeVisit.store_id);
-      setTitle(activeVisit.report_title ?? '');
-      setNote(activeVisit.report_note ?? '');
-      setPhotos(activeVisit.report_photos ?? []);
-      setStep(activeVisit.report_title ? 'confirm' : 'report');
+      if (activeVisit.report_cards && activeVisit.report_cards.length > 0) {
+        setCards(activeVisit.report_cards.map((c) => ({
+          key: nextCardKey.current++,
+          category: c.category,
+          note: c.note ?? '',
+          photos: c.photos,
+        })));
+        setStep('confirm');
+      } else {
+        setCards([blankCard()]);
+        setStep('report');
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeVisit]);
@@ -194,35 +204,48 @@ export default function SupervisorFlowPage({ onViewHistory }: SupervisorFlowPage
     }
   };
 
-  /* ── Step 2: Report ── */
-  const handlePhotoFile = async (file: File) => {
-    if (file.size > MAX_PHOTO_SIZE) { toast.error(t('supervisorFlow.report.toasts.fileTooLarge')); return; }
-    setUploading(true);
-    try {
-      const res = await uploadApi.upload(file);
-      setPhotos((p) => [...p, res.url]);
-    } catch (err) {
-      toast.error((err as Error).message || t('supervisorFlow.report.toasts.uploadFailed'));
-    } finally {
-      setUploading(false);
-    }
+  /* ── Step 2: Report (repeatable cards) ── */
+  const addCard = () => setCards((prev) => [...prev, blankCard()]);
+  const removeCard = (key: number) => setCards((prev) => prev.filter((c) => c.key !== key));
+  const updateCard = (key: number, patch: Partial<CardState>) =>
+    setCards((prev) => prev.map((c) => (c.key === key ? { ...c, ...patch } : c)));
+
+  const canSaveReport = cards.every((c) => c.photos.length > 0 && c.category !== null);
+
+  const reportCardLabels: ReportCardLabels = {
+    cardTitle: t('supervisorFlow.report.cardTitle'),
+    photoLabel: t('supervisorFlow.report.photoLabel'),
+    takePhoto: t('supervisorFlow.report.takePhoto'),
+    addPhoto: t('supervisorFlow.report.addPhoto'),
+    removePhoto: t('supervisorFlow.report.removePhoto'),
+    photoAlt: t('supervisorFlow.report.photoAlt'),
+    uploading: t('supervisorFlow.report.uploading'),
+    categoryLabel: t('supervisorFlow.report.categoryLabel'),
+    categoryOptions: {
+      display: t('supervisorFlow.report.categoryOptions.display'),
+      tg: t('supervisorFlow.report.categoryOptions.tg'),
+      mea: t('supervisorFlow.report.categoryOptions.mea'),
+      plv: t('supervisorFlow.report.categoryOptions.plv'),
+    },
+    noteLabel: t('supervisorFlow.report.noteLabel'),
+    notePlaceholder: t('supervisorFlow.report.notePlaceholder'),
+    removeCard: t('supervisorFlow.report.removeCard'),
+    fileTooLarge: t('supervisorFlow.report.toasts.fileTooLarge'),
+    uploadFailed: t('supervisorFlow.report.toasts.uploadFailed'),
   };
-
-  const handleCameraCapture = (file: File) => {
-    setCameraOpen(false);
-    handlePhotoFile(file);
-  };
-
-  const removePhoto = (idx: number) => setPhotos((p) => p.filter((_, i) => i !== idx));
-
-  const canSaveReport = title.trim() !== '' && photos.length > 0;
 
   const handleSaveReport = async () => {
     if (!visit || !canSaveReport) return;
     setBusy(true);
     const res = await dispatch(submitVisitReport({
       visitId: visit.id,
-      payload: { title: title.trim(), note: note.trim() || undefined, photos },
+      payload: {
+        cards: cards.map((c) => ({
+          category: c.category!,
+          note: c.note.trim() || undefined,
+          photos: c.photos,
+        })),
+      },
     }));
     setBusy(false);
     if (submitVisitReport.fulfilled.match(res)) {
@@ -434,87 +457,29 @@ export default function SupervisorFlowPage({ onViewHistory }: SupervisorFlowPage
               </div>
             </div>
 
-            {/* Photos — the first one must come straight from the camera, not the gallery */}
-            <div className="form-group" style={{ marginTop: 16, marginBottom: 16 }}>
-              <label className="form-label">{t('supervisorFlow.report.photoLabel')} *</label>
+            {/* Repeatable report cards — each has camera-only photos, a category, and an optional note */}
+            <div style={{ marginTop: 16 }}>
+              {cards.map((card, idx) => (
+                <ReportCard
+                  key={card.key}
+                  index={idx}
+                  labels={reportCardLabels}
+                  category={card.category}
+                  onCategoryChange={(category) => updateCard(card.key, { category })}
+                  note={card.note}
+                  onNoteChange={(note) => updateCard(card.key, { note })}
+                  photos={card.photos}
+                  onPhotosChange={(photos) => updateCard(card.key, { photos })}
+                  onRemove={cards.length > 1 ? () => removeCard(card.key) : undefined}
+                />
+              ))}
 
-              {photos.length === 0 ? (
-                <button
-                  type="button"
-                  className="photo-capture-btn"
-                  onClick={() => setCameraOpen(true)}
-                  disabled={uploading}
-                >
-                  {uploading ? (
-                    <span style={{ fontSize: 13 }}>{t('supervisorFlow.report.uploading')}</span>
-                  ) : (
-                    <>
-                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-                        <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
-                        <circle cx="12" cy="13" r="4"/>
-                      </svg>
-                      {t('supervisorFlow.report.takePhoto')}
-                    </>
-                  )}
-                </button>
-              ) : (
-                <>
-                  <div className="sf-photo-grid">
-                    {photos.map((url, idx) => (
-                      <div key={url + idx} className="sf-photo-item">
-                        <img src={url} alt={t('supervisorFlow.report.photoAlt')} />
-                        <button
-                          type="button"
-                          className="sf-photo-remove"
-                          onClick={() => removePhoto(idx)}
-                          aria-label={t('supervisorFlow.report.removePhoto')}
-                        >
-                          ×
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                  <button
-                    type="button"
-                    className="sf-add-photo-btn"
-                    onClick={() => galleryInputRef.current?.click()}
-                    disabled={uploading}
-                  >
-                    {uploading ? t('supervisorFlow.report.uploading') : `+ ${t('supervisorFlow.report.addPhoto')}`}
-                  </button>
-                </>
-              )}
-
-              {/* Additional photos: lets the device offer camera or gallery */}
-              <input
-                type="file"
-                accept="image/*"
-                style={{ display: 'none' }}
-                ref={galleryInputRef}
-                onChange={(e) => { const f = e.target.files?.[0]; if (f) handlePhotoFile(f); e.target.value = ''; }}
-              />
-            </div>
-
-            <div className="form-group" style={{ marginBottom: 16 }}>
-              <label className="form-label">{t('supervisorFlow.report.titleLabel')} *</label>
-              <input
-                type="text"
-                className="form-input"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder={t('supervisorFlow.report.titlePlaceholder')}
-              />
-            </div>
-
-            <div className="form-group" style={{ marginBottom: 0 }}>
-              <label className="form-label">{t('supervisorFlow.report.noteLabel')}</label>
-              <textarea
-                className="form-textarea"
-                value={note}
-                onChange={(e) => setNote(e.target.value)}
-                placeholder={t('supervisorFlow.report.notePlaceholder')}
-                rows={3}
-              />
+              <button type="button" className="sf-add-card-btn" onClick={addCard}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                  <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                {t('supervisorFlow.report.addCard')}
+              </button>
             </div>
 
             <div className="mf-sticky-footer">
@@ -559,23 +524,31 @@ export default function SupervisorFlowPage({ onViewHistory }: SupervisorFlowPage
                 </svg>
               </div>
               <div>
-                <div className="mf-store-name">{title}</div>
-                <div className="mf-store-sub">{storeName}</div>
+                <div className="mf-store-name">{storeName}</div>
+                <div className="mf-store-sub">{t('supervisorFlow.confirm.cardsCount', { count: (visit?.report_cards ?? cards).length })}</div>
               </div>
             </div>
 
-            {note && (
-              <p style={{ color: 'var(--gray-600)', fontSize: 14, marginBottom: 16, whiteSpace: 'pre-wrap' }}>{note}</p>
-            )}
-
-            <label className="form-label">{t('supervisorFlow.confirm.photosLabel')}</label>
-            <div className="sf-photo-grid" style={{ marginTop: 8, marginBottom: 16 }}>
-              {photos.map((url, idx) => (
-                <div key={url + idx} className="sf-photo-item">
-                  <img src={url} alt={t('supervisorFlow.report.photoAlt')} />
+            {(visit?.report_cards ?? []).map((card, idx) => (
+              <div key={card.id} className="sf-report-card">
+                <div className="sf-report-card-header">
+                  <span className="sf-report-card-title">{t('supervisorFlow.report.cardTitle')} {idx + 1}</span>
+                  <span className="sf-category-option selected" style={{ flex: 'none', cursor: 'default' }}>
+                    {t(`supervisorFlow.report.categoryOptions.${card.category}`)}
+                  </span>
                 </div>
-              ))}
-            </div>
+                {card.note && (
+                  <p style={{ color: 'var(--gray-600)', fontSize: 14, marginBottom: 12, whiteSpace: 'pre-wrap' }}>{card.note}</p>
+                )}
+                <div className="sf-photo-grid">
+                  {card.photos.map((url, pIdx) => (
+                    <div key={url + pIdx} className="sf-photo-item">
+                      <img src={url} alt={t('supervisorFlow.report.photoAlt')} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
 
             <button
               className="btn btn-primary btn-lg mf-full-btn"
@@ -616,8 +589,6 @@ export default function SupervisorFlowPage({ onViewHistory }: SupervisorFlowPage
         )}
 
       </AnimatePresence>
-
-      {cameraOpen && <CameraCapture onCapture={handleCameraCapture} onClose={() => setCameraOpen(false)} />}
     </div>
   );
 }

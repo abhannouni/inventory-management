@@ -95,7 +95,14 @@
       "photosTitle_many": "{{count}} صورة",
       "photosTitle_other": "{{count}} صورة",
       "noPhotos": "لا توجد صور",
-      "photoAlt": "ملاحظة"
+      "photoAlt": "ملاحظة",
+      "cardsCount": "بطاقات الملاحظة",
+      "cardsTitle_zero": "لا توجد بطاقات ملاحظة",
+      "cardsTitle_one": "بطاقة ملاحظة واحدة",
+      "cardsTitle_two": "بطاقتا ملاحظة",
+      "cardsTitle_few": "{{count}} بطاقات ملاحظة",
+      "cardsTitle_many": "{{count}} بطاقة ملاحظة",
+      "cardsTitle_other": "{{count}} بطاقة ملاحظة"
     }
   },
   "checkin": {
@@ -255,17 +262,25 @@
     },
     "title": "زيارة إشرافية",
     "report": {
-      "sectionSubtitle": "أضف صورة وعنوانًا وملاحظة",
+      "sectionSubtitle": "أضف بطاقة ملاحظة واحدة على الأقل",
+      "cardTitle": "بطاقة",
       "photoLabel": "صورة",
       "takePhoto": "التقاط صورة",
       "addPhoto": "إضافة صورة",
       "removePhoto": "حذف الصورة",
       "photoAlt": "ملاحظة",
       "uploading": "جارٍ الرفع…",
-      "titleLabel": "العنوان",
-      "titlePlaceholder": "مثال: نفاد مخزون رف الألبان",
+      "categoryLabel": "الفئة",
+      "categoryOptions": {
+        "display": "Display",
+        "tg": "TG",
+        "mea": "MEA",
+        "plv": "PLV"
+      },
       "noteLabel": "ملاحظة (اختياري)",
       "notePlaceholder": "ملاحظات إضافية…",
+      "addCard": "إضافة بطاقة",
+      "removeCard": "حذف البطاقة",
       "saveAndContinue": "حفظ ومتابعة",
       "camera": {
         "capture": "التقاط",
@@ -284,6 +299,12 @@
       "sectionTitle": "راجع قبل المغادرة",
       "sectionSubtitle": "راجع ملاحظتك ثم أكّد تسجيل الخروج",
       "photosLabel": "الصور",
+      "cardsCount_zero": "لا توجد بطاقات",
+      "cardsCount_one": "بطاقة واحدة",
+      "cardsCount_two": "بطاقتان",
+      "cardsCount_few": "{{count}} بطاقات",
+      "cardsCount_many": "{{count}} بطاقة",
+      "cardsCount_other": "{{count}} بطاقة",
       "confirmCheckOut": "تأكيد تسجيل الخروج",
       "toasts": {
         "visitCompleted": "اكتملت الزيارة!",

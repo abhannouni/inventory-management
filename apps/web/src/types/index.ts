@@ -155,6 +155,15 @@ export interface AuditItem {
   updated_at: string;
 }
 
+export type VisitReportCategory = 'display' | 'tg' | 'mea' | 'plv';
+
+export interface VisitReportCard {
+  id: string;
+  category: VisitReportCategory;
+  note: string | null;
+  photos: string[];
+}
+
 export interface Visit {
   id: string;
   user_id: string;
@@ -176,10 +185,12 @@ export interface Visit {
   elapsed_seconds: number;
   /** How much of the POS product list has been audited. Check-out is blocked until complete. */
   audit_progress?: AuditProgress;
-  /** Supervisor spot-check report, filled in instead of a product audit. */
+  /** Legacy supervisor spot-check report — superseded by report_cards, kept for historical visits. */
   report_title: string | null;
   report_note: string | null;
   report_photos: string[];
+  /** Supervisor spot-check report cards, filled in instead of a product audit. */
+  report_cards?: VisitReportCard[];
   /** Merchandiser "before/after" shelf photos, bracketing the product audit. */
   initial_note: string | null;
   initial_photos: string[];

@@ -45,7 +45,7 @@ export class VisitsController {
 
   @Patch(':id/report')
   @RequirePermissions('visits.update')
-  @ApiOperation({ summary: "Save a supervisor's spot-check report (title, note, photos) on an open visit" })
+  @ApiOperation({ summary: "Save a supervisor's spot-check report cards (category, note, photos) on an open visit" })
   submitReport(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: SubmitVisitReportDto,

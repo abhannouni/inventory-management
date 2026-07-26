@@ -46,6 +46,9 @@ export default function VisitDetailPage() {
   if (loading) return <Spinner center size="lg" />;
   if (!visit) return <div className="empty-state"><p>{t('detail.notFound')}</p></div>;
 
+  const reportCards = visit.report_cards ?? [];
+  const hasReport = reportCards.length > 0 || !!visit.report_title;
+
   const items = visit.audit_items || auditItems;
   const total = items.length;
   const inStock = items.filter((i) => i.status === 'in_stock').length;
@@ -104,7 +107,17 @@ export default function VisitDetailPage() {
           </div>
         </motion.div>
 
-        {visit.report_title ? (
+        {reportCards.length > 0 ? (
+          <motion.div className="card" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+            <div className="card-body">
+              <h3 style={{ fontSize: 14, fontWeight: 600, color: 'var(--gray-700)', marginBottom: 12 }}>{t('detail.report.title')}</h3>
+              <div className="detail-item">
+                <span className="detail-label">{t('detail.report.cardsCount')}</span>
+                <span className="detail-value">{reportCards.length}</span>
+              </div>
+            </div>
+          </motion.div>
+        ) : visit.report_title ? (
           <motion.div className="card" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
             <div className="card-body">
               <h3 style={{ fontSize: 14, fontWeight: 600, color: 'var(--gray-700)', marginBottom: 12 }}>{t('detail.report.title')}</h3>
@@ -162,7 +175,7 @@ export default function VisitDetailPage() {
         )}
       </div>
 
-      {!visit.report_title && (visit.initial_photos.length > 0 || visit.final_photos.length > 0) && (
+      {!hasReport && (visit.initial_photos.length > 0 || visit.final_photos.length > 0) && (
         <motion.div className="card" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} style={{ marginBottom: 20 }}>
           <div className="card-header" style={{ padding: '16px 20px' }}>
             <h3 style={{ fontSize: 14, fontWeight: 600 }}>{t('detail.beforeAfter.title')}</h3>
@@ -202,7 +215,35 @@ export default function VisitDetailPage() {
         </motion.div>
       )}
 
-      {visit.report_title ? (
+      {reportCards.length > 0 ? (
+        <motion.div className="card" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+          <div className="card-header" style={{ padding: '16px 20px' }}>
+            <h3 style={{ fontSize: 14, fontWeight: 600 }}>{t('detail.report.cardsTitle', { count: reportCards.length })}</h3>
+          </div>
+          <div className="card-body">
+            {reportCards.map((card, idx) => (
+              <div key={card.id} className="sf-report-card" style={idx === reportCards.length - 1 ? { marginBottom: 0 } : undefined}>
+                <div className="sf-report-card-header">
+                  <span className="sf-report-card-title">{t('supervisorFlow.report.cardTitle')} {idx + 1}</span>
+                  <span className="sf-category-option selected" style={{ flex: 'none', cursor: 'default' }}>
+                    {t(`supervisorFlow.report.categoryOptions.${card.category}`)}
+                  </span>
+                </div>
+                {card.note && (
+                  <p style={{ fontSize: 13, color: 'var(--gray-600)', marginBottom: 12, whiteSpace: 'pre-wrap' }}>{card.note}</p>
+                )}
+                <div className="sf-photo-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))' }}>
+                  {card.photos.map((url) => (
+                    <a key={url} href={url} target="_blank" rel="noopener noreferrer" className="sf-photo-item">
+                      <img src={url} alt={t('detail.report.photoAlt')} />
+                    </a>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      ) : visit.report_title ? (
         <motion.div className="card" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
           <div className="card-header" style={{ padding: '16px 20px' }}>
             <h3 style={{ fontSize: 14, fontWeight: 600 }}>{t('detail.report.photosTitle', { count: visit.report_photos.length })}</h3>

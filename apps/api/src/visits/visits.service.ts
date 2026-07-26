@@ -56,6 +56,9 @@ const VISIT_INCLUDE = {
   auditItems: {
     include: { product: true },
   },
+  report_cards: {
+    orderBy: { position: 'asc' },
+  },
 } as const;
 
 @Injectable()
@@ -145,9 +148,12 @@ export class VisitsService {
   }
 
   /**
-   * Supervisor spot-check: saves the title/note/photos while the visit is still
-   * open. Kept separate from checkout so the supervisor can review what they
-   * entered (the "confirm" step) before the visit actually closes.
+   * Supervisor spot-check: saves the full set of report cards while the visit is
+   * still open. Kept separate from checkout so the supervisor can review what
+   * they entered (the "confirm" step) before the visit actually closes.
+   *
+   * Replaces the visit's entire card set on every call — the client always
+   * submits the full, current list rather than incremental diffs.
    */
   async submitReport(id: string, dto: SubmitVisitReportDto, user: User) {
     const visit = await this.prisma.visit.findUnique({ where: { id } });
@@ -157,15 +163,20 @@ export class VisitsService {
       throw new ConflictException('Visit is already completed');
     }
 
-    const updated = await this.prisma.visit.update({
-      where: { id },
-      data: {
-        report_title: dto.title,
-        report_note: dto.note ?? null,
-        report_photos: dto.photos,
-      },
-      include: VISIT_INCLUDE,
+    const updated = await this.prisma.$transaction(async (tx) => {
+      await tx.visitReportCard.deleteMany({ where: { visit_id: id } });
+      await tx.visitReportCard.createMany({
+        data: dto.cards.map((card, index) => ({
+          visit_id: id,
+          category: card.category,
+          note: card.note ?? null,
+          photos: card.photos,
+          position: index,
+        })),
+      });
+      return tx.visit.findUniqueOrThrow({ where: { id }, include: VISIT_INCLUDE });
     });
+
     return {
       ...this.serializeVisit(updated),
       audit_progress: await this.auditProgress(updated.id, updated.store_id),
@@ -231,9 +242,11 @@ export class VisitsService {
 
     if (user.role === UserRole.supervisor) {
       // A supervisor's visit is a spot-check report, not a product audit: it must
-      // have a title and at least one photo before the visit can be closed.
-      if (!visit.report_title || visit.report_photos.length === 0) {
-        throw new ConflictException('Add a report (photo and title) before checking out');
+      // have at least one report card (photos + category) before the visit can
+      // be closed.
+      const cardCount = await this.prisma.visitReportCard.count({ where: { visit_id: visit.id } });
+      if (cardCount === 0) {
+        throw new ConflictException('Add at least one report card (photo and category) before checking out');
       }
     } else {
       // A visit is finished by doing the work, not by pressing a button: every

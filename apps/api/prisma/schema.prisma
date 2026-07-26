@@ -21,6 +21,13 @@ enum VisitStatus {
   completed
 }
 
+enum VisitReportCategory {
+  display
+  tg
+  mea
+  plv
+}
+
 enum AuditItemStatus {
   in_stock
   stock_disponible
@@ -308,9 +315,9 @@ model Visit {
   duration_seconds Int?
   status           VisitStatus @default(open)
 
-  /// Supervisor spot-check report (title + note + photos), filled in during the
-  /// visit in place of the merchandiser's product audit. Required before checkout
-  /// when the visitor is a supervisor.
+  /// Legacy supervisor spot-check report (title + note + photos) — superseded by
+  /// report_cards below. No longer written to; kept so historical visits from
+  /// before the multi-card redesign still display correctly.
   report_title  String?
   report_note   String?
   report_photos String[] @default([])
@@ -322,11 +329,32 @@ model Visit {
   final_note     String?
   final_photos   String[] @default([])
 
+  /// Supervisor spot-check report cards (one or more), filled in during the visit
+  /// in place of the merchandiser's product audit. At least one is required
+  /// before checkout when the visitor is a supervisor.
+  report_cards VisitReportCard[]
+
   auditItems AuditItem[]
 
   /// Supports the "one open visit per merchandiser" lookup and the resume query.
   @@index([user_id, status])
   @@map("visits")
+}
+
+model VisitReportCard {
+  id         String               @id @default(uuid())
+  visit      Visit                @relation(fields: [visit_id], references: [id], onDelete: Cascade)
+  visit_id   String
+  category   VisitReportCategory
+  note       String?
+  photos     String[]
+  /// Preserves the order the supervisor entered cards in — submitReport always
+  /// replaces the full set, so this can't be inferred from created_at alone.
+  position   Int                  @default(0)
+  created_at DateTime             @default(now())
+
+  @@index([visit_id])
+  @@map("visit_report_cards")
 }
 
 model AuditItem {

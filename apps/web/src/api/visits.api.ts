@@ -1,5 +1,5 @@
 import { api } from './client';
-import type { Visit } from '../types';
+import type { Visit, VisitReportCategory } from '../types';
 
 // Timestamps are deliberately absent: the server stamps check-in and check-out
 // from its own clock and derives the duration from them.
@@ -27,10 +27,14 @@ export interface FindVisitsParams {
   [key: string]: string | undefined;
 }
 
-export interface SubmitReportPayload {
-  title: string;
+export interface VisitReportCardPayload {
+  category: VisitReportCategory;
   note?: string;
   photos: string[];
+}
+
+export interface SubmitReportPayload {
+  cards: VisitReportCardPayload[];
 }
 
 export interface SubmitStatePayload {
@@ -45,7 +49,7 @@ export const visitsApi = {
   /** The caller's open visit, or null — the source of truth when resuming the timer. */
   findActive: () => api.get<Visit | null>('/visits/active'),
   findOne: (id: string) => api.get<Visit>(`/visits/${id}`),
-  /** Supervisor spot-check: saves title/note/photos on an open visit before checkout. */
+  /** Supervisor spot-check: saves the full set of report cards on an open visit before checkout. */
   submitReport: (visitId: string, payload: SubmitReportPayload) =>
     api.patch<Visit>(`/visits/${visitId}/report`, payload),
   /** Merchandiser "before" shelf state, saved before the product audit. */

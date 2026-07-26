@@ -91,7 +91,10 @@
       "photosTitle_one": "Photo ({{count}})",
       "photosTitle_other": "Photos ({{count}})",
       "noPhotos": "No photos",
-      "photoAlt": "report"
+      "photoAlt": "report",
+      "cardsCount": "Report cards",
+      "cardsTitle_one": "Report Card ({{count}})",
+      "cardsTitle_other": "Report Cards ({{count}})"
     }
   },
   "checkin": {
@@ -245,17 +248,25 @@
     },
     "title": "Supervision Visit",
     "report": {
-      "sectionSubtitle": "Add a photo, a title and a note",
+      "sectionSubtitle": "Add at least one report card",
+      "cardTitle": "Card",
       "photoLabel": "Photo",
       "takePhoto": "Take a photo",
       "addPhoto": "Add a photo",
       "removePhoto": "Remove photo",
       "photoAlt": "report",
       "uploading": "Uploading…",
-      "titleLabel": "Title",
-      "titlePlaceholder": "E.g. Out of stock — dairy aisle",
+      "categoryLabel": "Category",
+      "categoryOptions": {
+        "display": "Display",
+        "tg": "TG",
+        "mea": "MEA",
+        "plv": "PLV"
+      },
       "noteLabel": "Note (optional)",
       "notePlaceholder": "Additional observations…",
+      "addCard": "Add card",
+      "removeCard": "Remove card",
       "saveAndContinue": "Save & Continue",
       "camera": {
         "capture": "Capture",
@@ -274,6 +285,8 @@
       "sectionTitle": "Review before you leave",
       "sectionSubtitle": "Check your report, then confirm check-out",
       "photosLabel": "Photos",
+      "cardsCount_one": "{{count}} card",
+      "cardsCount_other": "{{count}} cards",
       "confirmCheckOut": "Confirm Check Out",
       "toasts": {
         "visitCompleted": "Visit completed!",

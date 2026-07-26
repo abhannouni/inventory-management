@@ -91,7 +91,10 @@
       "photosTitle_one": "Photo ({{count}})",
       "photosTitle_other": "Photos ({{count}})",
       "noPhotos": "Aucune photo",
-      "photoAlt": "constat"
+      "photoAlt": "constat",
+      "cardsCount": "Fiches de constat",
+      "cardsTitle_one": "Fiche de constat ({{count}})",
+      "cardsTitle_other": "Fiches de constat ({{count}})"
     }
   },
   "checkin": {
@@ -245,17 +248,25 @@
     },
     "title": "Visite de supervision",
     "report": {
-      "sectionSubtitle": "Ajoutez une photo, un titre et une note",
+      "sectionSubtitle": "Ajoutez au moins une fiche de constat",
+      "cardTitle": "Fiche",
       "photoLabel": "Photo",
       "takePhoto": "Prendre une photo",
       "addPhoto": "Ajouter une photo",
       "removePhoto": "Supprimer la photo",
       "photoAlt": "constat",
       "uploading": "Envoi en cours…",
-      "titleLabel": "Titre",
-      "titlePlaceholder": "Ex : Rupture de stock rayon lait",
+      "categoryLabel": "Catégorie",
+      "categoryOptions": {
+        "display": "Display",
+        "tg": "TG",
+        "mea": "MEA",
+        "plv": "PLV"
+      },
       "noteLabel": "Note (facultatif)",
       "notePlaceholder": "Observations complémentaires…",
+      "addCard": "Ajouter une fiche",
+      "removeCard": "Supprimer la fiche",
       "saveAndContinue": "Enregistrer et continuer",
       "camera": {
         "capture": "Capturer",
@@ -274,6 +285,8 @@
       "sectionTitle": "Vérifier avant de sortir",
       "sectionSubtitle": "Relisez votre constat puis confirmez la sortie",
       "photosLabel": "Photos",
+      "cardsCount_one": "{{count}} fiche",
+      "cardsCount_other": "{{count}} fiches",
       "confirmCheckOut": "Confirmer la sortie",
       "toasts": {
         "visitCompleted": "Visite terminée !",

@@ -30,6 +30,7 @@ export class PrismaService implements OnModuleInit, OnModuleDestroy {
   readonly sellOut: PrismaClient['sellOut'];
   readonly featureFlag: PrismaClient['featureFlag'];
   readonly productRequest: PrismaClient['productRequest'];
+  readonly visitReportCard: PrismaClient['visitReportCard'];
 
   constructor(config: ConfigService) {
     const adapter = new PrismaPg(config.get<string>('DATABASE_URL')!);
@@ -59,6 +60,7 @@ export class PrismaService implements OnModuleInit, OnModuleDestroy {
     this.sellOut = this.client.sellOut;
     this.featureFlag = this.client.featureFlag;
     this.productRequest = this.client.productRequest;
+    this.visitReportCard = this.client.visitReportCard;
   }
 
   $transaction: PrismaClient['$transaction'] = (...args: any[]) =>
