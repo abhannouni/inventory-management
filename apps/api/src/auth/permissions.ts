@@ -185,8 +185,11 @@ export const ROLE_PRESETS: Record<string, string[]> = {
     'users.read',
     'pos.read',
     'regions.read',
-    'products.read',
-    'inventory.read',
+    // Standalone Produits/Stock/Rapports pages removed from this role's
+    // sidebar by request. The audit/visit flow still reads the product
+    // catalog and product-store assignments — see `RequireAnyPermission`
+    // on the products and product-store list endpoints, which fall back
+    // to `visits.create`/`visits.update`/`audit_items.*` for exactly this.
     ...crud('schedules', '').map((p) => p.code),
     'visits.read',
     // A supervisor performs their own spot-check visits too (not just field
@@ -199,7 +202,6 @@ export const ROLE_PRESETS: Record<string, string[]> = {
     'audit_items.read',
     'audit_items.create',
     'audit_items.update',
-    'reports.read',
     'kpis.read',
     'dashboards.read',
     'sell_out.read',
@@ -210,18 +212,15 @@ export const ROLE_PRESETS: Record<string, string[]> = {
 
   merchandiser: [
     'pos.read',
-    'products.read',
-    'inventory.read',
+    // See the comment on `supervisor` above — Produits/Stock/Rapports removed
+    // from the sidebar; the field audit flow keeps working via the
+    // `RequireAnyPermission` fallback on those endpoints.
     'schedules.read',
     'visits.read',
     'visits.create',
     'visits.update',
     ...crud('audit_items', '').map((p) => p.code),
     'dashboards.read',
-    // The reports service already scopes merchandisers to their own visits
-    // ("merchandiser → own visits" per its own doc comment); the endpoint was
-    // simply never gated. This formalizes access that already worked.
-    'reports.read',
     ...crud('product_requests', '').map((p) => p.code),
   ],
 };

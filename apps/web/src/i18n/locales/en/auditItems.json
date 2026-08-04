@@ -4,13 +4,21 @@
   "bulkAudit": "Bulk Audit",
   "addAuditItem": "Add Audit Item",
   "allVisits": "All visits",
+  "filters": {
+    "store": "Store",
+    "allStores": "All stores",
+    "from": "From",
+    "to": "To",
+    "visit": "Visit"
+  },
   "table": {
     "product": "Product",
     "qtyFound": "Qty Found",
     "status": "Status",
     "notes": "Notes",
     "photo": "Photo",
-    "empty": "No audit items found"
+    "empty": "No audit items found",
+    "noVisitSelected": "Select a visit above to see its audit items, or adjust the filters."
   },
   "modals": {
     "createTitle": "Create Audit Item",
@@ -52,6 +60,11 @@
       "productRequired": "Product is required",
       "qtyRequired": "Quantity is required",
       "qtyInvalid": "Invalid quantity"
+    },
+    "duplicate": {
+      "title": "Already audited",
+      "message": "This product was already audited on this visit (previous quantity found: {{qty}}). Saving will update that existing entry.",
+      "useExisting": "Use previous quantity"
     },
     "toasts": {
       "fileTooLarge": "File must be under 5 MB",

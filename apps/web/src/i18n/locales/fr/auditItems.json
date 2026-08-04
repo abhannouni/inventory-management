@@ -4,13 +4,21 @@
   "bulkAudit": "Audit groupé",
   "addAuditItem": "Ajouter un élément",
   "allVisits": "Toutes les visites",
+  "filters": {
+    "store": "Magasin",
+    "allStores": "Tous les magasins",
+    "from": "Du",
+    "to": "Au",
+    "visit": "Visite"
+  },
   "table": {
     "product": "Produit",
     "qtyFound": "Qté trouvée",
     "status": "Statut",
     "notes": "Notes",
     "photo": "Photo",
-    "empty": "Aucun élément d'audit trouvé"
+    "empty": "Aucun élément d'audit trouvé",
+    "noVisitSelected": "Sélectionnez une visite ci-dessus pour voir ses éléments d'audit, ou ajustez les filtres."
   },
   "modals": {
     "createTitle": "Créer un élément d'audit",
@@ -52,6 +60,11 @@
       "productRequired": "Le produit est requis",
       "qtyRequired": "La quantité est requise",
       "qtyInvalid": "Quantité invalide"
+    },
+    "duplicate": {
+      "title": "Déjà audité",
+      "message": "Ce produit a déjà été audité lors de cette visite (quantité trouvée précédemment : {{qty}}). En enregistrant, vous mettrez à jour cette entrée existante.",
+      "useExisting": "Reprendre la quantité précédente"
     },
     "toasts": {
       "fileTooLarge": "Le fichier doit faire moins de 5 Mo",

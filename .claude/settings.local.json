@@ -74,7 +74,20 @@
       "Bash(curl -sL \"https://www.bourchanin.ma/wp-content/uploads/2025/10/favicon-36x36.png\" -o \".firecrawl/bourchanin-favicon.png\" -w \"%{http_code} %{size_download}\\\\n\")",
       "Bash(perl -pi -e 's/#1558C0/#25001B/g; s/#1D6ADE/#310024/g; s/#60A5FA/#C3B9AD/g; s/#2B7FEC/#4A0F3A/g' styles/components.css)",
       "Bash(perl -pi -e 's/rgba\\\\\\(29,106,222,/rgba\\(49,0,36,/g; s/rgba\\\\\\(21,88,192,/rgba\\(37,0,27,/g; s/rgba\\\\\\(43,127,236,/rgba\\(74,15,58,/g; s/rgba\\\\\\(96,165,250,/rgba\\(195,185,173,/g' styles/components.css)",
-      "Bash(perl -pi -e 's/#1D6ADE/#310024/g' pages/visits/MerchandiserFlowPage.tsx pages/reports/VisitsReport.tsx components/charts/tokens.ts pages/pos/PosMap.tsx)"
+      "Bash(perl -pi -e 's/#1D6ADE/#310024/g' pages/visits/MerchandiserFlowPage.tsx pages/reports/VisitsReport.tsx components/charts/tokens.ts pages/pos/PosMap.tsx)",
+      "Bash(pnpm --filter web exec tsc --noEmit -p .)",
+      "Bash(curl -s http://localhost:3001/api/health)",
+      "Bash(pnpm --filter api exec tsc --noEmit -p .)",
+      "Bash(ps -p 33204 -o pid,ppid,args)",
+      "Bash(wmic process *)",
+      "PowerShell(Get-CimInstance Win32_Process -Filter \"ProcessId=33204\")",
+      "Bash(pnpm --filter api build)",
+      "PowerShell(Get-CimInstance Win32_Process -Filter \"ProcessId=34404\")",
+      "PowerShell(Stop-Process -Id 33204 -Force -ErrorAction SilentlyContinue)",
+      "PowerShell(Stop-Process -Id 34404 -Force -ErrorAction SilentlyContinue)",
+      "PowerShell(Get-Process -Id 33204 -ErrorAction SilentlyContinue)",
+      "Bash(node --enable-source-maps dist/src/main)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3001/api/auth/me)"
     ]
   }
 }

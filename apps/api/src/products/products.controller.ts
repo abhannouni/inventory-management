@@ -25,6 +25,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { RequirePermissions } from '../auth/decorators/require-permissions.decorator';
+import { RequireAnyPermission } from '../auth/decorators/require-any-permission.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../auth/guards/permissions.guard';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -42,14 +43,16 @@ export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Get()
-  @RequirePermissions('products.read')
+  // Also readable by whoever can log an audit — the audit-item picker needs
+  // the catalog even for roles without standalone Products-page access.
+  @RequireAnyPermission('products.read', 'audit_items.create', 'audit_items.update')
   @ApiOperation({ summary: 'List all products in the catalog' })
   findAll() {
     return this.productsService.findAll();
   }
 
   @Get(':id')
-  @RequirePermissions('products.read')
+  @RequireAnyPermission('products.read', 'audit_items.create', 'audit_items.update')
   @ApiOperation({ summary: 'Get a product from the catalog' })
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.productsService.findOne(id);

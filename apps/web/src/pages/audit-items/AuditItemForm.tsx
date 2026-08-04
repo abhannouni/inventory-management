@@ -1,25 +1,28 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import Input from '../../components/ui/Input';
 import Select from '../../components/ui/Select';
 import Button from '../../components/ui/Button';
 import { uploadApi } from '../../api/upload.api';
+import { auditItemsApi } from '../../api/audit-items.api';
 import type { AuditItem, Visit, Product } from '../../types';
 
 interface AuditItemFormProps {
   visits: Visit[];
   products: Product[];
   initialData?: AuditItem;
+  /** Pre-selects the visit the page is currently filtered on, for new items. */
+  defaultVisitId?: string;
   onSubmit: (data: any) => Promise<void>;
   onCancel: () => void;
 }
 
-export default function AuditItemForm({ visits, products, initialData, onSubmit, onCancel }: AuditItemFormProps) {
+export default function AuditItemForm({ visits, products, initialData, defaultVisitId, onSubmit, onCancel }: AuditItemFormProps) {
   const { t, i18n } = useTranslation('auditItems');
   const { t: tCommon } = useTranslation('common');
   const [form, setForm] = useState({
-    visit_id: initialData?.visit_id || '',
+    visit_id: initialData?.visit_id || defaultVisitId || '',
     product_id: initialData?.product_id || '',
     qty_found: initialData?.qty_found?.toString() || '',
     notes: initialData?.notes || '',
@@ -29,7 +32,25 @@ export default function AuditItemForm({ visits, products, initialData, onSubmit,
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState(initialData?.photo_url || '');
+  const [visitItems, setVisitItems] = useState<AuditItem[]>([]);
   const fileRef = useRef<HTMLInputElement>(null);
+
+  // Load what's already been audited on the selected visit, so we can warn
+  // about (and offer to fix) re-auditing the same product instead of hitting
+  // the backend's unique-constraint error on submit.
+  useEffect(() => {
+    if (initialData || !form.visit_id) { setVisitItems([]); return; }
+    let cancelled = false;
+    auditItemsApi.findAll({ visit_id: form.visit_id })
+      .then((res) => { if (!cancelled) setVisitItems(res); })
+      .catch(() => { if (!cancelled) setVisitItems([]); });
+    return () => { cancelled = true; };
+  }, [form.visit_id, initialData]);
+
+  const duplicate = useMemo(
+    () => (initialData ? undefined : visitItems.find((i) => i.product_id === form.product_id)),
+    [initialData, visitItems, form.product_id],
+  );
 
   const validate = () => {
     const errs: Record<string, string> = {};
@@ -70,8 +91,14 @@ export default function AuditItemForm({ visits, products, initialData, onSubmit,
     const payload: any = { ...form, qty_found: Number(form.qty_found) };
     if (!payload.notes) delete payload.notes;
     if (!payload.photo_url) delete payload.photo_url;
+    if (duplicate) payload.id = duplicate.id;
     await onSubmit(payload);
     setLoading(false);
+  };
+
+  const useExistingQty = () => {
+    if (!duplicate) return;
+    setForm((f) => ({ ...f, qty_found: duplicate.qty_found.toString(), notes: duplicate.notes || f.notes }));
   };
 
   const visitOptions = visits.map((v) => ({
@@ -87,6 +114,24 @@ export default function AuditItemForm({ visits, products, initialData, onSubmit,
         <Select label={t('form.visit')} value={form.visit_id} onChange={(e) => setForm({ ...form, visit_id: e.target.value })} options={visitOptions} placeholder={t('form.selectVisit')} error={errors.visit_id} />
         <Select label={t('form.product')} value={form.product_id} onChange={(e) => setForm({ ...form, product_id: e.target.value })} options={productOptions} placeholder={t('form.selectProduct')} error={errors.product_id} />
       </div>
+
+      {duplicate && (
+        <div className="audit-duplicate-notice">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+            <line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" />
+          </svg>
+          <div>
+            <div><strong>{t('form.duplicate.title')}</strong></div>
+            <div>{t('form.duplicate.message', { qty: duplicate.qty_found })}</div>
+            <div className="audit-duplicate-notice-actions">
+              <Button type="button" size="sm" variant="outline" onClick={useExistingQty}>
+                {t('form.duplicate.useExisting')}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <Input label={t('form.qtyFoundLabel')} type="number" min="0" value={form.qty_found} onChange={(e) => setForm({ ...form, qty_found: e.target.value })} error={errors.qty_found} placeholder={t('form.qtyFoundPlaceholder')} />
 
@@ -129,7 +174,7 @@ export default function AuditItemForm({ visits, products, initialData, onSubmit,
 
       <div className="form-actions">
         <Button variant="ghost" type="button" onClick={onCancel} disabled={loading || uploading}>{tCommon('actions.cancel')}</Button>
-        <Button type="submit" loading={loading} disabled={uploading}>{initialData ? tCommon('actions.update') : tCommon('actions.create')}</Button>
+        <Button type="submit" loading={loading} disabled={uploading}>{initialData || duplicate ? tCommon('actions.update') : tCommon('actions.create')}</Button>
       </div>
     </form>
   );

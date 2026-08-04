@@ -21,6 +21,7 @@ import {
 import type { User } from '@prisma/client';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { RequirePermissions } from '../auth/decorators/require-permissions.decorator';
+import { RequireAnyPermission } from '../auth/decorators/require-any-permission.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../auth/guards/permissions.guard';
 import { BulkAssignProductStoreDto } from './dto/bulk-assign-product-store.dto';
@@ -40,14 +41,17 @@ export class ProductStoreController {
   constructor(private readonly productStoreService: ProductStoreService) {}
 
   @Get()
-  @RequirePermissions('inventory.read')
+  // Also readable by whoever runs the field visit/audit flow — it needs each
+  // product's expected quantity for the store being audited, even for roles
+  // without standalone Stock-page access.
+  @RequireAnyPermission('inventory.read', 'visits.create', 'visits.update')
   @ApiOperation({ summary: 'List product-store assignments, filter by store or product' })
   findAll(@Query() query: FindProductStoresDto, @CurrentUser() user: User) {
     return this.productStoreService.findAll(user, query);
   }
 
   @Get(':id')
-  @RequirePermissions('inventory.read')
+  @RequireAnyPermission('inventory.read', 'visits.create', 'visits.update')
   @ApiOperation({ summary: 'Get a single product-store assignment' })
   findOne(@Param('id', ParseUUIDPipe) id: string, @CurrentUser() user: User) {
     return this.productStoreService.findOne(id, user);

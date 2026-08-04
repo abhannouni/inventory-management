@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
@@ -8,6 +8,7 @@ import { useClientPagination } from '../../hooks/useClientPagination';
 import { fetchAuditItems, createAuditItem, bulkUpsertAuditItems, updateAuditItem, deleteAuditItem } from '../../store/slices/auditItemsSlice';
 import { fetchVisits } from '../../store/slices/visitsSlice';
 import { fetchProducts } from '../../store/slices/productsSlice';
+import { fetchStores } from '../../store/slices/storesSlice';
 import PageHeader from '../../components/ui/PageHeader';
 import Button from '../../components/ui/Button';
 import DataTable from '../../components/ui/DataTable';
@@ -35,28 +36,80 @@ export default function AuditItemsPage() {
   const { items, loading } = useAppSelector((s) => s.auditItems);
   const { items: visits } = useAppSelector((s) => s.visits);
   const { items: products } = useAppSelector((s) => s.products);
+  const { items: stores } = useAppSelector((s) => s.stores);
 
   const [createOpen, setCreateOpen] = useState(false);
   const [bulkOpen, setBulkOpen] = useState(false);
   const [editItem, setEditItem] = useState<AuditItem | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [filterStore, setFilterStore] = useState('');
+  const [filterFrom, setFilterFrom] = useState('');
+  const [filterTo, setFilterTo] = useState('');
   const [filterVisit, setFilterVisit] = useState('');
+  const didAutoSelectVisit = useRef(false);
 
   useEffect(() => {
-    dispatch(fetchAuditItems(undefined));
     dispatch(fetchVisits(undefined));
     dispatch(fetchProducts());
+    dispatch(fetchStores());
   }, [dispatch]);
 
+  // Visits sorted most-recent-first by the API; narrow them by the store/date filters.
+  const filteredVisits = useMemo(() => {
+    return visits.filter((v) => {
+      if (filterStore && v.store_id !== filterStore) return false;
+      const checkinDate = v.checkin_at.slice(0, 10);
+      if (filterFrom && checkinDate < filterFrom) return false;
+      if (filterTo && checkinDate > filterTo) return false;
+      return true;
+    });
+  }, [visits, filterStore, filterFrom, filterTo]);
+
+  // Default to the most recent visit instead of a blank "all visits" view — the
+  // list API requires a single visit_id, and merchandisers almost always want
+  // to pick up where the last visit left off.
   useEffect(() => {
-    dispatch(fetchAuditItems(filterVisit ? { visit_id: filterVisit } : undefined));
+    if (!didAutoSelectVisit.current && visits.length > 0) {
+      didAutoSelectVisit.current = true;
+      setFilterVisit(filteredVisits[0]?.id || '');
+    }
+  }, [visits, filteredVisits]);
+
+  // If store/date filters narrow out the currently selected visit, fall back to
+  // the latest visit still matching instead of silently showing stale data.
+  useEffect(() => {
+    if (filterVisit && !filteredVisits.some((v) => v.id === filterVisit)) {
+      setFilterVisit(filteredVisits[0]?.id || '');
+    }
+  }, [filteredVisits, filterVisit]);
+
+  useEffect(() => {
+    if (filterVisit) dispatch(fetchAuditItems({ visit_id: filterVisit }));
   }, [filterVisit, dispatch]);
 
-  const { pageItems, meta, setPage, setLimit } = useClientPagination(items);
+  const hasFilters = !!(filterStore || filterFrom || filterTo);
+  const resetFilters = () => { setFilterStore(''); setFilterFrom(''); setFilterTo(''); };
+
+  const displayedItems = filterVisit ? items : [];
+  const { pageItems, meta, setPage, setLimit } = useClientPagination(displayedItems);
 
   const handleCreate = async (data: any) => {
-    const res = await dispatch(createAuditItem(data));
+    // The form flags a duplicate (same product already audited on this visit)
+    // by attaching the existing item's id — route that through an update
+    // instead of hitting the backend's unique-constraint error.
+    const { id: duplicateId, ...payload } = data;
+    if (duplicateId) {
+      const res = await dispatch(updateAuditItem({ id: duplicateId, payload }));
+      if (updateAuditItem.fulfilled.match(res)) {
+        toast.success(t('toasts.updateSuccess'));
+        setCreateOpen(false);
+      } else {
+        toast.error(res.payload as string || t('toasts.updateError'));
+      }
+      return;
+    }
+    const res = await dispatch(createAuditItem(payload));
     if (createAuditItem.fulfilled.match(res)) {
       toast.success(t('toasts.createSuccess'));
       setCreateOpen(false);
@@ -156,21 +209,57 @@ export default function AuditItemsPage() {
 
       <div className="filter-bar">
         <Select
-          options={visits.map((v) => ({ value: v.id, label: `${v.store?.name || v.store_id} — ${new Date(v.checkin_at).toLocaleDateString(i18n.language)}` }))}
+          label={t('filters.store')}
+          options={stores.map((s) => ({ value: s.id, label: s.name }))}
+          placeholder={t('filters.allStores')}
+          value={filterStore}
+          onChange={(e) => setFilterStore(e.target.value)}
+        />
+        <label className="form-group" style={{ minWidth: 150 }}>
+          <span className="form-label">{t('filters.from')}</span>
+          <input
+            type="date"
+            className="form-input"
+            value={filterFrom}
+            max={filterTo || undefined}
+            onChange={(e) => setFilterFrom(e.target.value)}
+          />
+        </label>
+        <label className="form-group" style={{ minWidth: 150 }}>
+          <span className="form-label">{t('filters.to')}</span>
+          <input
+            type="date"
+            className="form-input"
+            value={filterTo}
+            min={filterFrom || undefined}
+            onChange={(e) => setFilterTo(e.target.value)}
+          />
+        </label>
+        <Select
+          label={t('filters.visit')}
+          options={filteredVisits.map((v) => ({ value: v.id, label: `${v.store?.name || v.store_id} — ${new Date(v.checkin_at).toLocaleDateString(i18n.language)}` }))}
           placeholder={t('allVisits')}
           value={filterVisit}
           onChange={(e) => setFilterVisit(e.target.value)}
-          label=""
         />
+        {hasFilters && (
+          <Button variant="ghost" size="sm" onClick={resetFilters}>{tCommon('filters.reset')}</Button>
+        )}
       </div>
 
       <motion.div className="card" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
-        <DataTable columns={columns} data={pageItems} loading={loading} keyExtractor={(ai) => ai.id} emptyMessage={t('table.empty')} />
+        <DataTable
+          columns={columns}
+          data={pageItems}
+          loading={loading}
+          keyExtractor={(ai) => ai.id}
+          emptyMessage={filterVisit ? t('table.empty') : t('table.noVisitSelected')}
+        />
         <Pagination meta={meta} onPageChange={setPage} onLimitChange={setLimit} />
       </motion.div>
 
       <Modal open={createOpen} onClose={() => setCreateOpen(false)} title={t('modals.createTitle')} size="md">
-        <AuditItemForm visits={visits} products={products} onSubmit={handleCreate} onCancel={() => setCreateOpen(false)} />
+        <AuditItemForm visits={visits} products={products} defaultVisitId={filterVisit} onSubmit={handleCreate} onCancel={() => setCreateOpen(false)} />
       </Modal>
 
       <Modal open={!!editItem} onClose={() => setEditItem(null)} title={t('modals.editTitle')} size="md">
