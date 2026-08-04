@@ -5,7 +5,7 @@ import { usePermissions } from '../../hooks/usePermissions';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { logout } from '../../store/slices/authSlice';
 import { NAV_PAGES, hasPageAccess, type NavIcon, type NavSection } from '../../config/navigation';
-import Logo from '../ui/Logo';
+import BourchaninLogo from '../ui/BourchaninLogo';
 
 function IconGlyph({ d, d2 }: NavIcon) {
   return (
@@ -57,10 +57,7 @@ export default function Sidebar() {
     >
       {/* Brand */}
       <div className="sidebar-brand">
-        <div className="brand-icon">
-          <Logo size={22} />
-        </div>
-        <span className="brand-name">{t('brand')}</span>
+        <BourchaninLogo variant="white" className="brand-logo" />
       </div>
 
       {/* Nav */}

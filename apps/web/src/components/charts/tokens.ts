@@ -24,11 +24,11 @@
  */
 
 /** Single-series hue — the app's brand blue. */
-export const SERIES = '#1D6ADE';
+export const SERIES = '#310024';
 
 /** Reserved status scale. Never reused as "series 3". */
 export const STATUS = {
-  in_stock: '#1D6ADE',
+  in_stock: '#310024',
   stock_disponible: '#0ca30c',
   low_stock: '#fab219',
   out_of_stock: '#d03b3b',
@@ -36,7 +36,7 @@ export const STATUS = {
 
 /** Polarity: above vs below the expected quantity. Grey midpoint reads as "nothing". */
 export const DIVERGING = {
-  positive: '#1D6ADE',
+  positive: '#310024',
   negative: '#d03b3b',
   neutral: '#E5E7EB',
 } as const;

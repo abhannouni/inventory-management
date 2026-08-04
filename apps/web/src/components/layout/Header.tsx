@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from '../../hooks/useAppDispatch';
 import { logout } from '../../store/slices/authSlice';
 import { useLanguage } from '../../hooks/useLanguage';
 import LanguageSwitcher from '../ui/LanguageSwitcher';
+import BourchaninLogo from '../ui/BourchaninLogo';
 
 export default function Header() {
   const { t } = useTranslation('header');
@@ -33,6 +34,11 @@ export default function Header() {
 
   return (
     <header className="header">
+
+      {/* Brand — shown only on mobile, where the sidebar is hidden */}
+      <div className="header-brand">
+        <BourchaninLogo variant="color" className="header-logo" />
+      </div>
 
       {/* Search — left side */}
       <div className="header-search">

@@ -23,7 +23,7 @@ import type { VisitReport } from '../../types';
  * one hue getting lighter is the honest encoding — never four unrelated hues. */
 const CLASSIFICATION_RAMP: Record<string, string> = {
   A: '#0B3B82',
-  B: '#1D6ADE',
+  B: '#310024',
   C: '#6EA0EA',
   D: '#C3D9F7',
 };

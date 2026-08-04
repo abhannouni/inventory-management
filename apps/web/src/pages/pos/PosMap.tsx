@@ -103,7 +103,7 @@ export default function PosMap({ stores, selectedId, onSelect, height = 520 }: P
           source: SOURCE,
           filter: ['has', 'point_count'],
           paint: {
-            'circle-color': '#1D6ADE',
+            'circle-color': '#310024',
             'circle-opacity': 0.85,
             'circle-radius': ['step', ['get', 'point_count'], 16, 10, 22, 50, 30],
             'circle-stroke-width': 3,
@@ -130,7 +130,7 @@ export default function PosMap({ stores, selectedId, onSelect, height = 520 }: P
           source: SOURCE,
           filter: ['!', ['has', 'point_count']],
           paint: {
-            'circle-color': ['case', ['==', ['get', 'active'], 1], '#1D6ADE', '#9CA3AF'],
+            'circle-color': ['case', ['==', ['get', 'active'], 1], '#310024', '#9CA3AF'],
             'circle-radius': 8,
             'circle-stroke-width': 3,
             'circle-stroke-color': '#ffffff',

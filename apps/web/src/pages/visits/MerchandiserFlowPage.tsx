@@ -47,7 +47,7 @@ function calcStatus(
   if (found === 0)                       return { key: 'out_of_stock',     label: labels.outOfStock,       color: '#dc2626', bg: '#fee2e2' };
   if (found < expected * 0.5)            return { key: 'low_stock',        label: labels.lowStock,         color: '#d97706', bg: '#fef3c7' };
   if (found < expected)                  return { key: 'stock_disponible', label: labels.stockDisponible,  color: '#16a34a', bg: '#dcfce7' };
-  return                                        { key: 'in_stock',         label: labels.inStock,          color: '#1D6ADE', bg: '#dbeafe' };
+  return                                        { key: 'in_stock',         label: labels.inStock,          color: '#310024', bg: '#dbeafe' };
 }
 
 /* ─────────── Schedule grouping (for the expanded visits panel) ─────────── */
@@ -837,7 +837,7 @@ export default function MerchandiserFlowPage({ onViewHistory }: MerchandiserFlow
             {/* Audit summary */}
             <div className="mf-summary-cards">
               <div className="mf-summary-card" style={{ borderColor: '#bfdbfe' }}>
-                <div className="mf-summary-num" style={{ color: '#1D6ADE' }}>{summary.inStock}</div>
+                <div className="mf-summary-num" style={{ color: '#310024' }}>{summary.inStock}</div>
                 <div className="mf-summary-lbl">{t('merchandiserFlow.checkout.inStock')}</div>
               </div>
               <div className="mf-summary-card" style={{ borderColor: '#bbf7d0' }}>
@@ -909,7 +909,7 @@ export default function MerchandiserFlowPage({ onViewHistory }: MerchandiserFlow
             </p>
             <div className="mf-summary-cards" style={{ marginBottom: 24 }}>
               <div className="mf-summary-card" style={{ borderColor: '#bfdbfe' }}>
-                <div className="mf-summary-num" style={{ color: '#1D6ADE' }}>{summary.inStock}</div>
+                <div className="mf-summary-num" style={{ color: '#310024' }}>{summary.inStock}</div>
                 <div className="mf-summary-lbl">{t('merchandiserFlow.checkout.inStock')}</div>
               </div>
               <div className="mf-summary-card" style={{ borderColor: '#bbf7d0' }}>

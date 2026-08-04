@@ -1,20 +1,20 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  /* ── Brand Palette ── */
-  --p1: #1558C0;
-  --p2: #1D6ADE;
-  --p3: #60A5FA;
-  --p4: #F0F2F5;
+  /* ── Brand Palette (Bourchanin) ── */
+  --p1: #25001B;
+  --p2: #310024;
+  --p3: #C3B9AD;
+  --p4: #F6F2EC;
 
   /* ── Semantic aliases ── */
-  --primary:        #1D6ADE;
-  --primary-hover:  #1558C0;
-  --primary-light:  #EBF3FF;
-  --primary-medium: #2B7FEC;
-  --accent:         #60A5FA;
-  --accent-light:   #DBEAFE;
-  --secondary:      #60A5FA;
+  --primary:        #310024;
+  --primary-hover:  #25001B;
+  --primary-light:  #F3EAE2;
+  --primary-medium: #4A0F3A;
+  --accent:         #C3B9AD;
+  --accent-light:   #EDE7DC;
+  --secondary:      #C3B9AD;
   --success:        #16a34a;
   --success-light:  #DCFCE7;
   --warning:        #d97706;
@@ -38,10 +38,10 @@
   --white:    #FFFFFF;
 
   /* ── Sidebar tokens ── */
-  --sidebar-bg:         #131C30;
+  --sidebar-bg:         #22001A;
   --sidebar-hover-bg:   rgba(255,255,255,0.06);
-  --sidebar-active-bg:  rgba(29,106,222,0.20);
-  --sidebar-text:       #A8B4C8;
+  --sidebar-active-bg:  rgba(195,185,173,0.20);
+  --sidebar-text:       #B7A6A6;
   --sidebar-text-hover: rgba(255,255,255,0.88);
   --sidebar-text-active:#FFFFFF;
   --sidebar-border:     rgba(255,255,255,0.06);
@@ -60,28 +60,28 @@
   --shadow-lg: 0 20px 30px rgba(0,0,0,0.12), 0 8px 12px rgba(0,0,0,0.06);
 
   /* ── Gradients ── */
-  --grad-primary:     linear-gradient(135deg, #1558C0 0%, #1D6ADE 60%, #2B7FEC 100%);
-  --grad-primary-btn: linear-gradient(135deg, #1D6ADE 0%, #1558C0 100%);
+  --grad-primary:     linear-gradient(135deg, #25001B 0%, #310024 60%, #4A0F3A 100%);
+  --grad-primary-btn: linear-gradient(135deg, #310024 0%, #25001B 100%);
   --grad-card:        #ffffff;
-  --grad-bg:          #F0F2F5;
+  --grad-bg:          #F6F2EC;
 
   /* ── Stat icon accent tones (harmonized with primary) ── */
-  --tone-blue:   linear-gradient(135deg, #60A5FA 0%, #1D6ADE 100%);
+  --tone-blue:   linear-gradient(135deg, #C3B9AD 0%, #310024 100%);
   --tone-teal:   linear-gradient(135deg, #5EEAD4 0%, #0D9488 100%);
   --tone-violet: linear-gradient(135deg, #C4B5FD 0%, #7C3AED 100%);
   --tone-amber:  linear-gradient(135deg, #FCD34D 0%, #D97706 100%);
   --tone-rose:   linear-gradient(135deg, #FCA5A5 0%, #DC2626 100%);
 
   /* ── Auth / marketing panel ── */
-  --auth-bg-deep:  #0b1221;
-  --auth-bg-mid:   #131C30;
-  --auth-bg-edge:  #1D3360;
+  --auth-bg-deep:  #17000F;
+  --auth-bg-mid:   #25001B;
+  --auth-bg-edge:  #4A0F3A;
 }
 
 html, body, #root { height: 100%; }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+  font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
   background: var(--grad-bg);
   min-height: 100vh;
   color: var(--gray-800);

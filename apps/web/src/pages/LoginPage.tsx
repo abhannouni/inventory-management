@@ -8,7 +8,7 @@ import { login, fetchMe } from '../store/slices/authSlice';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
 import LanguageSwitcher from '../components/ui/LanguageSwitcher';
-import Logo from '../components/ui/Logo';
+import BourchaninLogo from '../components/ui/BourchaninLogo';
 import loginHero from '../assets/login-hero.png';
 
 const FEATURE_KEYS = ['visits', 'inventory', 'reports'] as const;
@@ -102,10 +102,7 @@ export default function LoginPage() {
           transition={{ duration: 0.5 }}
         >
           <div className="auth-visual-brand">
-            <div className="auth-visual-brand-icon">
-              <Logo size={20} />
-            </div>
-            <span className="auth-visual-brand-name">Inventory</span>
+            <BourchaninLogo variant="white" className="auth-visual-logo" />
           </div>
         </motion.div>
 
@@ -147,10 +144,7 @@ export default function LoginPage() {
           transition={{ duration: 0.4, ease: 'easeOut' }}
         >
           <div className="auth-logo">
-            <div className="auth-logo-icon">
-              <Logo size={26} />
-            </div>
-            <span className="auth-logo-text">Inventory</span>
+            <BourchaninLogo variant="color" className="auth-logo-img" />
           </div>
 
           <h1 className="auth-title">{t('title')}</h1>
