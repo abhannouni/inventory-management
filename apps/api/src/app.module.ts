@@ -22,6 +22,8 @@ import { TrainingModule } from './training/training.module';
 import { SettingsModule } from './settings/settings.module';
 import { HrModule } from './hr/hr.module';
 import { ProductRequestsModule } from './product-requests/product-requests.module';
+import { PromosModule } from './promos/promos.module';
+import { PriceSurveysModule } from './price-surveys/price-surveys.module';
 
 @Module({
   imports: [
@@ -60,6 +62,8 @@ import { ProductRequestsModule } from './product-requests/product-requests.modul
     SettingsModule,
     HrModule,
     ProductRequestsModule,
+    PromosModule,
+    PriceSurveysModule,
   ],
   controllers: [AppController],
   providers: [AppService],

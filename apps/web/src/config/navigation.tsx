@@ -20,6 +20,8 @@ import MarketingPage from '../pages/modules/MarketingPage';
 import MarketingDetailPage from '../pages/modules/MarketingDetailPage';
 import SettingsPage from '../pages/settings/SettingsPage';
 import HrPage from '../pages/modules/HrPage';
+import PromosPage from '../pages/modules/PromosPage';
+import PriceSurveysPage from '../pages/modules/PriceSurveysPage';
 
 /**
  * The permission-to-page map. This is the single source of truth for the
@@ -321,6 +323,34 @@ export const NAV_PAGES: NavPage[] = [
     },
   },
   { id: 'marketing-detail', path: '/marketing/:id', element: MarketingDetailPage, permissions: ['product_requests.read'] },
+  {
+    id: 'promos',
+    path: '/promos',
+    element: PromosPage,
+    permissions: [],
+    nav: {
+      labelKey: 'nav.promos',
+      icon: {
+        d: 'M20.59 13.41L11 3.83A2 2 0 009.59 3.24L4 3a1 1 0 00-1 1l.24 5.59a2 2 0 00.59 1.41l9.58 9.58a2 2 0 002.83 0l4.35-4.35a2 2 0 000-2.82z',
+        d2: 'M7.5 7.5h.01',
+      },
+      section: 'general',
+    },
+  },
+  {
+    id: 'price-surveys',
+    path: '/price-surveys',
+    element: PriceSurveysPage,
+    permissions: [],
+    nav: {
+      labelKey: 'nav.priceSurveys',
+      icon: {
+        d: 'M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2',
+        d2: 'M8 2h8a1 1 0 011 1v2a1 1 0 01-1 1H8a1 1 0 01-1-1V3a1 1 0 011-1zM8 12h8M8 16h5',
+      },
+      section: 'general',
+    },
+  },
 ];
 
 /**
