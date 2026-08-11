@@ -1203,6 +1203,8 @@ html[dir='rtl'] .user-menu-dropdown-item {
   color: var(--gray-700);
 }
 
+.required-mark { color: var(--danger); }
+
 .input-wrapper { position: relative; }
 
 .input-icon {

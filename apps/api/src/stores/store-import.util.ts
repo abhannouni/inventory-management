@@ -34,6 +34,9 @@ const REQUIRED_TEXT_FIELDS: Record<string, string> = {
   city: 'city',
   postal_code: 'postal_code',
   section_manager_name: 'section_manager_name',
+};
+
+const OPTIONAL_TEXT_FIELDS: Record<string, string> = {
   department_manager_name: 'department_manager_name',
   gds_name: 'gds_name',
 };
@@ -62,13 +65,19 @@ export interface ParsedStoreRow {
   error?: string;
 }
 
-/** Turns one raw spreadsheet row into a validated CreateStoreDto, or an error message. Every column is mandatory. */
+/**
+ * Turns one raw spreadsheet row into a validated CreateStoreDto, or an error message.
+ * Every column is mandatory except department_manager_name/phone and gds_name/phone.
+ */
 export function parseStoreRow(
   raw: Record<string, unknown>,
   regionsByName: Map<string, string>,
 ): ParsedStoreRow {
   const texts: Record<string, string> = {};
   for (const key of Object.keys(REQUIRED_TEXT_FIELDS)) {
+    texts[key] = toText(raw[key]);
+  }
+  for (const key of Object.keys(OPTIONAL_TEXT_FIELDS)) {
     texts[key] = toText(raw[key]);
   }
 
@@ -91,8 +100,6 @@ export function parseStoreRow(
   if (!classificationText) missing.push('classification');
   if (!openingDateText) missing.push('opening_date');
   if (!sectionManagerPhoneText) missing.push('section_manager_phone');
-  if (!departmentManagerPhoneText) missing.push('department_manager_phone');
-  if (!gdsPhoneText) missing.push('gds_phone');
   if (!latitudeText) missing.push('latitude');
   if (!longitudeText) missing.push('longitude');
   if (!googleMapsUrlText) missing.push('google_maps_url');
@@ -128,10 +135,10 @@ export function parseStoreRow(
   if (!PHONE_REGEX.test(sectionManagerPhoneText)) {
     return { error: `Invalid section_manager_phone "${sectionManagerPhoneText}"` };
   }
-  if (!PHONE_REGEX.test(departmentManagerPhoneText)) {
+  if (departmentManagerPhoneText && !PHONE_REGEX.test(departmentManagerPhoneText)) {
     return { error: `Invalid department_manager_phone "${departmentManagerPhoneText}"` };
   }
-  if (!PHONE_REGEX.test(gdsPhoneText)) {
+  if (gdsPhoneText && !PHONE_REGEX.test(gdsPhoneText)) {
     return { error: `Invalid gds_phone "${gdsPhoneText}"` };
   }
 

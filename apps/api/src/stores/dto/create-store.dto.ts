@@ -100,19 +100,17 @@ export class CreateStoreDto {
   opening_date?: string;
 
   // ── Contacts ───────────────────────────────────────────────────────────────
+  // section_manager (Chef de rayon liquide) is required; department_manager and
+  // gds are optional.
 
-  @ApiPropertyOptional({ example: 'Youssef Alami' })
-  @EmptyToUndefined()
+  @ApiProperty({ example: 'Youssef Alami' })
   @IsString()
   @MaxLength(120)
-  @IsOptional()
-  section_manager_name?: string;
+  section_manager_name: string;
 
-  @ApiPropertyOptional({ example: '+212 661 234 567' })
-  @EmptyToUndefined()
+  @ApiProperty({ example: '+212 661 234 567' })
   @Matches(PHONE_REGEX, { message: 'section_manager_phone must be a valid phone number' })
-  @IsOptional()
-  section_manager_phone?: string;
+  section_manager_phone: string;
 
   @ApiPropertyOptional({ example: 'Salma Bennis' })
   @EmptyToUndefined()

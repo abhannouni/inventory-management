@@ -85,10 +85,10 @@ const INSTRUCTIONS_ROWS: [string, string, string][] = [
   ['opening_date', 'Yes', 'ISO date, e.g. 2019-04-12'],
   ['section_manager_name', 'Yes', 'Department section manager name'],
   ['section_manager_phone', 'Yes', 'e.g. +212 661 234 567'],
-  ['department_manager_name', 'Yes', 'Department manager name'],
-  ['department_manager_phone', 'Yes', 'e.g. +212 662 345 678'],
-  ['gds_name', 'Yes', 'GDS name'],
-  ['gds_phone', 'Yes', 'e.g. +212 663 456 789'],
+  ['department_manager_name', 'No', 'Department manager name'],
+  ['department_manager_phone', 'No', 'e.g. +212 662 345 678'],
+  ['gds_name', 'No', 'GDS name'],
+  ['gds_phone', 'No', 'e.g. +212 663 456 789'],
   ['latitude', 'Yes', 'Decimal, -90 to 90'],
   ['longitude', 'Yes', 'Decimal, -180 to 180'],
   ['google_maps_url', 'Yes', 'Full URL starting with http:// or https://'],
@@ -127,7 +127,7 @@ export async function downloadStoreImportTemplate() {
   INSTRUCTIONS_ROWS.forEach((row) => instructionsSheet.addRow(row));
   instructionsSheet.addRow([]);
   instructionsSheet.addRow(['Keep the header row (row 1) exactly as provided.']);
-  instructionsSheet.addRow(['Every column is required — a row with any blank field will be rejected.']);
+  instructionsSheet.addRow(['Columns marked "Yes" are required — a row with any blank required field will be rejected. Columns marked "No" may be left blank.']);
   instructionsSheet.addRow(['Delete the example rows before uploading your own stores, or leave them — they will be imported as-is.']);
   instructionsSheet.columns = [{ width: 24 }, { width: 14 }, { width: 72 }];
   instructionsSheet.getColumn(3).alignment = { wrapText: true, vertical: 'middle' };

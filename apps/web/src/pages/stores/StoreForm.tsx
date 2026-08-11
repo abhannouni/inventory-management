@@ -90,7 +90,16 @@ export default function StoreForm({
       else if (d.getTime() > Date.now()) e.opening_date = t('errors.dateFuture');
     }
 
-    for (const key of ['section_manager_phone', 'department_manager_phone', 'gds_phone'] as const) {
+    if (!form.section_manager_name.trim()) {
+      e.section_manager_name = t('errors.sectionManagerNameRequired');
+    }
+    if (!form.section_manager_phone.trim()) {
+      e.section_manager_phone = t('errors.sectionManagerPhoneRequired');
+    } else if (!PHONE_RE.test(form.section_manager_phone.trim())) {
+      e.section_manager_phone = t('errors.phoneInvalid');
+    }
+
+    for (const key of ['department_manager_phone', 'gds_phone'] as const) {
       const v = form[key].trim();
       if (v && !PHONE_RE.test(v)) e[key] = t('errors.phoneInvalid');
     }
@@ -201,9 +210,9 @@ export default function StoreForm({
   };
 
   const contacts = [
-    { key: 'section_manager', label: t('form.contacts.sectionManager') },
-    { key: 'department_manager', label: t('form.contacts.departmentManager') },
-    { key: 'gds', label: t('form.contacts.gds') },
+    { key: 'section_manager', label: t('form.contacts.sectionManager'), required: true },
+    { key: 'department_manager', label: t('form.contacts.departmentManager'), required: false },
+    { key: 'gds', label: t('form.contacts.gds'), required: false },
   ] as const;
 
   return (
@@ -311,12 +320,16 @@ export default function StoreForm({
 
           return (
             <div key={contact.key} className="contact-block">
-              <h4 className="contact-block-title">{contact.label}</h4>
+              <h4 className="contact-block-title">
+                {contact.label}
+                {contact.required && <span className="required-mark"> *</span>}
+              </h4>
               <div className="form-row">
                 <Input
                   label={t('form.contacts.name')}
                   value={form[nameKey]}
                   onChange={(e) => set(nameKey, e.target.value)}
+                  error={errors[nameKey]}
                   placeholder={t('form.contacts.namePlaceholder')}
                 />
                 <Input

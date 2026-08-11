@@ -18,8 +18,8 @@ export interface StorePayload {
   opening_date?: string;
 
   // Contacts
-  section_manager_name?: string;
-  section_manager_phone?: string;
+  section_manager_name: string;
+  section_manager_phone: string;
   department_manager_name?: string;
   department_manager_phone?: string;
   gds_name?: string;
