@@ -87,7 +87,13 @@
       "PowerShell(Stop-Process -Id 34404 -Force -ErrorAction SilentlyContinue)",
       "PowerShell(Get-Process -Id 33204 -ErrorAction SilentlyContinue)",
       "Bash(node --enable-source-maps dist/src/main)",
-      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3001/api/auth/me)"
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3001/api/auth/me)",
+      "Bash(grep -o \"xlink:href=\\\\\"data:[^\\\\\"]\\\\{1,50\\\\}\" Bourchanin_clean.svg)",
+      "Bash(cp \"C:\\\\Users\\\\SalekElFahimam\\\\Downloads\\\\Bourchanin_clean.svg\" \"C:\\\\Users\\\\SalekElFahimam\\\\Desktop\\\\ASAP\\\\Apps\\\\inventory-management\\\\apps\\\\web\\\\public\\\\Bourchanin.svg\" && wc -c \"C:\\\\Users\\\\SalekElFahimam\\\\Desktop\\\\ASAP\\\\Apps\\\\inventory-management\\\\apps\\\\web\\\\public\\\\Bourchanin.svg\")",
+      "Bash(python3 -c ' *)",
+      "Bash(python3 -c \"import cairosvg\")",
+      "Bash(python3 -c \"from PIL import Image; print\\('PIL ok'\\)\")",
+      "Bash(python3)"
     ]
   }
 }
