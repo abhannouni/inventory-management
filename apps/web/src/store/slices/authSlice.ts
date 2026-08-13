@@ -92,11 +92,14 @@ const authSlice = createSlice({
         state.loading = false;
         state.user = action.payload;
       })
+      // Does NOT clear user/token here: a rejection can be a transient
+      // network/server error, not just an expired session, and clearing on
+      // every failure logged users out on blips that a retry would have
+      // survived. A genuinely invalid/expired token already triggers
+      // clearSession via the 'auth:session-expired' event (see store/index.ts),
+      // which is the single source of truth for forcing a logout.
       .addCase(fetchMe.rejected, (state) => {
         state.loading = false;
-        state.user = null;
-        state.token = null;
-        localStorage.removeItem('access_token');
       })
       .addCase(logout.fulfilled, (state) => {
         state.user = null;

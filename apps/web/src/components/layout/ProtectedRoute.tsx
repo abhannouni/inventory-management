@@ -19,9 +19,10 @@ export default function ProtectedRoute() {
   // the `loading` flag's precise timing — on the first render after a hard
   // reload, `loading` is still its false initial value and `user` is still
   // null, so gating on `loading` raced this into a false "not authenticated"
-  // redirect before fetchMe() had even started. fetchMe.rejected clears the
-  // token, so an actually-invalid token still falls through to the redirect
-  // above on the next render.
+  // redirect before fetchMe() had even started. An actually-invalid token
+  // still falls through to the redirect above: the fetch client's 401 handling
+  // clears the token (via the 'auth:session-expired' event) once a real
+  // refresh attempt fails, which re-renders this component with `token` gone.
   if (!user) return <Spinner center size="lg" />;
 
   return <Outlet />;

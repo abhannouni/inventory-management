@@ -19,6 +19,12 @@ interface RefreshPayload {
   jti: string;
 }
 
+// A refresh token that was already rotated but gets presented again within
+// this window is treated as a benign race (e.g. two tabs refreshing around
+// the same 15-minute access-token expiry) rather than theft. Past this
+// window, reuse of a rotated token is assumed to be a replayed/stolen token.
+const REUSE_GRACE_MS = 10_000;
+
 export interface IssuedTokens {
   accessToken: string;
   refreshToken: string;
@@ -89,15 +95,26 @@ export class AuthService {
     const tokenHash = this.hash(rawToken);
     const stored = await this.prisma.refreshToken.findUnique({ where: { token_hash: tokenHash } });
 
-    if (!stored || stored.revoked_at || stored.expires_at < new Date()) {
-      // A validly-signed token that isn't the current one on file has
-      // already been rotated away - most likely reuse of a stolen/replayed
-      // token. Revoke every session for this user as a precaution.
-      await this.prisma.refreshToken.updateMany({
-        where: { user_id: payload.sub, revoked_at: null },
-        data: { revoked_at: new Date() },
-      });
+    if (!stored || stored.expires_at < new Date()) {
       throw new UnauthorizedException('Refresh token no longer valid');
+    }
+
+    if (stored.revoked_at) {
+      const reusedRecently = Date.now() - stored.revoked_at.getTime() < REUSE_GRACE_MS;
+      if (!reusedRecently) {
+        // A validly-signed token that was rotated away a while ago is being
+        // reused - most likely a stolen/replayed token. Revoke every session
+        // for this user as a precaution.
+        await this.prisma.refreshToken.updateMany({
+          where: { user_id: payload.sub, revoked_at: null },
+          data: { revoked_at: new Date() },
+        });
+        throw new UnauthorizedException('Refresh token no longer valid');
+      }
+      // Rotated moments ago: almost certainly two concurrent requests (e.g.
+      // two open tabs) racing to refresh the same token, not theft. Fall
+      // through and issue a fresh pair rather than tearing down every
+      // session - each caller gets its own valid refresh token below.
     }
 
     const user = await this.prisma.user.findUnique({ where: { id: payload.sub } });
@@ -105,10 +122,12 @@ export class AuthService {
       throw new UnauthorizedException('Account no longer active');
     }
 
-    await this.prisma.refreshToken.update({
-      where: { id: stored.id },
-      data: { revoked_at: new Date() },
-    });
+    if (!stored.revoked_at) {
+      await this.prisma.refreshToken.update({
+        where: { id: stored.id },
+        data: { revoked_at: new Date() },
+      });
+    }
 
     return this.issueTokens(user);
   }

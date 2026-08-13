@@ -104,7 +104,15 @@
       "PowerShell(Get-Process -Id 29872 -ErrorAction SilentlyContinue)",
       "PowerShell(Get-NetTCPConnection -LocalPort 3001 -ErrorAction SilentlyContinue)",
       "Bash(pnpm exec ts-node -e ' *)",
-      "Bash(pwd && ls apps/api/prisma/ 2>&1 | head; find / -maxdepth 2 -iname \"inventory-management\" 2>/dev/null)"
+      "Bash(pwd && ls apps/api/prisma/ 2>&1 | head; find / -maxdepth 2 -iname \"inventory-management\" 2>/dev/null)",
+      "Bash(xargs grep -ln \"axios.create\\\\|localStorage\\\\|sessionStorage\")",
+      "Bash(git check-ignore *)",
+      "Bash(grep -i \"\\\\.env$\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3001/api/health)",
+      "Bash(curl -s -X POST http://localhost:3001/api/auth/register -H 'Content-Type: application/json' -d '{\"full_name\":\"Test Probe\",\"email\":\"security-probe-test@example.invalid\",\"password\":\"testpassword123\",\"role\":\"super_admin\"}' -w '\\\\nHTTP_STATUS:%{http_code}\\\\n')",
+      "Bash(PGPASSWORD='asap@2020' psql -h localhost -U postgres -d myapp -c \"DELETE FROM users WHERE email='security-probe-test@example.invalid';\")",
+      "Bash(PGPASSWORD='asap@2020' psql -h localhost -U postgres -d myapp -c \"SELECT id, email, role FROM users WHERE email='security-probe-test@example.invalid';\")",
+      "Bash(tasklist //FI \"PID eq 18448\" //V)"
     ]
   }
 }

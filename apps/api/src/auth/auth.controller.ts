@@ -13,9 +13,11 @@ import {
 import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import type { Request as ExpressRequest, Response } from 'express';
 import { AuthService, IssuedTokens } from './auth.service';
+import { RequirePermissions } from './decorators/require-permissions.decorator';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { PermissionsGuard } from './guards/permissions.guard';
 
 const REFRESH_COOKIE = 'refresh_token';
 const REFRESH_COOKIE_PATH = '/api/auth';
@@ -25,8 +27,14 @@ const REFRESH_COOKIE_PATH = '/api/auth';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  // Requires an authenticated admin, same as POST /users - without this, any
+  // unauthenticated caller could self-provision an account with an arbitrary
+  // role (e.g. "super_admin") since RegisterDto accepts a client-supplied role.
   @Post('register')
-  @ApiOperation({ summary: 'Register a new user' })
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @RequirePermissions('users.create')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Register a new user (admin only)' })
   register(@Body() dto: RegisterDto) {
     return this.authService.register(dto);
   }
