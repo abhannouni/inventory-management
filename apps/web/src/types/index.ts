@@ -123,6 +123,76 @@ export interface ProductStore {
   updated_at: string;
 }
 
+// ─── Promos ─────────────────────────────────────────────────────────────────
+
+export interface PromoItemPicture {
+  id: string;
+  promo_item_id: string;
+  user_id: string;
+  image_url: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PromoItem {
+  id: string;
+  promo_id: string;
+  product_id: string;
+  product?: Product;
+  contenance: string;
+  original_price: string;
+  promo_price: string;
+  created_at: string;
+  /** Present on responses scoped to the caller (or to one uploader, for the Super Admin drill-down). */
+  my_picture?: PromoItemPicture | null;
+}
+
+export interface Promo {
+  id: string;
+  title: string | null;
+  is_active: boolean;
+  created_by_id: string | null;
+  created_by?: { id: string; full_name: string } | null;
+  created_at: string;
+  updated_at: string;
+  items: PromoItem[];
+  _count?: { items: number };
+}
+
+export interface PromoPictureUploader {
+  id: string;
+  full_name: string;
+  email: string;
+  role: Role;
+  uploaded_count: number;
+  last_upload_at: string;
+}
+
+export interface PromoPictureUploadersResponse {
+  promo_id: string | null;
+  total_items: number;
+  users: PromoPictureUploader[];
+}
+
+export interface PromoUserPictureView {
+  promo_id: string;
+  title: string | null;
+  items: PromoItem[];
+}
+
+export type NotificationType = 'promo_created';
+
+export interface Notification {
+  id: string;
+  user_id: string;
+  type: NotificationType;
+  title: string;
+  body: string | null;
+  link: string | null;
+  is_read: boolean;
+  created_at: string;
+}
+
 export interface ProductRequest {
   id: string;
   store_id: string;

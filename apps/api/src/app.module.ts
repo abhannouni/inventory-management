@@ -24,6 +24,7 @@ import { HrModule } from './hr/hr.module';
 import { ProductRequestsModule } from './product-requests/product-requests.module';
 import { PromosModule } from './promos/promos.module';
 import { PriceSurveysModule } from './price-surveys/price-surveys.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -64,6 +65,7 @@ import { PriceSurveysModule } from './price-surveys/price-surveys.module';
     ProductRequestsModule,
     PromosModule,
     PriceSurveysModule,
+    NotificationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

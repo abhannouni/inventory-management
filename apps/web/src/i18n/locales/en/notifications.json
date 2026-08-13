@@ -1,0 +1,11 @@
+{
+  "title": "Notifications",
+  "empty": "No notifications yet",
+  "markAllRead": "Mark all as read",
+  "types": {
+    "promo_created": {
+      "title": "New promo published",
+      "body": "A new promo batch is live — add your shelf photo once the label is in place."
+    }
+  }
+}

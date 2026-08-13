@@ -20,7 +20,7 @@ import MarketingPage from '../pages/modules/MarketingPage';
 import MarketingDetailPage from '../pages/modules/MarketingDetailPage';
 import SettingsPage from '../pages/settings/SettingsPage';
 import HrPage from '../pages/modules/HrPage';
-import PromosPage from '../pages/modules/PromosPage';
+import PromosPage from '../pages/promos/PromosPage';
 import PriceSurveysPage from '../pages/modules/PriceSurveysPage';
 
 /**
@@ -327,7 +327,7 @@ export const NAV_PAGES: NavPage[] = [
     id: 'promos',
     path: '/promos',
     element: PromosPage,
-    permissions: [],
+    permissions: ['promos.read'],
     nav: {
       labelKey: 'nav.promos',
       icon: {

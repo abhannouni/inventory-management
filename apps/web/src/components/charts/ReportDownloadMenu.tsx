@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { downloadCsv, downloadPptx, downloadXlsx } from '../../utils/export';
 import { useChartRegistry } from './useChartExport';
+import { usePermissions } from '../../hooks/usePermissions';
 
 interface ReportDownloadMenuProps {
   /** File name stem for the combined workbook / deck. */
@@ -19,6 +20,7 @@ interface ReportDownloadMenuProps {
  */
 export default function ReportDownloadMenu({ fileName }: ReportDownloadMenuProps) {
   const { t } = useTranslation('reports');
+  const { isSuperAdmin } = usePermissions();
   const charts = useChartRegistry();
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState<'csv' | 'xlsx' | 'pptx' | null>(null);
@@ -50,6 +52,9 @@ export default function ReportDownloadMenu({ fileName }: ReportDownloadMenuProps
       document.removeEventListener('keydown', onEsc);
     };
   }, [open]);
+
+  // Downloading data off the platform is a super-admin-only action.
+  if (!isSuperAdmin) return null;
 
   const picked = charts.filter((c) => selected.has(c.id));
   const rowCount = picked.reduce((n, c) => n + c.dataset.rows.length, 0);

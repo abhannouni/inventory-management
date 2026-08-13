@@ -123,9 +123,11 @@ export default function SellOutPage() {
         subtitle={t('subtitle')}
         actions={
           <div className="pos-header-actions">
-            <Button variant="outline" icon={<DownloadIcon />} onClick={() => setExportOpen(true)}>
-              {t('exportModal.button')}
-            </Button>
+            {p.isSuperAdmin && (
+              <Button variant="outline" icon={<DownloadIcon />} onClick={() => setExportOpen(true)}>
+                {t('exportModal.button')}
+              </Button>
+            )}
             {p.can('sell_out.create') && (
               <>
                 <Button variant="outline" icon={<UploadIcon />} onClick={() => setImportOpen(true)}>

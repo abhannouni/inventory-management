@@ -1,0 +1,122 @@
+{
+  "title": "Promos",
+  "subtitle": "This month's promotional prices across your product catalog",
+  "tabs": {
+    "table": "Promos",
+    "pictures": "Pictures"
+  },
+  "actions": {
+    "addPromo": "Add Promo",
+    "importExcel": "Import Excel",
+    "deletePromo": "Delete this promo"
+  },
+  "table": {
+    "product": "Product",
+    "contenance": "Contenance",
+    "originalPrice": "Original price",
+    "promoPrice": "Promo price",
+    "picture": "Picture",
+    "empty": "No active promo right now",
+    "emptyHint": "Once the Super Admin publishes a promo, it will appear here."
+  },
+  "filters": {
+    "viewingCurrent": "Viewing the current promo",
+    "viewingBatch": "Viewing an older promo",
+    "batchLabel": "Promo batch",
+    "from": "From",
+    "to": "To",
+    "search": "Search title…",
+    "apply": "Apply",
+    "reset": "Reset",
+    "backToCurrent": "Back to current promo",
+    "untitledBatch": "Promo",
+    "itemCount_one": "{{count}} product",
+    "itemCount_other": "{{count}} products"
+  },
+  "picture": {
+    "add": "Add photo",
+    "replace": "Replace",
+    "uploading": "Uploading…",
+    "remove": "Remove"
+  },
+  "modal": {
+    "addTitle": "Add a new promo",
+    "editItemTitle": "Edit promo line",
+    "importTitle": "Import a promo from Excel"
+  },
+  "form": {
+    "searchProduct": "Search a product…",
+    "noResults": "No matching product",
+    "typeToSearch": "Type to search",
+    "contenance": "Contenance",
+    "contenancePlaceholder": "e.g. 33cl, 1L",
+    "originalPrice": "Original price",
+    "promoPrice": "Promo price",
+    "addLine": "Add to list",
+    "draftEmpty": "No products added yet",
+    "removeLine": "Remove",
+    "publish": "Publish promo",
+    "cancel": "Cancel",
+    "titleLabel": "Title (optional)",
+    "titlePlaceholder": "e.g. Promo August 2026"
+  },
+  "bulkImport": {
+    "templateTitle": "Need the template?",
+    "instructions": "Download the example file — one row per product, matched by SKU — fill it in, then upload it below. Publishing replaces the currently active promo.",
+    "downloadTemplate": "Download example Excel",
+    "fileLabel": "Excel file",
+    "chooseFile": "Click to choose a file",
+    "fileHint": "Supports .xlsx or .xls files",
+    "import": "Publish",
+    "created": "Added",
+    "failed": "Failed",
+    "rowLabel": "Row {{row}}",
+    "allImported": "All rows imported successfully"
+  },
+  "deleteItemConfirm": {
+    "message": "Remove this product from the promo?"
+  },
+  "deleteBatchConfirm": {
+    "message": "Delete this entire promo? This removes every line and every photo in it."
+  },
+  "pictures": {
+    "subtitle": "Field users who have added at least one shelf photo for this promo",
+    "table": {
+      "user": "User",
+      "role": "Role",
+      "progress": "Progress",
+      "lastUpload": "Last upload",
+      "view": "View",
+      "empty": "No one has added a picture yet"
+    },
+    "detail": {
+      "back": "← Back",
+      "title": "{{name}}'s pictures"
+    }
+  },
+  "toasts": {
+    "createSuccess": "Promo published",
+    "createError": "Failed to publish promo",
+    "importSuccess": "Promo imported and published",
+    "importError": "Failed to import promo",
+    "updateItemSuccess": "Promo line updated",
+    "updateItemError": "Failed to update promo line",
+    "removeItemSuccess": "Product removed from promo",
+    "removeItemError": "Failed to remove product",
+    "removeBatchSuccess": "Promo deleted",
+    "removeBatchError": "Failed to delete promo",
+    "pictureUploaded": "Photo added",
+    "pictureUploadError": "Failed to upload photo",
+    "pictureRemoved": "Photo removed",
+    "pictureRemoveError": "Failed to remove photo",
+    "fileTooLarge": "File is too large (max 5MB)",
+    "invalidFileType": "Unsupported file type"
+  },
+  "errors": {
+    "productRequired": "Select a product",
+    "contenanceRequired": "Contenance is required",
+    "originalPriceRequired": "Enter a valid original price",
+    "promoPriceRequired": "Enter a valid promo price",
+    "itemsRequired": "Add at least one product"
+  }
+}

@@ -13,6 +13,8 @@ import schedulesReducer from './slices/schedulesSlice';
 import sellOutReducer from './slices/sellOutSlice';
 import settingsReducer from './slices/settingsSlice';
 import productRequestsReducer from './slices/productRequestsSlice';
+import promosReducer from './slices/promosSlice';
+import notificationsReducer from './slices/notificationsSlice';
 
 export const store = configureStore({
   reducer: {
@@ -30,6 +32,8 @@ export const store = configureStore({
     sellOut: sellOutReducer,
     settings: settingsReducer,
     productRequests: productRequestsReducer,
+    promos: promosReducer,
+    notifications: notificationsReducer,
   },
 });
 

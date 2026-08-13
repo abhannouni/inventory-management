@@ -48,6 +48,8 @@ export function usePermissions() {
     canManageStores: canManage('pos'),
     canManageProducts: canManage('products'),
     canManageProductStores: canManage('inventory'),
+    canManagePromos: canManage('promos'),
+    canUploadPromoPicture: can('promos.upload_picture'),
     canManageSchedules: canManage('schedules'),
     // A visit is a create (check-in) followed by an update (check-out) — not
     // something every authenticated role does. General Management, for

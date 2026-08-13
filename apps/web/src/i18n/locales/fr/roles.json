@@ -30,7 +30,8 @@
     "assign_permissions": "Assigner des permissions",
     "set_visibility": "Définir la visibilité",
     "change_status": "Changer le statut",
-    "view_audit_log": "Consulter le journal d'audit"
+    "view_audit_log": "Consulter le journal d'audit",
+    "upload_picture": "Ajouter une photo de rayon promo"
   },
   "resources": {
     "users": "Utilisateurs",
@@ -51,7 +52,8 @@
     "settings": "Paramètres",
     "sell_out": "Ventes (Sell-out)",
     "hr": "RH",
-    "product_requests": "Marketing"
+    "product_requests": "Marketing",
+    "promos": "Promos"
   },
   "matrix": {
     "superAdminLocked": "Le super administrateur détient toujours toutes les permissions. Ce rôle n'est pas modifiable — c'est ce qui garantit que vous ne pourrez jamais être exclu de la plateforme.",

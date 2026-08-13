@@ -10,6 +10,5 @@ export const modulesApi = {
   sellOut: () => api.get<ModuleStatus>('/sell-out'),
   training: () => api.get<ModuleStatus>('/training'),
   hr: () => api.get<ModuleStatus>('/hr'),
-  promos: () => api.get<ModuleStatus>('/promos'),
   priceSurveys: () => api.get<ModuleStatus>('/price-surveys'),
 };

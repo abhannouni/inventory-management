@@ -1,0 +1,122 @@
+{
+  "title": "Promos",
+  "subtitle": "Les prix promotionnels du mois sur votre catalogue produits",
+  "tabs": {
+    "table": "Promos",
+    "pictures": "Photos"
+  },
+  "actions": {
+    "addPromo": "Ajouter une promo",
+    "importExcel": "Importer Excel",
+    "deletePromo": "Supprimer cette promo"
+  },
+  "table": {
+    "product": "Produit",
+    "contenance": "Contenance",
+    "originalPrice": "Prix initial",
+    "promoPrice": "Prix promo",
+    "picture": "Photo",
+    "empty": "Aucune promo active pour le moment",
+    "emptyHint": "Dès que le Super Admin publie une promo, elle apparaît ici."
+  },
+  "filters": {
+    "viewingCurrent": "Promo en cours",
+    "viewingBatch": "Ancienne promo",
+    "batchLabel": "Lot de promo",
+    "from": "Du",
+    "to": "Au",
+    "search": "Rechercher un titre…",
+    "apply": "Appliquer",
+    "reset": "Réinitialiser",
+    "backToCurrent": "Revenir à la promo en cours",
+    "untitledBatch": "Promo",
+    "itemCount_one": "{{count}} produit",
+    "itemCount_other": "{{count}} produits"
+  },
+  "picture": {
+    "add": "Ajouter une photo",
+    "replace": "Remplacer",
+    "uploading": "Envoi…",
+    "remove": "Supprimer"
+  },
+  "modal": {
+    "addTitle": "Ajouter une nouvelle promo",
+    "editItemTitle": "Modifier la ligne de promo",
+    "importTitle": "Importer une promo depuis Excel"
+  },
+  "form": {
+    "searchProduct": "Rechercher un produit…",
+    "noResults": "Aucun produit correspondant",
+    "typeToSearch": "Tapez pour rechercher",
+    "contenance": "Contenance",
+    "contenancePlaceholder": "ex. 33cl, 1L",
+    "originalPrice": "Prix initial",
+    "promoPrice": "Prix promo",
+    "addLine": "Ajouter à la liste",
+    "draftEmpty": "Aucun produit ajouté pour l'instant",
+    "removeLine": "Retirer",
+    "publish": "Publier la promo",
+    "cancel": "Annuler",
+    "titleLabel": "Titre (optionnel)",
+    "titlePlaceholder": "ex. Promo Août 2026"
+  },
+  "bulkImport": {
+    "templateTitle": "Besoin du modèle ?",
+    "instructions": "Téléchargez le fichier exemple — une ligne par produit, identifié par SKU — remplissez-le, puis importez-le ci-dessous. La publication remplace la promo actuellement active.",
+    "downloadTemplate": "Télécharger l'exemple Excel",
+    "fileLabel": "Fichier Excel",
+    "chooseFile": "Cliquez pour choisir un fichier",
+    "fileHint": "Formats .xlsx ou .xls acceptés",
+    "import": "Publier",
+    "created": "Ajoutés",
+    "failed": "Échecs",
+    "rowLabel": "Ligne {{row}}",
+    "allImported": "Toutes les lignes ont été importées avec succès"
+  },
+  "deleteItemConfirm": {
+    "message": "Retirer ce produit de la promo ?"
+  },
+  "deleteBatchConfirm": {
+    "message": "Supprimer entièrement cette promo ? Cela supprime toutes les lignes et toutes les photos qu'elle contient."
+  },
+  "pictures": {
+    "subtitle": "Utilisateurs terrain ayant ajouté au moins une photo de rayon pour cette promo",
+    "table": {
+      "user": "Utilisateur",
+      "role": "Rôle",
+      "progress": "Progression",
+      "lastUpload": "Dernier envoi",
+      "view": "Voir",
+      "empty": "Personne n'a encore ajouté de photo"
+    },
+    "detail": {
+      "back": "← Retour",
+      "title": "Photos de {{name}}"
+    }
+  },
+  "toasts": {
+    "createSuccess": "Promo publiée",
+    "createError": "Échec de la publication de la promo",
+    "importSuccess": "Promo importée et publiée",
+    "importError": "Échec de l'import de la promo",
+    "updateItemSuccess": "Ligne de promo mise à jour",
+    "updateItemError": "Échec de la mise à jour de la ligne",
+    "removeItemSuccess": "Produit retiré de la promo",
+    "removeItemError": "Échec du retrait du produit",
+    "removeBatchSuccess": "Promo supprimée",
+    "removeBatchError": "Échec de la suppression de la promo",
+    "pictureUploaded": "Photo ajoutée",
+    "pictureUploadError": "Échec de l'envoi de la photo",
+    "pictureRemoved": "Photo supprimée",
+    "pictureRemoveError": "Échec de la suppression de la photo",
+    "fileTooLarge": "Fichier trop volumineux (5 Mo max)",
+    "invalidFileType": "Type de fichier non pris en charge"
+  },
+  "errors": {
+    "productRequired": "Sélectionnez un produit",
+    "contenanceRequired": "La contenance est requise",
+    "originalPriceRequired": "Entrez un prix initial valide",
+    "promoPriceRequired": "Entrez un prix promo valide",
+    "itemsRequired": "Ajoutez au moins un produit"
+  }
+}

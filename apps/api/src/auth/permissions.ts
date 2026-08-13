@@ -26,6 +26,7 @@ export const RESOURCES = [
   'sell_out',
   'hr',
   'product_requests',
+  'promos',
 ] as const;
 
 export type Resource = (typeof RESOURCES)[number];
@@ -129,6 +130,18 @@ export const PERMISSIONS: PermissionDef[] = [
   // Not included in any ROLE_PRESETS entry — only super_admin (which bypasses
   // the preset table and gets every permission) can reach the HR module.
   { code: 'hr.read', resource: 'hr', action: 'read', description: 'View HR module (super admin only)' },
+
+  // Promos: `read` is granted broadly below (every role sees the current
+  // promo table); create/update/delete are deliberately absent from every
+  // ROLE_PRESETS entry, so only super_admin can publish/edit/remove a promo
+  // batch — same "no preset grant" pattern as `hr.read` above.
+  ...crud('promos', 'promos'),
+  {
+    code: 'promos.upload_picture',
+    resource: 'promos',
+    action: 'upload_picture',
+    description: 'Upload a shelf photo for a promo product',
+  },
 ];
 
 export const PERMISSION_CODES = PERMISSIONS.map((p) => p.code);
@@ -161,6 +174,7 @@ export const ROLE_PRESETS: Record<string, string[]> = {
     'reports.export',
     ...crud('sell_out', '').map((p) => p.code),
     ...crud('product_requests', '').map((p) => p.code),
+    'promos.read',
   ],
 
   // Reads consolidated data, but only for the POS the Super Admin has exposed.
@@ -179,6 +193,7 @@ export const ROLE_PRESETS: Record<string, string[]> = {
     'users.read',
     'sell_out.read',
     'product_requests.read',
+    'promos.read',
   ],
 
   supervisor: [
@@ -208,6 +223,8 @@ export const ROLE_PRESETS: Record<string, string[]> = {
     'product_requests.read',
     'product_requests.create',
     'product_requests.update',
+    'promos.read',
+    'promos.upload_picture',
   ],
 
   merchandiser: [
@@ -222,5 +239,7 @@ export const ROLE_PRESETS: Record<string, string[]> = {
     ...crud('audit_items', '').map((p) => p.code),
     'dashboards.read',
     ...crud('product_requests', '').map((p) => p.code),
+    'promos.read',
+    'promos.upload_picture',
   ],
 };

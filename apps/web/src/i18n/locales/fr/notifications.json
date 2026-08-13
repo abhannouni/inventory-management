@@ -1,0 +1,11 @@
+{
+  "title": "Notifications",
+  "empty": "Aucune notification pour le moment",
+  "markAllRead": "Tout marquer comme lu",
+  "types": {
+    "promo_created": {
+      "title": "Nouvelle promo publiée",
+      "body": "Une nouvelle promo est en ligne — ajoutez votre photo de rayon une fois l'étiquette en place."
+    }
+  }
+}

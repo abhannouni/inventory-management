@@ -1,0 +1,122 @@
+{
+  "title": "العروض الترويجية",
+  "subtitle": "أسعار العروض الترويجية لهذا الشهر عبر كتالوج المنتجات",
+  "tabs": {
+    "table": "العروض",
+    "pictures": "الصور"
+  },
+  "actions": {
+    "addPromo": "إضافة عرض",
+    "importExcel": "استيراد Excel",
+    "deletePromo": "حذف هذا العرض"
+  },
+  "table": {
+    "product": "المنتج",
+    "contenance": "السعة",
+    "originalPrice": "السعر الأصلي",
+    "promoPrice": "سعر العرض",
+    "picture": "الصورة",
+    "empty": "لا يوجد عرض نشط حاليًا",
+    "emptyHint": "بمجرد أن ينشر المسؤول الأعلى عرضًا، سيظهر هنا."
+  },
+  "filters": {
+    "viewingCurrent": "عرض العرض الحالي",
+    "viewingBatch": "عرض قديم",
+    "batchLabel": "دفعة العرض",
+    "from": "من",
+    "to": "إلى",
+    "search": "البحث عن عنوان…",
+    "apply": "تطبيق",
+    "reset": "إعادة تعيين",
+    "backToCurrent": "العودة إلى العرض الحالي",
+    "untitledBatch": "عرض",
+    "itemCount_one": "{{count}} منتج",
+    "itemCount_other": "{{count}} منتجات"
+  },
+  "picture": {
+    "add": "إضافة صورة",
+    "replace": "استبدال",
+    "uploading": "جارٍ الرفع…",
+    "remove": "إزالة"
+  },
+  "modal": {
+    "addTitle": "إضافة عرض جديد",
+    "editItemTitle": "تعديل سطر العرض",
+    "importTitle": "استيراد عرض من Excel"
+  },
+  "form": {
+    "searchProduct": "البحث عن منتج…",
+    "noResults": "لا يوجد منتج مطابق",
+    "typeToSearch": "اكتب للبحث",
+    "contenance": "السعة",
+    "contenancePlaceholder": "مثال: 33cl، 1L",
+    "originalPrice": "السعر الأصلي",
+    "promoPrice": "سعر العرض",
+    "addLine": "إضافة إلى القائمة",
+    "draftEmpty": "لم تتم إضافة أي منتج بعد",
+    "removeLine": "إزالة",
+    "publish": "نشر العرض",
+    "cancel": "إلغاء",
+    "titleLabel": "العنوان (اختياري)",
+    "titlePlaceholder": "مثال: عرض أغسطس 2026"
+  },
+  "bulkImport": {
+    "templateTitle": "تحتاج إلى النموذج؟",
+    "instructions": "قم بتنزيل الملف النموذجي — سطر واحد لكل منتج، مطابق حسب SKU — املأه ثم قم برفعه أدناه. النشر يستبدل العرض النشط حاليًا.",
+    "downloadTemplate": "تنزيل نموذج Excel",
+    "fileLabel": "ملف Excel",
+    "chooseFile": "انقر لاختيار ملف",
+    "fileHint": "يدعم ملفات .xlsx أو .xls",
+    "import": "نشر",
+    "created": "تمت الإضافة",
+    "failed": "فشل",
+    "rowLabel": "السطر {{row}}",
+    "allImported": "تم استيراد جميع الأسطر بنجاح"
+  },
+  "deleteItemConfirm": {
+    "message": "إزالة هذا المنتج من العرض؟"
+  },
+  "deleteBatchConfirm": {
+    "message": "حذف هذا العرض بالكامل؟ سيؤدي ذلك إلى حذف جميع الأسطر والصور الموجودة فيه."
+  },
+  "pictures": {
+    "subtitle": "مستخدمو الميدان الذين أضافوا صورة واحدة على الأقل للرف لهذا العرض",
+    "table": {
+      "user": "المستخدم",
+      "role": "الدور",
+      "progress": "التقدم",
+      "lastUpload": "آخر رفع",
+      "view": "عرض",
+      "empty": "لم يقم أحد بإضافة صورة بعد"
+    },
+    "detail": {
+      "back": "← رجوع",
+      "title": "صور {{name}}"
+    }
+  },
+  "toasts": {
+    "createSuccess": "تم نشر العرض",
+    "createError": "فشل نشر العرض",
+    "importSuccess": "تم استيراد العرض ونشره",
+    "importError": "فشل استيراد العرض",
+    "updateItemSuccess": "تم تحديث سطر العرض",
+    "updateItemError": "فشل تحديث سطر العرض",
+    "removeItemSuccess": "تمت إزالة المنتج من العرض",
+    "removeItemError": "فشلت إزالة المنتج",
+    "removeBatchSuccess": "تم حذف العرض",
+    "removeBatchError": "فشل حذف العرض",
+    "pictureUploaded": "تمت إضافة الصورة",
+    "pictureUploadError": "فشل رفع الصورة",
+    "pictureRemoved": "تمت إزالة الصورة",
+    "pictureRemoveError": "فشلت إزالة الصورة",
+    "fileTooLarge": "الملف كبير جدًا (الحد الأقصى 5 ميغابايت)",
+    "invalidFileType": "نوع ملف غير مدعوم"
+  },
+  "errors": {
+    "productRequired": "اختر منتجًا",
+    "contenanceRequired": "السعة مطلوبة",
+    "originalPriceRequired": "أدخل سعرًا أصليًا صالحًا",
+    "promoPriceRequired": "أدخل سعر عرض صالحًا",
+    "itemsRequired": "أضف منتجًا واحدًا على الأقل"
+  }
+}

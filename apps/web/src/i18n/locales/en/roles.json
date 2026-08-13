@@ -30,7 +30,8 @@
     "assign_permissions": "Assign permissions",
     "set_visibility": "Set visibility",
     "change_status": "Change status",
-    "view_audit_log": "View audit log"
+    "view_audit_log": "View audit log",
+    "upload_picture": "Upload promo shelf photo"
   },
   "resources": {
     "users": "Users",
@@ -51,7 +52,8 @@
     "settings": "Settings",
     "sell_out": "Sell-out",
     "hr": "HR",
-    "product_requests": "Marketing"
+    "product_requests": "Marketing",
+    "promos": "Promos"
   },
   "matrix": {
     "superAdminLocked": "The Super Administrator always holds every permission. This role cannot be edited — it is what guarantees you can never be locked out of the platform.",

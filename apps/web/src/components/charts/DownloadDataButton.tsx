@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { downloadCsv, downloadPptx, downloadXlsx } from '../../utils/export';
 import type { AnyExportDataset } from '../../utils/export';
+import { usePermissions } from '../../hooks/usePermissions';
 
 interface DownloadDataButtonProps {
   /** The rows behind the chart. Several datasets export as one multi-sheet workbook. */
@@ -26,6 +27,7 @@ export default function DownloadDataButton({
   chartSubtitle,
 }: DownloadDataButtonProps) {
   const { t } = useTranslation('reports');
+  const { isSuperAdmin } = usePermissions();
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -43,6 +45,9 @@ export default function DownloadDataButton({
       document.removeEventListener('keydown', onEsc);
     };
   }, [open]);
+
+  // Downloading data off the platform is a super-admin-only action.
+  if (!isSuperAdmin) return null;
 
   const rowCount = datasets.reduce((n, d) => n + d.rows.length, 0);
   const disabled = rowCount === 0;

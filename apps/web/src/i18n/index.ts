@@ -21,6 +21,8 @@ import frModules from './locales/fr/modules.json';
 import frSellOut from './locales/fr/sellOut.json';
 import frSettings from './locales/fr/settings.json';
 import frProductRequests from './locales/fr/productRequests.json';
+import frPromos from './locales/fr/promos.json';
+import frNotifications from './locales/fr/notifications.json';
 
 import enCommon from './locales/en/common.json';
 import enSidebar from './locales/en/sidebar.json';
@@ -42,6 +44,8 @@ import enModules from './locales/en/modules.json';
 import enSellOut from './locales/en/sellOut.json';
 import enSettings from './locales/en/settings.json';
 import enProductRequests from './locales/en/productRequests.json';
+import enPromos from './locales/en/promos.json';
+import enNotifications from './locales/en/notifications.json';
 
 import arCommon from './locales/ar/common.json';
 import arSidebar from './locales/ar/sidebar.json';
@@ -63,6 +67,8 @@ import arModules from './locales/ar/modules.json';
 import arSellOut from './locales/ar/sellOut.json';
 import arSettings from './locales/ar/settings.json';
 import arProductRequests from './locales/ar/productRequests.json';
+import arPromos from './locales/ar/promos.json';
+import arNotifications from './locales/ar/notifications.json';
 
 export const LANGUAGE_STORAGE_KEY = 'appLanguage';
 export const SUPPORTED_LANGUAGES = ['fr', 'en', 'ar'] as const;
@@ -91,6 +97,8 @@ export const NAMESPACES = [
   'sellOut',
   'settings',
   'productRequests',
+  'promos',
+  'notifications',
 ] as const;
 
 function getInitialLanguage(): SupportedLanguage {
@@ -133,6 +141,8 @@ i18n.use(initReactI18next).init({
       sellOut: frSellOut,
       settings: frSettings,
       productRequests: frProductRequests,
+      promos: frPromos,
+      notifications: frNotifications,
     },
     en: {
       common: enCommon,
@@ -155,6 +165,8 @@ i18n.use(initReactI18next).init({
       sellOut: enSellOut,
       settings: enSettings,
       productRequests: enProductRequests,
+      promos: enPromos,
+      notifications: enNotifications,
     },
     ar: {
       common: arCommon,
@@ -177,6 +189,8 @@ i18n.use(initReactI18next).init({
       sellOut: arSellOut,
       settings: arSettings,
       productRequests: arProductRequests,
+      promos: arPromos,
+      notifications: arNotifications,
     },
   },
   ns: NAMESPACES,
