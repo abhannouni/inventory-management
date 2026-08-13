@@ -2,13 +2,28 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import cookieParser from 'cookie-parser';
+import { syncRbac } from '../prisma/rbac';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
+import { PrismaService } from './prisma/prisma.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.use(cookieParser());
+
+  // Reconciles the Permission/Role tables with the in-code catalogue
+  // (apps/api/src/auth/permissions.ts) on every boot — idempotent and
+  // non-destructive, so a new permission added in code is live in every
+  // environment (including production) on the next deploy, with no separate
+  // manual `db:seed:rbac` step to remember. Logged but not fatal: a
+  // transient DB hiccup here shouldn't crash-loop the whole API.
+  try {
+    const { permissions, roles } = await syncRbac(app.get(PrismaService));
+    console.log(`RBAC synced — ${permissions} permissions across ${roles} roles.`);
+  } catch (err) {
+    console.error('RBAC sync failed — permissions may be stale until the next successful boot.', err);
+  }
 
   const devOrigins = ['http://localhost:5173', 'http://localhost:3000', 'http://localhost:4173'];
   const allowedOrigins = process.env.FRONTEND_URL

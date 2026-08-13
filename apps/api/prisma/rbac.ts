@@ -1,6 +1,14 @@
 import { PrismaClient, UserRole } from '@prisma/client';
 import { PERMISSIONS, ROLE_PRESETS } from '../src/auth/permissions';
 
+/**
+ * The slice of PrismaClient this needs — satisfied both by a raw PrismaClient
+ * (seed-rbac.ts) and by the app's PrismaService facade (main.ts bootstrap),
+ * which exposes the same delegates as plain properties rather than by
+ * extending PrismaClient itself.
+ */
+type RbacPrisma = Pick<PrismaClient, 'permission' | 'role' | 'rolePermission' | 'user'>;
+
 const ROLE_LABELS: Record<string, { label: string; description: string }> = {
   super_admin: {
     label: 'Super Administrator',
@@ -32,7 +40,7 @@ const ROLE_LABELS: Record<string, { label: string; description: string }> = {
  * Safe to run against a populated database — it only adds and relinks, and it
  * leaves custom roles and any hand-edited grants on system roles alone.
  */
-export async function syncRbac(prisma: PrismaClient) {
+export async function syncRbac(prisma: RbacPrisma) {
   // 1. Permissions
   for (const p of PERMISSIONS) {
     await prisma.permission.upsert({
