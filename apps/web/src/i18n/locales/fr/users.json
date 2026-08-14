@@ -30,9 +30,9 @@
   "assignStoresTitle": "Assigner des PDV — {{name}}",
   "fields": {
     "fullName": "Nom complet",
-    "fullNamePlaceholder": "Jean Dupont",
+    "fullNamePlaceholder": "Nom complet",
     "email": "E-mail",
-    "emailPlaceholder": "jean@exemple.com",
+    "emailPlaceholder": "vous@exemple.com",
     "role": "Rôle",
     "rolePlaceholder": "Sélectionner un rôle",
     "region": "Région (facultatif)",

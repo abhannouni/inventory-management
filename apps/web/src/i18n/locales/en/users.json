@@ -30,9 +30,9 @@
   "assignStoresTitle": "Assign POS — {{name}}",
   "fields": {
     "fullName": "Full Name",
-    "fullNamePlaceholder": "John Doe",
+    "fullNamePlaceholder": "Full name",
     "email": "Email",
-    "emailPlaceholder": "john@example.com",
+    "emailPlaceholder": "you@example.com",
     "role": "Role",
     "rolePlaceholder": "Select a role",
     "region": "Region (optional)",

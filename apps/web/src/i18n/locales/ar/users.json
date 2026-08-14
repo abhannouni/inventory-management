@@ -30,9 +30,9 @@
   "assignStoresTitle": "تعيين نقاط البيع — {{name}}",
   "fields": {
     "fullName": "الاسم الكامل",
-    "fullNamePlaceholder": "أحمد بنعلي",
+    "fullNamePlaceholder": "الاسم الكامل",
     "email": "البريد الإلكتروني",
-    "emailPlaceholder": "ahmed@example.com",
+    "emailPlaceholder": "you@example.com",
     "role": "الدور",
     "rolePlaceholder": "اختر دورًا",
     "region": "المنطقة (اختياري)",

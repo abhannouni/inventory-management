@@ -18,7 +18,7 @@ const TEMPLATE_COLUMNS = [
 ];
 
 const EXAMPLE_ROWS = [
-  ['Coca-Cola 330ml', 'CC330', 'Beverages', 'no', 'Coca-Cola Company', 'Boissons', 'Sodas', '330ml'],
+  ['Sparkling Water 330ml', 'SKU-330', 'Beverages', 'no', 'Sample Distributor', 'Boissons', 'Sodas', '330ml'],
   ['Bourchanin Juice 1L', 'BJ1000', 'Beverages', 'yes', '', 'Boissons', 'Jus', '1L'],
 ];
 

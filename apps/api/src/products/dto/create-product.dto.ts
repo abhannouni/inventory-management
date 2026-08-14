@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsOptional, IsString } from 'class-validator';
 
 export class CreateProductDto {
-  @ApiProperty({ example: 'Coca Cola 500ml' })
+  @ApiProperty({ example: 'Sparkling Water 500ml' })
   @IsString()
   name: string;
 
@@ -19,7 +19,7 @@ export class CreateProductDto {
   @IsOptional()
   is_our_product?: boolean;
 
-  @ApiProperty({ example: 'Coca-Cola Company' })
+  @ApiProperty({ example: 'Sample Distributor Ltd.' })
   @IsString()
   distributeur: string;
 

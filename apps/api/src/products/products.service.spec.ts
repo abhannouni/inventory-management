@@ -5,10 +5,10 @@ import { ProductsService } from './products.service';
 
 const product = {
   id: 'b0759b92-e576-4f01-80fa-927b905fab2e',
-  name: 'Coca Cola 500ml',
-  sku: 'CC-500',
+  name: 'Sparkling Water 500ml',
+  sku: 'SKU-500',
   category: 'Beverages',
-  distributeur: 'Coca-Cola Company',
+  distributeur: 'Sample Distributor',
   famille: 'Boissons',
   sous_famille: 'Sodas',
   format: '500ml',
@@ -53,7 +53,7 @@ describe('ProductsService', () => {
 
   describe('update', () => {
     it('updates an existing product', async () => {
-      const dto = { name: 'Coca Cola Zero 500ml', category: 'Sodas' };
+      const dto = { name: 'Sparkling Water Zero 500ml', category: 'Sodas' };
       prisma.product.findUnique.mockResolvedValue(product);
       prisma.product.update.mockResolvedValue({ ...product, ...dto });
 
@@ -63,7 +63,7 @@ describe('ProductsService', () => {
         where: { id: product.id },
         data: dto,
       });
-      expect(result.name).toBe('Coca Cola Zero 500ml');
+      expect(result.name).toBe('Sparkling Water Zero 500ml');
     });
 
     it('throws NotFoundException when the product does not exist', async () => {
