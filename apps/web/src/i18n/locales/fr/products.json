@@ -65,6 +65,20 @@
   "deleteConfirm": {
     "message": "Cette action supprimera définitivement le produit."
   },
+  "assignPdv": {
+    "action": "Assigner PDV",
+    "title": "Assigner des points de vente — {{name}}",
+    "searchLabel": "Rechercher un point de vente",
+    "searchPlaceholder": "Rechercher par nom ou ville…",
+    "noResults": "Aucun point de vente trouvé",
+    "typeToSearch": "Tapez pour rechercher un point de vente…",
+    "selectedCount_one": "{{count}} point de vente assigné",
+    "selectedCount_other": "{{count}} points de vente assignés",
+    "toasts": {
+      "success": "Liste des points de vente mise à jour",
+      "error": "Échec de la mise à jour de la liste des points de vente"
+    }
+  },
   "bulkImport": {
     "button": "Importer Excel",
     "title": "Import en masse des produits",

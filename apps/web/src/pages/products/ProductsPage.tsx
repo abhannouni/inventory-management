@@ -16,6 +16,7 @@ import Select from '../../components/ui/Select';
 import Badge from '../../components/ui/Badge';
 import ProductForm from './ProductForm';
 import ProductBulkImportModal from './ProductBulkImportModal';
+import AssignPdvModal from './AssignPdvModal';
 import { formatDate } from '../../utils/format';
 import type { Product } from '../../types';
 import { getProductClassificationLabel } from '../../utils/productClassification';
@@ -30,6 +31,7 @@ export default function ProductsPage() {
   const [createOpen, setCreateOpen] = useState(false);
   const [importOpen, setImportOpen] = useState(false);
   const [editProduct, setEditProduct] = useState<Product | null>(null);
+  const [pdvProduct, setPdvProduct] = useState<Product | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [search, setSearch] = useState('');
@@ -144,6 +146,9 @@ export default function ProductsPage() {
           {p.can('products.update') && (
             <Button variant="outline" size="sm" onClick={() => setEditProduct(row)}>{tCommon('actions.edit')}</Button>
           )}
+          {p.canManageProductStores && (
+            <Button variant="outline" size="sm" onClick={() => setPdvProduct(row)}>{t('assignPdv.action')}</Button>
+          )}
           {p.can('products.delete') && (
             <Button variant="danger" size="sm" onClick={() => setDeleteId(row.id)}>{tCommon('actions.delete')}</Button>
           )}
@@ -244,6 +249,8 @@ export default function ProductsPage() {
       <Modal open={importOpen} onClose={() => setImportOpen(false)} title={t('bulkImport.title')} size="md">
         <ProductBulkImportModal onClose={() => setImportOpen(false)} />
       </Modal>
+
+      <AssignPdvModal product={pdvProduct} onClose={() => setPdvProduct(null)} />
 
       <ConfirmDialog
         open={!!deleteId}

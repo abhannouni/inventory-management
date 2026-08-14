@@ -65,6 +65,20 @@
   "deleteConfirm": {
     "message": "سيؤدي هذا إلى حذف المنتج نهائيًا."
   },
+  "assignPdv": {
+    "action": "تعيين نقاط البيع",
+    "title": "تعيين نقاط البيع — {{name}}",
+    "searchLabel": "البحث عن نقطة بيع",
+    "searchPlaceholder": "البحث بالاسم أو المدينة…",
+    "noResults": "لم يتم العثور على نقاط بيع",
+    "typeToSearch": "اكتب للبحث عن نقطة بيع…",
+    "selectedCount_one": "تم تعيين نقطة بيع واحدة",
+    "selectedCount_other": "تم تعيين {{count}} نقطة بيع",
+    "toasts": {
+      "success": "تم تحديث قائمة نقاط البيع",
+      "error": "فشل تحديث قائمة نقاط البيع"
+    }
+  },
   "bulkImport": {
     "button": "استيراد من Excel",
     "title": "استيراد المنتجات بالجملة",

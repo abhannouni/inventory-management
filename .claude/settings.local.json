@@ -112,7 +112,10 @@
       "Bash(curl -s -X POST http://localhost:3001/api/auth/register -H 'Content-Type: application/json' -d '{\"full_name\":\"Test Probe\",\"email\":\"security-probe-test@example.invalid\",\"password\":\"testpassword123\",\"role\":\"super_admin\"}' -w '\\\\nHTTP_STATUS:%{http_code}\\\\n')",
       "Bash(PGPASSWORD='asap@2020' psql -h localhost -U postgres -d myapp -c \"DELETE FROM users WHERE email='security-probe-test@example.invalid';\")",
       "Bash(PGPASSWORD='asap@2020' psql -h localhost -U postgres -d myapp -c \"SELECT id, email, role FROM users WHERE email='security-probe-test@example.invalid';\")",
-      "Bash(tasklist //FI \"PID eq 18448\" //V)"
+      "Bash(tasklist //FI \"PID eq 18448\" //V)",
+      "Bash(node -e \"const p=require\\('./apps/web/package.json'\\); console.log\\(JSON.stringify\\({deps:p.dependencies, devDeps:Object.keys\\(p.devDependencies||{}\\)}, null, 2\\)\\)\")",
+      "Bash(node -e \"const p=require\\('./apps/api/package.json'\\); console.log\\(JSON.stringify\\(p.dependencies, null, 2\\)\\)\")",
+      "Bash(node -e \"let d='';process.stdin.on\\('data',c=>d+=c\\);process.stdin.on\\('end',\\(\\)=>{const j=JSON.parse\\(d\\); console.log\\(j.data.map\\(ps=>ps.store?.name\\).join\\(', '\\)\\)}\\)\")"
     ]
   }
 }

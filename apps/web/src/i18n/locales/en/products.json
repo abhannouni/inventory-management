@@ -65,6 +65,20 @@
   "deleteConfirm": {
     "message": "This will permanently delete the product."
   },
+  "assignPdv": {
+    "action": "Assign PDV",
+    "title": "Assign points of sale — {{name}}",
+    "searchLabel": "Search points of sale",
+    "searchPlaceholder": "Search by name or city…",
+    "noResults": "No points of sale found",
+    "typeToSearch": "Type to search points of sale…",
+    "selectedCount_one": "{{count}} point of sale assigned",
+    "selectedCount_other": "{{count}} points of sale assigned",
+    "toasts": {
+      "success": "Point of sale list updated",
+      "error": "Failed to update the point of sale list"
+    }
+  },
   "bulkImport": {
     "button": "Import Excel",
     "title": "Bulk Import Products",
