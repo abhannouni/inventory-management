@@ -1,0 +1,100 @@
+{
+  "title": "Relevés de prix",
+  "subtitle": "Relevés de prix collectés sur le terrain dans vos points de vente",
+  "noStores": "Aucun point de vente ne vous est assigné pour le moment.",
+  "pdvSwitcher": {
+    "label": "Point de vente"
+  },
+  "actions": {
+    "save": "Enregistrer",
+    "newRound": "Nouveau relevé de prix"
+  },
+  "newRoundConfirm": {
+    "message": "Cela archive le relevé actuel et vide tous les champs. Les produits assignés restent inchangés. Continuer ?"
+  },
+  "toasts": {
+    "saveSuccess": "Relevé enregistré",
+    "saveError": "Échec de l'enregistrement du relevé",
+    "newRoundSuccess": "Nouveau relevé démarré",
+    "newRoundError": "Échec du démarrage d'un nouveau relevé"
+  },
+  "slides": {
+    "synthese": {
+      "tabLabel": "Synthèse",
+      "zone": "Zone",
+      "own": "Bourchanin",
+      "competitor": "Concurrence",
+      "groups": {
+        "alcool": "Produits alcool",
+        "food": "Produits food"
+      },
+      "kinds": {
+        "mises_en_avant": "Mises en avant",
+        "ruptures": "Ruptures"
+      }
+    }
+  },
+  "grid": {
+    "columns": {
+      "product": "Produit",
+      "cl": "CL",
+      "priceNormal": "Prix normal",
+      "pricePromo": "Prix promo",
+      "etat": "État",
+      "competitorName": "Concurrent",
+      "competitorCl": "CL concurrent",
+      "competitorPriceNormal": "Prix normal concurrent",
+      "competitorPricePromo": "Prix promo concurrent",
+      "competitorEtat": "État concurrent"
+    },
+    "empty": "Aucun produit assigné pour cette catégorie"
+  },
+  "admin": {
+    "pickUser": {
+      "subtitle": "Choisissez un utilisateur pour gérer ses produits de relevé de prix et consulter son historique",
+      "searchPlaceholder": "Rechercher un utilisateur…",
+      "back": "← Retour aux utilisateurs",
+      "table": {
+        "name": "Nom",
+        "email": "Email",
+        "role": "Rôle",
+        "view": "Voir",
+        "empty": "Aucun utilisateur trouvé"
+      }
+    },
+    "pickStore": {
+      "title": "Points de vente de {{name}}",
+      "back": "← Retour aux points de vente",
+      "empty": "Aucun point de vente assigné à cet utilisateur."
+    },
+    "manage": {
+      "title": "{{user}} — {{store}}"
+    },
+    "assignProducts": {
+      "open": "Gérer les produits",
+      "title": "Produits assignés à {{name}}",
+      "searchLabel": "Rechercher un produit",
+      "searchPlaceholder": "Nom ou SKU…",
+      "noResults": "Aucun produit correspondant",
+      "typeToSearch": "Tapez pour rechercher",
+      "selectedCount": "{{count}} produit(s) sélectionné(s)",
+      "toasts": {
+        "success": "Liste de produits mise à jour",
+        "error": "Échec de la mise à jour de la liste de produits"
+      }
+    },
+    "history": {
+      "from": "Du",
+      "to": "Au",
+      "apply": "Filtrer",
+      "viewingOld": "Ancien relevé",
+      "backToCurrent": "Revenir au relevé actuel",
+      "table": {
+        "date": "Date de soumission",
+        "itemCount": "Produits",
+        "view": "Voir",
+        "empty": "Aucun relevé soumis pour ce point de vente"
+      }
+    }
+  }
+}

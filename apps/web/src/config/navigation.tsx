@@ -21,7 +21,7 @@ import MarketingDetailPage from '../pages/modules/MarketingDetailPage';
 import SettingsPage from '../pages/settings/SettingsPage';
 import HrPage from '../pages/modules/HrPage';
 import PromosPage from '../pages/promos/PromosPage';
-import PriceSurveysPage from '../pages/modules/PriceSurveysPage';
+import PriceSurveysPage from '../pages/price-surveys/PriceSurveysPage';
 
 /**
  * The permission-to-page map. This is the single source of truth for the
@@ -341,7 +341,7 @@ export const NAV_PAGES: NavPage[] = [
     id: 'price-surveys',
     path: '/price-surveys',
     element: PriceSurveysPage,
-    permissions: [],
+    permissions: ['price_surveys.update', 'price_surveys.manage'],
     nav: {
       labelKey: 'nav.priceSurveys',
       icon: {

@@ -115,7 +115,9 @@
       "Bash(tasklist //FI \"PID eq 18448\" //V)",
       "Bash(node -e \"const p=require\\('./apps/web/package.json'\\); console.log\\(JSON.stringify\\({deps:p.dependencies, devDeps:Object.keys\\(p.devDependencies||{}\\)}, null, 2\\)\\)\")",
       "Bash(node -e \"const p=require\\('./apps/api/package.json'\\); console.log\\(JSON.stringify\\(p.dependencies, null, 2\\)\\)\")",
-      "Bash(node -e \"let d='';process.stdin.on\\('data',c=>d+=c\\);process.stdin.on\\('end',\\(\\)=>{const j=JSON.parse\\(d\\); console.log\\(j.data.map\\(ps=>ps.store?.name\\).join\\(', '\\)\\)}\\)\")"
+      "Bash(node -e \"let d='';process.stdin.on\\('data',c=>d+=c\\);process.stdin.on\\('end',\\(\\)=>{const j=JSON.parse\\(d\\); console.log\\(j.data.map\\(ps=>ps.store?.name\\).join\\(', '\\)\\)}\\)\")",
+      "Bash(cd \"C:\\\\Users\\\\SalekElFahimam\\\\Downloads\" && ls -la \"relever de prix.xlsx\" 2>&1 | head -5)",
+      "Bash(python -c ' *)"
     ]
   }
 }

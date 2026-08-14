@@ -180,7 +180,61 @@ export interface PromoUserPictureView {
   items: PromoItem[];
 }
 
-export type NotificationType = 'promo_created';
+// ─── Price Surveys (Relevé de Prix) ────────────────────────────────────────────
+
+export type PriceSurveyNoteSide = 'own' | 'competitor';
+
+export interface PriceSurveyItem {
+  id: string;
+  submission_id: string;
+  product_id: string;
+  product?: Product;
+  price_normal: string | null;
+  price_promo: string | null;
+  etat: string | null;
+  competitor_name: string | null;
+  competitor_cl: string | null;
+  competitor_price_normal: string | null;
+  competitor_price_promo: string | null;
+  competitor_etat: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PriceSurveyNote {
+  id: string;
+  submission_id: string;
+  section: string;
+  sub_area: string;
+  side: PriceSurveyNoteSide;
+  text: string | null;
+  updated_at: string;
+}
+
+export interface PriceSurveySubmission {
+  id: string;
+  user_id: string;
+  store_id: string;
+  user?: { id: string; full_name: string };
+  store?: { id: string; name: string };
+  submitted_at: string | null;
+  created_at: string;
+  updated_at: string;
+  items: PriceSurveyItem[];
+  notes: PriceSurveyNote[];
+  _count?: { items: number };
+}
+
+export interface PriceSurveyAssignment {
+  id: string;
+  user_id: string;
+  store_id: string;
+  product_id: string;
+  product?: Product;
+  created_at: string;
+}
+
+export type NotificationType = 'promo_created' | 'price_survey_products_assigned';
 
 export interface Notification {
   id: string;

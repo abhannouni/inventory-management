@@ -1,0 +1,100 @@
+{
+  "title": "مسح الأسعار",
+  "subtitle": "عمليات رصد الأسعار الميدانية عبر نقاط البيع الخاصة بك",
+  "noStores": "لا توجد نقطة بيع معينة لك حالياً.",
+  "pdvSwitcher": {
+    "label": "نقطة البيع"
+  },
+  "actions": {
+    "save": "حفظ",
+    "newRound": "مسح أسعار جديد"
+  },
+  "newRoundConfirm": {
+    "message": "سيؤدي هذا إلى أرشفة الجولة الحالية ومسح جميع الحقول. تبقى المنتجات المعينة دون تغيير. متابعة؟"
+  },
+  "toasts": {
+    "saveSuccess": "تم حفظ المسح",
+    "saveError": "فشل حفظ المسح",
+    "newRoundSuccess": "تم بدء جولة جديدة",
+    "newRoundError": "فشل بدء جولة جديدة"
+  },
+  "slides": {
+    "synthese": {
+      "tabLabel": "ملخص",
+      "zone": "المنطقة",
+      "own": "بورشانين",
+      "competitor": "المنافس",
+      "groups": {
+        "alcool": "منتجات الكحول",
+        "food": "المنتجات الغذائية"
+      },
+      "kinds": {
+        "mises_en_avant": "عرض المنتجات",
+        "ruptures": "النفاد"
+      }
+    }
+  },
+  "grid": {
+    "columns": {
+      "product": "المنتج",
+      "cl": "الحجم",
+      "priceNormal": "السعر العادي",
+      "pricePromo": "سعر العرض",
+      "etat": "الحالة",
+      "competitorName": "المنافس",
+      "competitorCl": "حجم المنافس",
+      "competitorPriceNormal": "السعر العادي للمنافس",
+      "competitorPricePromo": "سعر عرض المنافس",
+      "competitorEtat": "حالة المنافس"
+    },
+    "empty": "لا يوجد منتج معين لهذه الفئة"
+  },
+  "admin": {
+    "pickUser": {
+      "subtitle": "اختر مستخدماً لإدارة منتجات مسح الأسعار الخاصة به والاطلاع على سجله",
+      "searchPlaceholder": "البحث عن مستخدم…",
+      "back": "← العودة إلى المستخدمين",
+      "table": {
+        "name": "الاسم",
+        "email": "البريد الإلكتروني",
+        "role": "الدور",
+        "view": "عرض",
+        "empty": "لم يتم العثور على مستخدمين"
+      }
+    },
+    "pickStore": {
+      "title": "نقاط بيع {{name}}",
+      "back": "← العودة إلى نقاط البيع",
+      "empty": "لا توجد نقطة بيع معينة لهذا المستخدم."
+    },
+    "manage": {
+      "title": "{{user}} — {{store}}"
+    },
+    "assignProducts": {
+      "open": "إدارة المنتجات",
+      "title": "المنتجات المعينة لـ {{name}}",
+      "searchLabel": "البحث عن منتج",
+      "searchPlaceholder": "الاسم أو رمز المنتج…",
+      "noResults": "لا يوجد منتج مطابق",
+      "typeToSearch": "اكتب للبحث",
+      "selectedCount": "{{count}} منتج (منتجات) محدد",
+      "toasts": {
+        "success": "تم تحديث قائمة المنتجات",
+        "error": "فشل تحديث قائمة المنتجات"
+      }
+    },
+    "history": {
+      "from": "من",
+      "to": "إلى",
+      "apply": "تصفية",
+      "viewingOld": "جولة سابقة",
+      "backToCurrent": "العودة إلى الجولة الحالية",
+      "table": {
+        "date": "تاريخ الإرسال",
+        "itemCount": "المنتجات",
+        "view": "عرض",
+        "empty": "لم يتم إرسال أي جولة لنقطة البيع هذه"
+      }
+    }
+  }
+}

@@ -27,6 +27,7 @@ export const RESOURCES = [
   'hr',
   'product_requests',
   'promos',
+  'price_surveys',
 ] as const;
 
 export type Resource = (typeof RESOURCES)[number];
@@ -142,6 +143,22 @@ export const PERMISSIONS: PermissionDef[] = [
     action: 'upload_picture',
     description: 'Upload a shelf photo for a promo product',
   },
+
+  // Price Surveys (Relevé de Prix): `update` lets a field user fill in and
+  // submit their own survey; `manage` (Super Admin / Admin only) covers
+  // assigning products to a user's survey and browsing submission history.
+  {
+    code: 'price_surveys.update',
+    resource: 'price_surveys',
+    action: 'update',
+    description: 'Fill in and submit your own price survey',
+  },
+  {
+    code: 'price_surveys.manage',
+    resource: 'price_surveys',
+    action: 'manage',
+    description: "Assign products to a user's price survey and browse submission history",
+  },
 ];
 
 export const PERMISSION_CODES = PERMISSIONS.map((p) => p.code);
@@ -175,6 +192,7 @@ export const ROLE_PRESETS: Record<string, string[]> = {
     ...crud('sell_out', '').map((p) => p.code),
     ...crud('product_requests', '').map((p) => p.code),
     'promos.read',
+    'price_surveys.manage',
   ],
 
   // Reads consolidated data, but only for the POS the Super Admin has exposed.
@@ -225,6 +243,7 @@ export const ROLE_PRESETS: Record<string, string[]> = {
     'product_requests.update',
     'promos.read',
     'promos.upload_picture',
+    'price_surveys.update',
   ],
 
   merchandiser: [
@@ -241,5 +260,6 @@ export const ROLE_PRESETS: Record<string, string[]> = {
     ...crud('product_requests', '').map((p) => p.code),
     'promos.read',
     'promos.upload_picture',
+    'price_surveys.update',
   ],
 };

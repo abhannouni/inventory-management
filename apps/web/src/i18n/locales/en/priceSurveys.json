@@ -1,0 +1,100 @@
+{
+  "title": "Price Surveys",
+  "subtitle": "Price checks collected in the field across your points of sale",
+  "noStores": "No point of sale is currently assigned to you.",
+  "pdvSwitcher": {
+    "label": "Point of sale"
+  },
+  "actions": {
+    "save": "Save",
+    "newRound": "New price survey"
+  },
+  "newRoundConfirm": {
+    "message": "This archives the current round and clears every field. Assigned products stay unchanged. Continue?"
+  },
+  "toasts": {
+    "saveSuccess": "Survey saved",
+    "saveError": "Failed to save the survey",
+    "newRoundSuccess": "New round started",
+    "newRoundError": "Failed to start a new round"
+  },
+  "slides": {
+    "synthese": {
+      "tabLabel": "Summary",
+      "zone": "Zone",
+      "own": "Bourchanin",
+      "competitor": "Competitor",
+      "groups": {
+        "alcool": "Alcohol products",
+        "food": "Food products"
+      },
+      "kinds": {
+        "mises_en_avant": "Displays",
+        "ruptures": "Stockouts"
+      }
+    }
+  },
+  "grid": {
+    "columns": {
+      "product": "Product",
+      "cl": "CL",
+      "priceNormal": "Normal price",
+      "pricePromo": "Promo price",
+      "etat": "State",
+      "competitorName": "Competitor",
+      "competitorCl": "Competitor CL",
+      "competitorPriceNormal": "Competitor normal price",
+      "competitorPricePromo": "Competitor promo price",
+      "competitorEtat": "Competitor state"
+    },
+    "empty": "No product assigned for this category"
+  },
+  "admin": {
+    "pickUser": {
+      "subtitle": "Choose a user to manage their price survey products and view their history",
+      "searchPlaceholder": "Search a user…",
+      "back": "← Back to users",
+      "table": {
+        "name": "Name",
+        "email": "Email",
+        "role": "Role",
+        "view": "View",
+        "empty": "No users found"
+      }
+    },
+    "pickStore": {
+      "title": "{{name}}'s points of sale",
+      "back": "← Back to points of sale",
+      "empty": "No point of sale is assigned to this user."
+    },
+    "manage": {
+      "title": "{{user}} — {{store}}"
+    },
+    "assignProducts": {
+      "open": "Manage products",
+      "title": "Products assigned to {{name}}",
+      "searchLabel": "Search a product",
+      "searchPlaceholder": "Name or SKU…",
+      "noResults": "No matching product",
+      "typeToSearch": "Type to search",
+      "selectedCount": "{{count}} product(s) selected",
+      "toasts": {
+        "success": "Product list updated",
+        "error": "Failed to update the product list"
+      }
+    },
+    "history": {
+      "from": "From",
+      "to": "To",
+      "apply": "Filter",
+      "viewingOld": "Past round",
+      "backToCurrent": "Back to current round",
+      "table": {
+        "date": "Submitted",
+        "itemCount": "Products",
+        "view": "View",
+        "empty": "No round submitted for this point of sale"
+      }
+    }
+  }
+}

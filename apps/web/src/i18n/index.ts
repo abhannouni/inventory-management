@@ -23,6 +23,7 @@ import frSettings from './locales/fr/settings.json';
 import frProductRequests from './locales/fr/productRequests.json';
 import frPromos from './locales/fr/promos.json';
 import frNotifications from './locales/fr/notifications.json';
+import frPriceSurveys from './locales/fr/priceSurveys.json';
 
 import enCommon from './locales/en/common.json';
 import enSidebar from './locales/en/sidebar.json';
@@ -46,6 +47,7 @@ import enSettings from './locales/en/settings.json';
 import enProductRequests from './locales/en/productRequests.json';
 import enPromos from './locales/en/promos.json';
 import enNotifications from './locales/en/notifications.json';
+import enPriceSurveys from './locales/en/priceSurveys.json';
 
 import arCommon from './locales/ar/common.json';
 import arSidebar from './locales/ar/sidebar.json';
@@ -69,6 +71,7 @@ import arSettings from './locales/ar/settings.json';
 import arProductRequests from './locales/ar/productRequests.json';
 import arPromos from './locales/ar/promos.json';
 import arNotifications from './locales/ar/notifications.json';
+import arPriceSurveys from './locales/ar/priceSurveys.json';
 
 export const LANGUAGE_STORAGE_KEY = 'appLanguage';
 export const SUPPORTED_LANGUAGES = ['fr', 'en', 'ar'] as const;
@@ -99,6 +102,7 @@ export const NAMESPACES = [
   'productRequests',
   'promos',
   'notifications',
+  'priceSurveys',
 ] as const;
 
 function getInitialLanguage(): SupportedLanguage {
@@ -143,6 +147,7 @@ i18n.use(initReactI18next).init({
       productRequests: frProductRequests,
       promos: frPromos,
       notifications: frNotifications,
+      priceSurveys: frPriceSurveys,
     },
     en: {
       common: enCommon,
@@ -167,6 +172,7 @@ i18n.use(initReactI18next).init({
       productRequests: enProductRequests,
       promos: enPromos,
       notifications: enNotifications,
+      priceSurveys: enPriceSurveys,
     },
     ar: {
       common: arCommon,
@@ -191,6 +197,7 @@ i18n.use(initReactI18next).init({
       productRequests: arProductRequests,
       promos: arPromos,
       notifications: arNotifications,
+      priceSurveys: arPriceSurveys,
     },
   },
   ns: NAMESPACES,

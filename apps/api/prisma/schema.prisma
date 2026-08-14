@@ -86,6 +86,13 @@ enum WidgetType {
 
 enum NotificationType {
   promo_created
+  price_survey_products_assigned
+}
+
+/// Whose entry a PriceSurveyNote textarea belongs to.
+enum PriceSurveyNoteSide {
+  own
+  competitor
 }
 
 // ─── Models ────────────────────────────────────────────────────────────────────
@@ -135,6 +142,8 @@ model User {
   promosCreated     Promo[]
   promoPictures     PromoItemPicture[]
   notifications     Notification[]
+  priceSurveyAssignments PriceSurveyAssignment[]
+  priceSurveySubmissions PriceSurveySubmission[]
 
   @@index([role_id])
   @@index([is_active])
@@ -209,6 +218,8 @@ model Store {
   schedules       Schedule[]
   sellOuts        SellOut[]
   productRequests ProductRequest[]
+  priceSurveyAssignments PriceSurveyAssignment[]
+  priceSurveySubmissions PriceSurveySubmission[]
 
   @@index([visible_to_gm])
   @@index([is_active])
@@ -248,6 +259,8 @@ model Product {
   auditItems    AuditItem[]
   sellOuts      SellOut[]
   promoItems    PromoItem[]
+  priceSurveyAssignments PriceSurveyAssignment[]
+  priceSurveyItems       PriceSurveyItem[]
 
   @@index([client_id])
   @@map("products")
@@ -481,6 +494,94 @@ model Notification {
   @@index([user_id, is_read])
   @@index([created_at])
   @@map("notifications")
+}
+
+// ─── Price Surveys (Relevé de Prix) ────────────────────────────────────────────
+
+/// The persistent list of products a given (user, store) pair must survey.
+/// Edited only by super_admin/admin via price_surveys.manage. Untouched by
+/// "Nouveau relevé de prix" — this is what survives a reset.
+model PriceSurveyAssignment {
+  id         String   @id @default(uuid())
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id    String
+  store      Store    @relation(fields: [store_id], references: [id], onDelete: Cascade)
+  store_id   String
+  product    Product  @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  product_id String
+  created_at DateTime @default(now())
+
+  @@unique([user_id, store_id, product_id])
+  @@index([user_id, store_id])
+  @@map("price_survey_assignments")
+}
+
+/// One "round" of a price survey for a (user, store) pair. `submitted_at: null`
+/// is the live in-progress draft — the service ensures at most one exists per
+/// (user_id, store_id) at a time. Clicking "Nouveau relevé de prix" stamps
+/// `submitted_at` (making this row immutable history) and opens a fresh draft.
+model PriceSurveySubmission {
+  id           String    @id @default(uuid())
+  user         User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id      String
+  store        Store     @relation(fields: [store_id], references: [id], onDelete: Cascade)
+  store_id     String
+  submitted_at DateTime?
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @default(now()) @updatedAt
+
+  items PriceSurveyItem[]
+  notes PriceSurveyNote[]
+
+  @@index([user_id, store_id, submitted_at])
+  @@map("price_survey_submissions")
+}
+
+/// One product's filled-in line for one submission round. The user's own
+/// CL/size is read from Product.format, not duplicated here; the competitor's
+/// CL is free text since their product/size may differ from ours.
+model PriceSurveyItem {
+  id            String                @id @default(uuid())
+  submission    PriceSurveySubmission @relation(fields: [submission_id], references: [id], onDelete: Cascade)
+  submission_id String
+  product       Product               @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  product_id    String
+
+  price_normal Decimal? @db.Decimal(10, 2)
+  price_promo  Decimal? @db.Decimal(10, 2)
+  etat         String?
+
+  competitor_name        String?
+  competitor_cl           String?
+  competitor_price_normal Decimal? @db.Decimal(10, 2)
+  competitor_price_promo  Decimal? @db.Decimal(10, 2)
+  competitor_etat         String?
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+
+  @@unique([submission_id, product_id])
+  @@index([submission_id])
+  @@map("price_survey_items")
+}
+
+/// One free-text box for the Synthèse slide: (section × sub_area × side).
+/// `section`/`sub_area` are validated against the fixed SYNTHESE_STRUCTURE
+/// constant in the price-surveys module rather than DB enums, since the
+/// sub-area list differs per section.
+model PriceSurveyNote {
+  id            String                @id @default(uuid())
+  submission    PriceSurveySubmission @relation(fields: [submission_id], references: [id], onDelete: Cascade)
+  submission_id String
+  section       String
+  sub_area      String
+  side          PriceSurveyNoteSide
+  text          String?
+  updated_at    DateTime              @default(now()) @updatedAt
+
+  @@unique([submission_id, section, sub_area, side])
+  @@index([submission_id])
+  @@map("price_survey_notes")
 }
 
 // ─── RBAC ──────────────────────────────────────────────────────────────────────

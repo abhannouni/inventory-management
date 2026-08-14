@@ -15,6 +15,7 @@ import settingsReducer from './slices/settingsSlice';
 import productRequestsReducer from './slices/productRequestsSlice';
 import promosReducer from './slices/promosSlice';
 import notificationsReducer from './slices/notificationsSlice';
+import priceSurveysReducer from './slices/priceSurveysSlice';
 
 export const store = configureStore({
   reducer: {
@@ -34,6 +35,7 @@ export const store = configureStore({
     productRequests: productRequestsReducer,
     promos: promosReducer,
     notifications: notificationsReducer,
+    priceSurveys: priceSurveysReducer,
   },
 });
 

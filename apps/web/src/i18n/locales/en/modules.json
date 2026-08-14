@@ -15,10 +15,6 @@
     "title": "Promos",
     "subtitle": "Promotional campaigns across your points of sale"
   },
-  "priceSurveys": {
-    "title": "Price Surveys",
-    "subtitle": "Price checks collected in the field across your points of sale"
-  },
   "notAvailable": {
     "badge": "Coming soon",
     "title": "Not available yet",

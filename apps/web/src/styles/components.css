@@ -6072,3 +6072,55 @@ html[dir='rtl'] .gps-coords {
   .pos-view-btn { flex: 1; }
   .pos-preview { inset-inline: 12px; width: auto; }
 }
+
+/* ===== PRICE SURVEY — SYNTHÈSE ===== */
+.synthese-group { margin-bottom: 32px; }
+.synthese-group:last-child { margin-bottom: 0; }
+
+.synthese-group-title {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin-bottom: 14px;
+  padding-inline-start: 12px;
+  border-inline-start: 3px solid var(--primary);
+  line-height: 1.3;
+}
+
+.synthese-group-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px 28px;
+  align-items: start;
+}
+
+/* Flat, borderless sections — no white card box, just a colored accent rule
+   and a divider under the title, so they sit directly on the page background. */
+.synthese-section-card {
+  background: transparent;
+  box-shadow: none;
+  border: none;
+  border-inline-start: 3px solid var(--gray-200);
+  border-radius: 0;
+}
+.synthese-section-card:hover { box-shadow: none; }
+.synthese-section-card.kind-mises_en_avant { border-inline-start-color: var(--primary); }
+.synthese-section-card.kind-ruptures { border-inline-start-color: var(--danger); }
+
+.synthese-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 4px 16px 12px;
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.synthese-section-card .table-wrapper { border: 1px solid var(--gray-200); border-radius: var(--radius); }
+
+@media (max-width: 768px) {
+  .synthese-group-grid { grid-template-columns: 1fr; gap: 20px; }
+  .synthese-group-title { font-size: 15px; }
+}
