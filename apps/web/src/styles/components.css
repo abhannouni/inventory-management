@@ -2285,17 +2285,19 @@ html[dir='rtl'] .form-input.has-action { padding-right: 12px; padding-left: 36px
   .dash-grid { grid-template-columns: 1fr !important; }
   .dash-col-span2 { grid-column: 1 !important; }
 
-  .data-table th:nth-child(n+4),
-  .data-table td:nth-child(n+4) { display: none; }
-
+  /* Columns are only hidden when a page explicitly opts a column out via
+     `hideOnMobile` — never by position. Tables scroll horizontally
+     (.table-wrapper overflow-x: auto) so every column stays reachable and
+     mobile keeps the same data as desktop. */
   .data-table th.hide-mobile,
   .data-table td.hide-mobile { display: none; }
 
-  /* Actions is often the 4th+ column, but it must stay reachable on mobile —
-     hiding it by position leaves every row with no way to edit/delete/act on it.
-     The table wrapper already scrolls horizontally, so re-showing it is safe. */
   .data-table th.col-actions,
-  .data-table td.col-actions { display: table-cell !important; }
+  .data-table td.col-actions { position: sticky; right: 0; }
+  .data-table td.col-actions { background: #fcfcfc; }
+  .data-table tbody tr:hover td.col-actions { background: #F5F8FF; }
+  html[dir='rtl'] .data-table th.col-actions,
+  html[dir='rtl'] .data-table td.col-actions { right: auto; left: 0; }
 
   .user-cell-info { max-width: 150px; overflow: hidden; }
   .user-cell-info > div { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
