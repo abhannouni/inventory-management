@@ -5,7 +5,9 @@ export type Role =
   | 'supervisor'
   | 'merchandiser';
 
-export type VisitStatus = 'open' | 'closed';
+/** Mirrors the API's `VisitStatus`. `planned` rows live on the calendar and
+ *  have no check-in yet; they are kept out of the visit history. */
+export type VisitStatus = 'planned' | 'open' | 'completed';
 
 export type AuditStatus = 'in_stock' | 'stock_disponible' | 'low_stock' | 'out_of_stock';
 
@@ -234,7 +236,17 @@ export interface PriceSurveyAssignment {
   created_at: string;
 }
 
-export type NotificationType = 'promo_created' | 'price_survey_products_assigned';
+export type NotificationType =
+  | 'promo_created'
+  | 'price_survey_products_assigned'
+  | 'visit_plan_submitted'
+  | 'visit_plan_changed'
+  | 'visit_plan_approved'
+  | 'visit_plan_declined'
+  | 'visit_plan_adjusted'
+  | 'visit_plan_assigned'
+  | 'visit_plan_reminder'
+  | 'visit_plan_missing';
 
 export interface Notification {
   id: string;
@@ -244,6 +256,7 @@ export interface Notification {
   body: string | null;
   link: string | null;
   is_read: boolean;
+  metadata?: Record<string, unknown> | null;
   created_at: string;
 }
 
@@ -292,8 +305,15 @@ export interface Visit {
   id: string;
   user_id: string;
   store_id: string;
-  schedule_id: string | null;
   status: VisitStatus;
+  /** Set when the visit came off a month plan rather than an ad-hoc check-in. */
+  plan_id: string | null;
+  /** `YYYY-MM-DD` calendar day this visit is planned for. Null for ad-hoc visits. */
+  planned_date: string | null;
+  /** `HH:mm` wall-clock at the point of sale, or null when only the day matters. */
+  planned_time: string | null;
+  planned_notes: string | null;
+  planned_by_id: string | null;
   checkin_lat: number;
   checkin_lng: number;
   checkout_lat: number | null;
@@ -405,19 +425,39 @@ export interface ProductReport {
   }>;
 }
 
-export type ScheduleStatus = 'pending' | 'completed' | 'cancelled';
 
-export interface Schedule {
+
+export type VisitPlanStatus = 'draft' | 'pending_review' | 'approved' | 'declined';
+
+/**
+ * A visit as it sits on a month plan. Every row on a plan has a `planned_date`,
+ * and a still-`planned` one has not been checked into — so unlike a `Visit`
+ * coming off the visit endpoints (which never return `planned` rows) its
+ * check-in timestamp can still be empty.
+ */
+export interface PlannedVisit extends Omit<Visit, 'checkin_at' | 'planned_date'> {
+  planned_date: string;
+  checkin_at: string | null;
+}
+
+/**
+ * One person's month of planned visits. The planned days themselves are `Visit`
+ * rows with `status: 'planned'`, carried on `visits` — this object holds only
+ * the month's review state.
+ */
+export interface VisitPlan {
   id: string;
   user_id: string;
-  store_id: string;
-  created_by_id: string;
-  scheduled_at: string;
-  notes: string | null;
-  status: ScheduleStatus;
-  user?: User;
-  store?: Store;
-  created_by?: User;
+  user?: { id: string; full_name: string; email: string; role: Role };
+  year: number;
+  month: number;
+  status: VisitPlanStatus;
+  submitted_at: string | null;
+  reviewed_at: string | null;
+  reviewed_by_id: string | null;
+  reviewed_by?: { id: string; full_name: string } | null;
+  review_note: string | null;
+  visits: PlannedVisit[];
   created_at: string;
   updated_at: string;
 }

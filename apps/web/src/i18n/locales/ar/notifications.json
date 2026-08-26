@@ -6,6 +6,35 @@
     "promo_created": {
       "title": "تم نشر عرض جديد",
       "body": "عرض جديد متاح الآن — أضف صورة الرف الخاصة بك بمجرد وضع الملصق."
+    },
+    "visit_plan_submitted": {
+      "title": "أرسل {{actorName}} زياراته المخططة لشهر {{month}}/{{year}}",
+      "body": "اضغط لمراجعتها."
+    },
+    "visit_plan_changed": {
+      "title": "غيّر {{actorName}} خطته المعتمدة لشهر {{month}}/{{year}}",
+      "body": "اضغط لمعرفة ما تغيّر."
+    },
+    "visit_plan_approved": {
+      "title": "تمت الموافقة على زياراتك المخططة لشهر {{month}}/{{year}}"
+    },
+    "visit_plan_declined": {
+      "title": "تم رفض زياراتك المخططة لشهر {{month}}/{{year}}"
+    },
+    "visit_plan_adjusted": {
+      "title": "عدّل {{actorName}} زياراتك المخططة لشهر {{month}}/{{year}}"
+    },
+    "visit_plan_assigned": {
+      "title": "خطط {{actorName}} زياراتك لشهر {{month}}/{{year}}",
+      "body": "اضغط لعرض شهرك."
+    },
+    "visit_plan_reminder": {
+      "title": "بقيت أيام قليلة لتخطيط زياراتك لشهر {{month}}/{{year}}",
+      "body": "أرسلها قبل بداية الشهر."
+    },
+    "visit_plan_missing": {
+      "title": "لا توجد زيارات مخططة لـ {{actorName}} لشهر {{month}}/{{year}}",
+      "body": "افتح مخطط الزيارات لمعالجة ذلك."
     }
   }
 }

@@ -17,6 +17,8 @@ enum UserRole {
 }
 
 enum VisitStatus {
+  /// Put on the calendar but not started yet — no check-in, no times.
+  planned
   open
   completed
 }
@@ -35,10 +37,12 @@ enum AuditItemStatus {
   out_of_stock
 }
 
-enum ScheduleStatus {
-  pending
-  completed
-  cancelled
+/// Review state of one person's month of planned visits.
+enum VisitPlanStatus {
+  draft
+  pending_review
+  approved
+  declined
 }
 
 /// Distribution channel of a point of sale.
@@ -87,6 +91,15 @@ enum WidgetType {
 enum NotificationType {
   promo_created
   price_survey_products_assigned
+  visit_plan_submitted
+  visit_plan_changed
+  visit_plan_approved
+  visit_plan_declined
+  visit_plan_adjusted
+  /// A reviewer filled in this person's month for them (merchandisers).
+  visit_plan_assigned
+  visit_plan_reminder
+  visit_plan_missing
 }
 
 /// Whose entry a PriceSurveyNote textarea belongs to.
@@ -124,7 +137,7 @@ model User {
   region         Region?  @relation(fields: [region_id], references: [id])
   region_id      String?
   /// The supervisor who manages this user's field work (relevant for merchandisers).
-  /// Drives "my team" scoping for schedules — who a supervisor may plan for.
+  /// Drives "my team" scoping — whose month a supervisor may look at.
   supervisor      User?    @relation("SupervisorTeam", fields: [supervisor_id], references: [id], onDelete: SetNull)
   supervisor_id   String?
   team            User[]   @relation("SupervisorTeam")
@@ -133,8 +146,9 @@ model User {
 
   userStores        UserStore[]
   visits            Visit[]
-  schedulesAssigned Schedule[] @relation("AssignedSchedules")
-  schedulesCreated  Schedule[] @relation("CreatedSchedules")
+  visitPlans          VisitPlan[] @relation("VisitPlans")
+  visitPlansReviewed  VisitPlan[] @relation("VisitPlanReviews")
+  visitsPlannedForOthers Visit[]  @relation("PlannedVisits")
   dashboards        Dashboard[]
   refreshTokens     RefreshToken[]
   sellOuts          SellOut[]
@@ -215,7 +229,6 @@ model Store {
   userStores      UserStore[]
   productStores   ProductStore[]
   visits          Visit[]
-  schedules       Schedule[]
   sellOuts        SellOut[]
   productRequests ProductRequest[]
   priceSurveyAssignments PriceSurveyAssignment[]
@@ -323,9 +336,27 @@ model Visit {
   user_id       String
   store         Store       @relation(fields: [store_id], references: [id], onDelete: Cascade)
   store_id      String
-  schedule      Schedule?   @relation(fields: [schedule_id], references: [id], onDelete: SetNull)
-  schedule_id   String?     @unique
-  checkin_time  DateTime
+  /// The month plan this visit was put on, when it came from the calendar
+  /// rather than from an ad-hoc check-in. Null for walk-up visits.
+  plan          VisitPlan?  @relation(fields: [plan_id], references: [id], onDelete: Cascade)
+  plan_id       String?
+  /// The calendar day this visit is planned for. Set together with
+  /// `status = planned`; stays set after check-in so the plan/actual pair
+  /// can still be compared. Null for ad-hoc visits.
+  planned_date  DateTime?   @db.Date
+  /// Time of day for the planned visit, as `HH:mm` wall-clock at the point of
+  /// sale. Deliberately not a timestamp: "09:00 at this store" must not shift
+  /// with the server's timezone. Required on every newly planned visit — null
+  /// only survives on rows that predate the hour being mandatory.
+  planned_time  String?
+  planned_notes String?
+  /// Who put it on the calendar — the field user themself (a supervisor
+  /// planning their own month) or the reviewer who planned it for them.
+  planned_by    User?       @relation("PlannedVisits", fields: [planned_by_id], references: [id], onDelete: SetNull)
+  planned_by_id String?
+  /// Null until check-in. A `planned` visit sits on the calendar with no
+  /// clock started yet; check-in flips it to `open` and stamps this.
+  checkin_time  DateTime?
   checkin_lat   Decimal?    @db.Decimal(10, 7)
   checkin_lng   Decimal?    @db.Decimal(10, 7)
   checkout_time DateTime?
@@ -359,6 +390,14 @@ model Visit {
 
   /// Supports the "one open visit per merchandiser" lookup and the resume query.
   @@index([user_id, status])
+  @@index([plan_id])
+  @@index([planned_date])
+  /// Nobody visits the same point of sale twice on the same day. Postgres
+  /// treats NULLs as distinct, so this only binds rows carrying a
+  /// `planned_date` — ad-hoc check-ins are fenced in VisitsService instead.
+  @@unique([user_id, planned_date, store_id])
+  /// ...and nobody is in two places at once: one point of sale per time slot.
+  @@unique([user_id, planned_date, planned_time])
   @@map("visits")
 }
 
@@ -398,23 +437,46 @@ model AuditItem {
   @@map("audit_items")
 }
 
-model Schedule {
-  id            String         @id @default(uuid())
-  user          User           @relation("AssignedSchedules", fields: [user_id], references: [id], onDelete: Cascade)
-  user_id       String
-  store         Store          @relation(fields: [store_id], references: [id], onDelete: Cascade)
-  store_id      String
-  created_by    User           @relation("CreatedSchedules", fields: [created_by_id], references: [id])
-  created_by_id String
-  scheduled_at  DateTime
-  notes         String?
-  status        ScheduleStatus @default(pending)
-  created_at    DateTime       @default(now())
-  updated_at    DateTime       @updatedAt
+/// One person's month of planned visits, submitted as a batch and reviewed by a
+/// super admin/admin (approve / decline / adjust). This row holds only the
+/// review state — the planned days themselves are `Visit` rows with
+/// `status = planned` pointing back here via `plan_id`.
+///
+/// Two ways a month gets filled:
+///   • a supervisor builds their own (draft → pending_review → approved), and
+///     editing an already-`approved` month bounces it back to `pending_review`
+///     so the change gets re-reviewed — see VisitPlansService;
+///   • a reviewer fills a merchandiser's month for them, which lands straight
+///     in `approved` (there is nothing to review — they wrote it).
+model VisitPlan {
+  id             String          @id @default(uuid())
+  user           User            @relation("VisitPlans", fields: [user_id], references: [id], onDelete: Cascade)
+  user_id        String
+  year           Int
+  month          Int
+  status         VisitPlanStatus @default(draft)
+  submitted_at   DateTime?
+  reviewed_at    DateTime?
+  reviewed_by    User?           @relation("VisitPlanReviews", fields: [reviewed_by_id], references: [id], onDelete: SetNull)
+  reviewed_by_id String?
+  /// Optional note left on decline or adjust.
+  review_note    String?
+  /// Snapshot of the planned visits (date/store_id/notes) taken the moment the
+  /// month was last approved — diffed against the current rows when an approved
+  /// month is edited again, to describe exactly what changed in the re-review
+  /// notification.
+  approved_snapshot Json?
+  /// Dedupe flags for the daily cron reminders — see VisitPlansCron.
+  reminder_sent_at      DateTime?
+  missing_alert_sent_at DateTime?
+  created_at     DateTime        @default(now())
+  updated_at     DateTime        @updatedAt
 
-  visit Visit?
+  visits Visit[]
 
-  @@map("schedules")
+  @@unique([user_id, year, month])
+  @@index([status])
+  @@map("visit_plans")
 }
 
 // ─── Promos ────────────────────────────────────────────────────────────────────

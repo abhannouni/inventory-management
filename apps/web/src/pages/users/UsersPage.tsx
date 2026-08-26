@@ -199,7 +199,6 @@ export default function UsersPage() {
     {
       key: 'region',
       header: t('table.region'),
-      hideOnMobile: true,
       render: (u: User) => (
         <span style={{ color: 'var(--gray-500)' }}>{u.region?.name || '—'}</span>
       ),
@@ -208,7 +207,6 @@ export default function UsersPage() {
       key: 'last_login_at',
       header: t('table.lastLogin'),
       sortable: true,
-      hideOnMobile: true,
       render: (u: User) => (
         <span style={{ color: 'var(--gray-500)' }}>
           {u.last_login_at ? formatDate(u.last_login_at, i18n.language) : t('table.never')}
@@ -218,7 +216,6 @@ export default function UsersPage() {
     {
       key: 'store_assignment',
       header: t('table.storeAssignment'),
-      hideOnMobile: true,
       render: (u: User) =>
         ['supervisor', 'merchandiser', 'admin'].includes(u.role) && p.can('users.assign_stores') ? (
           <Button variant="secondary" size="sm" onClick={() => setAssignUser(u)}>

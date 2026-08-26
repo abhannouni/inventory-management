@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../../hooks/useAppDispatch';
 import { fetchVisitsReport } from '../../store/slices/reportsSlice';
 import { fetchActiveVisit } from '../../store/slices/visitsSlice';
-import { fetchSchedules } from '../../store/slices/schedulesSlice';
+import { fetchUpcomingPlanned } from '../../store/slices/visitPlansSlice';
 import ChartCard from '../../components/charts/ChartCard';
 import DonutChart from '../../components/charts/DonutChart';
 import BarChart from '../../components/charts/BarChart';
@@ -31,12 +31,12 @@ export default function SupervisorDashboard() {
   const navigate = useNavigate();
   const { visitsReport } = useAppSelector((s) => s.reports);
   const activeVisit = useAppSelector((s) => s.visits.active);
-  const { items: schedules } = useAppSelector((s) => s.schedules);
+  const { upcoming: schedules } = useAppSelector((s) => s.visitPlans);
 
   useEffect(() => {
     dispatch(fetchVisitsReport(undefined));
     dispatch(fetchActiveVisit());
-    dispatch(fetchSchedules({ status: 'pending' }));
+    dispatch(fetchUpcomingPlanned());
   }, [dispatch]);
 
   const totals = useMemo(() => aggregateStockTotals(visitsReport), [visitsReport]);
@@ -46,7 +46,9 @@ export default function SupervisorDashboard() {
   const topStockoutStores = useMemo(() => stockoutsByStore(visitsReport, 6), [visitsReport]);
   const teamActivity = useMemo(() => recentVisits(visitsReport, 6), [visitsReport]);
   const upcoming = useMemo(
-    () => [...schedules].sort((a, b) => new Date(a.scheduled_at).getTime() - new Date(b.scheduled_at).getTime()).slice(0, 5),
+    () => [...schedules]
+      .sort((a, b) => `${a.planned_date}${a.planned_time ?? ''}`.localeCompare(`${b.planned_date}${b.planned_time ?? ''}`))
+      .slice(0, 5),
     [schedules],
   );
 
@@ -152,7 +154,7 @@ export default function SupervisorDashboard() {
         <div>
           <TimeTracker visit={activeVisit} />
           <div style={{ marginTop: 16 }}>
-            <DashCard title={t('schedule.upcomingTitle')} subtitle={t('schedule.upcomingSubtitle')} action={{ label: t('team.viewAll'), onClick: () => navigate('/schedule') }}>
+            <DashCard title={t('schedule.upcomingTitle')} subtitle={t('schedule.upcomingSubtitle')} action={{ label: t('team.viewAll'), onClick: () => navigate('/visits?tab=planning') }}>
               {upcoming.length === 0 ? (
                 <p className="dashv2-card-empty">{t('schedule.empty')}</p>
               ) : (
@@ -161,7 +163,7 @@ export default function SupervisorDashboard() {
                     <span className="dashv2-mini-icon"><CalendarIcon /></span>
                     <div className="dashv2-mini-info">
                       <div className="dashv2-mini-title">{s.store?.name ?? '—'}</div>
-                      <div className="dashv2-mini-meta">{s.user?.full_name ? `${s.user.full_name} · ` : ''}{formatDateOnly(s.scheduled_at, i18n.language)}</div>
+                      <div className="dashv2-mini-meta">{formatDateOnly(s.planned_date.slice(0, 10), i18n.language)}{s.planned_time && ` · ${s.planned_time}`}</div>
                     </div>
                   </div>
                 ))

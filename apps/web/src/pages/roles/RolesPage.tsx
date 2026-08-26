@@ -123,7 +123,6 @@ export default function RolesPage() {
     {
       key: 'description',
       header: t('table.description'),
-      hideOnMobile: true,
       render: (r: RoleRecord) => (
         <span style={{ color: 'var(--gray-500)' }}>{r.description || '—'}</span>
       ),

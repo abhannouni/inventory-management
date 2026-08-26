@@ -6,10 +6,14 @@ export class CheckinDto {
   @IsUUID()
   store_id: string;
 
-  @ApiPropertyOptional({ example: 'uuid-of-schedule', description: 'Link this visit to a planned schedule entry' })
+  @ApiPropertyOptional({
+    example: 'uuid-of-planned-visit',
+    description:
+      "Start a visit already sitting on the caller's approved month plan, instead of creating an ad-hoc one",
+  })
   @IsOptional()
   @IsUUID()
-  schedule_id?: string;
+  planned_visit_id?: string;
 
   // Optional: when the `visits.gps_required` flag is off, the client never
   // requests device GPS, so nothing is sent. When the flag is on, the service

@@ -20,7 +20,7 @@ export const RESOURCES = [
   'subscriptions',
   'visits',
   'audit_items',
-  'schedules',
+  'visit_plans',
   'reports',
   'settings',
   'sell_out',
@@ -95,7 +95,20 @@ export const PERMISSIONS: PermissionDef[] = [
 
   ...crud('visits', 'visits'),
   ...crud('audit_items', 'audit items'),
-  ...crud('schedules', 'schedules'),
+
+  // Visit planning (lives inside the Visits module): `create`/`update`/`delete`
+  // let a supervisor build and submit their own month; `review` (Super Admin /
+  // Admin only) covers approve/decline/adjust on anyone's month, and filling in
+  // a merchandiser's month for them. Kept separate from `update` so a
+  // supervisor's self-service edit right never doubles as review authority —
+  // same split as `price_surveys.update` vs `.manage`.
+  ...crud('visit_plans', 'visit plans'),
+  {
+    code: 'visit_plans.review',
+    resource: 'visit_plans',
+    action: 'review',
+    description: "Approve, decline, or fill in someone's month of planned visits",
+  },
 
   { code: 'reports.read', resource: 'reports', action: 'read', description: 'View reports' },
   { code: 'reports.export', resource: 'reports', action: 'export', description: 'Export reports' },
@@ -182,7 +195,11 @@ export const ROLE_PRESETS: Record<string, string[]> = {
     'regions.read',
     ...crud('products', '').map((p) => p.code),
     ...crud('inventory', '').map((p) => p.code),
-    ...crud('schedules', '').map((p) => p.code),
+    // Admin reviews supervisors' months (approve/decline/adjust) and fills in
+    // merchandisers' months, but never owns one — no create/update/delete here,
+    // the `supervisor` preset below being the mirror image.
+    'visit_plans.read',
+    'visit_plans.review',
     ...crud('visits', '').map((p) => p.code),
     ...crud('audit_items', '').map((p) => p.code),
     'kpis.read',
@@ -203,7 +220,7 @@ export const ROLE_PRESETS: Record<string, string[]> = {
     'clients.read',
     'visits.read',
     'audit_items.read',
-    'schedules.read',
+    'visit_plans.read',
     'kpis.read',
     'dashboards.read',
     'reports.read',
@@ -223,7 +240,11 @@ export const ROLE_PRESETS: Record<string, string[]> = {
     // catalog and product-store assignments — see `RequireAnyPermission`
     // on the products and product-store list endpoints, which fall back
     // to `visits.create`/`visits.update`/`audit_items.*` for exactly this.
-    ...crud('schedules', '').map((p) => p.code),
+    // A supervisor may create/edit/delete the planned visits on their own month
+    // (ownership enforced in VisitPlansService) but never `visit_plans.review`
+    // — that's reviewer-only, and it is what a reviewer uses to fill in a
+    // merchandiser's month for them.
+    ...crud('visit_plans', '').map((p) => p.code),
     'visits.read',
     // A supervisor performs their own spot-check visits too (not just field
     // audits by merchandisers), so they need the same create/update rights a
@@ -251,7 +272,10 @@ export const ROLE_PRESETS: Record<string, string[]> = {
     // See the comment on `supervisor` above — Produits/Stock/Rapports removed
     // from the sidebar; the field audit flow keeps working via the
     // `RequireAnyPermission` fallback on those endpoints.
-    'schedules.read',
+    // Read-only: a merchandiser's month is filled in for them by a reviewer,
+    // so no create/update/delete here — only the right to see it and check in
+    // from it.
+    'visit_plans.read',
     'visits.read',
     'visits.create',
     'visits.update',

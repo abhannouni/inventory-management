@@ -4,7 +4,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { Prisma, User, UserRole } from '@prisma/client';
+import { Prisma, User, UserRole, VisitStatus } from '@prisma/client';
 import * as XLSX from 'xlsx';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateStoreDto } from './dto/create-store.dto';
@@ -122,9 +122,10 @@ export class StoresService {
           },
         },
       }),
-      // Visit history with the audit rows, newest first.
+      // Visit history with the audit rows, newest first. `planned` rows are
+      // calendar entries, not visits that happened — they stay out of history.
       this.prisma.visit.findMany({
-        where: { store_id: id },
+        where: { store_id: id, status: { not: VisitStatus.planned } },
         orderBy: { checkin_time: 'desc' },
         take: 50,
         include: {
@@ -142,7 +143,7 @@ export class StoresService {
     // Latest audited quantity per product, from the most recent visit that saw it.
     const latestByProduct = new Map<
       string,
-      { qty_found: number; status: string; checkin_at: Date; visit_id: string }
+      { qty_found: number; status: string; checkin_at: Date | null; visit_id: string }
     >();
     for (const v of visits) {
       for (const ai of v.auditItems) {

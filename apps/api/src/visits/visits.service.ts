@@ -4,7 +4,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { Prisma, ScheduleStatus, User, UserRole, VisitStatus } from '@prisma/client';
+import { Prisma, User, UserRole, VisitPlanStatus, VisitStatus } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { SettingsService } from '../settings/settings.service';
 import { adminAssignedStoreIds } from '../stores/store-scope';
@@ -70,15 +70,21 @@ export class VisitsService {
 
   async checkin(dto: CheckinDto, user: User) {
     let store_id = dto.store_id;
-    let scheduleId: string | undefined;
+    let plannedVisit: { id: string; store_id: string } | undefined;
 
-    if (dto.schedule_id) {
-      const schedule = await this.prisma.schedule.findUnique({ where: { id: dto.schedule_id } });
-      if (!schedule) throw new NotFoundException('Schedule not found');
-      if (schedule.user_id !== user.id) throw new ForbiddenException('This schedule is not assigned to you');
-      if (schedule.status !== ScheduleStatus.pending) throw new ConflictException('This schedule is not pending');
-      store_id = schedule.store_id; // trust the schedule's store, not the client-supplied one
-      scheduleId = schedule.id;
+    if (dto.planned_visit_id) {
+      const planned = await this.prisma.visit.findUnique({
+        where: { id: dto.planned_visit_id },
+        include: { plan: true },
+      });
+      if (!planned || !planned.plan) throw new NotFoundException('Planned visit not found');
+      if (planned.user_id !== user.id) throw new ForbiddenException('This planned visit is not yours');
+      if (planned.plan.status !== VisitPlanStatus.approved)
+        throw new ConflictException('This plan has not been approved yet');
+      if (planned.status !== VisitStatus.planned)
+        throw new ConflictException('This planned visit has already been started');
+      store_id = planned.store_id; // trust the plan's store, not the client-supplied one
+      plannedVisit = { id: planned.id, store_id: planned.store_id };
     }
 
     const store = await this.prisma.store.findUnique({ where: { id: store_id } });
@@ -100,21 +106,42 @@ export class VisitsService {
     });
     if (openVisit) throw new ConflictException('You already have an open visit');
 
+    // Nobody visits the same point of sale twice in a day. A check-in against a
+    // planned row is the day's one visit, not a second one, so it is exempt.
+    if (!plannedVisit) await this.assertNotVisitedToday(user.id, store_id);
+
+    // Walking up to a POS that is already on today's plan starts *that* visit
+    // rather than a parallel ad-hoc one — otherwise the day would end with a
+    // completed visit and an orphaned planned row for the same store.
+    const adoptable = plannedVisit ?? (await this.findTodaysPlannedVisit(user.id, store_id));
+
+    // The visit clock is started by the server, never by the client: a device
+    // with a wrong or tampered clock must not be able to skew the duration.
+    const checkinTime = new Date();
+
     try {
-      const visit = await this.prisma.visit.create({
-        data: {
-          user_id: user.id,
-          store_id,
-          schedule_id: scheduleId,
-          // The visit clock is started by the server, never by the client: a device
-          // with a wrong or tampered clock must not be able to skew the duration.
-          checkin_time: new Date(),
-          checkin_lat: dto.lat,
-          checkin_lng: dto.lng,
-          status: VisitStatus.open,
-        },
-        include: VISIT_INCLUDE,
-      });
+      const visit = adoptable
+        ? await this.prisma.visit.update({
+            where: { id: adoptable.id },
+            data: {
+              status: VisitStatus.open,
+              checkin_time: checkinTime,
+              checkin_lat: dto.lat,
+              checkin_lng: dto.lng,
+            },
+            include: VISIT_INCLUDE,
+          })
+        : await this.prisma.visit.create({
+            data: {
+              user_id: user.id,
+              store_id,
+              checkin_time: checkinTime,
+              checkin_lat: dto.lat,
+              checkin_lng: dto.lng,
+              status: VisitStatus.open,
+            },
+            include: VISIT_INCLUDE,
+          });
       return {
         ...this.serializeVisit(visit),
         audit_progress: await this.auditProgress(visit.id, visit.store_id),
@@ -266,6 +293,7 @@ export class VisitsService {
     // Server clock again — and the duration is derived from the two stored
     // timestamps, never from anything the client reports having counted.
     const checkoutTime = new Date();
+    if (!visit.checkin_time) throw new ConflictException('This visit has not been checked into yet');
     const durationSeconds = computeDurationSeconds(visit.checkin_time, checkoutTime);
 
     const updated = await this.prisma.$transaction(async (tx) => {
@@ -281,13 +309,8 @@ export class VisitsService {
         include: VISIT_INCLUDE,
       });
 
-      if (visit.schedule_id) {
-        await tx.schedule.update({
-          where: { id: visit.schedule_id },
-          data: { status: ScheduleStatus.completed },
-        });
-      }
-
+      // No plan bookkeeping to do: a planned visit *is* this row, so flipping it
+      // to `completed` above already marked the planned day as done.
       return result;
     });
     return this.serializeVisit(updated);
@@ -318,6 +341,58 @@ export class VisitsService {
   }
 
   // ─── Helpers ───────────────────────────────────────────────────────────────
+
+  /** Midnight-to-midnight bounds of the server's today, for the same-day rules. */
+  private todayBounds() {
+    const start = new Date();
+    start.setHours(0, 0, 0, 0);
+    const end = new Date(start);
+    end.setDate(end.getDate() + 1);
+    return { start, end };
+  }
+
+  /**
+   * The rule the whole planner is built around: one visit per point of sale per
+   * day, per person. Checked against both what has already happened today and
+   * what today's calendar holds.
+   */
+  private async assertNotVisitedToday(userId: string, storeId: string) {
+    const { start, end } = this.todayBounds();
+    const already = await this.prisma.visit.findFirst({
+      where: {
+        user_id: userId,
+        store_id: storeId,
+        status: { not: VisitStatus.planned },
+        checkin_time: { gte: start, lt: end },
+      },
+      select: { id: true },
+    });
+    if (already)
+      throw new ConflictException('You have already visited this point of sale today');
+  }
+
+  /**
+   * Today's still-unstarted planned visit at this store, if the plan holds one.
+   *
+   * `planned_date` is a `@db.Date` — midnight *UTC* of the calendar day — so it
+   * is matched against today's date rebuilt in UTC, not against `todayBounds()`.
+   * Comparing it to a local-midnight window would be off by a day for any
+   * server west of Greenwich.
+   */
+  private async findTodaysPlannedVisit(userId: string, storeId: string) {
+    const now = new Date();
+    const today = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
+    return this.prisma.visit.findFirst({
+      where: {
+        user_id: userId,
+        store_id: storeId,
+        status: VisitStatus.planned,
+        planned_date: today,
+        plan: { status: VisitPlanStatus.approved },
+      },
+      select: { id: true, store_id: true },
+    });
+  }
 
   /**
    * Rejects a check-in/check-out whose device GPS falls outside the store's
@@ -366,7 +441,7 @@ export class VisitsService {
 
   private serializeVisit<
     T extends {
-      checkin_time: Date;
+      checkin_time: Date | null;
       checkout_time: Date | null;
       duration_seconds: number | null;
     },
@@ -374,10 +449,12 @@ export class VisitsService {
     // `elapsed_seconds` is the duration as of *now*, measured against the server
     // clock. The client seeds its ticking timer from this instead of computing
     // `Date.now() - checkin_at` itself, so a skewed device clock cannot distort
-    // the displayed timer.
-    const elapsed_seconds = v.checkout_time
-      ? (v.duration_seconds ?? computeDurationSeconds(v.checkin_time, v.checkout_time))
-      : computeDurationSeconds(v.checkin_time, new Date());
+    // the displayed timer. A `planned` visit hasn't started, so it has none.
+    const elapsed_seconds = !v.checkin_time
+      ? 0
+      : v.checkout_time
+        ? (v.duration_seconds ?? computeDurationSeconds(v.checkin_time, v.checkout_time))
+        : computeDurationSeconds(v.checkin_time, new Date());
 
     return {
       ...v,
@@ -388,8 +465,11 @@ export class VisitsService {
   }
 
   private async buildFilter(user: User, query: FindVisitsDto) {
-    const where: Record<string, unknown> = {};
-    if (query.status) where.status = query.status;
+    // A `planned` row is a calendar entry, not a visit that happened — it stays
+    // out of every list unless something asks for it by status explicitly.
+    const where: Record<string, unknown> = query.status
+      ? { status: query.status }
+      : { status: { not: VisitStatus.planned } };
     if (query.store_id) where.store_id = query.store_id;
 
     if (user.role === UserRole.super_admin) return where;

@@ -15,7 +15,6 @@ export class PrismaService implements OnModuleInit, OnModuleDestroy {
   readonly productStore: PrismaClient['productStore'];
   readonly visit: PrismaClient['visit'];
   readonly auditItem: PrismaClient['auditItem'];
-  readonly schedule: PrismaClient['schedule'];
   readonly role: PrismaClient['role'];
   readonly permission: PrismaClient['permission'];
   readonly rolePermission: PrismaClient['rolePermission'];
@@ -39,6 +38,7 @@ export class PrismaService implements OnModuleInit, OnModuleDestroy {
   readonly priceSurveySubmission: PrismaClient['priceSurveySubmission'];
   readonly priceSurveyItem: PrismaClient['priceSurveyItem'];
   readonly priceSurveyNote: PrismaClient['priceSurveyNote'];
+  readonly visitPlan: PrismaClient['visitPlan'];
 
   constructor(config: ConfigService) {
     const adapter = new PrismaPg(config.get<string>('DATABASE_URL')!);
@@ -52,7 +52,6 @@ export class PrismaService implements OnModuleInit, OnModuleDestroy {
     this.productStore = this.client.productStore;
     this.visit = this.client.visit;
     this.auditItem = this.client.auditItem;
-    this.schedule = this.client.schedule;
     this.role = this.client.role;
     this.permission = this.client.permission;
     this.rolePermission = this.client.rolePermission;
@@ -77,6 +76,7 @@ export class PrismaService implements OnModuleInit, OnModuleDestroy {
     this.priceSurveySubmission = this.client.priceSurveySubmission;
     this.priceSurveyItem = this.client.priceSurveyItem;
     this.priceSurveyNote = this.client.priceSurveyNote;
+    this.visitPlan = this.client.visitPlan;
   }
 
   $transaction: PrismaClient['$transaction'] = (...args: any[]) =>

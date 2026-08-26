@@ -9,7 +9,7 @@
   "nav": {
     "dashboard": "Tableau de bord",
     "visits": "Visites",
-    "schedule": "Planning",
+    "visitPlanning": "Planning des visites",
     "auditItems": "Articles à auditer",
     "users": "Utilisateurs",
     "roles": "Rôles et permissions",

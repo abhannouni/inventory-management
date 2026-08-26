@@ -13,7 +13,6 @@ import frRegions from './locales/fr/regions.json';
 import frUsers from './locales/fr/users.json';
 import frVisits from './locales/fr/visits.json';
 import frAuditItems from './locales/fr/auditItems.json';
-import frSchedule from './locales/fr/schedule.json';
 import frReports from './locales/fr/reports.json';
 import frRoles from './locales/fr/roles.json';
 import frPos from './locales/fr/pos.json';
@@ -24,6 +23,7 @@ import frProductRequests from './locales/fr/productRequests.json';
 import frPromos from './locales/fr/promos.json';
 import frNotifications from './locales/fr/notifications.json';
 import frPriceSurveys from './locales/fr/priceSurveys.json';
+import frPlanning from './locales/fr/planning.json';
 
 import enCommon from './locales/en/common.json';
 import enSidebar from './locales/en/sidebar.json';
@@ -37,7 +37,6 @@ import enRegions from './locales/en/regions.json';
 import enUsers from './locales/en/users.json';
 import enVisits from './locales/en/visits.json';
 import enAuditItems from './locales/en/auditItems.json';
-import enSchedule from './locales/en/schedule.json';
 import enReports from './locales/en/reports.json';
 import enRoles from './locales/en/roles.json';
 import enPos from './locales/en/pos.json';
@@ -48,6 +47,7 @@ import enProductRequests from './locales/en/productRequests.json';
 import enPromos from './locales/en/promos.json';
 import enNotifications from './locales/en/notifications.json';
 import enPriceSurveys from './locales/en/priceSurveys.json';
+import enPlanning from './locales/en/planning.json';
 
 import arCommon from './locales/ar/common.json';
 import arSidebar from './locales/ar/sidebar.json';
@@ -61,7 +61,6 @@ import arRegions from './locales/ar/regions.json';
 import arUsers from './locales/ar/users.json';
 import arVisits from './locales/ar/visits.json';
 import arAuditItems from './locales/ar/auditItems.json';
-import arSchedule from './locales/ar/schedule.json';
 import arReports from './locales/ar/reports.json';
 import arRoles from './locales/ar/roles.json';
 import arPos from './locales/ar/pos.json';
@@ -72,6 +71,7 @@ import arProductRequests from './locales/ar/productRequests.json';
 import arPromos from './locales/ar/promos.json';
 import arNotifications from './locales/ar/notifications.json';
 import arPriceSurveys from './locales/ar/priceSurveys.json';
+import arPlanning from './locales/ar/planning.json';
 
 export const LANGUAGE_STORAGE_KEY = 'appLanguage';
 export const SUPPORTED_LANGUAGES = ['fr', 'en', 'ar'] as const;
@@ -92,7 +92,6 @@ export const NAMESPACES = [
   'users',
   'visits',
   'auditItems',
-  'schedule',
   'reports',
   'roles',
   'pos',
@@ -103,6 +102,7 @@ export const NAMESPACES = [
   'promos',
   'notifications',
   'priceSurveys',
+  'planning',
 ] as const;
 
 function getInitialLanguage(): SupportedLanguage {
@@ -137,7 +137,6 @@ i18n.use(initReactI18next).init({
       users: frUsers,
       visits: frVisits,
       auditItems: frAuditItems,
-      schedule: frSchedule,
       reports: frReports,
       roles: frRoles,
       pos: frPos,
@@ -148,6 +147,7 @@ i18n.use(initReactI18next).init({
       promos: frPromos,
       notifications: frNotifications,
       priceSurveys: frPriceSurveys,
+      planning: frPlanning,
     },
     en: {
       common: enCommon,
@@ -162,7 +162,6 @@ i18n.use(initReactI18next).init({
       users: enUsers,
       visits: enVisits,
       auditItems: enAuditItems,
-      schedule: enSchedule,
       reports: enReports,
       roles: enRoles,
       pos: enPos,
@@ -173,6 +172,7 @@ i18n.use(initReactI18next).init({
       promos: enPromos,
       notifications: enNotifications,
       priceSurveys: enPriceSurveys,
+      planning: enPlanning,
     },
     ar: {
       common: arCommon,
@@ -187,7 +187,6 @@ i18n.use(initReactI18next).init({
       users: arUsers,
       visits: arVisits,
       auditItems: arAuditItems,
-      schedule: arSchedule,
       reports: arReports,
       roles: arRoles,
       pos: arPos,
@@ -198,6 +197,7 @@ i18n.use(initReactI18next).init({
       promos: arPromos,
       notifications: arNotifications,
       priceSurveys: arPriceSurveys,
+      planning: arPlanning,
     },
   },
   ns: NAMESPACES,

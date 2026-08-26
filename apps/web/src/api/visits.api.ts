@@ -10,7 +10,12 @@ import type { Visit, VisitReportCategory } from '../types';
 // boundary — just matching what the client actually has available.
 export interface CheckinPayload {
   store_id: string;
-  schedule_id?: string;
+  /**
+   * Starts a visit already sitting on the caller's approved month plan instead
+   * of creating an ad-hoc one. Optional: checking in at a point of sale that is
+   * on today's plan adopts that row server-side anyway.
+   */
+  planned_visit_id?: string;
   lat?: number;
   lng?: number;
 }

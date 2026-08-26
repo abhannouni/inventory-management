@@ -1,7 +1,10 @@
 import { join, resolve } from 'path';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
+import { ScheduleModule } from '@nestjs/schedule';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
@@ -16,7 +19,6 @@ import { VisitsModule } from './visits/visits.module';
 import { AuditItemsModule } from './audit-items/audit-items.module';
 import { UploadModule } from './upload/upload.module';
 import { ReportsModule } from './reports/reports.module';
-import { SchedulesModule } from './schedules/schedules.module';
 import { SellOutModule } from './sell-out/sell-out.module';
 import { TrainingModule } from './training/training.module';
 import { SettingsModule } from './settings/settings.module';
@@ -32,6 +34,11 @@ import { NotificationsModule } from './notifications/notifications.module';
       isGlobal: true,
       envFilePath: '.env',
     }),
+    // Global default cap: 100 requests / minute / IP. Auth routes (login,
+    // refresh) set a much tighter per-route limit via @Throttle to blunt online
+    // password brute-forcing; see AuthController.
+    ThrottlerModule.forRoot([{ ttl: 60_000, limit: 100 }]),
+    ScheduleModule.forRoot(),
     ServeStaticModule.forRoot(
       {
         rootPath: join(__dirname, '..', '..', '..', 'web', 'dist'),
@@ -57,7 +64,6 @@ import { NotificationsModule } from './notifications/notifications.module';
     AuditItemsModule,
     UploadModule,
     ReportsModule,
-    SchedulesModule,
     SellOutModule,
     TrainingModule,
     SettingsModule,
@@ -68,6 +74,6 @@ import { NotificationsModule } from './notifications/notifications.module';
     NotificationsModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, { provide: APP_GUARD, useClass: ThrottlerGuard }],
 })
 export class AppModule {}

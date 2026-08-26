@@ -6,6 +6,35 @@
     "promo_created": {
       "title": "New promo published",
       "body": "A new promo batch is live — add your shelf photo once the label is in place."
+    },
+    "visit_plan_submitted": {
+      "title": "{{actorName}} submitted their planned visits for {{month}}/{{year}}",
+      "body": "Tap to review them."
+    },
+    "visit_plan_changed": {
+      "title": "{{actorName}} changed their approved plan for {{month}}/{{year}}",
+      "body": "Tap to see what changed."
+    },
+    "visit_plan_approved": {
+      "title": "Your planned visits for {{month}}/{{year}} were approved"
+    },
+    "visit_plan_declined": {
+      "title": "Your planned visits for {{month}}/{{year}} were declined"
+    },
+    "visit_plan_adjusted": {
+      "title": "{{actorName}} adjusted your planned visits for {{month}}/{{year}}"
+    },
+    "visit_plan_assigned": {
+      "title": "{{actorName}} planned your visits for {{month}}/{{year}}",
+      "body": "Tap to see your month."
+    },
+    "visit_plan_reminder": {
+      "title": "Only a few days left to plan your visits for {{month}}/{{year}}",
+      "body": "Submit them before the month starts."
+    },
+    "visit_plan_missing": {
+      "title": "{{actorName}} has no planned visits for {{month}}/{{year}} yet",
+      "body": "Open Visit planning to sort it out."
     }
   }
 }

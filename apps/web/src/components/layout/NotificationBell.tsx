@@ -50,9 +50,22 @@ export default function NotificationBell() {
   };
 
   // Prefer the live translation over the stored English snapshot, so a
-  // language switch updates already-fetched notifications too.
-  const notifTitle = (n: Notification) => t(`types.${n.type}.title`, { defaultValue: n.title });
-  const notifBody = (n: Notification) => t(`types.${n.type}.body`, { defaultValue: n.body || '' });
+  // language switch updates already-fetched notifications too. Metadata
+  // (actorName, year, month, note…) is spread in as interpolation values —
+  // types with no metadata (e.g. promo_created) just ignore the extra keys.
+  const notifTitle = (n: Notification) => t(`types.${n.type}.title`, { defaultValue: n.title, ...(n.metadata || {}) });
+  /**
+   * Empty on purpose for the types that say everything in their title.
+   *
+   * i18n runs with `returnEmptyString: false`, so a `defaultValue` of `''`
+   * makes i18next fall back to printing the raw key — hence the explicit
+   * `exists` check rather than leaning on the default.
+   */
+  const notifBody = (n: Notification) => {
+    const key = `types.${n.type}.body`;
+    if (i18n.exists(key, { ns: 'notifications' })) return t(key, { ...(n.metadata || {}) });
+    return n.body || '';
+  };
 
   return (
     <div className="user-menu-wrap" ref={ref}>
@@ -77,12 +90,11 @@ export default function NotificationBell() {
       <AnimatePresence>
         {open && (
           <motion.div
-            className="user-menu-dropdown"
+            className="user-menu-dropdown notification-dropdown"
             initial={{ opacity: 0, scale: 0.96, y: -6 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.96, y: -6 }}
             transition={{ duration: 0.14 }}
-            style={{ width: 320, maxHeight: 400, overflowY: 'auto', padding: 0 }}
           >
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
               <strong style={{ fontSize: 13 }}>{t('title')}</strong>
@@ -109,7 +121,9 @@ export default function NotificationBell() {
                   }}
                 >
                   <div style={{ fontSize: 13, fontWeight: n.is_read ? 500 : 700 }}>{notifTitle(n)}</div>
-                  <div style={{ fontSize: 12, color: 'var(--gray-500)', marginTop: 2 }}>{notifBody(n)}</div>
+                  {notifBody(n) && (
+                    <div style={{ fontSize: 12, color: 'var(--gray-500)', marginTop: 2 }}>{notifBody(n)}</div>
+                  )}
                   <div style={{ fontSize: 11, color: 'var(--gray-400)', marginTop: 4 }}>{formatDate(n.created_at, i18n.language)}</div>
                 </div>
               ))

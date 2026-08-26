@@ -441,6 +441,13 @@ html[dir='rtl'] .user-menu-dropdown {
   left: 0;
 }
 
+.notification-dropdown {
+  width: 320px;
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 0;
+}
+
 .user-menu-dropdown-section-label {
   font-size: 11px;
   font-weight: 700;
@@ -2258,6 +2265,18 @@ html[dir='rtl'] .form-input.has-action { padding-right: 12px; padding-left: 36px
   }
 
   html[dir='rtl'] .language-switcher-menu { left: 12px; right: 12px; }
+
+  /* Same viewport-anchoring as the language menu: a 320px trigger-anchored
+     dropdown runs off one edge or the other on phone screens. */
+  .notification-dropdown,
+  html[dir='rtl'] .notification-dropdown {
+    position: fixed;
+    left: 12px;
+    right: 12px;
+    top: 64px;
+    width: auto;
+    min-width: 0;
+  }
 
   .page-content { padding: 16px 14px 88px; }
 
@@ -4220,10 +4239,169 @@ button.mobile-nav-item {
   text-overflow: ellipsis;
   line-height: 1.5;
 }
-.schedule-chip.pending   { background: #fef3c7; color: #92400e; }
-.schedule-chip.completed { background: var(--success-light); color: #14532d; }
-.schedule-chip.cancelled { background: var(--gray-100); color: var(--gray-500); text-decoration: line-through; }
-.schedule-chip.more      { background: var(--gray-100); color: var(--gray-500); font-size: 10px; }
+/* ─── Planned-visit chips ─────────────────────────────────────────────────── */
+/*
+ * One planned visit inside a calendar cell: the hour first (tabular, so the
+ * times line up down a column), then the point of sale. The left accent carries
+ * the status, which keeps the fill light enough for the text to stay readable.
+ */
+.visit-chip {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  min-width: 0;
+  padding: 3px 6px;
+  border-radius: 5px;
+  border-inline-start: 3px solid transparent;
+  font-size: 11px;
+  line-height: 1.35;
+}
+.visit-chip + .visit-chip { margin-top: 3px; }
+
+.visit-chip-time {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+  opacity: 0.9;
+}
+.visit-chip-store {
+  font-weight: 500;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/*
+ * A visit still on the calendar wears its *month's* review state, so approving
+ * a plan turns the whole month green at once. A visit that has actually started
+ * wears its own status instead — see `chipState`.
+ */
+.visit-chip.draft {
+  background: var(--gray-100);
+  color: var(--gray-600);
+  border-inline-start-color: var(--gray-400);
+}
+/* Submitted, waiting on a reviewer. */
+.visit-chip.pending {
+  background: #fef3c7;
+  color: #92400e;
+  border-inline-start-color: #f59e0b;
+}
+/* Approved — the month is settled. */
+.visit-chip.approved {
+  background: var(--success-light);
+  color: #14532d;
+  border-inline-start-color: #16a34a;
+}
+.visit-chip.declined {
+  background: #fee2e2;
+  color: #991b1b;
+  border-inline-start-color: #dc2626;
+}
+/* Checked in, clock running — the brand plum, so it reads as "live now". */
+.visit-chip.open {
+  background: var(--primary-light);
+  color: var(--primary);
+  border-inline-start-color: var(--primary);
+}
+.visit-chip.completed {
+  background: var(--success-light);
+  color: #14532d;
+  border-inline-start-color: #16a34a;
+}
+.visit-chip.more {
+  display: block;
+  background: transparent;
+  color: var(--gray-500);
+  font-weight: 600;
+  border-inline-start-color: transparent;
+  padding-inline-start: 6px;
+}
+
+/*
+ * Per-person tint for the reviewer's all-people calendar. Only the accent bar
+ * changes: the status fill still has to carry approved-vs-pending, so identity
+ * rides on the stripe rather than on the background.
+ */
+.visit-chip.person-0 { border-inline-start-color: #6366f1; }
+.visit-chip.person-1 { border-inline-start-color: #0ea5e9; }
+.visit-chip.person-2 { border-inline-start-color: #14b8a6; }
+.visit-chip.person-3 { border-inline-start-color: #f97316; }
+.visit-chip.person-4 { border-inline-start-color: #ec4899; }
+.visit-chip.person-5 { border-inline-start-color: #8b5cf6; }
+.visit-chip.person-6 { border-inline-start-color: #64748b; }
+.visit-chip.person-7 { border-inline-start-color: #ca8a04; }
+
+.planning-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  margin-top: 10px;
+}
+.planning-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gray-600);
+}
+.planning-legend-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.planning-legend-item.person-0 .planning-legend-dot { background: #6366f1; }
+.planning-legend-item.person-1 .planning-legend-dot { background: #0ea5e9; }
+.planning-legend-item.person-2 .planning-legend-dot { background: #14b8a6; }
+.planning-legend-item.person-3 .planning-legend-dot { background: #f97316; }
+.planning-legend-item.person-4 .planning-legend-dot { background: #ec4899; }
+.planning-legend-item.person-5 .planning-legend-dot { background: #8b5cf6; }
+.planning-legend-item.person-6 .planning-legend-dot { background: #64748b; }
+.planning-legend-item.person-7 .planning-legend-dot { background: #ca8a04; }
+
+/* Merchandisers / supervisors switch — a segmented control, not a dropdown,
+   because there are only ever two and one of them is the default. */
+.planning-role-toggle {
+  display: inline-flex;
+  padding: 3px;
+  border-radius: 9px;
+  background: var(--gray-100);
+  gap: 3px;
+}
+.planning-role-btn {
+  border: none;
+  background: transparent;
+  padding: 6px 14px;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gray-600);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.planning-role-btn.active {
+  background: white;
+  color: var(--primary);
+  box-shadow: var(--shadow-sm);
+}
+
+/* The "+" that appears on an empty day, so the cell reads as clickable. */
+.calendar-day-add {
+  position: absolute;
+  top: 6px;
+  inset-inline-end: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--gray-300);
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  pointer-events: none;
+}
+.calendar-day:hover .calendar-day-add { opacity: 1; }
 
 /* Loading state */
 .calendar-loading {
@@ -4243,6 +4421,36 @@ button.mobile-nav-item {
   margin-bottom: 16px;
   padding-bottom: 12px;
   border-bottom: 1px solid var(--gray-100);
+}
+
+.day-detail-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--gray-100);
+}
+.day-detail-nav .day-detail-date {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+  text-align: center;
+  flex: 1;
+}
+.day-detail-nav .cal-nav-btn {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+}
+.day-detail-nav .cal-nav-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+.day-detail-nav .cal-nav-btn:disabled:hover {
+  background: var(--gray-100);
+  color: var(--gray-700);
 }
 
 .day-detail-empty {
@@ -4367,7 +4575,7 @@ button.mobile-nav-item {
 @media (max-width: 768px) {
   .calendar-day { min-height: 64px; padding: 6px 4px 4px; }
   .day-number { width: 22px; height: 22px; font-size: 11px; }
-  .schedule-chip { font-size: 9px; padding: 1px 3px; }
+  .visit-chip { font-size: 9px; padding: 1px 4px; gap: 3px; }
   .cal-month-name { font-size: 17px; }
   .schedule-title-row { flex-direction: column; gap: 10px; }
   .cal-month-nav { gap: 6px; }
@@ -4390,6 +4598,513 @@ button.mobile-nav-item {
     bottom: 4px;
     left: 50%;
     transform: translateX(-50%);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   MONTHLY PLANNING
+═══════════════════════════════════════════════════════════════ */
+
+.planning-status-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  background: var(--gray-50);
+  border-left: 4px solid var(--gray-300);
+  flex-wrap: wrap;
+}
+.planning-status-banner.status-draft          { border-left-color: var(--gray-300); }
+.planning-status-banner.status-pending_review { border-left-color: var(--warning); background: #fffbeb; }
+.planning-status-banner.status-approved       { border-left-color: var(--success); background: var(--success-light); }
+.planning-status-banner.status-declined       { border-left-color: #dc2626; background: #fef2f2; }
+
+.planning-status-text {
+  font-size: 13px;
+  color: var(--gray-600);
+}
+
+/* Desktop grid / mobile agenda toggle — real breakpoint switch, not a JS check */
+.planning-agenda-view { display: none; }
+
+.planning-agenda-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--gray-100);
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.planning-agenda-row:hover { background: var(--primary-light); }
+.planning-agenda-row:last-child { border-bottom: none; }
+.planning-agenda-row.today { background: var(--primary-light); }
+
+.planning-agenda-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 40px;
+  flex-shrink: 0;
+}
+.planning-agenda-daynum {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--gray-900);
+  line-height: 1.1;
+}
+.planning-agenda-row.today .planning-agenda-daynum { color: var(--primary); }
+.planning-agenda-weekday {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--gray-400);
+  letter-spacing: 0.4px;
+}
+
+.planning-agenda-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+.planning-agenda-empty {
+  font-size: 12px;
+  color: var(--gray-300);
+}
+
+.planning-agenda-chevron {
+  color: var(--gray-300);
+  flex-shrink: 0;
+}
+html[dir='rtl'] .planning-agenda-chevron { transform: scaleX(-1); }
+
+.planning-entry-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.planning-repeat-box {
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  background: var(--gray-50);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.planning-repeat-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gray-700);
+  cursor: pointer;
+}
+.planning-repeat-toggle input { width: 16px; height: 16px; cursor: pointer; }
+
+.planning-weekday-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.planning-weekday-chip {
+  min-width: 40px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  border: 1.5px solid var(--gray-200);
+  background: white;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gray-600);
+  cursor: pointer;
+  transition: all 0.12s;
+}
+.planning-weekday-chip:hover { border-color: var(--primary-medium); }
+.planning-weekday-chip.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+.planning-repeat-hint {
+  font-size: 11px;
+  color: var(--gray-400);
+}
+
+.planning-store-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+.planning-store-chip {
+  padding: 7px 12px;
+  border-radius: 20px;
+  border: 1.5px solid var(--gray-200);
+  background: white;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gray-600);
+  cursor: pointer;
+  transition: all 0.12s;
+}
+.planning-store-chip:hover { border-color: var(--primary-medium); }
+.planning-store-chip.active {
+  background: var(--primary-light);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.planning-day-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  max-height: 120px;
+  overflow-y: auto;
+  padding: 2px;
+}
+.planning-day-chip {
+  width: 30px;
+  height: 30px;
+  border-radius: 7px;
+  border: 1.5px solid var(--gray-200);
+  background: white;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gray-600);
+  cursor: pointer;
+  transition: all 0.12s;
+  flex-shrink: 0;
+}
+.planning-day-chip:hover { border-color: var(--primary-medium); }
+.planning-day-chip.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+
+/* ── Admin review ── */
+.planning-missing-panel {
+  padding: 14px 16px;
+  border-radius: var(--radius);
+  background: #fffbeb;
+  border-left: 4px solid var(--warning);
+}
+.planning-missing-panel strong {
+  font-size: 13px;
+  color: #92400e;
+  display: block;
+  margin-bottom: 8px;
+}
+.planning-missing-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.planning-missing-chip {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: white;
+  color: #92400e;
+  box-shadow: var(--shadow-sm);
+}
+
+.planning-row-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: nowrap;
+}
+.planning-row-actions .sli-btn.complete { white-space: nowrap; }
+
+.planning-detail-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--gray-100);
+}
+.planning-detail-email {
+  display: block;
+  font-size: 12px;
+  color: var(--gray-500);
+}
+.planning-detail-note {
+  margin-top: 10px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: var(--gray-50);
+  font-size: 13px;
+  color: var(--gray-600);
+  font-style: italic;
+}
+
+/* Clicking a name in the "nobody planned this month" panel opens their month. */
+.planning-missing-chip {
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+.planning-missing-chip:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+.planning-missing-role {
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  opacity: 0.65;
+}
+.planning-missing-hint {
+  margin: 0 0 8px;
+  font-size: 12px;
+  color: #92400e;
+  opacity: 0.85;
+}
+
+/* A point of sale already on the day being edited — the one-visit-per-day rule. */
+.planning-store-chip.taken {
+  opacity: 0.4;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
+.planning-detail-badges {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.planning-detail-period {
+  margin: 10px 0 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gray-500);
+}
+.planning-adjust-row.duplicate .form-input,
+.planning-adjust-row.duplicate .form-select {
+  border-color: var(--danger, #dc2626);
+}
+.planning-adjust-locked {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  color: var(--gray-400);
+}
+.planning-adjust-error {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: var(--danger, #dc2626);
+}
+
+/* ─── Slide-over drawer ───────────────────────────────────────────────────── */
+
+.drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(15, 23, 42, 0.45);
+}
+.drawer-panel {
+  position: fixed;
+  inset-block: 0;
+  inset-inline-end: 0;
+  z-index: 1001;
+  width: min(560px, 100vw);
+  display: flex;
+  flex-direction: column;
+  background: white;
+  box-shadow: -8px 0 32px rgba(15, 23, 42, 0.18);
+}
+/* RTL: the panel slides in from the left, so the shadow has to follow it. */
+[dir='rtl'] .drawer-panel {
+  box-shadow: 8px 0 32px rgba(15, 23, 42, 0.18);
+}
+.drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--gray-100);
+  flex-shrink: 0;
+}
+.drawer-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--gray-800);
+}
+.drawer-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--gray-500);
+  cursor: pointer;
+}
+.drawer-close:hover { background: var(--gray-100); color: var(--gray-700); }
+.drawer-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+/* Sticks to the bottom of the scroll area so the actions stay reachable. */
+.drawer-footer {
+  position: sticky;
+  bottom: -20px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 20px -20px -20px;
+  padding: 14px 20px;
+  background: white;
+  border-top: 1px solid var(--gray-100);
+}
+@media (max-width: 640px) {
+  .drawer-panel { width: 100vw; }
+}
+
+.planning-adjust-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.planning-adjust-row {
+  display: grid;
+  /* date · store · time · notes · remove */
+  grid-template-columns: 130px 1fr 96px 1fr auto;
+  gap: 8px;
+  align-items: center;
+}
+
+/* ─── Per-point-of-sale time rows ─────────────────────────────────────────── */
+
+.planning-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.planning-pick-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.planning-pick-row {
+  display: grid;
+  grid-template-columns: 1fr 116px auto;
+  gap: 8px;
+  align-items: center;
+  padding: 6px 8px;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  background: white;
+}
+.planning-pick-row.clash {
+  border-color: var(--danger, #dc2626);
+  background: #fef2f2;
+}
+.planning-pick-store {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gray-700);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ─── Bulk month filler ───────────────────────────────────────────────────── */
+
+.planning-bulk-open {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  padding: 7px 12px;
+  border: 1px dashed var(--primary-medium, var(--gray-300));
+  border-radius: 8px;
+  background: transparent;
+  color: var(--primary, var(--gray-700));
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.planning-bulk-open:hover { background: var(--gray-50); }
+
+.planning-bulk-box {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid var(--gray-200);
+  border-radius: 10px;
+  background: var(--gray-50);
+}
+.planning-bulk-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.planning-bulk-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+.planning-bulk-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-top: 4px;
+  border-top: 1px solid var(--gray-200);
+}
+.planning-bulk-count {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gray-600);
+}
+/* The day grid can run to 31 chips — let it wrap tightly rather than scroll. */
+.planning-bulk-box .planning-day-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+@media (max-width: 900px) {
+  .planning-adjust-row { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 640px) {
+  .planning-adjust-row { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 640px) {
+  .planning-grid-view { display: none; }
+  .planning-agenda-view {
+    display: block;
+    background: white;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
   }
 }
 

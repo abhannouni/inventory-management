@@ -6,6 +6,35 @@
     "promo_created": {
       "title": "Nouvelle promo publiée",
       "body": "Une nouvelle promo est en ligne — ajoutez votre photo de rayon une fois l'étiquette en place."
+    },
+    "visit_plan_submitted": {
+      "title": "{{actorName}} a soumis ses visites planifiées pour {{month}}/{{year}}",
+      "body": "Appuyez pour les examiner."
+    },
+    "visit_plan_changed": {
+      "title": "{{actorName}} a modifié son planning approuvé pour {{month}}/{{year}}",
+      "body": "Appuyez pour voir les changements."
+    },
+    "visit_plan_approved": {
+      "title": "Vos visites planifiées pour {{month}}/{{year}} ont été approuvées"
+    },
+    "visit_plan_declined": {
+      "title": "Vos visites planifiées pour {{month}}/{{year}} ont été refusées"
+    },
+    "visit_plan_adjusted": {
+      "title": "{{actorName}} a ajusté vos visites planifiées pour {{month}}/{{year}}"
+    },
+    "visit_plan_assigned": {
+      "title": "{{actorName}} a planifié vos visites pour {{month}}/{{year}}",
+      "body": "Appuyez pour voir votre mois."
+    },
+    "visit_plan_reminder": {
+      "title": "Plus que quelques jours pour planifier vos visites de {{month}}/{{year}}",
+      "body": "Soumettez-les avant le début du mois."
+    },
+    "visit_plan_missing": {
+      "title": "{{actorName}} n'a aucune visite planifiée pour {{month}}/{{year}}",
+      "body": "Ouvrez Planning des visites pour régler cela."
     }
   }
 }

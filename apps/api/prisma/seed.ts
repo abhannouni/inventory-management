@@ -1,4 +1,4 @@
-import { AuditItemStatus, PrismaClient, ScheduleStatus, VisitStatus } from '@prisma/client';
+import { AuditItemStatus, PrismaClient, VisitPlanStatus, VisitStatus } from '@prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import bcrypt from 'bcryptjs';
 import 'dotenv/config';
@@ -28,7 +28,7 @@ async function main() {
   await prisma.plan.deleteMany();
   await prisma.kpi.deleteMany();
   await prisma.adminAuditLog.deleteMany();
-  await prisma.schedule.deleteMany();
+  await prisma.visitPlan.deleteMany();
   await prisma.auditItem.deleteMany();
   await prisma.visit.deleteMany();
   await prisma.productStore.deleteMany();
@@ -495,94 +495,85 @@ async function main() {
   });
   console.log('  ✔  audit_items');
 
-  // ── 10. Schedules — current month + next 2 weeks ────────────────────────────
+  // ── 10. Planned visits — this week + the next two ───────────────────────────
   //
-  // supNorth schedules for merchNorth; supSouth schedules for merchSouth.
-  // Mix of: past (completed/cancelled) + upcoming (pending).
+  // A planned day is a `visits` row with `status: 'planned'` hanging off that
+  // person's month plan. Merchandiser months are written by their supervisor
+  // and land `approved`; the supervisors' own months are here too.
   //
-  const scheduleData: {
-    user_id: string; store_id: string; created_by_id: string;
-    scheduled_at: Date; notes?: string; status: ScheduleStatus;
+  const plannedData: {
+    user_id: string; store_id: string; planned_by_id: string;
+    at: Date; notes?: string;
   }[] = [
-    // ── Past (completed) ──────────────────────────────────────
-    { user_id: merchNorth.id, store_id: storeN1.id, created_by_id: supNorth.id,
-      scheduled_at: dt(-14, 8), notes: 'Weekly shelf check — aisle 3',
-      status: ScheduleStatus.completed },
-    { user_id: merchNorth.id, store_id: storeN2.id, created_by_id: supNorth.id,
-      scheduled_at: dt(-12, 9), notes: 'Restock dairy section',
-      status: ScheduleStatus.completed },
-    { user_id: merchNorth.id, store_id: storeN3.id, created_by_id: supNorth.id,
-      scheduled_at: dt(-10, 8, 30),
-      status: ScheduleStatus.completed },
-    { user_id: merchSouth.id, store_id: storeS1.id, created_by_id: supSouth.id,
-      scheduled_at: dt(-14, 9), notes: 'Full store audit',
-      status: ScheduleStatus.completed },
-    { user_id: merchSouth.id, store_id: storeS2.id, created_by_id: supSouth.id,
-      scheduled_at: dt(-11, 8),
-      status: ScheduleStatus.completed },
-    { user_id: supNorth.id, store_id: storeN1.id, created_by_id: supNorth.id,
-      scheduled_at: dt(-7, 10), notes: 'Supervisor spot check',
-      status: ScheduleStatus.completed },
-    { user_id: supSouth.id, store_id: storeS3.id, created_by_id: supSouth.id,
-      scheduled_at: dt(-8, 11), notes: 'New product placement review',
-      status: ScheduleStatus.completed },
+    // ── This week ─────────────────────────────────────────────
+    { user_id: merchNorth.id, store_id: storeN1.id, planned_by_id: supNorth.id,
+      at: dt(0, 8, 30), notes: 'Routine check + photo documentation' },
+    { user_id: merchNorth.id, store_id: storeN3.id, planned_by_id: supNorth.id,
+      at: dt(1, 9), notes: 'Focus on beverage aisle' },
+    { user_id: merchSouth.id, store_id: storeS2.id, planned_by_id: supSouth.id,
+      at: dt(1, 8) },
+    { user_id: supSouth.id, store_id: storeS1.id, planned_by_id: supSouth.id,
+      at: dt(2, 10), notes: 'Supervisor compliance check' },
 
-    // ── Past (cancelled) ─────────────────────────────────────
-    { user_id: merchNorth.id, store_id: storeN2.id, created_by_id: supNorth.id,
-      scheduled_at: dt(-9, 9), notes: 'Cancelled — public holiday',
-      status: ScheduleStatus.cancelled },
-    { user_id: merchSouth.id, store_id: storeS3.id, created_by_id: supSouth.id,
-      scheduled_at: dt(-6, 8), notes: 'Cancelled — store closed',
-      status: ScheduleStatus.cancelled },
+    // ── Next week ─────────────────────────────────────────────
+    { user_id: merchNorth.id, store_id: storeN2.id, planned_by_id: supNorth.id,
+      at: dt(7, 8, 30), notes: 'Monthly full audit' },
+    { user_id: merchNorth.id, store_id: storeN1.id, planned_by_id: supNorth.id,
+      at: dt(8, 9) },
+    { user_id: merchNorth.id, store_id: storeN3.id, planned_by_id: supNorth.id,
+      at: dt(9, 8) },
+    { user_id: merchSouth.id, store_id: storeS1.id, planned_by_id: supSouth.id,
+      at: dt(7, 9), notes: 'Focus on dairy and bakery' },
+    { user_id: merchSouth.id, store_id: storeS3.id, planned_by_id: supSouth.id,
+      at: dt(8, 8, 30) },
+    { user_id: supNorth.id, store_id: storeN2.id, planned_by_id: supNorth.id,
+      at: dt(10, 10), notes: 'Quarterly supervisor review' },
 
-    // ── This week (pending) ───────────────────────────────────
-    { user_id: merchNorth.id, store_id: storeN1.id, created_by_id: supNorth.id,
-      scheduled_at: dt(0, 8, 30), notes: 'Routine check + photo documentation',
-      status: ScheduleStatus.pending },
-    { user_id: merchNorth.id, store_id: storeN3.id, created_by_id: supNorth.id,
-      scheduled_at: dt(1, 9), notes: 'Focus on beverage aisle',
-      status: ScheduleStatus.pending },
-    { user_id: merchSouth.id, store_id: storeS2.id, created_by_id: supSouth.id,
-      scheduled_at: dt(1, 8),
-      status: ScheduleStatus.pending },
-    { user_id: supSouth.id, store_id: storeS1.id, created_by_id: supSouth.id,
-      scheduled_at: dt(2, 10), notes: 'Supervisor compliance check',
-      status: ScheduleStatus.pending },
-
-    // ── Next week (pending) ───────────────────────────────────
-    { user_id: merchNorth.id, store_id: storeN2.id, created_by_id: supNorth.id,
-      scheduled_at: dt(7, 8, 30), notes: 'Monthly full audit',
-      status: ScheduleStatus.pending },
-    { user_id: merchNorth.id, store_id: storeN1.id, created_by_id: supNorth.id,
-      scheduled_at: dt(8, 9),
-      status: ScheduleStatus.pending },
-    { user_id: merchNorth.id, store_id: storeN3.id, created_by_id: supNorth.id,
-      scheduled_at: dt(9, 8),
-      status: ScheduleStatus.pending },
-    { user_id: merchSouth.id, store_id: storeS1.id, created_by_id: supSouth.id,
-      scheduled_at: dt(7, 9), notes: 'Focus on dairy and bakery',
-      status: ScheduleStatus.pending },
-    { user_id: merchSouth.id, store_id: storeS3.id, created_by_id: supSouth.id,
-      scheduled_at: dt(8, 8, 30),
-      status: ScheduleStatus.pending },
-    { user_id: supNorth.id, store_id: storeN2.id, created_by_id: supNorth.id,
-      scheduled_at: dt(10, 10), notes: 'Quarterly supervisor review',
-      status: ScheduleStatus.pending },
-
-    // ── 2 weeks from now (pending) ────────────────────────────
-    { user_id: merchNorth.id, store_id: storeN1.id, created_by_id: supNorth.id,
-      scheduled_at: dt(14, 8),
-      status: ScheduleStatus.pending },
-    { user_id: merchSouth.id, store_id: storeS2.id, created_by_id: supSouth.id,
-      scheduled_at: dt(14, 9), notes: 'Pre-promo stock verification',
-      status: ScheduleStatus.pending },
-    { user_id: merchSouth.id, store_id: storeS1.id, created_by_id: supSouth.id,
-      scheduled_at: dt(15, 8),
-      status: ScheduleStatus.pending },
+    // ── 2 weeks from now ──────────────────────────────────────
+    { user_id: merchNorth.id, store_id: storeN1.id, planned_by_id: supNorth.id,
+      at: dt(14, 8) },
+    { user_id: merchSouth.id, store_id: storeS2.id, planned_by_id: supSouth.id,
+      at: dt(14, 9), notes: 'Pre-promo stock verification' },
+    { user_id: merchSouth.id, store_id: storeS1.id, planned_by_id: supSouth.id,
+      at: dt(15, 8) },
   ];
 
-  await prisma.schedule.createMany({ data: scheduleData });
-  console.log('  ✔  schedules');
+  /** Midnight UTC of that calendar day — matches the `@db.Date` column. */
+  const plannedDate = (d: Date) => new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  const plannedTime = (d: Date) =>
+    `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+
+  // One plan per (person, month) the data touches, created on first sighting.
+  const planIdByKey = new Map<string, string>();
+  for (const row of plannedData) {
+    const key = `${row.user_id}__${row.at.getFullYear()}__${row.at.getMonth() + 1}`;
+    if (planIdByKey.has(key)) continue;
+    const plan = await prisma.visitPlan.create({
+      data: {
+        user_id: row.user_id,
+        year: row.at.getFullYear(),
+        month: row.at.getMonth() + 1,
+        status: VisitPlanStatus.approved,
+        submitted_at: new Date(),
+        reviewed_at: new Date(),
+      },
+    });
+    planIdByKey.set(key, plan.id);
+  }
+
+  await prisma.visit.createMany({
+    data: plannedData.map((row) => ({
+      user_id: row.user_id,
+      store_id: row.store_id,
+      plan_id: planIdByKey.get(`${row.user_id}__${row.at.getFullYear()}__${row.at.getMonth() + 1}`)!,
+      planned_date: plannedDate(row.at),
+      planned_time: plannedTime(row.at),
+      planned_notes: row.notes ?? null,
+      planned_by_id: row.planned_by_id,
+      status: VisitStatus.planned,
+    })),
+  });
+  console.log('  ✔  visit plans + planned visits');
 
   // ── 10b. Sell-out entries — mix of Bourchanin and competitor products ───────
   await prisma.sellOut.createMany({
@@ -695,7 +686,8 @@ async function main() {
     users:         await prisma.user.count(),
     visits:        await prisma.visit.count(),
     audits:        await prisma.auditItem.count(),
-    schedules:     await prisma.schedule.count(),
+    visitPlans:    await prisma.visitPlan.count(),
+    plannedVisits: await prisma.visit.count({ where: { status: VisitStatus.planned } }),
     clients:       await prisma.client.count(),
     plans:         await prisma.plan.count(),
     subscriptions: await prisma.subscription.count(),
@@ -708,7 +700,7 @@ async function main() {
 
   console.log('\n✅  Seed complete!\n');
   console.log(`  Regions: ${counts.regions}  Stores: ${counts.stores} (${counts.visibleToGm} visible to GM)  Products: ${counts.products}`);
-  console.log(`  Users: ${counts.users}  Visits: ${counts.visits}  Audit items: ${counts.audits}  Schedules: ${counts.schedules}`);
+  console.log(`  Users: ${counts.users}  Visits: ${counts.visits}  Audit items: ${counts.audits}  Visit plans: ${counts.visitPlans} (${counts.plannedVisits} planned)`);
   console.log(`  Clients: ${counts.clients}  Plans: ${counts.plans}  Subscriptions: ${counts.subscriptions}`);
   console.log(`  KPIs: ${counts.kpis}  Dashboards: ${counts.dashboards}  Permissions: ${counts.permissions}  Sell-outs: ${counts.sellOuts}`);
   console.log('\n  Credentials (all passwords: password123)');

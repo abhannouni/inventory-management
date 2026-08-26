@@ -1,5 +1,5 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import { AuditItemStatus, User, UserRole } from '@prisma/client';
+import { AuditItemStatus, User, UserRole, VisitStatus } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { adminAssignedStoreIds } from '../stores/store-scope';
 import { ReportFiltersDto } from './dto/report-filters.dto';
@@ -52,7 +52,7 @@ export class ReportsService {
     const visits = await this.prisma.visit.findMany({
       where: {
         store_id: storeId,
-        ...(filters.status && { status: filters.status }),
+        status: filters.status ?? { not: VisitStatus.planned },
         ...dateFilter,
       },
       include: {
@@ -148,7 +148,8 @@ export class ReportsService {
   private async buildVisitWhere(user: User, filters: ReportFiltersDto) {
     const dateFilter = buildDateFilter(filters);
     const base: Record<string, unknown> = {
-      ...(filters.status && { status: filters.status }),
+      // Calendar rows aren't visits that happened — they never count in a report.
+      status: filters.status ?? { not: VisitStatus.planned },
       ...(filters.store_id && { store_id: filters.store_id }),
       ...dateFilter,
     };

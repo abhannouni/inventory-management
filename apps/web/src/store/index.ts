@@ -9,13 +9,13 @@ import productStoresReducer from './slices/productStoresSlice';
 import visitsReducer from './slices/visitsSlice';
 import auditItemsReducer from './slices/auditItemsSlice';
 import reportsReducer from './slices/reportsSlice';
-import schedulesReducer from './slices/schedulesSlice';
 import sellOutReducer from './slices/sellOutSlice';
 import settingsReducer from './slices/settingsSlice';
 import productRequestsReducer from './slices/productRequestsSlice';
 import promosReducer from './slices/promosSlice';
 import notificationsReducer from './slices/notificationsSlice';
 import priceSurveysReducer from './slices/priceSurveysSlice';
+import visitPlansReducer from './slices/visitPlansSlice';
 
 export const store = configureStore({
   reducer: {
@@ -29,13 +29,13 @@ export const store = configureStore({
     visits: visitsReducer,
     auditItems: auditItemsReducer,
     reports: reportsReducer,
-    schedules: schedulesReducer,
     sellOut: sellOutReducer,
     settings: settingsReducer,
     productRequests: productRequestsReducer,
     promos: promosReducer,
     notifications: notificationsReducer,
     priceSurveys: priceSurveysReducer,
+    visitPlans: visitPlansReducer,
   },
 });
 

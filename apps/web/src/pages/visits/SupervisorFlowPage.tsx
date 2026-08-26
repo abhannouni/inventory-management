@@ -6,11 +6,12 @@ import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../../hooks/useAppDispatch';
 import { checkin, checkout, submitVisitReport, fetchVisits, fetchActiveVisit } from '../../store/slices/visitsSlice';
 import { fetchStores } from '../../store/slices/storesSlice';
-import { fetchSchedules } from '../../store/slices/schedulesSlice';
+import { fetchUpcomingPlanned } from '../../store/slices/visitPlansSlice';
 import VisitTimer from '../../components/ui/VisitTimer';
 import ReportCard from './ReportCard';
 import type { ReportCardLabels } from './ReportCard';
-import { formatDate } from '../../utils/format';
+import { formatDateOnly } from '../../utils/format';
+import { apiDayString, parseApiDay } from '../../utils/calendar';
 import { getCurrentPosition, geolocationErrorMessage } from '../../utils/geolocation';
 import { useFeatureFlag } from '../../hooks/useFeatureFlag';
 import type { Visit, VisitReportCategory } from '../../types';
@@ -26,12 +27,12 @@ interface CardState {
 }
 type Step = 'checkin' | 'report' | 'confirm' | 'done';
 
-/* ─────────── Schedule grouping (for the expanded visits panel) ─────────── */
+/* ─────────── Planned-visit grouping (for the expanded visits panel) ─────────── */
 function startOfDay(d: Date): number {
   return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
 }
 
-function groupSchedulesByDate<T extends { scheduled_at: string }>(
+function groupSchedulesByDate<T extends { planned_date: string }>(
   schedules: T[],
   labels: { today: string; tomorrow: string; thisWeek: string; later: string },
 ): { label: string; items: T[] }[] {
@@ -47,7 +48,7 @@ function groupSchedulesByDate<T extends { scheduled_at: string }>(
   ];
 
   for (const sch of schedules) {
-    const day = startOfDay(new Date(sch.scheduled_at));
+    const day = startOfDay(parseApiDay(sch.planned_date));
     if (day === today) buckets[0].items.push(sch);
     else if (day === tomorrow) buckets[1].items.push(sch);
     else if (day < weekEnd) buckets[2].items.push(sch);
@@ -106,12 +107,12 @@ export default function SupervisorFlowPage({ onViewHistory }: SupervisorFlowPage
   const navigate  = useNavigate();
   const { active: activeVisit } = useAppSelector((s) => s.visits);
   const { items: stores  } = useAppSelector((s) => s.stores);
-  const { items: schedules } = useAppSelector((s) => s.schedules);
+  const { upcoming: schedules } = useAppSelector((s) => s.visitPlans);
   const currentUserId = useAppSelector((s) => s.auth.user?.id);
 
   const [step, setStep]           = useState<Step>('checkin');
   const [storeId, setStoreId]     = useState('');
-  const [scheduleId, setScheduleId] = useState<string | null>(null);
+  const [plannedVisitId, setPlannedVisitId] = useState<string | null>(null);
   const [storeErr, setStoreErr]   = useState('');
   const [busy, setBusy]           = useState(false);
   const [visitsExpanded, setVisitsExpanded] = useState(false);
@@ -127,11 +128,11 @@ export default function SupervisorFlowPage({ onViewHistory }: SupervisorFlowPage
     dispatch(fetchStores());
     dispatch(fetchVisits());
     dispatch(fetchActiveVisit());
-    if (currentUserId) dispatch(fetchSchedules({ status: 'pending', user_id: currentUserId }));
+    if (currentUserId) dispatch(fetchUpcomingPlanned());
   }, [dispatch, currentUserId]);
 
-  const upcomingSchedules = [...schedules].sort(
-    (a, b) => new Date(a.scheduled_at).getTime() - new Date(b.scheduled_at).getTime(),
+  const upcomingSchedules = [...schedules].sort((a, b) =>
+    `${a.planned_date}${a.planned_time ?? ''}`.localeCompare(`${b.planned_date}${b.planned_time ?? ''}`),
   );
   const COLLAPSED_COUNT = 3;
   const hasMoreSchedules = upcomingSchedules.length > COLLAPSED_COUNT;
@@ -190,7 +191,7 @@ export default function SupervisorFlowPage({ onViewHistory }: SupervisorFlowPage
     // The server starts the clock — no client timestamp is sent.
     const res = await dispatch(checkin({
       store_id: storeId,
-      schedule_id: scheduleId ?? undefined,
+      planned_visit_id: plannedVisitId ?? undefined,
       lat: position.lat,
       lng: position.lng,
     }));
@@ -333,12 +334,15 @@ export default function SupervisorFlowPage({ onViewHistory }: SupervisorFlowPage
                       <button
                         type="button"
                         key={sch.id}
-                        className={`mf-scheduled-card${scheduleId === sch.id ? ' selected' : ''}`}
-                        onClick={() => { setStoreId(sch.store_id); setScheduleId(sch.id); setStoreErr(''); }}
+                        className={`mf-scheduled-card${plannedVisitId === sch.id ? ' selected' : ''}`}
+                        onClick={() => { setStoreId(sch.store_id); setPlannedVisitId(sch.id); setStoreErr(''); }}
                       >
                         <div className="mf-scheduled-store">{sch.store?.name ?? sch.store_id}</div>
-                        <div className="mf-scheduled-date">{formatDate(sch.scheduled_at, i18n.language)}</div>
-                        {sch.notes && <div className="mf-scheduled-notes">{sch.notes}</div>}
+                        <div className="mf-scheduled-date">
+                          {formatDateOnly(apiDayString(sch.planned_date), i18n.language)}
+                          {sch.planned_time && ` · ${sch.planned_time}`}
+                        </div>
+                        {sch.planned_notes && <div className="mf-scheduled-notes">{sch.planned_notes}</div>}
                       </button>
                     ))}
                   </div>
@@ -354,12 +358,15 @@ export default function SupervisorFlowPage({ onViewHistory }: SupervisorFlowPage
                             <button
                               type="button"
                               key={sch.id}
-                              className={`mf-scheduled-card${scheduleId === sch.id ? ' selected' : ''}`}
-                              onClick={() => { setStoreId(sch.store_id); setScheduleId(sch.id); setStoreErr(''); }}
+                              className={`mf-scheduled-card${plannedVisitId === sch.id ? ' selected' : ''}`}
+                              onClick={() => { setStoreId(sch.store_id); setPlannedVisitId(sch.id); setStoreErr(''); }}
                             >
                               <div className="mf-scheduled-store">{sch.store?.name ?? sch.store_id}</div>
-                              <div className="mf-scheduled-date">{formatDate(sch.scheduled_at, i18n.language)}</div>
-                              {sch.notes && <div className="mf-scheduled-notes">{sch.notes}</div>}
+                              <div className="mf-scheduled-date">
+                          {formatDateOnly(apiDayString(sch.planned_date), i18n.language)}
+                          {sch.planned_time && ` · ${sch.planned_time}`}
+                        </div>
+                              {sch.planned_notes && <div className="mf-scheduled-notes">{sch.planned_notes}</div>}
                             </button>
                           ))}
                         </div>
@@ -387,7 +394,7 @@ export default function SupervisorFlowPage({ onViewHistory }: SupervisorFlowPage
               <select
                 className={`form-select ${storeErr ? 'is-error' : ''}`}
                 value={storeId}
-                onChange={(e) => { setStoreId(e.target.value); setScheduleId(null); setStoreErr(''); }}
+                onChange={(e) => { setStoreId(e.target.value); setPlannedVisitId(null); setStoreErr(''); }}
               >
                 <option value="">{t('merchandiserFlow.checkin.chooseStore')}</option>
                 {stores.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}

@@ -88,7 +88,7 @@ export default function AdminDashboard() {
     { label: t('quickActions.manageUsers'), icon: <UsersIcon />, path: '/users' },
     { label: t('quickActions.manageStores'), icon: <StoreIcon />, path: '/stores' },
     { label: t('quickActions.manageStock'), icon: <ProductIcon />, path: '/product-stores' },
-    { label: t('quickActions.schedule'), icon: <TargetIcon />, path: '/schedule' },
+    { label: t('quickActions.schedule'), icon: <TargetIcon />, path: '/visits?tab=plans' },
   ];
 
   return (

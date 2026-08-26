@@ -53,6 +53,8 @@ export function usePermissions() {
     canFillPriceSurvey: can('price_surveys.update'),
     canManagePriceSurveys: can('price_surveys.manage'),
     canManageSchedules: canManage('schedules'),
+    canPlanOwnVisits: can('visit_plans.create'),
+    canReviewVisitPlans: can('visit_plans.review'),
     // A visit is a create (check-in) followed by an update (check-out) — not
     // something every authenticated role does. General Management, for
     // instance, has no `visits.create` and correctly never sees a check-in

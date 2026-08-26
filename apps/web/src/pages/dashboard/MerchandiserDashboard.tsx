@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../../hooks/useAppDispatch';
 import { fetchVisitsReport } from '../../store/slices/reportsSlice';
 import { fetchActiveVisit } from '../../store/slices/visitsSlice';
-import { fetchSchedules } from '../../store/slices/schedulesSlice';
+import { fetchUpcomingPlanned } from '../../store/slices/visitPlansSlice';
 import StatusBar from '../../components/charts/StatusBar';
 import { GreetingHeader, StatCard, DashCard, TimeTracker } from './shared';
 import { VisitIcon, CheckCircleIcon, TargetIcon, AlertIcon, CalendarIcon } from './icons';
@@ -64,21 +64,23 @@ export default function MerchandiserDashboard() {
   const navigate = useNavigate();
   const { visitsReport } = useAppSelector((s) => s.reports);
   const activeVisit = useAppSelector((s) => s.visits.active);
-  const { items: schedules } = useAppSelector((s) => s.schedules);
+  const { upcoming: schedules } = useAppSelector((s) => s.visitPlans);
 
   useEffect(() => {
     dispatch(fetchVisitsReport(undefined));
     dispatch(fetchActiveVisit());
-    dispatch(fetchSchedules({ status: 'pending' }));
+    dispatch(fetchUpcomingPlanned());
   }, [dispatch]);
 
   const totals = useMemo(() => aggregateStockTotals(visitsReport), [visitsReport]);
   const availability = availabilityPct(totals);
   const thisWeek = useMemo(() => visitsSince(visitsReport, 7), [visitsReport]);
-  const completedThisWeek = useMemo(() => thisWeek.filter((v) => v.status === 'closed').length, [thisWeek]);
+  const completedThisWeek = useMemo(() => thisWeek.filter((v) => v.status === 'completed').length, [thisWeek]);
   const latest = useMemo(() => recentVisits(visitsReport, 5), [visitsReport]);
   const upcoming = useMemo(
-    () => [...schedules].sort((a, b) => new Date(a.scheduled_at).getTime() - new Date(b.scheduled_at).getTime()).slice(0, 4),
+    () => [...schedules]
+      .sort((a, b) => `${a.planned_date}${a.planned_time ?? ''}`.localeCompare(`${b.planned_date}${b.planned_time ?? ''}`))
+      .slice(0, 4),
     [schedules],
   );
 
@@ -127,7 +129,7 @@ export default function MerchandiserDashboard() {
         <div>
           <TimeTracker visit={activeVisit} />
           <div style={{ marginTop: 16 }}>
-            <DashCard title={t('schedule.upcomingTitle')} subtitle={t('schedule.upcomingSubtitle')} action={{ label: t('team.viewAll'), onClick: () => navigate('/schedule') }}>
+            <DashCard title={t('schedule.upcomingTitle')} subtitle={t('schedule.upcomingSubtitle')} action={{ label: t('team.viewAll'), onClick: () => navigate('/visits?tab=planning') }}>
               {upcoming.length === 0 ? (
                 <p className="dashv2-card-empty">{t('schedule.empty')}</p>
               ) : (
@@ -136,7 +138,7 @@ export default function MerchandiserDashboard() {
                     <span className="dashv2-mini-icon"><CalendarIcon /></span>
                     <div className="dashv2-mini-info">
                       <div className="dashv2-mini-title">{s.store?.name ?? '—'}</div>
-                      <div className="dashv2-mini-meta">{formatDateOnly(s.scheduled_at, i18n.language)}</div>
+                      <div className="dashv2-mini-meta">{formatDateOnly(s.planned_date.slice(0, 10), i18n.language)}{s.planned_time && ` · ${s.planned_time}`}</div>
                     </div>
                   </div>
                 ))

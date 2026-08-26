@@ -10,10 +10,10 @@ import PosDirectoryPage from '../pages/pos/PosDirectoryPage';
 import ProductsPage from '../pages/products/ProductsPage';
 import ProductStoresPage from '../pages/product-stores/ProductStoresPage';
 import VisitsPage from '../pages/visits/VisitsPage';
+import VisitPlanningPage from '../pages/visit-planning/VisitPlanningPage';
 import VisitDetailPage from '../pages/visits/VisitDetailPage';
 import AuditItemsPage from '../pages/audit-items/AuditItemsPage';
 import ReportsPage from '../pages/reports/ReportsPage';
-import SchedulePage from '../pages/schedule/SchedulePage';
 import SellOutPage from '../pages/modules/SellOutPage';
 import TrainingPage from '../pages/modules/TrainingPage';
 import MarketingPage from '../pages/modules/MarketingPage';
@@ -102,6 +102,21 @@ export const NAV_PAGES: NavPage[] = [
   },
   { id: 'visit-detail', path: '/visits/:id', element: VisitDetailPage, permissions: ['visits.read'] },
   {
+    id: 'visit-planning',
+    path: '/visit-planning',
+    element: VisitPlanningPage,
+    permissions: ['visit_plans.read'],
+    nav: {
+      labelKey: 'nav.visitPlanning',
+      icon: {
+        d: 'M9 4h6a2 2 0 012 2h1a2 2 0 012 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2h1a2 2 0 012-2z',
+        d2: 'M8 12l2 2 4-4M8 17h6',
+      },
+      section: 'menu',
+      mobilePrimary: true,
+    },
+  },
+  {
     id: 'pos-map',
     path: '/pos',
     element: PosDirectoryPage,
@@ -116,20 +131,6 @@ export const NAV_PAGES: NavPage[] = [
     },
   },
   { id: 'pos-detail', path: '/pos/:id', element: StoreDetailPage, permissions: ['pos.read'] },
-  {
-    id: 'schedule',
-    path: '/schedule',
-    element: SchedulePage,
-    permissions: ['schedules.read'],
-    nav: {
-      labelKey: 'nav.schedule',
-      icon: {
-        d: 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z',
-      },
-      section: 'menu',
-      mobilePrimary: true,
-    },
-  },
   {
     id: 'audit-items',
     path: '/audit-items',

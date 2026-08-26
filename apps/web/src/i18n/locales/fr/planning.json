@@ -1,0 +1,192 @@
+{
+  "months": [
+    "Janvier",
+    "Février",
+    "Mars",
+    "Avril",
+    "Mai",
+    "Juin",
+    "Juillet",
+    "Août",
+    "Septembre",
+    "Octobre",
+    "Novembre",
+    "Décembre"
+  ],
+  "weekdaysShort": [
+    "Lun",
+    "Mar",
+    "Mer",
+    "Jeu",
+    "Ven",
+    "Sam",
+    "Dim"
+  ],
+  "pageTitle": "Mes visites planifiées",
+  "subtitle": "Planifiez vos visites du mois, puis soumettez-les pour approbation",
+  "adminPageTitle": "Plannings des visites",
+  "adminSubtitle": "Examinez les mois des superviseurs et planifiez ceux des marchandiseurs",
+  "previousMonth": "Mois précédent",
+  "nextMonth": "Mois suivant",
+  "today": "Aujourd'hui",
+  "submitForReview": "Soumettre pour validation",
+  "statusLabels": {
+    "empty": "Non commencé",
+    "draft": "Brouillon",
+    "pending_review": "En attente de validation",
+    "approved": "Approuvé",
+    "declined": "Refusé"
+  },
+  "statusHelp": {
+    "empty": "Vous n'avez pas encore commencé la planification de ce mois.",
+    "draft": "Ajoutez vos visites, puis soumettez pour validation une fois terminé.",
+    "pendingReview": "Soumis — en attente de validation par votre responsable.",
+    "approved": "Approuvé. Toute modification le renverra en validation.",
+    "declined": "Refusé — apportez les modifications demandées et soumettez à nouveau.",
+    "declinedWithNote": "Refusé : {{note}} — apportez les modifications demandées et soumettez à nouveau."
+  },
+  "legend": {
+    "completed": "Terminée",
+    "planned": "Planifiée",
+    "open": "En cours"
+  },
+  "calendar": {
+    "loading": "Chargement de la planification…",
+    "visitFallback": "Visite",
+    "moreCount": "+{{count}}"
+  },
+  "dayDetail": {
+    "modalTitle": "Planification du jour",
+    "empty": "Aucune visite planifiée pour ce jour.",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "deleteConfirm": "Supprimer ?",
+    "yes": "Oui",
+    "no": "Non",
+    "addVisit": "Ajouter une visite",
+    "previousDay": "Jour précédent",
+    "nextDay": "Jour suivant"
+  },
+  "form": {
+    "store": "Magasin",
+    "selectStore": "Sélectionner un magasin…",
+    "notesLabel": "Notes",
+    "notesOptional": "(optionnel)",
+    "notesPlaceholder": "Objet de la visite, instructions…",
+    "saveChanges": "Enregistrer les modifications",
+    "addVisit": "Ajouter une visite",
+    "storesLabel": "Magasins",
+    "storesHint": "Sélectionnez un ou plusieurs magasins — une visite est créée pour chacun",
+    "repeatToggle": "Répéter cette visite sur d'autres jours",
+    "repeatHint": "Ajoute la même visite les jours de la semaine sélectionnés, jusqu'à la fin du mois",
+    "repeatAdded": "Visite ajoutée sur {{count}} jour(s)",
+    "extraDaysToggle": "Ajouter aussi des jours précis",
+    "extraDaysHint": "Sélectionnez d'autres jours du mois pour cette même visite",
+    "bulkAdded": "{{count}} visite(s) ajoutée(s)",
+    "alreadyPlannedToday": "Déjà planifié ce jour-là — un point de vente ne peut pas être visité deux fois par jour",
+    "timeLabel": "Heure",
+    "timesLabel": "Heure par point de vente",
+    "timesHint": "Chaque point de vente a sa propre heure — vous ne pouvez pas être à deux endroits à la fois",
+    "timeClash": "Deux points de vente ont la même heure — donnez à chacun son créneau",
+    "timeTaken": "Cette heure est déjà prise ce jour-là"
+  },
+  "filters": {
+    "monthLabel": "Mois",
+    "statusLabel": "Statut",
+    "searchLabel": "Personne",
+    "allStatuses": "Tous les statuts",
+    "searchPlaceholder": "Rechercher une personne…",
+    "roleLabel": "Rôle",
+    "allRoles": "Tous les rôles",
+    "supervisorLabel": "Superviseur",
+    "allSupervisors": "Tous les superviseurs",
+    "personLabel": "Personne",
+    "allPeople": "Tout le monde"
+  },
+  "missing": {
+    "title": "{{count}} personne(s) n'ont aucune visite planifiée ce mois-ci",
+    "hint": "Cliquez sur un nom pour planifier son mois."
+  },
+  "table": {
+    "supervisor": "Superviseur",
+    "month": "Mois",
+    "status": "Statut",
+    "visits": "Visites",
+    "submitted": "Soumis",
+    "actions": "Actions",
+    "view": "Voir",
+    "empty": "Aucune planification pour ces filtres",
+    "confirmApprove": "Approuver ?",
+    "owner": "Personne",
+    "role": "Rôle"
+  },
+  "detail": {
+    "title": "Détail de la planification",
+    "previousNote": "Note précédente",
+    "noteLabel": "Note",
+    "declineNotePlaceholder": "Expliquez ce qui doit être modifié…",
+    "adjustNotePlaceholder": "Expliquez ce que vous avez modifié…",
+    "decline": "Refuser",
+    "adjust": "Ajuster",
+    "approve": "Approuver",
+    "confirmDecline": "Confirmer le refus",
+    "confirmAdjust": "Enregistrer et approuver",
+    "planMonth": "Planifier ce mois",
+    "lockedHint": "Visite déjà commencée — ce jour ne peut plus être modifié",
+    "duplicateDay": "Le même point de vente ne peut pas être planifié deux fois le même jour",
+    "missingTime": "Chaque visite planifiée doit avoir une heure"
+  },
+  "toasts": {
+    "addSuccess": "Visite ajoutée",
+    "addError": "Impossible d'ajouter la visite",
+    "updateSuccess": "Visite mise à jour",
+    "updateError": "Impossible de mettre à jour la visite",
+    "deleteSuccess": "Visite supprimée",
+    "deleteError": "Impossible de supprimer la visite",
+    "submitSuccess": "Planification soumise pour validation",
+    "submitError": "Impossible de soumettre la planification",
+    "approveSuccess": "Planification approuvée",
+    "declineSuccess": "Planification refusée",
+    "adjustSuccess": "Planification ajustée et approuvée",
+    "reviewError": "Une erreur est survenue"
+  },
+  "assigned": {
+    "pageTitle": "Mes visites planifiées",
+    "subtitle": "Les visites planifiées pour vous ce mois-ci — pointez ici le jour venu",
+    "statusHelp": {
+      "empty": "Aucune visite n'a encore été planifiée pour vous ce mois-ci.",
+      "approved": "Voici votre mois. Pointez à chaque point de vente le jour prévu."
+    }
+  },
+  "bulk": {
+    "open": "Remplir le mois en une fois",
+    "title": "Remplir le mois",
+    "close": "Fermer",
+    "weekdaysLabel": "Répéter ces jours de la semaine",
+    "weekdaysHint": "Chaque jour correspondant du mois reçoit une visite dans chaque PDV sélectionné ci-dessus",
+    "daysLabel": "Ou choisir des dates précises",
+    "daysHint": "S’ajoutent aux jours de la semaine ci-dessus",
+    "preview": "{{count}} visite(s) seront ajoutées",
+    "apply": "Ajouter au mois",
+    "added": "{{count}} visite(s) ajoutée(s)",
+    "skipped": "{{count}} ignorée(s) — déjà prévue(s) ce jour-là"
+  },
+  "addVisitCta": "Ajouter une visite",
+  "sections": {
+    "plan": "Planification",
+    "review": "Validation"
+  },
+  "all": {
+    "pageTitle": "Visites planifiées de tous",
+    "subtitle": "Planifiez et suivez les mois de vos marchandiseurs et superviseurs",
+    "dayTitle": "Ce jour-là",
+    "addTitle": "Planifier des visites pour quelqu’un",
+    "roleLabel": "Planifier pour un",
+    "roleHint": "Sert uniquement à réduire la liste ci-dessous — les marchandiseurs sont le cas courant",
+    "personLabel": "Personne",
+    "selectPerson": "Choisir une personne…",
+    "dayLabel": "Jour de départ",
+    "autoApproved": "Les visites ajoutées ici sont approuvées immédiatement.",
+    "added": "{{count}} visite(s) planifiée(s)"
+  }
+}

@@ -1,0 +1,192 @@
+{
+  "months": [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
+  ],
+  "weekdaysShort": [
+    "Mon",
+    "Tue",
+    "Wed",
+    "Thu",
+    "Fri",
+    "Sat",
+    "Sun"
+  ],
+  "pageTitle": "My planned visits",
+  "subtitle": "Plan your store visits for the whole month, then submit them for approval",
+  "adminPageTitle": "Visit plannings",
+  "adminSubtitle": "Review supervisors' months, and plan the merchandisers' months for them",
+  "previousMonth": "Previous month",
+  "nextMonth": "Next month",
+  "today": "Today",
+  "submitForReview": "Submit for review",
+  "statusLabels": {
+    "empty": "Not started",
+    "draft": "Draft",
+    "pending_review": "Pending review",
+    "approved": "Approved",
+    "declined": "Declined"
+  },
+  "statusHelp": {
+    "empty": "You haven't started this month's plan yet.",
+    "draft": "Add your visits, then submit for review once you're done.",
+    "pendingReview": "Submitted — waiting for your reviewer to approve it.",
+    "approved": "Approved. Editing it will send it back for review.",
+    "declined": "Declined — make the requested changes and submit again.",
+    "declinedWithNote": "Declined: {{note}} — make the requested changes and submit again."
+  },
+  "legend": {
+    "completed": "Completed",
+    "planned": "Planned",
+    "open": "In progress"
+  },
+  "calendar": {
+    "loading": "Loading plan…",
+    "visitFallback": "Visit",
+    "moreCount": "+{{count}}"
+  },
+  "dayDetail": {
+    "modalTitle": "Day plan",
+    "empty": "No visit planned for this day.",
+    "edit": "Edit",
+    "delete": "Delete",
+    "deleteConfirm": "Delete?",
+    "yes": "Yes",
+    "no": "No",
+    "addVisit": "Add visit",
+    "previousDay": "Previous day",
+    "nextDay": "Next day"
+  },
+  "form": {
+    "store": "Store",
+    "selectStore": "Select store…",
+    "notesLabel": "Notes",
+    "notesOptional": "(optional)",
+    "notesPlaceholder": "Purpose of the visit, instructions…",
+    "saveChanges": "Save changes",
+    "addVisit": "Add visit",
+    "storesLabel": "Stores",
+    "storesHint": "Pick one or more stores — a visit is created for each one",
+    "repeatToggle": "Repeat this visit on other days",
+    "repeatHint": "Also add this same visit on the selected weekdays, for the rest of the month",
+    "repeatAdded": "Visit added to {{count}} day(s)",
+    "extraDaysToggle": "Also add specific other days",
+    "extraDaysHint": "Pick any other days of the month for this same visit",
+    "bulkAdded": "{{count}} visit(s) added",
+    "alreadyPlannedToday": "Already planned for this day — a point of sale cannot be visited twice in a day",
+    "timeLabel": "Time",
+    "timesLabel": "Time per point of sale",
+    "timesHint": "Each point of sale needs its own hour — you cannot be at two of them at once",
+    "timeClash": "Two points of sale share the same hour — give each one its own slot",
+    "timeTaken": "That hour is already taken on this day"
+  },
+  "filters": {
+    "monthLabel": "Month",
+    "statusLabel": "Status",
+    "searchLabel": "Person",
+    "allStatuses": "All statuses",
+    "searchPlaceholder": "Search a person…",
+    "roleLabel": "Role",
+    "allRoles": "All roles",
+    "supervisorLabel": "Supervisor",
+    "allSupervisors": "All supervisors",
+    "personLabel": "Person",
+    "allPeople": "Everyone"
+  },
+  "missing": {
+    "title": "{{count}} person(s) have no planned visits for this month",
+    "hint": "Click a name to plan their month."
+  },
+  "table": {
+    "supervisor": "Supervisor",
+    "month": "Month",
+    "status": "Status",
+    "visits": "Visits",
+    "submitted": "Submitted",
+    "actions": "Actions",
+    "view": "View",
+    "empty": "No plans for these filters",
+    "confirmApprove": "Approve?",
+    "owner": "Person",
+    "role": "Role"
+  },
+  "detail": {
+    "title": "Plan detail",
+    "previousNote": "Previous note",
+    "noteLabel": "Note",
+    "declineNotePlaceholder": "Explain what needs to change…",
+    "adjustNotePlaceholder": "Explain what you changed…",
+    "decline": "Decline",
+    "adjust": "Adjust",
+    "approve": "Approve",
+    "confirmDecline": "Confirm decline",
+    "confirmAdjust": "Save & approve",
+    "planMonth": "Plan this month",
+    "lockedHint": "Already checked into — this day can no longer be changed",
+    "duplicateDay": "The same point of sale cannot be planned twice on the same day",
+    "missingTime": "Every planned visit needs an hour"
+  },
+  "toasts": {
+    "addSuccess": "Visit added",
+    "addError": "Could not add the visit",
+    "updateSuccess": "Visit updated",
+    "updateError": "Could not update the visit",
+    "deleteSuccess": "Visit removed",
+    "deleteError": "Could not remove the visit",
+    "submitSuccess": "Plan submitted for review",
+    "submitError": "Could not submit the plan",
+    "approveSuccess": "Plan approved",
+    "declineSuccess": "Plan declined",
+    "adjustSuccess": "Plan adjusted and approved",
+    "reviewError": "Something went wrong"
+  },
+  "assigned": {
+    "pageTitle": "My planned visits",
+    "subtitle": "The visits planned for you this month — check in from here when the day comes",
+    "statusHelp": {
+      "empty": "Nothing has been planned for you this month yet.",
+      "approved": "This is your month. Check in at each point of sale on its day."
+    }
+  },
+  "bulk": {
+    "open": "Fill the month in one go",
+    "title": "Fill the month",
+    "close": "Close",
+    "weekdaysLabel": "Repeat on these weekdays",
+    "weekdaysHint": "Every matching day of the month gets a visit at each point of sale selected above",
+    "daysLabel": "Or pick specific dates",
+    "daysHint": "Combined with the weekdays above",
+    "preview": "{{count}} visit(s) will be added",
+    "apply": "Add to the month",
+    "added": "{{count}} visit(s) added",
+    "skipped": "{{count}} skipped — already on that day"
+  },
+  "addVisitCta": "Add a visit",
+  "sections": {
+    "plan": "Planning",
+    "review": "Validation"
+  },
+  "all": {
+    "pageTitle": "Everyone’s planned visits",
+    "subtitle": "Plan and follow the months of your merchandisers and supervisors",
+    "dayTitle": "That day",
+    "addTitle": "Plan visits for someone",
+    "roleLabel": "Plan for a",
+    "roleHint": "Only narrows the list below — merchandisers are the usual case",
+    "personLabel": "Person",
+    "selectPerson": "Select a person…",
+    "dayLabel": "Starting day",
+    "autoApproved": "Visits you add here are approved straight away.",
+    "added": "{{count}} visit(s) planned"
+  }
+}

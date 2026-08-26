@@ -162,7 +162,6 @@ export default function StoresPage() {
     {
       key: 'city',
       header: t('columns.city'),
-      hideOnMobile: true,
       render: (s: Store) => (
         <div>
           <div>{s.city || '—'}</div>
@@ -173,13 +172,11 @@ export default function StoresPage() {
     {
       key: 'region',
       header: t('columns.region'),
-      hideOnMobile: true,
       render: (s: Store) => <span>{s.region?.name || '—'}</span>,
     },
     {
       key: 'coords',
       header: t('columns.coordinates'),
-      hideOnMobile: true,
       render: (s: Store) => {
         const link = externalMapLink(s);
         return link ? (

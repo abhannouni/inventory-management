@@ -11,6 +11,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Throttle } from '@nestjs/throttler';
 import type { Request as ExpressRequest, Response } from 'express';
 import { AuthService, IssuedTokens } from './auth.service';
 import { RequirePermissions } from './decorators/require-permissions.decorator';
@@ -39,7 +40,10 @@ export class AuthController {
     return this.authService.register(dto);
   }
 
+  // Tight cap to blunt online password brute-forcing: 5 attempts per minute
+  // per IP. Legitimate users never hit this; a credential-stuffing loop does.
   @Post('login')
+  @Throttle({ default: { ttl: 60_000, limit: 5 } })
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Login and receive an access token' })
   @ApiOkResponse({ schema: { example: { access_token: 'eyJ...' } } })
@@ -50,6 +54,7 @@ export class AuthController {
   }
 
   @Post('refresh')
+  @Throttle({ default: { ttl: 60_000, limit: 20 } })
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Exchange the refresh cookie for a new access token' })
   @ApiOkResponse({ schema: { example: { access_token: 'eyJ...' } } })

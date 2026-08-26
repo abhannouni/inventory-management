@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
@@ -22,6 +22,7 @@ import { formatDate, formatDurationShort } from '../../utils/format';
 import type { Visit } from '../../types';
 import { usePermissions } from '../../hooks/usePermissions';
 
+/** Planning moved to its own page — Visits is the visit itself and its history. */
 type Tab = 'visit' | 'history';
 
 export default function VisitsPage() {
@@ -33,7 +34,26 @@ export default function VisitsPage() {
   const { items: stores } = useAppSelector((s) => s.stores);
   const p = usePermissions();
 
-  const [activeTab, setActiveTab] = useState<Tab>(p.canCheckin ? 'visit' : 'history');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const availableTabs = [
+    ...(p.canCheckin ? (['visit'] as const) : []),
+    ...(['history'] as const),
+  ] as Tab[];
+
+  // `?tab=` lets a notification deep-link straight to the right tab.
+  const [activeTab, setActiveTab] = useState<Tab>(() => {
+    const requested = searchParams.get('tab') as Tab | null;
+    if (requested && availableTabs.includes(requested)) return requested;
+    // A reviewer who can also check in still lands on their own visit first.
+    return availableTabs[0];
+  });
+
+  const selectTab = (tab: Tab) => {
+    setActiveTab(tab);
+    const next = new URLSearchParams(searchParams);
+    next.set('tab', tab);
+    setSearchParams(next, { replace: true });
+  };
   const [checkinOpen, setCheckinOpen] = useState(false);
   const [statusFilter, setStatusFilter] = useState('');
   const [search, setSearch] = useState('');
@@ -136,7 +156,7 @@ export default function VisitsPage() {
           {/* An open visit is resumed, never closed from here: it can only be
               completed by finishing the audit in the visit flow. */}
           {v.status === 'open' && p.canCheckin && (
-            <Button variant="secondary" size="sm" onClick={() => setActiveTab('visit')}>{t('list.resumeVisit')}</Button>
+            <Button variant="secondary" size="sm" onClick={() => selectTab('visit')}>{t('list.resumeVisit')}</Button>
           )}
         </div>
       ),
@@ -172,7 +192,7 @@ export default function VisitsPage() {
             <div className="open-visit-banner-store">{openVisit.store?.name}</div>
           </div>
           <VisitTimer visit={openVisit} variant="inline" />
-          <Button size="sm" onClick={() => setActiveTab('visit')}>{t('list.resumeVisit')}</Button>
+          <Button size="sm" onClick={() => selectTab('visit')}>{t('list.resumeVisit')}</Button>
         </motion.div>
       )}
 
@@ -188,7 +208,7 @@ export default function VisitsPage() {
         <select className="form-select" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} style={{ width: 160 }}>
           <option value="">{t('list.filters.allStatuses')}</option>
           <option value="open">{tCommon('status.open')}</option>
-          <option value="closed">{tCommon('status.closed')}</option>
+          <option value="completed">{tCommon('status.closed')}</option>
         </select>
         <Select
           options={storeOptions}
@@ -247,7 +267,7 @@ export default function VisitsPage() {
                   {v.status === 'open' ? tCommon('status.open') : tCommon('status.closed')}
                 </Badge>
                 {v.status === 'open' && p.canCheckin && (
-                  <Button size="sm" variant="outline" onClick={(e) => { e.stopPropagation(); setActiveTab('visit'); }}>
+                  <Button size="sm" variant="outline" onClick={(e) => { e.stopPropagation(); selectTab('visit'); }}>
                     {t('list.resumeVisit')}
                   </Button>
                 )}
@@ -282,41 +302,52 @@ export default function VisitsPage() {
     </div>
   );
 
-  /* ─── Admin view: no tabs, just history ─── */
-  if (!p.canCheckin) return historyPanel;
+  /* ─── Tabs, driven by what this person may actually do ─── */
+  if (availableTabs.length === 1) return historyPanel;
 
-  /* ─── Merchandiser/Supervisor view: tabs ─── */
+  const TAB_META: Record<Tab, { label: string; icon: React.ReactNode }> = {
+    visit: { label: t('list.tabs.myVisit'), icon: <PinIcon /> },
+    history: { label: t('list.tabs.history'), icon: <HistoryIcon /> },
+  };
+
   return (
     <div>
-      {/* Tab switcher */}
       <div className="visits-tab-bar">
-        <button
-          className={`visits-tab-btn${activeTab === 'visit' ? ' active' : ''}`}
-          onClick={() => setActiveTab('visit')}
-        >
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z"/>
-          </svg>
-          {t('list.tabs.myVisit')}
-        </button>
-        <button
-          className={`visits-tab-btn${activeTab === 'history' ? ' active' : ''}`}
-          onClick={() => setActiveTab('history')}
-        >
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-          </svg>
-          {t('list.tabs.history')}
-        </button>
+        {availableTabs.map((tab) => (
+          <button
+            key={tab}
+            className={`visits-tab-btn${activeTab === tab ? ' active' : ''}`}
+            onClick={() => selectTab(tab)}
+          >
+            {TAB_META[tab].icon}
+            {TAB_META[tab].label}
+          </button>
+        ))}
       </div>
 
       {activeTab === 'visit' && (
         p.role === 'supervisor'
-          ? <SupervisorFlowPage onViewHistory={() => setActiveTab('history')} />
-          : <MerchandiserFlowPage onViewHistory={() => setActiveTab('history')} />
+          ? <SupervisorFlowPage onViewHistory={() => selectTab('history')} />
+          : <MerchandiserFlowPage onViewHistory={() => selectTab('history')} />
       )}
-      {activeTab === 'history'  && historyPanel}
+      {activeTab === 'history' && historyPanel}
     </div>
+  );
+}
+
+function PinIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z" />
+    </svg>
+  );
+}
+
+function HistoryIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
   );
 }
 
