@@ -23,6 +23,7 @@ import { uploadApi } from '../../api/upload.api';
 import { formatDateOnly } from '../../utils/format';
 import { apiDayString, parseApiDay } from '../../utils/calendar';
 import { getCurrentPosition, geolocationErrorMessage } from '../../utils/geolocation';
+import { handleNumberInputKeyDown } from '../../utils/numberInput';
 import { useFeatureFlag } from '../../hooks/useFeatureFlag';
 import type { Visit, ProductStore } from '../../types';
 
@@ -698,6 +699,7 @@ export default function MerchandiserFlowPage({ onViewHistory }: MerchandiserFlow
                             min="0"
                             className="qty-stepper-input"
                             value={row.qty_found}
+                            onKeyDown={handleNumberInputKeyDown}
                             onChange={(e) => updateRow(row.id, { qty_found: Math.max(0, Number(e.target.value)) })}
                           />
                           <button type="button" className="qty-stepper-btn" onClick={() => adjustQty(row.id, 1)}>+</button>

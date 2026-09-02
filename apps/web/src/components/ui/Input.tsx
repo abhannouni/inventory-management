@@ -1,4 +1,5 @@
-import type { InputHTMLAttributes, ReactNode } from 'react';
+import type { InputHTMLAttributes, ReactNode, KeyboardEvent } from 'react';
+import { handleNumberInputKeyDown } from '../../utils/numberInput';
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -7,8 +8,14 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   leftIcon?: ReactNode;
 }
 
-export default function Input({ label, error, hint, leftIcon, className = '', id, ...rest }: InputProps) {
+export default function Input({ label, error, hint, leftIcon, className = '', id, type, onKeyDown, ...rest }: InputProps) {
   const inputId = id || label?.toLowerCase().replace(/\s+/g, '-');
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (type === 'number') handleNumberInputKeyDown(e);
+    onKeyDown?.(e);
+  };
+
   return (
     <div className="form-group">
       {label && <label htmlFor={inputId} className="form-label">{label}</label>}
@@ -16,6 +23,8 @@ export default function Input({ label, error, hint, leftIcon, className = '', id
         {leftIcon && <span className="input-icon">{leftIcon}</span>}
         <input
           id={inputId}
+          type={type}
+          onKeyDown={handleKeyDown}
           className={`form-input ${leftIcon ? 'has-icon' : ''} ${error ? 'is-error' : ''} ${className}`}
           {...rest}
         />

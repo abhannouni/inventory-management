@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import DataTable from '../../components/ui/DataTable';
+import { handleNumberInputKeyDown } from '../../utils/numberInput';
 import type { PriceSurveyItem } from '../../types';
 import type { ItemFormValues } from './itemFormValues';
 
@@ -29,6 +30,7 @@ function Cell({
       className="form-input"
       style={{ minWidth: type === 'number' ? 90 : 130 }}
       value={value}
+      onKeyDown={type === 'number' ? handleNumberInputKeyDown : undefined}
       onChange={(e) => onChange?.(e.target.value)}
     />
   );

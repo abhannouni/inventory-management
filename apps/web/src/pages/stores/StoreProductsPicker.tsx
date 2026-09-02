@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import MultiSelectSearch from '../../components/ui/MultiSelectSearch';
+import { handleNumberInputKeyDown } from '../../utils/numberInput';
 import type { Product } from '../../types';
 
 export interface ProductAssignmentValue {
@@ -79,6 +80,7 @@ export default function StoreProductsPicker({ products, value, onChange }: Store
                     className="form-input"
                     style={{ width: 80 }}
                     value={v.expected_qty}
+                    onKeyDown={handleNumberInputKeyDown}
                     onChange={(e) => handleQtyChange(v.product_id, Math.max(0, Number(e.target.value) || 0))}
                     aria-label={t('form.productsPicker.expectedQtyAriaLabel', { name: product?.name ?? '' })}
                   />

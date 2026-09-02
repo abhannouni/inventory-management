@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import Select from '../../components/ui/Select';
 import Button from '../../components/ui/Button';
 import { uploadApi } from '../../api/upload.api';
+import { handleNumberInputKeyDown } from '../../utils/numberInput';
 import type { Visit, Product } from '../../types';
 
 interface BulkRow {
@@ -154,6 +155,7 @@ export default function BulkAuditForm({ visits, products, onSubmit, onCancel }: 
                     min="0"
                     className="qty-stepper-input"
                     value={row.qty_found}
+                    onKeyDown={handleNumberInputKeyDown}
                     onChange={(e) => updateRow(row.id, { qty_found: Math.max(0, Number(e.target.value)) })}
                   />
                   <button type="button" className="qty-stepper-btn" onClick={() => adjustQty(row.id, 1)}>+</button>
