@@ -18,21 +18,9 @@
     "newRoundSuccess": "Nouveau relevé démarré",
     "newRoundError": "Échec du démarrage d'un nouveau relevé"
   },
-  "slides": {
-    "synthese": {
-      "tabLabel": "Synthèse",
-      "zone": "Zone",
-      "own": "Bourchanin",
-      "competitor": "Concurrence",
-      "groups": {
-        "alcool": "Produits alcool",
-        "food": "Produits food"
-      },
-      "kinds": {
-        "mises_en_avant": "Mises en avant",
-        "ruptures": "Ruptures"
-      }
-    }
+  "emptyState": {
+    "filler": "Aucun produit ne vous est encore assigné pour ce point de vente.",
+    "admin": "Aucun produit assigné à ce point de vente. Ajoutez des produits via « Gérer les produits » pour faire apparaître les catégories."
   },
   "grid": {
     "columns": {

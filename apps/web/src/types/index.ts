@@ -184,8 +184,6 @@ export interface PromoUserPictureView {
 
 // ─── Price Surveys (Relevé de Prix) ────────────────────────────────────────────
 
-export type PriceSurveyNoteSide = 'own' | 'competitor';
-
 export interface PriceSurveyItem {
   id: string;
   submission_id: string;
@@ -203,16 +201,6 @@ export interface PriceSurveyItem {
   updated_at: string;
 }
 
-export interface PriceSurveyNote {
-  id: string;
-  submission_id: string;
-  section: string;
-  sub_area: string;
-  side: PriceSurveyNoteSide;
-  text: string | null;
-  updated_at: string;
-}
-
 export interface PriceSurveySubmission {
   id: string;
   user_id: string;
@@ -223,7 +211,6 @@ export interface PriceSurveySubmission {
   created_at: string;
   updated_at: string;
   items: PriceSurveyItem[];
-  notes: PriceSurveyNote[];
   _count?: { items: number };
 }
 

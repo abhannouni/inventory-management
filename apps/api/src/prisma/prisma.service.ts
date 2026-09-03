@@ -37,7 +37,6 @@ export class PrismaService implements OnModuleInit, OnModuleDestroy {
   readonly priceSurveyAssignment: PrismaClient['priceSurveyAssignment'];
   readonly priceSurveySubmission: PrismaClient['priceSurveySubmission'];
   readonly priceSurveyItem: PrismaClient['priceSurveyItem'];
-  readonly priceSurveyNote: PrismaClient['priceSurveyNote'];
   readonly visitPlan: PrismaClient['visitPlan'];
 
   constructor(config: ConfigService) {
@@ -75,7 +74,6 @@ export class PrismaService implements OnModuleInit, OnModuleDestroy {
     this.priceSurveyAssignment = this.client.priceSurveyAssignment;
     this.priceSurveySubmission = this.client.priceSurveySubmission;
     this.priceSurveyItem = this.client.priceSurveyItem;
-    this.priceSurveyNote = this.client.priceSurveyNote;
     this.visitPlan = this.client.visitPlan;
   }
 

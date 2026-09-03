@@ -1,7 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsArray, IsEnum, IsNumber, IsOptional, IsString, IsUUID, ValidateNested } from 'class-validator';
-import { PriceSurveyNoteSide } from '@prisma/client';
+import { IsArray, IsNumber, IsOptional, IsString, IsUUID, ValidateNested } from 'class-validator';
 
 export class SaveItemDto {
   @ApiProperty({ example: 'uuid-of-item' })
@@ -49,35 +48,10 @@ export class SaveItemDto {
   competitor_etat?: string | null;
 }
 
-export class SaveNoteDto {
-  @ApiProperty({ example: 'mises_en_avant_alcool' })
-  @IsString()
-  section: string;
-
-  @ApiProperty({ example: 'Frigo' })
-  @IsString()
-  sub_area: string;
-
-  @ApiProperty({ enum: PriceSurveyNoteSide, example: PriceSurveyNoteSide.own })
-  @IsEnum(PriceSurveyNoteSide)
-  side: PriceSurveyNoteSide;
-
-  @ApiPropertyOptional({ example: '3 facings mis en avant' })
-  @IsOptional()
-  @IsString()
-  text?: string | null;
-}
-
 export class SaveSubmissionDto {
   @ApiProperty({ type: [SaveItemDto] })
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => SaveItemDto)
   items: SaveItemDto[];
-
-  @ApiProperty({ type: [SaveNoteDto] })
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => SaveNoteDto)
-  notes: SaveNoteDto[];
 }

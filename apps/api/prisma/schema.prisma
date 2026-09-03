@@ -102,12 +102,6 @@ enum NotificationType {
   visit_plan_missing
 }
 
-/// Whose entry a PriceSurveyNote textarea belongs to.
-enum PriceSurveyNoteSide {
-  own
-  competitor
-}
-
 // ─── Models ────────────────────────────────────────────────────────────────────
 
 model Region {
@@ -593,7 +587,6 @@ model PriceSurveySubmission {
   updated_at   DateTime  @default(now()) @updatedAt
 
   items PriceSurveyItem[]
-  notes PriceSurveyNote[]
 
   @@index([user_id, store_id, submitted_at])
   @@map("price_survey_submissions")
@@ -625,25 +618,6 @@ model PriceSurveyItem {
   @@unique([submission_id, product_id])
   @@index([submission_id])
   @@map("price_survey_items")
-}
-
-/// One free-text box for the Synthèse slide: (section × sub_area × side).
-/// `section`/`sub_area` are validated against the fixed SYNTHESE_STRUCTURE
-/// constant in the price-surveys module rather than DB enums, since the
-/// sub-area list differs per section.
-model PriceSurveyNote {
-  id            String                @id @default(uuid())
-  submission    PriceSurveySubmission @relation(fields: [submission_id], references: [id], onDelete: Cascade)
-  submission_id String
-  section       String
-  sub_area      String
-  side          PriceSurveyNoteSide
-  text          String?
-  updated_at    DateTime              @default(now()) @updatedAt
-
-  @@unique([submission_id, section, sub_area, side])
-  @@index([submission_id])
-  @@map("price_survey_notes")
 }
 
 // ─── RBAC ──────────────────────────────────────────────────────────────────────

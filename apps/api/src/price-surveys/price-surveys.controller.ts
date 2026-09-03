@@ -29,7 +29,7 @@ export class PriceSurveysController {
 
   @Patch('submissions/:id')
   @RequireAnyPermission('price_surveys.update', 'price_surveys.manage')
-  @ApiOperation({ summary: 'Bulk-save item values and Synthèse notes on a draft round' })
+  @ApiOperation({ summary: 'Bulk-save item values on a draft round' })
   saveSubmission(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: SaveSubmissionDto,

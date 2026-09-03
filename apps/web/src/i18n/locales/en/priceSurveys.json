@@ -18,21 +18,9 @@
     "newRoundSuccess": "New round started",
     "newRoundError": "Failed to start a new round"
   },
-  "slides": {
-    "synthese": {
-      "tabLabel": "Summary",
-      "zone": "Zone",
-      "own": "Bourchanin",
-      "competitor": "Competitor",
-      "groups": {
-        "alcool": "Alcohol products",
-        "food": "Food products"
-      },
-      "kinds": {
-        "mises_en_avant": "Displays",
-        "ruptures": "Stockouts"
-      }
-    }
+  "emptyState": {
+    "filler": "No products have been assigned to you for this point of sale yet.",
+    "admin": "No products assigned to this point of sale. Add products via \"Manage products\" to make the categories appear."
   },
   "grid": {
     "columns": {

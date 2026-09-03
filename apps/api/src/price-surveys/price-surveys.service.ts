@@ -7,11 +7,9 @@ import { FindAssignmentsDto } from './dto/find-assignments.dto';
 import { FindSubmissionsDto } from './dto/find-submissions.dto';
 import { GetDraftDto } from './dto/get-draft.dto';
 import { SaveSubmissionDto } from './dto/save-submission.dto';
-import { isValidSyntheseSlot } from './synthese-structure';
 
 const DRAFT_INCLUDE = {
   items: { include: { product: true }, orderBy: { product: { name: 'asc' as const } } },
-  notes: true,
 } satisfies Prisma.PriceSurveySubmissionInclude;
 
 @Injectable()
@@ -46,14 +44,9 @@ export class PriceSurveysService {
         throw new BadRequestException(`Item ${item.id} does not belong to this submission`);
       }
     }
-    for (const note of dto.notes) {
-      if (!isValidSyntheseSlot(note.section, note.sub_area)) {
-        throw new BadRequestException(`Invalid Synthèse slot: ${note.section} / ${note.sub_area}`);
-      }
-    }
 
-    await this.prisma.$transaction([
-      ...dto.items.map((item) =>
+    await this.prisma.$transaction(
+      dto.items.map((item) =>
         this.prisma.priceSurveyItem.update({
           where: { id: item.id },
           data: {
@@ -68,27 +61,7 @@ export class PriceSurveysService {
           },
         }),
       ),
-      ...dto.notes.map((note) =>
-        this.prisma.priceSurveyNote.upsert({
-          where: {
-            submission_id_section_sub_area_side: {
-              submission_id: id,
-              section: note.section,
-              sub_area: note.sub_area,
-              side: note.side,
-            },
-          },
-          update: { text: note.text },
-          create: {
-            submission_id: id,
-            section: note.section,
-            sub_area: note.sub_area,
-            side: note.side,
-            text: note.text,
-          },
-        }),
-      ),
-    ]);
+    );
 
     return this.prisma.priceSurveySubmission.findUniqueOrThrow({ where: { id }, include: DRAFT_INCLUDE });
   }

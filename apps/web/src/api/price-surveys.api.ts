@@ -1,5 +1,5 @@
 import { api } from './client';
-import type { PriceSurveyAssignment, PriceSurveyNoteSide, PriceSurveySubmission } from '../types';
+import type { PriceSurveyAssignment, PriceSurveySubmission } from '../types';
 
 export interface SaveItemPayload {
   id: string;
@@ -13,16 +13,8 @@ export interface SaveItemPayload {
   competitor_etat?: string | null;
 }
 
-export interface SaveNotePayload {
-  section: string;
-  sub_area: string;
-  side: PriceSurveyNoteSide;
-  text?: string | null;
-}
-
 export interface SaveSubmissionPayload {
   items: SaveItemPayload[];
-  notes: SaveNotePayload[];
 }
 
 export interface FindSubmissionsParams {

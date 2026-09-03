@@ -15,14 +15,10 @@ import Input from '../../components/ui/Input';
 import SlideTabs from './SlideTabs';
 import type { Slide } from './SlideTabs';
 import PriceSurveyGrid from './PriceSurveyGrid';
-import SyntheseSlide from './SyntheseSlide';
 import AssignProductsModal from './AssignProductsModal';
 import { itemToFormValues } from './itemFormValues';
-import { buildInitialNoteValues } from './syntheseStructure';
 import { formatDate, formatRole } from '../../utils/format';
 import type { User, PriceSurveySubmission } from '../../types';
-
-const SYNTHESE_KEY = 'SYNTHESE';
 
 export default function PriceSurveyAdminView() {
   const { t, i18n } = useTranslation('priceSurveys');
@@ -34,7 +30,7 @@ export default function PriceSurveyAdminView() {
   const [search, setSearch] = useState('');
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [selectedStoreId, setSelectedStoreId] = useState<string | null>(null);
-  const [activeSlide, setActiveSlide] = useState<string>(SYNTHESE_KEY);
+  const [activeSlide, setActiveSlide] = useState<string>('');
   const [assignOpen, setAssignOpen] = useState(false);
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
@@ -73,14 +69,12 @@ export default function PriceSurveyAdminView() {
     return map;
   }, [viewed]);
 
-  const noteValues = useMemo(() => buildInitialNoteValues(viewed?.notes ?? []), [viewed]);
-
   const slides: Slide[] = useMemo(() => {
     if (!viewed) return [];
     const categories = Array.from(new Set(viewed.items.map((i) => i.product?.category).filter(Boolean))) as string[];
     categories.sort((a, b) => a.localeCompare(b));
-    return [{ key: SYNTHESE_KEY, label: t('slides.synthese.tabLabel') }, ...categories.map((c) => ({ key: c, label: c }))];
-  }, [viewed, t]);
+    return categories.map((c) => ({ key: c, label: c }));
+  }, [viewed]);
 
   useEffect(() => {
     if (!slides.length) return;
@@ -88,7 +82,7 @@ export default function PriceSurveyAdminView() {
   }, [slides, activeSlide]);
 
   const itemsForActiveSlide = useMemo(() => {
-    if (!viewed || activeSlide === SYNTHESE_KEY) return [];
+    if (!viewed || !activeSlide) return [];
     return viewed.items.filter((i) => i.product?.category === activeSlide);
   }, [viewed, activeSlide]);
 
@@ -159,17 +153,17 @@ export default function PriceSurveyAdminView() {
 
         {draftLoading || !viewed ? (
           <Spinner center size="lg" />
+        ) : !viewed.items.length ? (
+          <div className="card">
+            <p style={{ color: 'var(--gray-500)' }}>{t('emptyState.admin')}</p>
+          </div>
         ) : (
           <>
             <div style={{ marginBottom: 16 }}>
               <SlideTabs slides={slides} active={activeSlide} onChange={setActiveSlide} />
             </div>
             <div className="card">
-              {activeSlide === SYNTHESE_KEY ? (
-                <SyntheseSlide values={noteValues} onChange={() => {}} editable={false} />
-              ) : (
-                <PriceSurveyGrid items={itemsForActiveSlide} values={itemValues} onFieldChange={() => {}} editable={false} />
-              )}
+              <PriceSurveyGrid items={itemsForActiveSlide} values={itemValues} onFieldChange={() => {}} editable={false} />
             </div>
           </>
         )}

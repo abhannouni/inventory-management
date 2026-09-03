@@ -12,12 +12,8 @@ import ConfirmDialog from '../../components/ui/ConfirmDialog';
 import SlideTabs from './SlideTabs';
 import type { Slide } from './SlideTabs';
 import PriceSurveyGrid from './PriceSurveyGrid';
-import SyntheseSlide from './SyntheseSlide';
 import { itemToFormValues, formValuesToItemPayload } from './itemFormValues';
 import type { ItemFormValues } from './itemFormValues';
-import { buildInitialNoteValues, buildNotePayload } from './syntheseStructure';
-
-const SYNTHESE_KEY = 'SYNTHESE';
 
 export default function PriceSurveyFillingView() {
   const { t } = useTranslation('priceSurveys');
@@ -28,9 +24,8 @@ export default function PriceSurveyFillingView() {
 
   const [storeId, setStoreId] = useState('');
   const [itemValues, setItemValues] = useState<Record<string, ItemFormValues>>({});
-  const [noteValues, setNoteValues] = useState<Record<string, string>>({});
   const [dirty, setDirty] = useState(false);
-  const [activeSlide, setActiveSlide] = useState<string>(SYNTHESE_KEY);
+  const [activeSlide, setActiveSlide] = useState<string>('');
   const [newRoundOpen, setNewRoundOpen] = useState(false);
   const [startingNewRound, setStartingNewRound] = useState(false);
 
@@ -53,7 +48,6 @@ export default function PriceSurveyFillingView() {
     const nextItemValues: Record<string, ItemFormValues> = {};
     for (const item of draft.items) nextItemValues[item.id] = itemToFormValues(item);
     setItemValues(nextItemValues);
-    setNoteValues(buildInitialNoteValues(draft.notes));
     setDirty(false);
   }, [draft]);
 
@@ -61,8 +55,8 @@ export default function PriceSurveyFillingView() {
     if (!draft) return [];
     const categories = Array.from(new Set(draft.items.map((i) => i.product?.category).filter(Boolean))) as string[];
     categories.sort((a, b) => a.localeCompare(b));
-    return [{ key: SYNTHESE_KEY, label: t('slides.synthese.tabLabel') }, ...categories.map((c) => ({ key: c, label: c }))];
-  }, [draft, t]);
+    return categories.map((c) => ({ key: c, label: c }));
+  }, [draft]);
 
   useEffect(() => {
     if (!slides.length) return;
@@ -70,7 +64,7 @@ export default function PriceSurveyFillingView() {
   }, [slides, activeSlide]);
 
   const itemsForActiveSlide = useMemo(() => {
-    if (!draft || activeSlide === SYNTHESE_KEY) return [];
+    if (!draft || !activeSlide) return [];
     return draft.items.filter((i) => i.product?.category === activeSlide);
   }, [draft, activeSlide]);
 
@@ -79,16 +73,10 @@ export default function PriceSurveyFillingView() {
     setDirty(true);
   };
 
-  const handleNoteChange = (key: string, value: string) => {
-    setNoteValues((prev) => ({ ...prev, [key]: value }));
-    setDirty(true);
-  };
-
   const handleSave = async () => {
     if (!draft) return;
     const items = draft.items.map((item) => formValuesToItemPayload(item.id, itemValues[item.id]));
-    const notes = buildNotePayload(noteValues);
-    const res = await dispatch(saveDraft({ id: draft.id, payload: { items, notes } }));
+    const res = await dispatch(saveDraft({ id: draft.id, payload: { items } }));
     if (saveDraft.fulfilled.match(res)) {
       toast.success(t('toasts.saveSuccess'));
     } else {
@@ -120,6 +108,8 @@ export default function PriceSurveyFillingView() {
     );
   }
 
+  const hasProducts = !!draft && draft.items.length > 0;
+
   return (
     <div>
       <PageHeader
@@ -127,7 +117,7 @@ export default function PriceSurveyFillingView() {
         subtitle={t('subtitle')}
         actions={
           <div style={{ display: 'flex', gap: 8 }}>
-            <Button variant="outline" onClick={() => setNewRoundOpen(true)} disabled={!draft}>
+            <Button variant="outline" onClick={() => setNewRoundOpen(true)} disabled={!draft || !hasProducts}>
               {t('actions.newRound')}
             </Button>
             <Button onClick={handleSave} loading={saving} disabled={!draft || !dirty}>
@@ -151,6 +141,10 @@ export default function PriceSurveyFillingView() {
 
       {loading || !draft ? (
         <Spinner center size="lg" />
+      ) : !hasProducts ? (
+        <div className="card">
+          <p style={{ color: 'var(--gray-500)' }}>{t('emptyState.filler')}</p>
+        </div>
       ) : (
         <>
           <div style={{ marginBottom: 16 }}>
@@ -158,16 +152,12 @@ export default function PriceSurveyFillingView() {
           </div>
 
           <div className="card">
-            {activeSlide === SYNTHESE_KEY ? (
-              <SyntheseSlide values={noteValues} onChange={handleNoteChange} editable />
-            ) : (
-              <PriceSurveyGrid
-                items={itemsForActiveSlide}
-                values={itemValues}
-                onFieldChange={handleItemFieldChange}
-                editable
-              />
-            )}
+            <PriceSurveyGrid
+              items={itemsForActiveSlide}
+              values={itemValues}
+              onFieldChange={handleItemFieldChange}
+              editable
+            />
           </div>
         </>
       )}
