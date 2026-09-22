@@ -2312,11 +2312,29 @@ html[dir='rtl'] .form-input.has-action { padding-right: 12px; padding-left: 36px
   .data-table td.hide-mobile { display: none; }
 
   .data-table th.col-actions,
-  .data-table td.col-actions { position: sticky; right: 0; }
+  .data-table td.col-actions { position: sticky; right: 0; max-width: 40vw; }
   .data-table td.col-actions { background: #fcfcfc; }
   .data-table tbody tr:hover td.col-actions { background: #F5F8FF; }
   html[dir='rtl'] .data-table th.col-actions,
   html[dir='rtl'] .data-table td.col-actions { right: auto; left: 0; }
+
+  /* A row can carry 2-3 action buttons (Edit/Assign/Delete). Laid out in a
+     single line they can outgrow the whole viewport, and because this column
+     is sticky (see above) that oversized line permanently blots out every
+     other column with no way to scroll past it (products table with
+     Modifier/Assigner PDV/Supprimer). Stacking them keeps the sticky
+     column's width to a single button, leaving the rest of the row
+     reachable by horizontal scroll. */
+  .data-table td.col-actions .table-actions {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    gap: 6px;
+  }
+  .data-table td.col-actions .table-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
 
   .user-cell-info { max-width: 150px; overflow: hidden; }
   .user-cell-info > div { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
