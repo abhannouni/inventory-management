@@ -15,11 +15,13 @@ const TEMPLATE_COLUMNS = [
   'famille',
   'sous_famille',
   'format',
+  'classification',
 ];
 
 const EXAMPLE_ROWS = [
-  ['Sparkling Water 330ml', 'SKU-330', 'Beverages', 'no', 'Sample Distributor', 'Boissons', 'Sodas', '330ml'],
-  ['Bourchanin Juice 1L', 'BJ1000', 'Beverages', 'yes', '', 'Boissons', 'Jus', '1L'],
+  ['Sparkling Water 330ml', 'SKU-330', 'Beverages', 'no', 'Sample Distributor', 'Boissons', 'Sodas', '330ml', 'Standard'],
+  ['Bourchanin Juice 1L', 'BJ1000', 'Beverages', 'yes', '', 'Boissons', 'Jus', '1L', 'Premium'],
+  ['Sparkling Water 1L', 'SKU-1000', 'Beverages', 'no', 'Sample Distributor', 'Boissons', 'Sodas', '1L', ''],
 ];
 
 const INSTRUCTIONS_ROWS: [string, string, string][] = [
@@ -31,6 +33,7 @@ const INSTRUCTIONS_ROWS: [string, string, string][] = [
   ['famille', 'Yes', 'Product famille'],
   ['sous_famille', 'Yes', 'Product sous-famille'],
   ['format', 'Yes', 'Product format, e.g. 500ml'],
+  ['classification', 'No', 'One of: Standard, Premium, Ultra Premium. Leave empty for no classification.'],
 ];
 
 const HEADER_FILL = 'FF1D6ADE'; // matches --primary

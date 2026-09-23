@@ -1,3 +1,4 @@
+import { ProductClassification } from '@prisma/client';
 import { CreateProductDto } from './dto/create-product.dto';
 import { BOURCHANIN_CANONICAL_NAME } from './product-classification';
 
@@ -10,6 +11,7 @@ export const PRODUCT_IMPORT_COLUMNS = [
   'famille',
   'sous_famille',
   'format',
+  'classification',
 ] as const;
 
 const REQUIRED_FIELD_LABELS: Record<string, string> = {
@@ -36,6 +38,20 @@ function toText(value: unknown): string {
 function toBoolean(value: unknown): boolean {
   if (typeof value === 'boolean') return value;
   return TRUTHY_VALUES.has(toText(value).toLowerCase());
+}
+
+/** Accepts "Standard", "Premium", "Ultra Premium" (any case, space/dash/underscore). */
+function toClassification(
+  value: unknown,
+): ProductClassification | null | 'invalid' {
+  const text = toText(value)
+    .toLowerCase()
+    .replace(/[\s-]+/g, '_');
+  if (!text) return null;
+  if (text === 'ultrapremium') return ProductClassification.ultra_premium;
+  return (Object.values(ProductClassification) as string[]).includes(text)
+    ? (text as ProductClassification)
+    : 'invalid';
 }
 
 export interface ParsedProductRow {
@@ -75,6 +91,13 @@ export function parseProductRow(
     return { error: `Missing required field(s): ${missing.join(', ')}` };
   }
 
+  const classification = toClassification(raw.classification);
+  if (classification === 'invalid') {
+    return {
+      error: `Invalid classification "${toText(raw.classification)}" (expected Standard, Premium or Ultra Premium, or leave empty)`,
+    };
+  }
+
   return {
     data: {
       name,
@@ -85,6 +108,7 @@ export function parseProductRow(
       famille,
       sous_famille,
       format,
+      classification,
     },
   };
 }

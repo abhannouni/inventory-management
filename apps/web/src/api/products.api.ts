@@ -1,5 +1,5 @@
 import { api } from './client';
-import type { Product } from '../types';
+import type { Product, ProductClassification } from '../types';
 
 export interface ProductPayload {
   name: string;
@@ -10,6 +10,7 @@ export interface ProductPayload {
   famille: string;
   sous_famille: string;
   format: string;
+  classification: ProductClassification | null;
 }
 
 export interface BulkImportRowError {

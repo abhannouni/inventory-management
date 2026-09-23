@@ -12,6 +12,7 @@
     "allFamilles": "All familles",
     "allSousFamilles": "All sous-familles",
     "allFormats": "All formats",
+    "allClassifications": "All classifications",
     "allStatuses": "All statuses",
     "clear": "Clear filters"
   },
@@ -20,6 +21,7 @@
     "sku": "SKU",
     "category": "Category",
     "distributeur": "Distributeur",
+    "ownership": "Ownership",
     "classification": "Classification",
     "famille": "Famille",
     "sousFamille": "Sous famille",
@@ -43,7 +45,14 @@
     "sousFamille": "Sous famille",
     "sousFamillePlaceholder": "e.g. Sodas",
     "format": "Format",
-    "formatPlaceholder": "e.g. 500ml"
+    "formatPlaceholder": "e.g. 500ml",
+    "classification": "Classification",
+    "classificationPlaceholder": "No classification"
+  },
+  "classifications": {
+    "standard": "Standard",
+    "premium": "Premium",
+    "ultra_premium": "Ultra Premium"
   },
   "errors": {
     "nameRequired": "Name is required",

@@ -1,3 +1,8 @@
+import type { ProductClassification } from '../types';
+
+/** Market tiers, lowest to highest. Labels live in products.json → classifications. */
+export const PRODUCT_CLASSIFICATIONS: ProductClassification[] = ['standard', 'premium', 'ultra_premium'];
+
 export const BOURCHANIN_CANONICAL_NAME = 'Bourchanin';
 
 const normalizedBourchaninNames = new Set(

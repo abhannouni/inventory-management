@@ -19,7 +19,7 @@ import ProductBulkImportModal from './ProductBulkImportModal';
 import AssignPdvModal from './AssignPdvModal';
 import { formatDate } from '../../utils/format';
 import type { Product } from '../../types';
-import { getProductClassificationLabel } from '../../utils/productClassification';
+import { PRODUCT_CLASSIFICATIONS, getProductClassificationLabel } from '../../utils/productClassification';
 
 export default function ProductsPage() {
   const { t, i18n } = useTranslation('products');
@@ -40,6 +40,7 @@ export default function ProductsPage() {
   const [familleFilter, setFamilleFilter] = useState('');
   const [sousFamilleFilter, setSousFamilleFilter] = useState('');
   const [formatFilter, setFormatFilter] = useState('');
+  const [classificationFilter, setClassificationFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
 
   useEffect(() => { dispatch(fetchProducts()); }, [dispatch]);
@@ -54,9 +55,10 @@ export default function ProductsPage() {
   const familleOptions = useMemo(() => toOptions(products.map((p) => p.famille)), [products]);
   const sousFamilleOptions = useMemo(() => toOptions(products.map((p) => p.sous_famille)), [products]);
   const formatOptions = useMemo(() => toOptions(products.map((p) => p.format)), [products]);
+  const classificationOptions = PRODUCT_CLASSIFICATIONS.map((c) => ({ value: c, label: t(`classifications.${c}`) }));
 
   const hasActiveFilters =
-    !!search || !!categoryFilter || !!distributeurFilter || !!familleFilter || !!sousFamilleFilter || !!formatFilter || !!statusFilter;
+    !!search || !!categoryFilter || !!distributeurFilter || !!familleFilter || !!sousFamilleFilter || !!formatFilter || !!classificationFilter || !!statusFilter;
 
   const clearFilters = () => {
     setSearch('');
@@ -65,6 +67,7 @@ export default function ProductsPage() {
     setFamilleFilter('');
     setSousFamilleFilter('');
     setFormatFilter('');
+    setClassificationFilter('');
     setStatusFilter('');
   };
 
@@ -82,6 +85,7 @@ export default function ProductsPage() {
       (!familleFilter || p.famille === familleFilter) &&
       (!sousFamilleFilter || p.sous_famille === sousFamilleFilter) &&
       (!formatFilter || p.format === formatFilter) &&
+      (!classificationFilter || p.classification === classificationFilter) &&
       (!statusFilter || (statusFilter === 'active' ? p.is_active : !p.is_active))
   );
 
@@ -127,8 +131,8 @@ export default function ProductsPage() {
     { key: 'category', header: t('table.category'), render: (p: Product) => <span style={{ color: 'var(--gray-600)' }}>{p.category}</span> },
     { key: 'distributeur', header: t('table.distributeur'), render: (p: Product) => <span style={{ color: 'var(--gray-600)' }}>{p.distributeur}</span> },
     {
-      key: 'classification',
-      header: t('table.classification'),
+      key: 'ownership',
+      header: t('table.ownership'),
       render: (p: Product) => {
         const label = getProductClassificationLabel(p.is_our_product, p.distributeur);
         return <Badge variant={label === 'Bourchanin' ? 'success' : 'gray'}>{label}</Badge>;
@@ -137,6 +141,18 @@ export default function ProductsPage() {
     { key: 'famille', header: t('table.famille'), render: (p: Product) => <span style={{ color: 'var(--gray-600)' }}>{p.famille}</span> },
     { key: 'sous_famille', header: t('table.sousFamille'), render: (p: Product) => <span style={{ color: 'var(--gray-600)' }}>{p.sous_famille}</span> },
     { key: 'format', header: t('table.format'), render: (p: Product) => <span style={{ color: 'var(--gray-600)' }}>{p.format}</span> },
+    {
+      key: 'classification',
+      header: t('table.classification'),
+      render: (p: Product) =>
+        p.classification ? (
+          <Badge variant={p.classification === 'standard' ? 'gray' : p.classification === 'premium' ? 'primary' : 'warning'}>
+            {t(`classifications.${p.classification}`)}
+          </Badge>
+        ) : (
+          <span style={{ color: 'var(--gray-400)' }}>—</span>
+        ),
+    },
     { key: 'created_at', header: t('table.created'), render: (p: Product) => <span style={{ color: 'var(--gray-500)' }}>{formatDate(p.created_at, i18n.language)}</span> },
     {
       key: 'actions',
@@ -214,6 +230,13 @@ export default function ProductsPage() {
           placeholder={t('filters.allFormats')}
           value={formatFilter}
           onChange={(e) => setFormatFilter(e.target.value)}
+          style={{ minWidth: 160 }}
+        />
+        <Select
+          options={classificationOptions}
+          placeholder={t('filters.allClassifications')}
+          value={classificationFilter}
+          onChange={(e) => setClassificationFilter(e.target.value)}
           style={{ minWidth: 160 }}
         />
         <Select

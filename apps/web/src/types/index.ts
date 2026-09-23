@@ -85,6 +85,8 @@ export interface Store {
   updated_at: string;
 }
 
+export type ProductClassification = 'standard' | 'premium' | 'ultra_premium';
+
 export interface Product {
   id: string;
   name: string;
@@ -95,6 +97,7 @@ export interface Product {
   famille: string;
   sous_famille: string;
   format: string;
+  classification: ProductClassification | null;
   client_id: string | null;
   client?: Client | null;
   is_active: boolean;

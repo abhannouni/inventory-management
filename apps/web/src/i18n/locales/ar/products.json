@@ -12,6 +12,7 @@
     "allFamilles": "كل العائلات",
     "allSousFamilles": "كل العائلات الفرعية",
     "allFormats": "كل الأشكال",
+    "allClassifications": "كل التصنيفات",
     "allStatuses": "كل الحالات",
     "clear": "مسح الفلاتر"
   },
@@ -20,6 +21,7 @@
     "sku": "SKU",
     "category": "الفئة",
     "distributeur": "Distributeur",
+    "ownership": "الملكية",
     "classification": "التصنيف",
     "famille": "Famille",
     "sousFamille": "Sous famille",
@@ -43,7 +45,14 @@
     "sousFamille": "Sous famille",
     "sousFamillePlaceholder": "مثال: Sodas",
     "format": "Format",
-    "formatPlaceholder": "مثال: 500ml"
+    "formatPlaceholder": "مثال: 500ml",
+    "classification": "التصنيف",
+    "classificationPlaceholder": "بدون تصنيف"
+  },
+  "classifications": {
+    "standard": "Standard",
+    "premium": "Premium",
+    "ultra_premium": "Ultra Premium"
   },
   "errors": {
     "nameRequired": "اسم المنتج مطلوب",

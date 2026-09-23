@@ -1,5 +1,7 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsOptional, IsString } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ProductClassification } from '@prisma/client';
+import { Transform } from 'class-transformer';
+import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator';
 
 export class CreateProductDto {
   @ApiProperty({ example: 'Sparkling Water 500ml' })
@@ -34,4 +36,11 @@ export class CreateProductDto {
   @ApiProperty({ example: '500ml' })
   @IsString()
   format: string;
+
+  @ApiPropertyOptional({ enum: ProductClassification, nullable: true })
+  // An empty select posts "" — store it as "no classification".
+  @Transform(({ value }) => (value === '' ? null : value))
+  @IsEnum(ProductClassification)
+  @IsOptional()
+  classification?: ProductClassification | null;
 }

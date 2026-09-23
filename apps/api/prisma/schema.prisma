@@ -60,6 +60,13 @@ enum StoreClassification {
   D
 }
 
+/// Market positioning tier of a product. Optional — older products have none.
+enum ProductClassification {
+  standard
+  premium
+  ultra_premium
+}
+
 enum SubscriptionStatus {
   trialing
   active
@@ -255,6 +262,7 @@ model Product {
   famille      String
   sous_famille String
   format       String
+  classification ProductClassification?
   /// Owning brand / supplier.
   client       Client?  @relation(fields: [client_id], references: [id], onDelete: SetNull)
   client_id    String?

@@ -2,9 +2,11 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Input from '../../components/ui/Input';
 import Button from '../../components/ui/Button';
+import Select from '../../components/ui/Select';
 import type { Product } from '../../types';
 import {
   BOURCHANIN_CANONICAL_NAME,
+  PRODUCT_CLASSIFICATIONS,
   isBourchaninDistributor,
 } from '../../utils/productClassification';
 
@@ -29,6 +31,7 @@ export default function ProductForm({ initialData, onSubmit, onCancel }: Product
     famille: initialData?.famille || '',
     sous_famille: initialData?.sous_famille || '',
     format: initialData?.format || '',
+    classification: initialData?.classification || '',
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -60,6 +63,7 @@ export default function ProductForm({ initialData, onSubmit, onCancel }: Product
       famille: form.famille.trim(),
       sous_famille: form.sous_famille.trim(),
       format: form.format.trim(),
+      classification: form.classification || null,
     });
     setLoading(false);
   };
@@ -110,6 +114,13 @@ export default function ProductForm({ initialData, onSubmit, onCancel }: Product
         <Input label={t('fields.sousFamille')} value={form.sous_famille} onChange={(e) => setForm({ ...form, sous_famille: e.target.value })} error={errors.sous_famille} placeholder={t('fields.sousFamillePlaceholder')} />
         <Input label={t('fields.format')} value={form.format} onChange={(e) => setForm({ ...form, format: e.target.value })} error={errors.format} placeholder={t('fields.formatPlaceholder')} />
       </div>
+      <Select
+        label={t('fields.classification')}
+        options={PRODUCT_CLASSIFICATIONS.map((c) => ({ value: c, label: t(`classifications.${c}`) }))}
+        placeholder={t('fields.classificationPlaceholder')}
+        value={form.classification}
+        onChange={(e) => setForm({ ...form, classification: e.target.value as typeof form.classification })}
+      />
       <div className="form-actions">
         <Button variant="ghost" type="button" onClick={onCancel} disabled={loading}>{tCommon('actions.cancel')}</Button>
         <Button type="submit" loading={loading}>{initialData ? t('updateProduct') : t('createProduct')}</Button>
