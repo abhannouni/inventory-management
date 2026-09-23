@@ -7,6 +7,7 @@
   "updateProduct": "Mettre à jour le produit",
   "searchPlaceholder": "Rechercher par nom, SKU ou catégorie…",
   "filters": {
+    "toggle": "Filtres",
     "allCategories": "Toutes les catégories",
     "allDistributeurs": "Tous les distributeurs",
     "allFamilles": "Toutes les familles",

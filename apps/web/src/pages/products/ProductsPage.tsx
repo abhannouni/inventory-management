@@ -42,6 +42,8 @@ export default function ProductsPage() {
   const [formatFilter, setFormatFilter] = useState('');
   const [classificationFilter, setClassificationFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
+  // Mobile only: the dropdowns sit behind a "Filters" toggle so they don't push the table off screen.
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   useEffect(() => { dispatch(fetchProducts()); }, [dispatch]);
 
@@ -56,6 +58,10 @@ export default function ProductsPage() {
   const sousFamilleOptions = useMemo(() => toOptions(products.map((p) => p.sous_famille)), [products]);
   const formatOptions = useMemo(() => toOptions(products.map((p) => p.format)), [products]);
   const classificationOptions = PRODUCT_CLASSIFICATIONS.map((c) => ({ value: c, label: t(`classifications.${c}`) }));
+
+  const activeFilterCount = [
+    categoryFilter, distributeurFilter, familleFilter, sousFamilleFilter, formatFilter, classificationFilter, statusFilter,
+  ].filter(Boolean).length;
 
   const hasActiveFilters =
     !!search || !!categoryFilter || !!distributeurFilter || !!familleFilter || !!sousFamilleFilter || !!formatFilter || !!classificationFilter || !!statusFilter;
@@ -188,70 +194,77 @@ export default function ProductsPage() {
         }
       />
 
-      <div className="filter-bar">
-        <div className="form-group" style={{ flex: 1, maxWidth: 320 }}>
-          <input
-            className="form-input"
-            placeholder={t('searchPlaceholder')}
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+      <div className={`filter-bar filter-bar--collapsible${filtersOpen ? ' is-open' : ''}`}>
+        <div className="filter-bar-top">
+          <div className="form-group filter-bar-search">
+            <input
+              className="form-input"
+              placeholder={t('searchPlaceholder')}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+          <button
+            type="button"
+            className={`filter-toggle${activeFilterCount ? ' has-active' : ''}`}
+            onClick={() => setFiltersOpen((open) => !open)}
+            aria-expanded={filtersOpen}
+          >
+            <FilterIcon />
+            <span>{t('filters.toggle')}</span>
+            {activeFilterCount > 0 && <span className="filter-toggle-count">{activeFilterCount}</span>}
+          </button>
         </div>
-        <Select
-          options={categoryOptions}
-          placeholder={t('filters.allCategories')}
-          value={categoryFilter}
-          onChange={(e) => setCategoryFilter(e.target.value)}
-          style={{ minWidth: 160 }}
-        />
-        <Select
-          options={distributeurOptions}
-          placeholder={t('filters.allDistributeurs')}
-          value={distributeurFilter}
-          onChange={(e) => setDistributeurFilter(e.target.value)}
-          style={{ minWidth: 160 }}
-        />
-        <Select
-          options={familleOptions}
-          placeholder={t('filters.allFamilles')}
-          value={familleFilter}
-          onChange={(e) => setFamilleFilter(e.target.value)}
-          style={{ minWidth: 160 }}
-        />
-        <Select
-          options={sousFamilleOptions}
-          placeholder={t('filters.allSousFamilles')}
-          value={sousFamilleFilter}
-          onChange={(e) => setSousFamilleFilter(e.target.value)}
-          style={{ minWidth: 160 }}
-        />
-        <Select
-          options={formatOptions}
-          placeholder={t('filters.allFormats')}
-          value={formatFilter}
-          onChange={(e) => setFormatFilter(e.target.value)}
-          style={{ minWidth: 160 }}
-        />
-        <Select
-          options={classificationOptions}
-          placeholder={t('filters.allClassifications')}
-          value={classificationFilter}
-          onChange={(e) => setClassificationFilter(e.target.value)}
-          style={{ minWidth: 160 }}
-        />
-        <Select
-          options={[
-            { value: 'active', label: tCommon('status.active') },
-            { value: 'inactive', label: tCommon('status.inactive') },
-          ]}
-          placeholder={t('filters.allStatuses')}
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          style={{ minWidth: 160 }}
-        />
-        {hasActiveFilters && (
-          <Button variant="ghost" size="sm" onClick={clearFilters}>{t('filters.clear')}</Button>
-        )}
+        <div className="filter-bar-fields">
+          <Select
+            options={categoryOptions}
+            placeholder={t('filters.allCategories')}
+            value={categoryFilter}
+            onChange={(e) => setCategoryFilter(e.target.value)}
+          />
+          <Select
+            options={distributeurOptions}
+            placeholder={t('filters.allDistributeurs')}
+            value={distributeurFilter}
+            onChange={(e) => setDistributeurFilter(e.target.value)}
+          />
+          <Select
+            options={familleOptions}
+            placeholder={t('filters.allFamilles')}
+            value={familleFilter}
+            onChange={(e) => setFamilleFilter(e.target.value)}
+          />
+          <Select
+            options={sousFamilleOptions}
+            placeholder={t('filters.allSousFamilles')}
+            value={sousFamilleFilter}
+            onChange={(e) => setSousFamilleFilter(e.target.value)}
+          />
+          <Select
+            options={formatOptions}
+            placeholder={t('filters.allFormats')}
+            value={formatFilter}
+            onChange={(e) => setFormatFilter(e.target.value)}
+          />
+          <Select
+            options={classificationOptions}
+            placeholder={t('filters.allClassifications')}
+            value={classificationFilter}
+            onChange={(e) => setClassificationFilter(e.target.value)}
+          />
+          <Select
+            options={[
+              { value: 'active', label: tCommon('status.active') },
+              { value: 'inactive', label: tCommon('status.inactive') },
+            ]}
+            placeholder={t('filters.allStatuses')}
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+          />
+          {hasActiveFilters && (
+            <Button variant="ghost" size="sm" className="filter-bar-clear" onClick={clearFilters}>{t('filters.clear')}</Button>
+          )}
+        </div>
       </div>
 
       <motion.div className="card" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
@@ -290,6 +303,14 @@ function PlusIcon() {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
       <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
+    </svg>
+  );
+}
+
+function FilterIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="4" y1="6" x2="20" y2="6" /><line x1="7" y1="12" x2="17" y2="12" /><line x1="10" y1="18" x2="14" y2="18" />
     </svg>
   );
 }

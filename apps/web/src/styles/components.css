@@ -1683,6 +1683,14 @@ html[dir='rtl'] .switch-btn.is-on::after { transform: translateX(-14px); }
   min-width: 180px;
 }
 
+/* Collapsible variant: identical to .filter-bar on desktop (the wrappers
+   dissolve into the flex row); on mobile the dropdowns fold behind a toggle. */
+.filter-bar--collapsible .filter-bar-top,
+.filter-bar--collapsible .filter-bar-fields { display: contents; }
+.filter-bar--collapsible .filter-bar-search { flex: 1; max-width: 320px; }
+.filter-bar--collapsible .filter-bar-fields .form-select { min-width: 160px; }
+.filter-toggle { display: none; }
+
 /* ===== AUTH PAGE (split layout) ===== */
 .auth-lang-switcher {
   position: fixed;
@@ -2347,6 +2355,55 @@ html[dir='rtl'] .form-input.has-action { padding-right: 12px; padding-left: 36px
   .page-header-actions .btn { width: 100%; }
 
   .filter-bar .form-select { min-height: 44px; font-size: 16px; }
+
+  .filter-bar--collapsible { display: block; }
+  .filter-bar--collapsible .filter-bar-top { display: flex; gap: 8px; align-items: stretch; }
+  .filter-bar--collapsible .filter-bar-search { flex: 1; max-width: none; min-width: 0; }
+  .filter-bar--collapsible .filter-bar-search .form-input { min-height: 44px; font-size: 16px; }
+
+  .filter-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+    min-height: 44px;
+    padding: 0 14px;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius, 12px);
+    background: #fff;
+    color: var(--gray-700);
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .filter-toggle.has-active,
+  .filter-bar--collapsible.is-open .filter-toggle {
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+  .filter-toggle-count {
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: var(--primary);
+    color: #fff;
+    font-size: 12px;
+    line-height: 20px;
+    text-align: center;
+  }
+
+  .filter-bar--collapsible .filter-bar-fields { display: none; }
+  .filter-bar--collapsible.is-open .filter-bar-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .filter-bar--collapsible .filter-bar-fields .form-group { min-width: 0; }
+  .filter-bar--collapsible .filter-bar-fields .form-select { width: 100%; min-width: 0; text-overflow: ellipsis; }
+  .filter-bar--collapsible .filter-bar-clear { grid-column: 1 / -1; justify-content: center; }
 }
 
 /* ===== MOBILE BOTTOM NAV ===== */
