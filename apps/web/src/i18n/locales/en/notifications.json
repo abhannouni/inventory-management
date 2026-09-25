@@ -35,6 +35,10 @@
     "visit_plan_missing": {
       "title": "{{actorName}} has no planned visits for {{month}}/{{year}} yet",
       "body": "Open Visit planning to sort it out."
+    },
+    "training_quiz_assigned": {
+      "title": "New questionnaire: {{quizTitle}}",
+      "body": "Tap to start it."
     }
   }
 }

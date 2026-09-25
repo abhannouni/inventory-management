@@ -236,7 +236,8 @@ export type NotificationType =
   | 'visit_plan_adjusted'
   | 'visit_plan_assigned'
   | 'visit_plan_reminder'
-  | 'visit_plan_missing';
+  | 'visit_plan_missing'
+  | 'training_quiz_assigned';
 
 export interface Notification {
   id: string;

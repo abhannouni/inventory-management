@@ -1,0 +1,186 @@
+{
+  "title": "Training",
+  "duration_one": "{{count}} min",
+  "duration_other": "{{count}} min",
+  "questionCount_one": "{{count}} question",
+  "questionCount_other": "{{count}} questions",
+  "status": {
+    "not_started": "To do",
+    "in_progress": "In progress",
+    "completed": "Done",
+    "missed": "Missed"
+  },
+  "answerMode": {
+    "single": "One answer",
+    "singleHint": "One right answer per question",
+    "multiple": "Several answers",
+    "multipleHint": "One or more right answers per question"
+  },
+  "my": {
+    "subtitle": "Your questionnaires to complete",
+    "deadline": "Before {{date}}",
+    "open": "Start",
+    "resume": "Resume",
+    "emptyTitle": "Nothing to do right now",
+    "emptyHint": "You'll get a notification when a questionnaire is assigned to you."
+  },
+  "runner": {
+    "notFound": "This questionnaire could not be found.",
+    "rulesTitle": "Before you start",
+    "ruleTime_one": "Once started, you have {{count}} minute to finish.",
+    "ruleTime_other": "Once started, you have {{count}} minutes to finish.",
+    "ruleStay": "Stay on this screen until the end — don't leave the app.",
+    "ruleSingle": "Pick one answer, then tap “Next”.",
+    "ruleMultiple": "Pick one or more answers, then tap “Next”.",
+    "ruleAuto": "When time runs out, your answers are sent automatically.",
+    "start": "Start",
+    "questionOf": "Question {{current}} / {{total}}",
+    "pickOne": "Pick one answer",
+    "pickMany": "Pick one or more answers",
+    "next": "Next",
+    "finish": "Finish",
+    "saveError": "Couldn't save your answer. Check your connection and try again.",
+    "leaveWarning": "Please stay on this screen until you finish.",
+    "ok": "OK",
+    "doneTitle": "Thank you!",
+    "doneText": "Your answers have been sent.",
+    "doneTimeout": "Time is up — your answers have been sent.",
+    "missedTitle": "Questionnaire closed",
+    "missedText": "The deadline for this questionnaire has passed.",
+    "backToTraining": "Back to training"
+  },
+  "manager": {
+    "subtitle": "Create questionnaires, assign them and follow the results",
+    "newQuiz": "New questionnaire",
+    "emptyTitle": "No questionnaires yet",
+    "emptyHint": "Create one from an Excel file in seconds.",
+    "open": "Open",
+    "closed": "Closed",
+    "completedOf": "{{done}} / {{total}} done",
+    "notAssigned": "Not assigned yet"
+  },
+  "create": {
+    "title": "New questionnaire",
+    "step1": "1. Details",
+    "step2": "2. Questions (Excel file)",
+    "optional": "(optional)",
+    "fields": {
+      "title": "Title",
+      "description": "Description",
+      "deadline": "Deadline",
+      "duration": "Time to answer (minutes)",
+      "answerMode": "Answer type"
+    },
+    "templateTitle": "Excel template",
+    "templateHint": "Download the template: one row per question (at least 3), 2 to 4 responses, then the number of the right one.",
+    "downloadTemplate": "Download template",
+    "chooseFile": "Choose the Excel file",
+    "fileHint": ".xlsx or .xls, 10 MB max",
+    "fixErrors": "Fix the file and try again — nothing was created:",
+    "rowLabel": "Row {{row}}",
+    "submit": "Create questionnaire",
+    "success_one": "Questionnaire created with {{count}} question",
+    "success_other": "Questionnaire created with {{count}} questions",
+    "errors": {
+      "title": "The title is required.",
+      "deadline": "Pick a deadline in the future.",
+      "duration": "Enter a duration in minutes (at least 1).",
+      "file": "Add the Excel file of questions."
+    }
+  },
+  "edit": {
+    "title": "Edit questionnaire",
+    "success": "Questionnaire updated",
+    "questionsLocked": "Questions can't be changed after creation. To change them, create a new questionnaire."
+  },
+  "assign": {
+    "title": "Assign questionnaire",
+    "hint": "The selected users get a notification.",
+    "everyone": "Everyone",
+    "users": "Users",
+    "search": "Search a name or email…",
+    "noResults": "No users found",
+    "typeToSearch": "Type to search",
+    "selected_one": "{{count}} user selected",
+    "selected_other": "{{count}} users selected",
+    "clear": "Clear all",
+    "everyoneAssigned": "Every user already has this questionnaire.",
+    "submit_one": "Assign ({{count}})",
+    "submit_other": "Assign ({{count}})",
+    "success_one": "Assigned to {{count}} user",
+    "success_other": "Assigned to {{count}} users"
+  },
+  "detail": {
+    "back": "All questionnaires",
+    "assign": "Assign",
+    "tabs": {
+      "results": "Results",
+      "questions": "Questions"
+    },
+    "deleteConfirm": "Delete this questionnaire and all its results? This can't be undone.",
+    "deleted": "Questionnaire deleted",
+    "unassignConfirm": "Remove the questionnaire from {{name}}?",
+    "unassigned": "Assignment removed"
+  },
+  "stats": {
+    "assigned": "Assigned",
+    "completed": "Done",
+    "pending": "Not yet",
+    "inProgressHint_one": "{{count}} in progress",
+    "inProgressHint_other": "{{count}} in progress",
+    "missed": "Missed (deadline passed)",
+    "average": "Average score"
+  },
+  "filters": {
+    "all": "All",
+    "completed": "Done",
+    "pending": "Not yet",
+    "missed": "Missed"
+  },
+  "results": {
+    "user": "User",
+    "status": "Status",
+    "score": "Score",
+    "time": "Time",
+    "submittedAt": "Sent on",
+    "leaves": "Left screen",
+    "leavesHint": "How many times the user left the screen during the questionnaire",
+    "view": "View answers",
+    "unassign": "Remove",
+    "empty": "Nobody has this questionnaire yet. Click “Assign”.",
+    "emptyFilter": "No users in this category."
+  },
+  "questions": {
+    "noAnswers": "No answers yet",
+    "correctRate": "{{pct}}% right ({{correct}}/{{total}})"
+  },
+  "review": {
+    "title": "Answers",
+    "right": "Right",
+    "wrong": "Wrong",
+    "unanswered": "No answer",
+    "picked": "Picked",
+    "leaves_one": "Left the screen {{count}} time during the questionnaire.",
+    "leaves_other": "Left the screen {{count}} times during the questionnaire."
+  },
+  "export": {
+    "button": "Export results",
+    "buttonShort": "Export Excel",
+    "title": "Export results",
+    "hint": "Pick one or more questionnaires. You get one Excel file with a summary and a sheet per questionnaire (each user's score and answers).",
+    "selectAll": "Select all",
+    "download_one": "Download ({{count}})",
+    "download_other": "Download ({{count}})",
+    "success": "Excel file downloaded",
+    "summarySheet": "Summary",
+    "rightAnswers": "Right answer",
+    "cols": {
+      "quiz": "Questionnaire",
+      "durationMin": "Duration (min)",
+      "questions": "Questions",
+      "email": "Email",
+      "role": "Role",
+      "startedAt": "Started on"
+    }
+  }
+}

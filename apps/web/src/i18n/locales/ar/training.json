@@ -1,0 +1,186 @@
+{
+  "title": "التدريب",
+  "duration_one": "{{count}} دقيقة",
+  "duration_other": "{{count}} دقيقة",
+  "questionCount_one": "{{count}} سؤال",
+  "questionCount_other": "{{count}} أسئلة",
+  "status": {
+    "not_started": "للإنجاز",
+    "in_progress": "قيد الإنجاز",
+    "completed": "منتهٍ",
+    "missed": "فائت"
+  },
+  "answerMode": {
+    "single": "إجابة واحدة",
+    "singleHint": "إجابة صحيحة واحدة لكل سؤال",
+    "multiple": "عدة إجابات",
+    "multipleHint": "إجابة صحيحة أو أكثر لكل سؤال"
+  },
+  "my": {
+    "subtitle": "الاستبيانات المطلوب إكمالها",
+    "deadline": "قبل {{date}}",
+    "open": "ابدأ",
+    "resume": "استئناف",
+    "emptyTitle": "لا شيء للقيام به حالياً",
+    "emptyHint": "ستتلقى إشعاراً عند تعيين استبيان لك."
+  },
+  "runner": {
+    "notFound": "تعذر العثور على هذا الاستبيان.",
+    "rulesTitle": "قبل أن تبدأ",
+    "ruleTime_one": "بعد البدء، لديك {{count}} دقيقة للإنهاء.",
+    "ruleTime_other": "بعد البدء، لديك {{count}} دقيقة للإنهاء.",
+    "ruleStay": "ابقَ على هذه الشاشة حتى النهاية — لا تغادر التطبيق.",
+    "ruleSingle": "اختر إجابة واحدة، ثم اضغط «التالي».",
+    "ruleMultiple": "اختر إجابة أو أكثر، ثم اضغط «التالي».",
+    "ruleAuto": "عند انتهاء الوقت، تُرسل إجاباتك تلقائياً.",
+    "start": "ابدأ",
+    "questionOf": "السؤال {{current}} / {{total}}",
+    "pickOne": "اختر إجابة واحدة",
+    "pickMany": "اختر إجابة أو أكثر",
+    "next": "التالي",
+    "finish": "إنهاء",
+    "saveError": "تعذر حفظ إجابتك. تحقق من الاتصال وحاول مرة أخرى.",
+    "leaveWarning": "يرجى البقاء على هذه الشاشة حتى النهاية.",
+    "ok": "حسناً",
+    "doneTitle": "شكراً!",
+    "doneText": "تم إرسال إجاباتك.",
+    "doneTimeout": "انتهى الوقت — تم إرسال إجاباتك.",
+    "missedTitle": "الاستبيان مغلق",
+    "missedText": "انتهى الموعد النهائي لهذا الاستبيان.",
+    "backToTraining": "العودة إلى التدريب"
+  },
+  "manager": {
+    "subtitle": "أنشئ الاستبيانات، عيّنها وتابع النتائج",
+    "newQuiz": "استبيان جديد",
+    "emptyTitle": "لا توجد استبيانات بعد",
+    "emptyHint": "أنشئ واحداً من ملف Excel في ثوانٍ.",
+    "open": "مفتوح",
+    "closed": "مغلق",
+    "completedOf": "{{done}} / {{total}} منتهٍ",
+    "notAssigned": "لم يُعيَّن بعد"
+  },
+  "create": {
+    "title": "استبيان جديد",
+    "step1": "1. المعلومات",
+    "step2": "2. الأسئلة (ملف Excel)",
+    "optional": "(اختياري)",
+    "fields": {
+      "title": "العنوان",
+      "description": "الوصف",
+      "deadline": "الموعد النهائي",
+      "duration": "وقت الإجابة (بالدقائق)",
+      "answerMode": "نوع الإجابة"
+    },
+    "templateTitle": "نموذج Excel",
+    "templateHint": "حمّل النموذج: سطر لكل سؤال (3 على الأقل)، من 2 إلى 4 إجابات، ثم رقم الإجابة الصحيحة.",
+    "downloadTemplate": "تحميل النموذج",
+    "chooseFile": "اختر ملف Excel",
+    "fileHint": ".xlsx أو .xls، بحد أقصى 10 ميغابايت",
+    "fixErrors": "صحّح الملف وحاول مرة أخرى — لم يتم إنشاء أي شيء:",
+    "rowLabel": "السطر {{row}}",
+    "submit": "إنشاء الاستبيان",
+    "success_one": "تم إنشاء الاستبيان بـ {{count}} سؤال",
+    "success_other": "تم إنشاء الاستبيان بـ {{count}} أسئلة",
+    "errors": {
+      "title": "العنوان مطلوب.",
+      "deadline": "اختر موعداً نهائياً في المستقبل.",
+      "duration": "أدخل مدة بالدقائق (1 على الأقل).",
+      "file": "أضف ملف Excel للأسئلة."
+    }
+  },
+  "edit": {
+    "title": "تعديل الاستبيان",
+    "success": "تم تحديث الاستبيان",
+    "questionsLocked": "لا يمكن تعديل الأسئلة بعد الإنشاء. لتغييرها، أنشئ استبياناً جديداً."
+  },
+  "assign": {
+    "title": "تعيين الاستبيان",
+    "hint": "يتلقى المستخدمون المختارون إشعاراً.",
+    "everyone": "الجميع",
+    "users": "المستخدمون",
+    "search": "ابحث عن اسم أو بريد…",
+    "noResults": "لم يتم العثور على مستخدمين",
+    "typeToSearch": "اكتب للبحث",
+    "selected_one": "تم اختيار {{count}} مستخدم",
+    "selected_other": "تم اختيار {{count}} مستخدمين",
+    "clear": "إزالة الكل",
+    "everyoneAssigned": "جميع المستخدمين لديهم هذا الاستبيان بالفعل.",
+    "submit_one": "تعيين ({{count}})",
+    "submit_other": "تعيين ({{count}})",
+    "success_one": "تم التعيين لـ {{count}} مستخدم",
+    "success_other": "تم التعيين لـ {{count}} مستخدمين"
+  },
+  "detail": {
+    "back": "كل الاستبيانات",
+    "assign": "تعيين",
+    "tabs": {
+      "results": "النتائج",
+      "questions": "الأسئلة"
+    },
+    "deleteConfirm": "حذف هذا الاستبيان وكل نتائجه؟ لا يمكن التراجع عن ذلك.",
+    "deleted": "تم حذف الاستبيان",
+    "unassignConfirm": "إزالة الاستبيان من {{name}}؟",
+    "unassigned": "تمت إزالة التعيين"
+  },
+  "stats": {
+    "assigned": "المعيَّنون",
+    "completed": "منتهٍ",
+    "pending": "لم يُنجز بعد",
+    "inProgressHint_one": "{{count}} قيد الإنجاز",
+    "inProgressHint_other": "{{count}} قيد الإنجاز",
+    "missed": "فائت (انتهى الموعد)",
+    "average": "متوسط النتيجة"
+  },
+  "filters": {
+    "all": "الكل",
+    "completed": "منتهٍ",
+    "pending": "لم يُنجز بعد",
+    "missed": "فائت"
+  },
+  "results": {
+    "user": "المستخدم",
+    "status": "الحالة",
+    "score": "النتيجة",
+    "time": "المدة",
+    "submittedAt": "أُرسل في",
+    "leaves": "مغادرات",
+    "leavesHint": "عدد مرات مغادرة المستخدم للشاشة أثناء الاستبيان",
+    "view": "عرض الإجابات",
+    "unassign": "إزالة",
+    "empty": "لا أحد لديه هذا الاستبيان بعد. اضغط «تعيين».",
+    "emptyFilter": "لا يوجد مستخدمون في هذه الفئة."
+  },
+  "questions": {
+    "noAnswers": "لا توجد إجابات بعد",
+    "correctRate": "{{pct}}% إجابات صحيحة ({{correct}}/{{total}})"
+  },
+  "review": {
+    "title": "الإجابات",
+    "right": "صحيح",
+    "wrong": "خطأ",
+    "unanswered": "بدون إجابة",
+    "picked": "مختار",
+    "leaves_one": "غادر الشاشة {{count}} مرة أثناء الاستبيان.",
+    "leaves_other": "غادر الشاشة {{count}} مرات أثناء الاستبيان."
+  },
+  "export": {
+    "button": "تصدير النتائج",
+    "buttonShort": "تصدير Excel",
+    "title": "تصدير النتائج",
+    "hint": "اختر استبياناً أو أكثر. ستحصل على ملف Excel يحتوي على ملخص وورقة لكل استبيان (نتيجة وإجابات كل مستخدم).",
+    "selectAll": "تحديد الكل",
+    "download_one": "تحميل ({{count}})",
+    "download_other": "تحميل ({{count}})",
+    "success": "تم تحميل ملف Excel",
+    "summarySheet": "ملخص",
+    "rightAnswers": "الإجابة الصحيحة",
+    "cols": {
+      "quiz": "الاستبيان",
+      "durationMin": "المدة (دقيقة)",
+      "questions": "الأسئلة",
+      "email": "البريد الإلكتروني",
+      "role": "الدور",
+      "startedAt": "بدأ في"
+    }
+  }
+}

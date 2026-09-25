@@ -8,6 +8,5 @@ export interface ModuleStatus {
 
 export const modulesApi = {
   sellOut: () => api.get<ModuleStatus>('/sell-out'),
-  training: () => api.get<ModuleStatus>('/training'),
   hr: () => api.get<ModuleStatus>('/hr'),
 };

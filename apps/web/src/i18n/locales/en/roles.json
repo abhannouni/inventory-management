@@ -53,7 +53,8 @@
     "sell_out": "Sell-out",
     "hr": "HR",
     "product_requests": "Marketing",
-    "promos": "Promos"
+    "promos": "Promos",
+    "training": "Training"
   },
   "matrix": {
     "superAdminLocked": "The Super Administrator always holds every permission. This role cannot be edited — it is what guarantees you can never be locked out of the platform.",

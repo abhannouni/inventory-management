@@ -35,6 +35,10 @@
     "visit_plan_missing": {
       "title": "{{actorName}} n'a aucune visite planifiée pour {{month}}/{{year}}",
       "body": "Ouvrez Planning des visites pour régler cela."
+    },
+    "training_quiz_assigned": {
+      "title": "Nouveau questionnaire : {{quizTitle}}",
+      "body": "Appuyez pour le commencer."
     }
   }
 }

@@ -15,7 +15,8 @@ import VisitDetailPage from '../pages/visits/VisitDetailPage';
 import AuditItemsPage from '../pages/audit-items/AuditItemsPage';
 import ReportsPage from '../pages/reports/ReportsPage';
 import SellOutPage from '../pages/modules/SellOutPage';
-import TrainingPage from '../pages/modules/TrainingPage';
+import TrainingPage from '../pages/training/TrainingPage';
+import QuizRunner from '../pages/training/QuizRunner';
 import MarketingPage from '../pages/modules/MarketingPage';
 import MarketingDetailPage from '../pages/modules/MarketingDetailPage';
 import SettingsPage from '../pages/settings/SettingsPage';
@@ -307,6 +308,8 @@ export const NAV_PAGES: NavPage[] = [
       section: 'general',
     },
   },
+  // Taking an assigned quiz — no permission gate, the API checks the assignment is the caller's.
+  { id: 'training-quiz', path: '/training/quiz/:id', element: QuizRunner, permissions: [] },
   {
     id: 'marketing',
     path: '/marketing',

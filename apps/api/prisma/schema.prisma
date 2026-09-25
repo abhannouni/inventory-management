@@ -107,6 +107,13 @@ enum NotificationType {
   visit_plan_assigned
   visit_plan_reminder
   visit_plan_missing
+  training_quiz_assigned
+}
+
+/// Whether a training quiz question accepts one answer or several.
+enum QuizAnswerMode {
+  single
+  multiple
 }
 
 // ─── Models ────────────────────────────────────────────────────────────────────
@@ -159,6 +166,8 @@ model User {
   notifications     Notification[]
   priceSurveyAssignments PriceSurveyAssignment[]
   priceSurveySubmissions PriceSurveySubmission[]
+  trainingQuizzesCreated TrainingQuiz[]
+  trainingAssignments    TrainingAssignment[]
 
   @@index([role_id])
   @@index([is_active])
@@ -558,6 +567,98 @@ model Notification {
   @@index([user_id, is_read])
   @@index([created_at])
   @@map("notifications")
+}
+
+// ─── Training (Formation) ──────────────────────────────────────────────────────
+
+/// A questionnaire the Super Admin builds from an Excel file and assigns to
+/// users. `deadline` gates starting it; once started, the user has
+/// `duration_minutes` to finish.
+model TrainingQuiz {
+  id               String         @id @default(uuid())
+  title            String
+  description      String?
+  deadline         DateTime
+  answer_mode      QuizAnswerMode @default(single)
+  duration_minutes Int
+  created_by       User?          @relation(fields: [created_by_id], references: [id], onDelete: SetNull)
+  created_by_id    String?
+  created_at       DateTime       @default(now())
+  updated_at       DateTime       @default(now()) @updatedAt
+
+  questions   TrainingQuestion[]
+  assignments TrainingAssignment[]
+
+  @@index([created_at])
+  @@map("training_quizzes")
+}
+
+model TrainingQuestion {
+  id       String       @id @default(uuid())
+  quiz     TrainingQuiz @relation(fields: [quiz_id], references: [id], onDelete: Cascade)
+  quiz_id  String
+  /// Order as authored in the Excel file (1-based). Users see a shuffled order.
+  position Int
+  text     String
+
+  options TrainingOption[]
+  answers TrainingAnswer[]
+
+  @@index([quiz_id])
+  @@map("training_questions")
+}
+
+model TrainingOption {
+  id          String           @id @default(uuid())
+  question    TrainingQuestion @relation(fields: [question_id], references: [id], onDelete: Cascade)
+  question_id String
+  position    Int
+  text        String
+  is_correct  Boolean          @default(false)
+
+  @@index([question_id])
+  @@map("training_options")
+}
+
+/// One user's copy of a quiz. `question_order` / `option_order` hold this
+/// user's shuffle, fixed at start so a reload shows the same order.
+model TrainingAssignment {
+  id             String       @id @default(uuid())
+  quiz           TrainingQuiz @relation(fields: [quiz_id], references: [id], onDelete: Cascade)
+  quiz_id        String
+  user           User         @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id        String
+  assigned_at    DateTime     @default(now())
+  started_at     DateTime?
+  submitted_at   DateTime?
+  /// Number of questions answered correctly — set on submission.
+  score          Int?
+  /// Question ids in the order this user sees them.
+  question_order Json?
+  /// Map of question id → option ids in the order this user sees them.
+  option_order   Json?
+  /// Times the user switched away from the quiz window while it was running.
+  leave_count    Int          @default(0)
+
+  answers TrainingAnswer[]
+
+  @@unique([quiz_id, user_id])
+  @@index([user_id])
+  @@map("training_assignments")
+}
+
+model TrainingAnswer {
+  id            String             @id @default(uuid())
+  assignment    TrainingAssignment @relation(fields: [assignment_id], references: [id], onDelete: Cascade)
+  assignment_id String
+  question      TrainingQuestion   @relation(fields: [question_id], references: [id], onDelete: Cascade)
+  question_id   String
+  option_ids    String[]
+  is_correct    Boolean            @default(false)
+  answered_at   DateTime           @default(now()) @updatedAt
+
+  @@unique([assignment_id, question_id])
+  @@map("training_answers")
 }
 
 // ─── Price Surveys (Relevé de Prix) ────────────────────────────────────────────

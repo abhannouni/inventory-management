@@ -35,6 +35,10 @@
     "visit_plan_missing": {
       "title": "لا توجد زيارات مخططة لـ {{actorName}} لشهر {{month}}/{{year}}",
       "body": "افتح مخطط الزيارات لمعالجة ذلك."
+    },
+    "training_quiz_assigned": {
+      "title": "استبيان جديد: {{quizTitle}}",
+      "body": "اضغط للبدء."
     }
   }
 }

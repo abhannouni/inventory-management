@@ -53,7 +53,8 @@
     "sell_out": "Ventes (Sell-out)",
     "hr": "RH",
     "product_requests": "Marketing",
-    "promos": "Promos"
+    "promos": "Promos",
+    "training": "Formation"
   },
   "matrix": {
     "superAdminLocked": "Le super administrateur détient toujours toutes les permissions. Ce rôle n'est pas modifiable — c'est ce qui garantit que vous ne pourrez jamais être exclu de la plateforme.",

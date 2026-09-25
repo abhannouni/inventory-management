@@ -26,6 +26,12 @@ export function toYYYYMMDD(d: Date) {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 }
 
+/** A `datetime-local` input value (local time, minute precision). */
+export function toDateTimeLocal(d: Date) {
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${toYYYYMMDD(d)}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
 /** Monday=0 .. Sunday=6, matching the Monday-first grid/weekday labels used throughout. */
 export function weekdayIndexMonFirst(d: Date) {
   return (d.getDay() + 6) % 7;

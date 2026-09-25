@@ -38,6 +38,11 @@ export class PrismaService implements OnModuleInit, OnModuleDestroy {
   readonly priceSurveySubmission: PrismaClient['priceSurveySubmission'];
   readonly priceSurveyItem: PrismaClient['priceSurveyItem'];
   readonly visitPlan: PrismaClient['visitPlan'];
+  readonly trainingQuiz: PrismaClient['trainingQuiz'];
+  readonly trainingQuestion: PrismaClient['trainingQuestion'];
+  readonly trainingOption: PrismaClient['trainingOption'];
+  readonly trainingAssignment: PrismaClient['trainingAssignment'];
+  readonly trainingAnswer: PrismaClient['trainingAnswer'];
 
   constructor(config: ConfigService) {
     const adapter = new PrismaPg(config.get<string>('DATABASE_URL')!);
@@ -75,6 +80,11 @@ export class PrismaService implements OnModuleInit, OnModuleDestroy {
     this.priceSurveySubmission = this.client.priceSurveySubmission;
     this.priceSurveyItem = this.client.priceSurveyItem;
     this.visitPlan = this.client.visitPlan;
+    this.trainingQuiz = this.client.trainingQuiz;
+    this.trainingQuestion = this.client.trainingQuestion;
+    this.trainingOption = this.client.trainingOption;
+    this.trainingAssignment = this.client.trainingAssignment;
+    this.trainingAnswer = this.client.trainingAnswer;
   }
 
   $transaction: PrismaClient['$transaction'] = (...args: any[]) =>

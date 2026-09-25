@@ -28,6 +28,7 @@ export const RESOURCES = [
   'product_requests',
   'promos',
   'price_surveys',
+  'training',
 ] as const;
 
 export type Resource = (typeof RESOURCES)[number];
@@ -171,6 +172,16 @@ export const PERMISSIONS: PermissionDef[] = [
     resource: 'price_surveys',
     action: 'manage',
     description: "Assign products to a user's price survey and browse submission history",
+  },
+
+  // Training (Formation): taking an assigned quiz needs no permission — the
+  // assignment itself is the grant. `manage` (create, assign, see results) is
+  // in no ROLE_PRESETS entry, so only super_admin holds it.
+  {
+    code: 'training.manage',
+    resource: 'training',
+    action: 'manage',
+    description: 'Create training quizzes, assign them and view results (super admin only)',
   },
 ];
 

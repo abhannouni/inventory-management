@@ -1,0 +1,186 @@
+{
+  "title": "Formation",
+  "duration_one": "{{count}} min",
+  "duration_other": "{{count}} min",
+  "questionCount_one": "{{count}} question",
+  "questionCount_other": "{{count}} questions",
+  "status": {
+    "not_started": "À faire",
+    "in_progress": "En cours",
+    "completed": "Terminé",
+    "missed": "Non fait"
+  },
+  "answerMode": {
+    "single": "Une seule réponse",
+    "singleHint": "Une seule bonne réponse par question",
+    "multiple": "Plusieurs réponses",
+    "multipleHint": "Une ou plusieurs bonnes réponses par question"
+  },
+  "my": {
+    "subtitle": "Vos questionnaires à compléter",
+    "deadline": "Avant le {{date}}",
+    "open": "Commencer",
+    "resume": "Reprendre",
+    "emptyTitle": "Rien à faire pour le moment",
+    "emptyHint": "Vous serez notifié dès qu'un questionnaire vous sera attribué."
+  },
+  "runner": {
+    "notFound": "Ce questionnaire est introuvable.",
+    "rulesTitle": "Avant de commencer",
+    "ruleTime_one": "Une fois commencé, vous avez {{count}} minute pour terminer.",
+    "ruleTime_other": "Une fois commencé, vous avez {{count}} minutes pour terminer.",
+    "ruleStay": "Restez sur cet écran jusqu'à la fin — ne quittez pas l'application.",
+    "ruleSingle": "Choisissez une réponse, puis appuyez sur « Suivant ».",
+    "ruleMultiple": "Choisissez une ou plusieurs réponses, puis appuyez sur « Suivant ».",
+    "ruleAuto": "Quand le temps est écoulé, vos réponses sont envoyées automatiquement.",
+    "start": "Commencer",
+    "questionOf": "Question {{current}} / {{total}}",
+    "pickOne": "Choisissez une réponse",
+    "pickMany": "Choisissez une ou plusieurs réponses",
+    "next": "Suivant",
+    "finish": "Terminer",
+    "saveError": "Impossible d'enregistrer la réponse. Vérifiez votre connexion et réessayez.",
+    "leaveWarning": "Merci de rester sur cet écran jusqu'à la fin.",
+    "ok": "OK",
+    "doneTitle": "Merci !",
+    "doneText": "Vos réponses ont bien été envoyées.",
+    "doneTimeout": "Le temps est écoulé — vos réponses ont bien été envoyées.",
+    "missedTitle": "Questionnaire fermé",
+    "missedText": "La date limite de ce questionnaire est dépassée.",
+    "backToTraining": "Retour à la formation"
+  },
+  "manager": {
+    "subtitle": "Créez des questionnaires, attribuez-les et suivez les résultats",
+    "newQuiz": "Nouveau questionnaire",
+    "emptyTitle": "Aucun questionnaire pour le moment",
+    "emptyHint": "Créez-en un à partir d'un fichier Excel en quelques secondes.",
+    "open": "Ouvert",
+    "closed": "Clôturé",
+    "completedOf": "{{done}} / {{total}} terminés",
+    "notAssigned": "Pas encore attribué"
+  },
+  "create": {
+    "title": "Nouveau questionnaire",
+    "step1": "1. Informations",
+    "step2": "2. Questions (fichier Excel)",
+    "optional": "(optionnel)",
+    "fields": {
+      "title": "Titre",
+      "description": "Description",
+      "deadline": "Date limite",
+      "duration": "Temps pour répondre (minutes)",
+      "answerMode": "Type de réponse"
+    },
+    "templateTitle": "Modèle Excel",
+    "templateHint": "Téléchargez le modèle : une ligne par question (minimum 3), 2 à 4 réponses, puis le numéro de la bonne réponse.",
+    "downloadTemplate": "Télécharger le modèle",
+    "chooseFile": "Choisir le fichier Excel",
+    "fileHint": ".xlsx ou .xls, 10 Mo max",
+    "fixErrors": "Corrigez le fichier puis réessayez — rien n'a été créé :",
+    "rowLabel": "Ligne {{row}}",
+    "submit": "Créer le questionnaire",
+    "success_one": "Questionnaire créé avec {{count}} question",
+    "success_other": "Questionnaire créé avec {{count}} questions",
+    "errors": {
+      "title": "Le titre est obligatoire.",
+      "deadline": "Choisissez une date limite dans le futur.",
+      "duration": "Indiquez une durée en minutes (au moins 1).",
+      "file": "Ajoutez le fichier Excel des questions."
+    }
+  },
+  "edit": {
+    "title": "Modifier le questionnaire",
+    "success": "Questionnaire mis à jour",
+    "questionsLocked": "Les questions ne peuvent pas être modifiées après la création. Pour les changer, créez un nouveau questionnaire."
+  },
+  "assign": {
+    "title": "Attribuer le questionnaire",
+    "hint": "Les utilisateurs choisis reçoivent une notification.",
+    "everyone": "Tout le monde",
+    "users": "Utilisateurs",
+    "search": "Rechercher un nom ou un e-mail…",
+    "noResults": "Aucun utilisateur trouvé",
+    "typeToSearch": "Tapez pour rechercher",
+    "selected_one": "{{count}} utilisateur sélectionné",
+    "selected_other": "{{count}} utilisateurs sélectionnés",
+    "clear": "Tout retirer",
+    "everyoneAssigned": "Tous les utilisateurs ont déjà ce questionnaire.",
+    "submit_one": "Attribuer ({{count}})",
+    "submit_other": "Attribuer ({{count}})",
+    "success_one": "Attribué à {{count}} utilisateur",
+    "success_other": "Attribué à {{count}} utilisateurs"
+  },
+  "detail": {
+    "back": "Tous les questionnaires",
+    "assign": "Attribuer",
+    "tabs": {
+      "results": "Résultats",
+      "questions": "Questions"
+    },
+    "deleteConfirm": "Supprimer ce questionnaire et tous ses résultats ? Cette action est définitive.",
+    "deleted": "Questionnaire supprimé",
+    "unassignConfirm": "Retirer le questionnaire à {{name}} ?",
+    "unassigned": "Attribution retirée"
+  },
+  "stats": {
+    "assigned": "Attribués",
+    "completed": "Terminés",
+    "pending": "Pas encore",
+    "inProgressHint_one": "dont {{count}} en cours",
+    "inProgressHint_other": "dont {{count}} en cours",
+    "missed": "Non faits (délai dépassé)",
+    "average": "Score moyen"
+  },
+  "filters": {
+    "all": "Tous",
+    "completed": "Terminés",
+    "pending": "Pas encore",
+    "missed": "Non faits"
+  },
+  "results": {
+    "user": "Utilisateur",
+    "status": "Statut",
+    "score": "Score",
+    "time": "Durée",
+    "submittedAt": "Envoyé le",
+    "leaves": "Sorties",
+    "leavesHint": "Nombre de fois où l'utilisateur a quitté l'écran pendant le questionnaire",
+    "view": "Voir les réponses",
+    "unassign": "Retirer",
+    "empty": "Personne n'a encore ce questionnaire. Cliquez sur « Attribuer ».",
+    "emptyFilter": "Aucun utilisateur dans cette catégorie."
+  },
+  "questions": {
+    "noAnswers": "Pas encore de réponses",
+    "correctRate": "{{pct}}% de bonnes réponses ({{correct}}/{{total}})"
+  },
+  "review": {
+    "title": "Réponses",
+    "right": "Juste",
+    "wrong": "Faux",
+    "unanswered": "Sans réponse",
+    "picked": "Choisi",
+    "leaves_one": "A quitté l'écran {{count}} fois pendant le questionnaire.",
+    "leaves_other": "A quitté l'écran {{count}} fois pendant le questionnaire."
+  },
+  "export": {
+    "button": "Exporter les résultats",
+    "buttonShort": "Exporter Excel",
+    "title": "Exporter les résultats",
+    "hint": "Choisissez un ou plusieurs questionnaires. Vous obtenez un fichier Excel avec un résumé et une feuille par questionnaire (score et réponses de chaque utilisateur).",
+    "selectAll": "Tout sélectionner",
+    "download_one": "Télécharger ({{count}})",
+    "download_other": "Télécharger ({{count}})",
+    "success": "Fichier Excel téléchargé",
+    "summarySheet": "Résumé",
+    "rightAnswers": "Bonne réponse",
+    "cols": {
+      "quiz": "Questionnaire",
+      "durationMin": "Durée (min)",
+      "questions": "Questions",
+      "email": "E-mail",
+      "role": "Rôle",
+      "startedAt": "Commencé le"
+    }
+  }
+}
