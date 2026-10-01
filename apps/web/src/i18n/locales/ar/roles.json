@@ -34,7 +34,8 @@
     "set_visibility": "تحديد الظهور",
     "change_status": "تغيير الحالة",
     "view_audit_log": "عرض سجل التدقيق",
-    "upload_picture": "إضافة صورة رف للعرض"
+    "upload_picture": "إضافة صورة رف للعرض",
+    "manage": "إدارة"
   },
   "resources": {
     "users": "المستخدمون",

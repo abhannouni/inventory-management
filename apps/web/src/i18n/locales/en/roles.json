@@ -31,7 +31,8 @@
     "set_visibility": "Set visibility",
     "change_status": "Change status",
     "view_audit_log": "View audit log",
-    "upload_picture": "Upload promo shelf photo"
+    "upload_picture": "Upload promo shelf photo",
+    "manage": "Manage"
   },
   "resources": {
     "users": "Users",

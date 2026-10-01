@@ -145,6 +145,16 @@ export const PERMISSIONS: PermissionDef[] = [
   // Not included in any ROLE_PRESETS entry — only super_admin (which bypasses
   // the preset table and gets every permission) can reach the HR module.
   { code: 'hr.read', resource: 'hr', action: 'read', description: 'View HR module (super admin only)' },
+  // Working hours: `read` covers the tracking dashboard and employee details;
+  // `manage` covers assigning schedules (by role, in bulk or per employee)
+  // and entering/correcting time records. Clocking your own time in and out
+  // needs neither — like taking a training quiz, it is scoped to the caller.
+  {
+    code: 'hr.manage',
+    resource: 'hr',
+    action: 'manage',
+    description: 'Assign working hours and correct time records (super admin only)',
+  },
 
   // Promos: `read` is granted broadly below (every role sees the current
   // promo table); create/update/delete are deliberately absent from every

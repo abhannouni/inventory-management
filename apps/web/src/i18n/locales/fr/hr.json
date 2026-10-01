@@ -1,0 +1,267 @@
+{
+  "title": "Heures de travail",
+  "subtitle": "Attribuez les horaires et suivez le temps enregistré par chaque employé",
+  "tabs": {
+    "tracking": "Suivi",
+    "schedules": "Horaires"
+  },
+  "status": {
+    "working": "En poste",
+    "completed": {
+      "label": "Complété",
+      "hint": "Vert — a effectué au moins les heures prévues"
+    },
+    "short": {
+      "label": "Léger manque",
+      "hint": "Orange — jusqu'à 15 minutes sous les heures prévues"
+    },
+    "missing": {
+      "label": "Heures manquantes",
+      "hint": "Rouge — plus de 15 minutes sous les heures prévues"
+    },
+    "in_progress": {
+      "label": "En cours",
+      "hint": "Bleu — pointé en ce moment, ou le service n'est pas terminé"
+    },
+    "not_started": {
+      "label": "Pas commencé",
+      "hint": "Gris — le service n'est pas terminé et aucun temps n'est enregistré"
+    },
+    "no_schedule": {
+      "label": "Sans horaire",
+      "hint": "Gris — aucune heure de travail prévue ce jour"
+    }
+  },
+  "source": {
+    "role": "Horaire du rôle",
+    "custom": "Personnalisé",
+    "none": "Sans horaire"
+  },
+  "schedule": {
+    "dayOff": "Repos",
+    "breakShort": "pause {{minutes}} min",
+    "none": "Sans horaire"
+  },
+  "editor": {
+    "presets": "Remplissage rapide :",
+    "preset": {
+      "weekdays": "Lun–Ven 9h00–18h00",
+      "weekdaysSaturday": "Lun–Ven + samedi matin",
+      "sixDays": "Lun–Sam 8h30–16h30"
+    },
+    "copyFirst": "Copier le 1er jour partout",
+    "copyFirstHint": "Donner à chaque jour travaillé les mêmes horaires que le premier",
+    "start": "Début",
+    "end": "Fin",
+    "break": "Pause",
+    "noBreak": "Sans pause",
+    "breakOption": "Pause {{minutes}} min",
+    "weeklyTotal": "Total hebdomadaire",
+    "errors": {
+      "required": "Saisissez une heure de début et de fin",
+      "endBeforeStart": "La fin doit être après le début",
+      "breakTooLong": "La pause dépasse la durée du service"
+    }
+  },
+  "assign": {
+    "title_one": "Attribuer des horaires à {{count}} employé",
+    "title_other": "Attribuer des horaires à {{count}} employés",
+    "titleOne": "Horaires — {{name}}",
+    "appliesTo_one": "S'applique à {{count}} employé",
+    "appliesTo_other": "S'applique à {{count}} employés",
+    "modeLabel": "Que faut-il attribuer",
+    "mode": {
+      "custom": {
+        "label": "Horaires personnalisés",
+        "hint": "Définir des heures précises pour chaque jour"
+      },
+      "role_default": {
+        "label": "Horaire du rôle",
+        "hint": "Suivre les horaires par défaut de leur rôle"
+      },
+      "none": {
+        "label": "Sans horaire",
+        "hint": "Aucune heure de travail attendue"
+      }
+    },
+    "effectiveFrom": "À partir du",
+    "effectiveHint": "Les jours passés conservent les horaires qui s'appliquaient alors.",
+    "note": "Note (facultatif)",
+    "notePlaceholder": "ex. Horaires d'été",
+    "review": "Vérifier les changements",
+    "confirmTitle_one": "Confirmer les nouveaux horaires de {{count}} employé",
+    "confirmTitle_other": "Confirmer les nouveaux horaires de {{count}} employés",
+    "effectiveOn": "à partir du {{date}}",
+    "weekly": "{{hours}} / semaine",
+    "replacesCustom_one": "{{count}} employé a des horaires personnalisés — ils seront remplacés.",
+    "replacesCustom_other": "{{count}} employés ont des horaires personnalisés — ils seront remplacés.",
+    "currentWeekly": "Actuel / semaine",
+    "newWeekly": "Nouveau / semaine",
+    "apply_one": "Appliquer à {{count}} employé",
+    "apply_other": "Appliquer à {{count}} employés",
+    "success_one": "Horaires mis à jour pour {{count}} employé",
+    "success_other": "Horaires mis à jour pour {{count}} employés"
+  },
+  "errors": {
+    "saveFailed": "Impossible d'enregistrer les modifications"
+  },
+  "table": {
+    "employee": "Employé",
+    "role": "Rôle",
+    "roleRegion": "Rôle / région",
+    "schedule": "Horaire",
+    "week": "Semaine",
+    "assigned": "Prévu",
+    "worked": "Effectué",
+    "remaining": "Restant",
+    "overtime": "Heures sup.",
+    "status": "Statut"
+  },
+  "roles": {
+    "title": "Horaires par défaut des rôles",
+    "subtitle": "Chaque employé suit l'horaire de son rôle, sauf s'il a des horaires personnalisés.",
+    "employees_one": "{{count}} employé",
+    "employees_other": "{{count}} employés",
+    "customCount_one": "{{count}} personnalisé",
+    "customCount_other": "{{count}} personnalisés",
+    "perWeek": "par semaine",
+    "noDefault": "Pas encore d'horaire par défaut",
+    "upcoming": "Change le {{date}} → {{hours}}",
+    "edit": "Modifier l'horaire",
+    "set": "Définir l'horaire",
+    "resetAll": "Remettre tous par défaut",
+    "resetAllHint": "Supprimer les horaires personnalisés pour que tout le rôle suive l'horaire par défaut",
+    "editTitle": "Horaire par défaut — {{role}}",
+    "appliesTo_one": "S'applique automatiquement à {{count}} employé de ce rôle.",
+    "appliesTo_other": "S'applique automatiquement à {{count}} employés de ce rôle.",
+    "customKept_one": "{{count}} employé avec un horaire personnalisé le conserve.",
+    "customKept_other": "{{count}} employés avec un horaire personnalisé le conservent.",
+    "saved": "Horaire par défaut enregistré",
+    "removed": "Horaire par défaut supprimé",
+    "remove": "Supprimer l'horaire",
+    "removeConfirm_one": "{{count}} employé se retrouvera sans horaire. Cliquez à nouveau pour confirmer.",
+    "removeConfirm_other": "{{count}} employés se retrouveront sans horaire. Cliquez à nouveau pour confirmer.",
+    "removeConfirmButton": "Confirmer la suppression"
+  },
+  "employees": {
+    "title": "Horaires des employés",
+    "subtitle": "Sélectionnez des employés pour attribuer des horaires en masse, ou modifiez-les un par un.",
+    "assignAllMatching_one": "Attribuer à l'employé affiché",
+    "assignAllMatching_other": "Attribuer aux {{count}} affichés",
+    "empty": "Aucun employé ne correspond à ces filtres",
+    "changesOn": "Change le {{date}}"
+  },
+  "filters": {
+    "search": "Rechercher par nom ou e-mail…",
+    "allRoles": "Tous les rôles",
+    "allRegions": "Toutes les régions",
+    "allTeams": "Toutes les équipes",
+    "allSources": "Tous types d'horaire",
+    "allStatuses": "Tous les statuts"
+  },
+  "bulk": {
+    "label": "Actions groupées",
+    "selected_one": "{{count}} sélectionné",
+    "selected_other": "{{count}} sélectionnés",
+    "selectAllMatching_one": "Sélectionner l'employé correspondant",
+    "selectAllMatching_other": "Sélectionner les {{count}} employés correspondants",
+    "selectOne": "Sélectionner {{name}}",
+    "assign": "Attribuer des horaires",
+    "useRoleDefault": "Horaire du rôle",
+    "clear": "Désélectionner"
+  },
+  "actions": {
+    "details": "Détails",
+    "editSchedule": "Modifier l'horaire"
+  },
+  "review": {
+    "label": "Sortie manquante",
+    "hint": "Un pointage n'a jamais été clôturé. Ouvrez l'employé pour le corriger."
+  },
+  "date": {
+    "label": "Jour",
+    "previous": "Jour précédent",
+    "next": "Jour suivant",
+    "today": "Aujourd'hui",
+    "updatedAt": "Mis à jour à {{time}} · actualisé chaque minute",
+    "previousWeek": "Semaine précédente",
+    "nextWeek": "Semaine suivante",
+    "thisWeek": "Cette semaine"
+  },
+  "kpi": {
+    "total": "Employés",
+    "completed": "Complétés",
+    "below": "Sous les heures",
+    "belowHint": "{{short}} léger manque · {{missing}} manquantes",
+    "working": "En poste",
+    "noSchedule": "Sans horaire",
+    "hours": "Effectué / prévu",
+    "hoursHint": "{{pct}} % des heures prévues"
+  },
+  "legend": {
+    "label": "Filtrer par statut"
+  },
+  "tracking": {
+    "empty": "Aucun employé ne correspond à ces filtres"
+  },
+  "records": {
+    "add": "Ajouter du temps",
+    "addTitle": "Ajouter un pointage",
+    "editTitle": "Corriger un pointage",
+    "clockIn": "Arrivée",
+    "clockOut": "Départ",
+    "clockOutHint": "Laissez vide s'il travaille encore.",
+    "note": "Note (facultatif)",
+    "notePlaceholder": "ex. Oubli de pointage",
+    "duration": "Durée : {{hours}}",
+    "created": "Pointage ajouté",
+    "updated": "Pointage corrigé",
+    "deleted": "Pointage supprimé",
+    "deleteTitle": "Supprimer le pointage",
+    "deleteMessage": "Ce temps ne comptera plus dans les heures de l'employé.",
+    "now": "maintenant",
+    "manual": "RH",
+    "errors": {
+      "clockInRequired": "Saisissez l'heure d'arrivée",
+      "outBeforeIn": "Le départ doit être après l'arrivée"
+    }
+  },
+  "detail": {
+    "supervisor": "Équipe de {{name}}",
+    "assignedWeek": "Prévu cette semaine",
+    "workedWeek": "Effectué cette semaine",
+    "daily": "Jour par jour",
+    "day": "Jour",
+    "currentSchedule": "Horaire actuel",
+    "noSchedule": "Aucune heure de travail attribuée.",
+    "roleDefaultIs": "L'horaire de son rôle est de {{hours}} / semaine.",
+    "roleHasNoDefault": "Son rôle n'a pas d'horaire par défaut."
+  },
+  "history": {
+    "title": "Historique des horaires",
+    "empty": "Aucun changement d'horaire",
+    "kind": {
+      "custom": "Horaire personnalisé attribué",
+      "none": "Mis sans horaire",
+      "role_default": "Remis à l'horaire du rôle",
+      "role_schedule": "Horaire du rôle modifié",
+      "removed": "Horaire du rôle supprimé"
+    },
+    "current": "Actuel",
+    "upcoming": "À venir",
+    "from": "À partir du {{date}}",
+    "week": "semaine",
+    "by": "Par {{name}} le {{date}}"
+  },
+  "clock": {
+    "clockIn": "Pointer l'arrivée",
+    "clockOut": "Pointer le départ",
+    "today": "Aujourd'hui",
+    "clockedIn": "Arrivée enregistrée — bonne journée",
+    "clockedOut": "Départ enregistré",
+    "working": "Vous êtes pointé",
+    "notWorking": "Vous n'êtes pas pointé",
+    "noShift": "Aucun service prévu aujourd'hui",
+    "stale": "Votre dernier départ n'a pas été enregistré. Pointez pour commencer aujourd'hui ; les RH pourront corriger."
+  }
+}

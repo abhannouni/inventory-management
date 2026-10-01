@@ -20,7 +20,8 @@ import QuizRunner from '../pages/training/QuizRunner';
 import MarketingPage from '../pages/modules/MarketingPage';
 import MarketingDetailPage from '../pages/modules/MarketingDetailPage';
 import SettingsPage from '../pages/settings/SettingsPage';
-import HrPage from '../pages/modules/HrPage';
+import HrPage from '../pages/hr/HrPage';
+import EmployeeHoursPage from '../pages/hr/EmployeeHoursPage';
 import PromosPage from '../pages/promos/PromosPage';
 import PriceSurveysPage from '../pages/price-surveys/PriceSurveysPage';
 
@@ -205,6 +206,7 @@ export const NAV_PAGES: NavPage[] = [
       section: 'administration',
     },
   },
+  { id: 'hr-employee', path: '/hr/employees/:id', element: EmployeeHoursPage, permissions: ['hr.read'] },
 
   // ── Management ───────────────────────────────────────────────────────────
   {

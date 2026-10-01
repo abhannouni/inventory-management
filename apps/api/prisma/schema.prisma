@@ -116,6 +116,13 @@ enum QuizAnswerMode {
   multiple
 }
 
+/// How a work session got recorded: the employee clocking in/out themself,
+/// or an HR administrator entering/correcting it on their behalf.
+enum WorkSessionSource {
+  clock
+  manual
+}
+
 // ─── Models ────────────────────────────────────────────────────────────────────
 
 model Region {
@@ -168,6 +175,10 @@ model User {
   priceSurveySubmissions PriceSurveySubmission[]
   trainingQuizzesCreated TrainingQuiz[]
   trainingAssignments    TrainingAssignment[]
+  workSchedules          WorkSchedule[]  @relation("UserWorkSchedules")
+  workSchedulesAuthored  WorkSchedule[]  @relation("WorkScheduleAuthors")
+  workSessions           WorkSession[]   @relation("UserWorkSessions")
+  workSessionsEntered    WorkSession[]   @relation("WorkSessionAuthors")
 
   @@index([role_id])
   @@index([is_active])
@@ -661,6 +672,61 @@ model TrainingAnswer {
   @@map("training_answers")
 }
 
+// ─── HR: working hours ─────────────────────────────────────────────────────────
+
+/// One version of a weekly working-hours schedule, owned by either a role (its
+/// default) or a single user (a personal override) — exactly one of `role_id`
+/// / `user_id` is set, enforced by a CHECK constraint in the migration.
+///
+/// Rows are append-only: every assignment writes a new version with the day it
+/// takes effect, and the schedule in force on a date is the latest version
+/// whose `effective_from` is on or before it. That keeps past days measured
+/// against the hours that applied back then, and doubles as the change history.
+///
+/// A user's effective schedule is their own latest version, unless that version
+/// has `days = null` ("follow my role"), in which case the role's applies.
+model WorkSchedule {
+  id             String    @id @default(uuid())
+  role           Role?     @relation(fields: [role_id], references: [id], onDelete: Cascade)
+  role_id        String?
+  user           User?     @relation("UserWorkSchedules", fields: [user_id], references: [id], onDelete: Cascade)
+  user_id        String?
+  /// Seven entries, Monday first; each is `{ start: "HH:mm", end: "HH:mm",
+  /// break_minutes }` or null for a day off. Null as a whole means "no schedule"
+  /// on a role row and "follow the role default" on a user row.
+  days           Json?
+  effective_from DateTime  @db.Date
+  note           String?
+  created_by     User?     @relation("WorkScheduleAuthors", fields: [created_by_id], references: [id], onDelete: SetNull)
+  created_by_id  String?
+  created_at     DateTime  @default(now())
+
+  @@index([user_id, effective_from])
+  @@index([role_id, effective_from])
+  @@map("work_schedules")
+}
+
+/// A stretch of recorded working time. `clock_out = null` means the employee
+/// is working right now — the service keeps at most one open session per user.
+model WorkSession {
+  id            String            @id @default(uuid())
+  user          User              @relation("UserWorkSessions", fields: [user_id], references: [id], onDelete: Cascade)
+  user_id       String
+  clock_in      DateTime
+  clock_out     DateTime?
+  source        WorkSessionSource @default(clock)
+  note          String?
+  /// The HR administrator who entered or last corrected it; null for self clock-ins.
+  created_by    User?             @relation("WorkSessionAuthors", fields: [created_by_id], references: [id], onDelete: SetNull)
+  created_by_id String?
+  created_at    DateTime          @default(now())
+  updated_at    DateTime          @default(now()) @updatedAt
+
+  @@index([user_id, clock_in])
+  @@index([clock_out])
+  @@map("work_sessions")
+}
+
 // ─── Price Surveys (Relevé de Prix) ────────────────────────────────────────────
 
 /// The persistent list of products a given (user, store) pair must survey.
@@ -742,9 +808,10 @@ model Role {
   created_at  DateTime @default(now())
   updated_at  DateTime @default(now()) @updatedAt
 
-  users       User[]
-  permissions RolePermission[]
-  dashboards  Dashboard[]
+  users         User[]
+  permissions   RolePermission[]
+  dashboards    Dashboard[]
+  workSchedules WorkSchedule[]
 
   @@map("roles")
 }

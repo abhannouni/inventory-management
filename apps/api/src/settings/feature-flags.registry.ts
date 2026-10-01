@@ -19,4 +19,11 @@ export const FEATURE_FLAGS: FeatureFlagDef[] = [
       'When enabled, merchandisers and supervisors must be within 2 km of the store to check in or check out of a visit. When disabled, check-in/out works without a location check.',
     default: true,
   },
+  {
+    key: 'hr.time_clock',
+    label: 'Employee time clock',
+    description:
+      'When enabled, every employee sees a clock-in / clock-out button in the header, and the recorded time feeds the HR working-hours tracking.',
+    default: true,
+  },
 ];

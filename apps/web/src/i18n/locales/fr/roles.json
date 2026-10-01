@@ -31,7 +31,8 @@
     "set_visibility": "Définir la visibilité",
     "change_status": "Changer le statut",
     "view_audit_log": "Consulter le journal d'audit",
-    "upload_picture": "Ajouter une photo de rayon promo"
+    "upload_picture": "Ajouter une photo de rayon promo",
+    "manage": "Gérer"
   },
   "resources": {
     "users": "Utilisateurs",

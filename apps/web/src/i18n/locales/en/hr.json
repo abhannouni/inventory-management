@@ -1,0 +1,267 @@
+{
+  "title": "Working hours",
+  "subtitle": "Assign working hours and follow the time every employee records",
+  "tabs": {
+    "tracking": "Tracking",
+    "schedules": "Schedules"
+  },
+  "status": {
+    "working": "Working now",
+    "completed": {
+      "label": "Completed",
+      "hint": "Green — worked at least the assigned hours"
+    },
+    "short": {
+      "label": "Slightly short",
+      "hint": "Orange — up to 15 minutes below the assigned hours"
+    },
+    "missing": {
+      "label": "Missing hours",
+      "hint": "Red — more than 15 minutes below the assigned hours"
+    },
+    "in_progress": {
+      "label": "In progress",
+      "hint": "Blue — clocked in now, or the shift is still running"
+    },
+    "not_started": {
+      "label": "Not started",
+      "hint": "Gray — the shift hasn't ended and no time is recorded yet"
+    },
+    "no_schedule": {
+      "label": "No schedule",
+      "hint": "Gray — no working hours are assigned for this day"
+    }
+  },
+  "source": {
+    "role": "Role default",
+    "custom": "Custom",
+    "none": "No schedule"
+  },
+  "schedule": {
+    "dayOff": "Day off",
+    "breakShort": "{{minutes}} min break",
+    "none": "No schedule"
+  },
+  "editor": {
+    "presets": "Quick fill:",
+    "preset": {
+      "weekdays": "Mon–Fri 9:00–18:00",
+      "weekdaysSaturday": "Mon–Fri + Saturday morning",
+      "sixDays": "Mon–Sat 8:30–16:30"
+    },
+    "copyFirst": "Copy first day to all",
+    "copyFirstHint": "Give every working day the same hours as the first one",
+    "start": "Start",
+    "end": "End",
+    "break": "Break",
+    "noBreak": "No break",
+    "breakOption": "{{minutes}} min break",
+    "weeklyTotal": "Weekly total",
+    "errors": {
+      "required": "Enter a start and an end time",
+      "endBeforeStart": "The end must be after the start",
+      "breakTooLong": "The break is longer than the shift"
+    }
+  },
+  "assign": {
+    "title_one": "Assign hours to {{count}} employee",
+    "title_other": "Assign hours to {{count}} employees",
+    "titleOne": "Working hours — {{name}}",
+    "appliesTo_one": "Applies to {{count}} employee",
+    "appliesTo_other": "Applies to {{count}} employees",
+    "modeLabel": "What to assign",
+    "mode": {
+      "custom": {
+        "label": "Custom hours",
+        "hint": "Set specific hours for each day"
+      },
+      "role_default": {
+        "label": "Role default",
+        "hint": "Follow the default hours of their role"
+      },
+      "none": {
+        "label": "No schedule",
+        "hint": "No working hours are expected"
+      }
+    },
+    "effectiveFrom": "Effective from",
+    "effectiveHint": "Past days keep the hours that applied at the time.",
+    "note": "Note (optional)",
+    "notePlaceholder": "e.g. Summer hours",
+    "review": "Review changes",
+    "confirmTitle_one": "Confirm the new hours for {{count}} employee",
+    "confirmTitle_other": "Confirm the new hours for {{count}} employees",
+    "effectiveOn": "from {{date}}",
+    "weekly": "{{hours}} / week",
+    "replacesCustom_one": "{{count}} employee currently has custom hours — they will be replaced.",
+    "replacesCustom_other": "{{count}} employees currently have custom hours — they will be replaced.",
+    "currentWeekly": "Current / week",
+    "newWeekly": "New / week",
+    "apply_one": "Apply to {{count}} employee",
+    "apply_other": "Apply to {{count}} employees",
+    "success_one": "Working hours updated for {{count}} employee",
+    "success_other": "Working hours updated for {{count}} employees"
+  },
+  "errors": {
+    "saveFailed": "Could not save the changes"
+  },
+  "table": {
+    "employee": "Employee",
+    "role": "Role",
+    "roleRegion": "Role / region",
+    "schedule": "Schedule",
+    "week": "Week",
+    "assigned": "Assigned",
+    "worked": "Worked",
+    "remaining": "Remaining",
+    "overtime": "Overtime",
+    "status": "Status"
+  },
+  "roles": {
+    "title": "Default hours by role",
+    "subtitle": "Every employee follows their role's default unless they have custom hours.",
+    "employees_one": "{{count}} employee",
+    "employees_other": "{{count}} employees",
+    "customCount_one": "{{count}} with custom hours",
+    "customCount_other": "{{count}} with custom hours",
+    "perWeek": "per week",
+    "noDefault": "No default hours yet",
+    "upcoming": "Changes on {{date}} → {{hours}}",
+    "edit": "Edit default",
+    "set": "Set default hours",
+    "resetAll": "Reset everyone to default",
+    "resetAllHint": "Remove custom hours so every employee in this role follows the default",
+    "editTitle": "Default hours — {{role}}",
+    "appliesTo_one": "Applies automatically to {{count}} employee following this role.",
+    "appliesTo_other": "Applies automatically to {{count}} employees following this role.",
+    "customKept_one": "{{count}} employee with custom hours keeps them.",
+    "customKept_other": "{{count}} employees with custom hours keep them.",
+    "saved": "Default hours saved",
+    "removed": "Default hours removed",
+    "remove": "Remove default",
+    "removeConfirm_one": "{{count}} employee will be left without a schedule. Click again to confirm.",
+    "removeConfirm_other": "{{count}} employees will be left without a schedule. Click again to confirm.",
+    "removeConfirmButton": "Confirm removal"
+  },
+  "employees": {
+    "title": "Employee schedules",
+    "subtitle": "Select employees to assign hours in bulk, or edit one at a time.",
+    "assignAllMatching_one": "Assign hours to the {{count}} shown",
+    "assignAllMatching_other": "Assign hours to all {{count}} shown",
+    "empty": "No employees match these filters",
+    "changesOn": "Changes on {{date}}"
+  },
+  "filters": {
+    "search": "Search by name or email…",
+    "allRoles": "All roles",
+    "allRegions": "All regions",
+    "allTeams": "All teams",
+    "allSources": "All schedule types",
+    "allStatuses": "All statuses"
+  },
+  "bulk": {
+    "label": "Bulk actions",
+    "selected_one": "{{count}} selected",
+    "selected_other": "{{count}} selected",
+    "selectAllMatching_one": "Select the {{count}} matching employee",
+    "selectAllMatching_other": "Select all {{count}} matching employees",
+    "selectOne": "Select {{name}}",
+    "assign": "Assign hours",
+    "useRoleDefault": "Use role default",
+    "clear": "Clear selection"
+  },
+  "actions": {
+    "details": "Details",
+    "editSchedule": "Edit schedule"
+  },
+  "review": {
+    "label": "Clock-out missing",
+    "hint": "A time record was never clocked out. Open the employee to correct it."
+  },
+  "date": {
+    "label": "Day",
+    "previous": "Previous day",
+    "next": "Next day",
+    "today": "Today",
+    "updatedAt": "Updated {{time}} · refreshes every minute",
+    "previousWeek": "Previous week",
+    "nextWeek": "Next week",
+    "thisWeek": "This week"
+  },
+  "kpi": {
+    "total": "Employees",
+    "completed": "Completed",
+    "below": "Below hours",
+    "belowHint": "{{short}} slightly short · {{missing}} missing",
+    "working": "Working now",
+    "noSchedule": "No schedule",
+    "hours": "Worked / assigned",
+    "hoursHint": "{{pct}}% of assigned hours"
+  },
+  "legend": {
+    "label": "Filter by status"
+  },
+  "tracking": {
+    "empty": "No employees match these filters"
+  },
+  "records": {
+    "add": "Add time",
+    "addTitle": "Add a time record",
+    "editTitle": "Correct a time record",
+    "clockIn": "Clock-in",
+    "clockOut": "Clock-out",
+    "clockOutHint": "Leave empty if they are still working.",
+    "note": "Note (optional)",
+    "notePlaceholder": "e.g. Forgot to clock out",
+    "duration": "Duration: {{hours}}",
+    "created": "Time record added",
+    "updated": "Time record corrected",
+    "deleted": "Time record deleted",
+    "deleteTitle": "Delete time record",
+    "deleteMessage": "This time will no longer count toward the employee's hours.",
+    "now": "now",
+    "manual": "HR",
+    "errors": {
+      "clockInRequired": "Enter the clock-in time",
+      "outBeforeIn": "The clock-out must be after the clock-in"
+    }
+  },
+  "detail": {
+    "supervisor": "Team of {{name}}",
+    "assignedWeek": "Assigned this week",
+    "workedWeek": "Worked this week",
+    "daily": "Day by day",
+    "day": "Day",
+    "currentSchedule": "Current schedule",
+    "noSchedule": "No working hours assigned.",
+    "roleDefaultIs": "Their role's default is {{hours}} / week.",
+    "roleHasNoDefault": "Their role has no default hours."
+  },
+  "history": {
+    "title": "Schedule history",
+    "empty": "No schedule changes yet",
+    "kind": {
+      "custom": "Custom hours assigned",
+      "none": "Set to no schedule",
+      "role_default": "Reset to role default",
+      "role_schedule": "Role default updated",
+      "removed": "Role default removed"
+    },
+    "current": "Current",
+    "upcoming": "Upcoming",
+    "from": "From {{date}}",
+    "week": "week",
+    "by": "By {{name}} on {{date}}"
+  },
+  "clock": {
+    "clockIn": "Clock in",
+    "clockOut": "Clock out",
+    "today": "Today",
+    "clockedIn": "Clocked in — have a good day",
+    "clockedOut": "Clocked out",
+    "working": "You are clocked in",
+    "notWorking": "You are not clocked in",
+    "noShift": "No shift scheduled today",
+    "stale": "Your last clock-out was never recorded. Clock in to start today; HR can correct the earlier time."
+  }
+}

@@ -14,6 +14,12 @@
         "label": "Exiger le GPS pour le pointage d'arrivée / de sortie",
         "description": "Si activé, les marchandiseurs et superviseurs doivent se trouver à moins de 2 km du magasin pour pointer leur arrivée ou leur sortie. Si désactivé, le pointage fonctionne sans vérification de localisation."
       }
+    },
+    "hr": {
+      "time_clock": {
+        "label": "Pointeuse des employés",
+        "description": "Lorsqu'elle est activée, chaque employé voit un bouton de pointage arrivée / départ dans l'en-tête, et le temps enregistré alimente le suivi des heures de travail RH."
+      }
     }
   }
 }

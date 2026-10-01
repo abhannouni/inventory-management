@@ -8,6 +8,7 @@ import { useLanguage } from '../../hooks/useLanguage';
 import LanguageSwitcher from '../ui/LanguageSwitcher';
 import BourchaninLogo from '../ui/BourchaninLogo';
 import NotificationBell from './NotificationBell';
+import WorkClock from './WorkClock';
 
 export default function Header() {
   const { t } = useTranslation('header');
@@ -57,6 +58,9 @@ export default function Header() {
 
       {/* Right side — icons + user */}
       <div className="header-right">
+        {/* Own time clock — hidden for Super Admins and when HR turns it off */}
+        <WorkClock />
+
         {/* Language switcher — quick access */}
         <LanguageSwitcher />
 
