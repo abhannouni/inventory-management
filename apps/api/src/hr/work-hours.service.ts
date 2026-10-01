@@ -25,6 +25,7 @@ import {
 } from './dto/tracking-query.dto';
 import {
   CreateWorkSessionDto,
+  CreateWorkSessionsBulkDto,
   UpdateWorkSessionDto,
 } from './dto/work-session.dto';
 import {
@@ -523,6 +524,80 @@ export class WorkHoursService {
       }),
     ]);
     return this.toSession(session, new Date());
+  }
+
+  /**
+   * Adds the same span(s) of time to several employees at once. Anyone the
+   * time can't be added to (it overlaps time they already have) is skipped
+   * and reported rather than failing the whole batch.
+   */
+  async createSessionsBulk(dto: CreateWorkSessionsBulkDto, actor: User) {
+    const ids = Array.from(new Set(dto.user_ids));
+    const users = await this.prisma.user.findMany({
+      where: { id: { in: ids } },
+      select: { id: true, full_name: true, role: true },
+    });
+    if (users.length !== ids.length) {
+      throw new NotFoundException(
+        `${ids.length - users.length} selected employee(s) no longer exist`,
+      );
+    }
+    if (users.some((u) => u.role === UserRole.super_admin)) {
+      throw new BadRequestException('Super Administrators are not scheduled');
+    }
+
+    const spans = dto.spans
+      .map((s) => ({
+        clock_in: new Date(s.clock_in),
+        clock_out: new Date(s.clock_out),
+      }))
+      .sort((a, b) => a.clock_in.getTime() - b.clock_in.getTime());
+    for (let i = 1; i < spans.length; i++) {
+      if (spans[i].clock_in < spans[i - 1].clock_out) {
+        throw new BadRequestException('The time spans overlap each other');
+      }
+    }
+
+    const added: string[] = [];
+    const skipped: { id: string; full_name: string; reason: string }[] = [];
+    for (const user of users) {
+      try {
+        for (const span of spans) {
+          await this.assertValidSession(user.id, span.clock_in, span.clock_out);
+        }
+        added.push(user.id);
+      } catch (e) {
+        // Invalid spans fail the same way for everyone — report that once.
+        if (!(e instanceof ConflictException)) throw e;
+        skipped.push({
+          id: user.id,
+          full_name: user.full_name,
+          reason: e.message,
+        });
+      }
+    }
+
+    if (added.length) {
+      await this.prisma.$transaction([
+        this.prisma.workSession.createMany({
+          data: added.flatMap((user_id) =>
+            spans.map((span) => ({
+              user_id,
+              ...span,
+              source: WorkSessionSource.manual,
+              note: dto.note,
+              created_by_id: actor.id,
+            })),
+          ),
+        }),
+        this.audit(actor, 'create_work_sessions_bulk', 'work_session', null, {
+          user_ids: added,
+          spans,
+          note: dto.note ?? null,
+        }),
+      ]);
+    }
+    return { added: added.length, skipped };
   }
 
   async updateSession(id: string, dto: UpdateWorkSessionDto, actor: User) {

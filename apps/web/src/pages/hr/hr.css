@@ -508,6 +508,20 @@
 .wh-excluded { color: #b91c1c; }
 .wh-row-excluded td { background: #fef2f2; }
 
+/* ─── Add time by role ─── */
+.wh-roletime-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
+.wh-roletime-head strong { font-size: 13.5px; color: var(--gray-900); }
+.wh-roletime-head .wh-tag { margin: 0; }
+.wh-roletime-hours { padding: 12px 14px; margin-bottom: 16px; border: 1px solid var(--gray-200); border-radius: var(--radius-lg); background: var(--gray-50); }
+.wh-roletime-fields { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.wh-roletime-fields .form-group { margin: 0; }
+.wh-roletime-preview { margin: 10px 0 0; font-size: 13px; }
+.wh-roletime-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; max-height: 260px; overflow: auto; }
+.wh-roletime-person { display: flex; align-items: flex-start; gap: 8px; padding: 8px 10px; border: 1px solid var(--gray-200); border-radius: var(--radius); cursor: pointer; font-size: 13px; }
+.wh-roletime-person.is-on { border-color: var(--primary); background: var(--primary-light); }
+.wh-roletime-person input { margin-top: 3px; }
+.wh-roletime-person > span { display: flex; flex-direction: column; min-width: 0; }
+
 @media (max-width: 1024px) {
   .wh-detail-grid { grid-template-columns: 1fr; }
 }
@@ -517,6 +531,7 @@
   .wh-mode-grid, .wh-mode-grid-2 { grid-template-columns: 1fr; }
   .wh-calc-policy { flex-direction: column; align-items: flex-start; }
   .wh-policy-sub { padding-inline-start: 14px; }
+  .wh-roletime-fields, .wh-roletime-list { grid-template-columns: 1fr; }
   .wh-editor-row { grid-template-columns: 1fr auto; row-gap: 6px; }
   .wh-editor-times { grid-column: 1 / -1; }
   .wh-editor-break { grid-column: 1; }

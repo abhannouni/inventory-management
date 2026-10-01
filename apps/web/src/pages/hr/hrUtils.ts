@@ -144,3 +144,24 @@ export function toLocalInput(iso: string | null | undefined): string {
   const d = new Date(iso);
   return `${toDateKey(d)}T${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
 }
+
+const pad = (n: number) => String(n).padStart(2, '0');
+const toHhmm = (minutes: number) => `${pad(Math.floor(minutes / 60))}:${pad(minutes % 60)}`;
+
+/**
+ * The time records a shift becomes. With a break, the shift is split in two
+ * around it, the break placed mid-shift (on the half hour) — so the recorded
+ * time matches the hours the schedule expects.
+ */
+export function shiftSpans(day: ScheduleDay): { start: string; end: string }[] {
+  const start = toMinutes(day.start);
+  const end = toMinutes(day.end);
+  const brk = day.break_minutes;
+  if (!brk) return [{ start: day.start, end: day.end }];
+  const mid = start + (end - start - brk) / 2;
+  const breakStart = Math.min(Math.max(Math.round(mid / 30) * 30, start + 1), end - brk - 1);
+  return [
+    { start: day.start, end: toHhmm(breakStart) },
+    { start: toHhmm(breakStart + brk), end: day.end },
+  ];
+}

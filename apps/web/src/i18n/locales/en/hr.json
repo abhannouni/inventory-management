@@ -462,5 +462,28 @@
       "visit_store": "visit",
       "assigned_store": "assigned store"
     }
+  },
+  "roleTime": {
+    "open": "Add time by role",
+    "title": "Add working time by role",
+    "role": "Role",
+    "chooseRole": "Choose a role…",
+    "hours": "Hours",
+    "fromRole": "Role's hours",
+    "resetToRole": "Use the role's hours ({{start}}–{{end}})",
+    "noRoleHours": "This role has no hours on {{day}} — enter them below.",
+    "recordedAs": "recorded as {{spans}}",
+    "employees": "Employees · {{selected}} of {{total}} selected",
+    "selectAll": "Select all",
+    "noEmployees": "No active employees have this role.",
+    "notePlaceholder": "e.g. Clock was down",
+    "overlapHint": "Anyone who already has time overlapping these hours is skipped.",
+    "submit_one": "Add {{hours}} for {{count}} employee",
+    "submit_other": "Add {{hours}} for {{count}} employees",
+    "submitNone": "Select employees",
+    "added_one": "{{hours}} added for {{count}} employee",
+    "added_other": "{{hours}} added for {{count}} employees",
+    "skipped_one": "Skipped {{count}} employee who already has time then: {{names}}",
+    "skipped_other": "Skipped {{count}} employees who already have time then: {{names}}"
   }
 }

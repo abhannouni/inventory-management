@@ -339,6 +339,15 @@ export const hrApi = {
   // Time records
   createSession: (payload: { user_id: string; clock_in: string; clock_out?: string | null; note?: string }) =>
     api.post<WorkSessionRecord>('/hr/sessions', payload),
+  createSessionsBulk: (payload: {
+    user_ids: string[];
+    spans: { clock_in: string; clock_out: string }[];
+    note?: string;
+  }) =>
+    api.post<{ added: number; skipped: { id: string; full_name: string; reason: string }[] }>(
+      '/hr/sessions/bulk',
+      payload,
+    ),
   updateSession: (id: string, payload: { clock_in?: string; clock_out?: string | null; note?: string }) =>
     api.patch<WorkSessionRecord>(`/hr/sessions/${id}`, payload),
   removeSession: (id: string) => api.delete<void>(`/hr/sessions/${id}`),

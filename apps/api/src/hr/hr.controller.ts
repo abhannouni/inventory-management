@@ -36,6 +36,7 @@ import { AssignSchedulesDto, SetRoleScheduleDto } from './dto/set-schedule.dto';
 import { EmployeeFilterDto, TrackingQueryDto } from './dto/tracking-query.dto';
 import {
   CreateWorkSessionDto,
+  CreateWorkSessionsBulkDto,
   UpdateWorkSessionDto,
 } from './dto/work-session.dto';
 import { HrService } from './hr.service';
@@ -240,6 +241,19 @@ export class HrController {
   @ApiOperation({ summary: 'Record working time on behalf of an employee' })
   createSession(@Body() dto: CreateWorkSessionDto, @CurrentUser() actor: User) {
     return this.workHours.createSession(dto, actor);
+  }
+
+  @Post('sessions/bulk')
+  @RequirePermissions('hr.manage')
+  @ApiOperation({
+    summary:
+      'Record the same working time for several employees (those it would overlap are skipped)',
+  })
+  createSessionsBulk(
+    @Body() dto: CreateWorkSessionsBulkDto,
+    @CurrentUser() actor: User,
+  ) {
+    return this.workHours.createSessionsBulk(dto, actor);
   }
 
   @Patch('sessions/:id')

@@ -462,5 +462,28 @@
       "visit_store": "زيارة",
       "assigned_store": "متجر مسند"
     }
+  },
+  "roleTime": {
+    "open": "إضافة وقت حسب الدور",
+    "title": "إضافة وقت عمل حسب الدور",
+    "role": "الدور",
+    "chooseRole": "اختر دوراً…",
+    "hours": "الساعات",
+    "fromRole": "ساعات الدور",
+    "resetToRole": "استخدام ساعات الدور ({{start}}–{{end}})",
+    "noRoleHours": "لا توجد ساعات لهذا الدور يوم {{day}} — أدخلها أدناه.",
+    "recordedAs": "تُسجَّل كـ {{spans}}",
+    "employees": "الموظفون · {{selected}} من {{total}} محددون",
+    "selectAll": "تحديد الكل",
+    "noEmployees": "لا يوجد موظفون نشطون بهذا الدور.",
+    "notePlaceholder": "مثال: جهاز التسجيل كان معطلاً",
+    "overlapHint": "يتم تخطي من لديه وقت مسجَّل يتداخل مع هذه الساعات.",
+    "submit_one": "إضافة {{hours}} لـ {{count}} موظف",
+    "submit_other": "إضافة {{hours}} لـ {{count}} موظفين",
+    "submitNone": "حدد الموظفين",
+    "added_one": "تمت إضافة {{hours}} لـ {{count}} موظف",
+    "added_other": "تمت إضافة {{hours}} لـ {{count}} موظفين",
+    "skipped_one": "تم تخطي {{count}} موظف لديه وقت مسجَّل في هذه الساعات: {{names}}",
+    "skipped_other": "تم تخطي {{count}} موظفين لديهم وقت مسجَّل في هذه الساعات: {{names}}"
   }
 }

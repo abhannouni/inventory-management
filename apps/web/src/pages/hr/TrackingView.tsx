@@ -13,6 +13,7 @@ import { usePermissions } from '../../hooks/usePermissions';
 import { useTableQuery } from '../../hooks/useTableQuery';
 import AssignHoursForm from './AssignHoursForm';
 import EmployeeCell from './EmployeeCell';
+import RoleTimeForm from './RoleTimeForm';
 import WorkStatusBadge from './WorkStatusBadge';
 import WorkingHoursModal from './WorkingHoursModal';
 import {
@@ -45,6 +46,7 @@ export default function TrackingView({ filters }: Props) {
   const [data, setData] = useState<TrackingResponse | null>(null);
   const [editRow, setEditRow] = useState<TrackingRow | null>(null);
   const [calcRow, setCalcRow] = useState<TrackingRow | null>(null);
+  const [addingTime, setAddingTime] = useState(false);
 
   const { query, params, setPage, setLimit, setSearch, setSort, setFilter, reset } = useTableQuery({
     limit: 50,
@@ -207,6 +209,11 @@ export default function TrackingView({ filters }: Props) {
               {t('date.today')}
             </Button>
           )}
+          {can('hr.manage') && (
+            <Button size="sm" onClick={() => setAddingTime(true)}>
+              + {t('roleTime.open')}
+            </Button>
+          )}
         </div>
         <div className="wh-datebar-meta">
           <strong>{formatDay(date, i18n.language, { weekday: 'long', year: 'numeric', month: 'long' })}</strong>
@@ -309,6 +316,20 @@ export default function TrackingView({ filters }: Props) {
 
         {data && <Pagination meta={data.meta} onPageChange={setPage} onLimitChange={setLimit} />}
       </div>
+
+      <Modal open={addingTime} onClose={() => setAddingTime(false)} title={t('roleTime.title')} size="lg">
+        {addingTime && (
+          <RoleTimeForm
+            filters={filters}
+            defaultDate={date}
+            onCancel={() => setAddingTime(false)}
+            onDone={() => {
+              setAddingTime(false);
+              fetchData();
+            }}
+          />
+        )}
+      </Modal>
 
       <WorkingHoursModal employee={calcRow} initialDate={date} onClose={() => setCalcRow(null)} />
 

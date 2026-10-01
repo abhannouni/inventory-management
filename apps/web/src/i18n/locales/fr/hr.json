@@ -462,5 +462,28 @@
       "visit_store": "visite",
       "assigned_store": "magasin affecté"
     }
+  },
+  "roleTime": {
+    "open": "Ajouter du temps par rôle",
+    "title": "Ajouter du temps de travail par rôle",
+    "role": "Rôle",
+    "chooseRole": "Choisir un rôle…",
+    "hours": "Horaires",
+    "fromRole": "Horaires du rôle",
+    "resetToRole": "Utiliser les horaires du rôle ({{start}}–{{end}})",
+    "noRoleHours": "Ce rôle n'a pas d'horaires le {{day}} — saisissez-les ci-dessous.",
+    "recordedAs": "enregistré comme {{spans}}",
+    "employees": "Employés · {{selected}} sur {{total}} sélectionnés",
+    "selectAll": "Tout sélectionner",
+    "noEmployees": "Aucun employé actif n'a ce rôle.",
+    "notePlaceholder": "ex. La pointeuse était en panne",
+    "overlapHint": "Les employés ayant déjà du temps sur ces horaires sont ignorés.",
+    "submit_one": "Ajouter {{hours}} pour {{count}} employé",
+    "submit_other": "Ajouter {{hours}} pour {{count}} employés",
+    "submitNone": "Sélectionnez des employés",
+    "added_one": "{{hours}} ajoutées pour {{count}} employé",
+    "added_other": "{{hours}} ajoutées pour {{count}} employés",
+    "skipped_one": "{{count}} employé ignoré, il a déjà du temps sur ces horaires : {{names}}",
+    "skipped_other": "{{count}} employés ignorés, ils ont déjà du temps sur ces horaires : {{names}}"
   }
 }
