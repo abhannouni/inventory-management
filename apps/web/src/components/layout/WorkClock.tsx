@@ -2,10 +2,11 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AnimatePresence, motion } from 'framer-motion';
 import { toast } from 'react-toastify';
-import { hrApi, type MyToday } from '../../api/hr.api';
+import { hrApi, type GeoPoint, type MyToday } from '../../api/hr.api';
 import { useAppSelector } from '../../hooks/useAppDispatch';
 import WorkStatusBadge from '../../pages/hr/WorkStatusBadge';
 import { formatHours, formatShift, formatTime } from '../../pages/hr/hrUtils';
+import { getCurrentPosition } from '../../utils/geolocation';
 import Button from '../ui/Button';
 import '../../pages/hr/hr.css';
 
@@ -70,7 +71,18 @@ export default function WorkClock() {
   const toggleClock = async () => {
     setBusy(true);
     try {
-      const res = working ? await hrApi.clockOut() : await hrApi.clockIn();
+      // Only employees whose attendance policy checks location are asked for
+      // it. A refused or failed fix still clocks — the time is just recorded
+      // without a position, and HR's rules decide whether it counts.
+      let position: GeoPoint | null = null;
+      if (data.location_check) {
+        try {
+          position = await getCurrentPosition();
+        } catch {
+          toast.warning(t('clock.noPosition'));
+        }
+      }
+      const res = working ? await hrApi.clockOut(position) : await hrApi.clockIn(position);
       apply(res);
       toast.success(working ? t('clock.clockedOut') : t('clock.clockedIn'));
     } catch (e) {
@@ -142,6 +154,9 @@ export default function WorkClock() {
             )}
 
             {data.open_session?.is_stale && <p className="wh-notice">{t('clock.stale')}</p>}
+            {data.location_check && (data.enabled || working) && (
+              <p className="wh-muted wh-clock-location">{t('clock.locationChecked')}</p>
+            )}
 
             {(data.enabled || working) && (
               <Button

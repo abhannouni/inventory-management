@@ -123,6 +123,13 @@ enum WorkSessionSource {
   manual
 }
 
+/// How a visit's store counts as a valid workplace under an attendance policy:
+/// only around the visit itself, or for the whole day the visit falls on.
+enum VisitLocationScope {
+  visit_period
+  visit_day
+}
+
 // ─── Models ────────────────────────────────────────────────────────────────────
 
 model Region {
@@ -179,6 +186,8 @@ model User {
   workSchedulesAuthored  WorkSchedule[]  @relation("WorkScheduleAuthors")
   workSessions           WorkSession[]   @relation("UserWorkSessions")
   workSessionsEntered    WorkSession[]   @relation("WorkSessionAuthors")
+  attendancePolicy       AttendancePolicy?  @relation("UserAttendancePolicy")
+  attendancePoliciesEdited AttendancePolicy[] @relation("AttendancePolicyEditors")
 
   @@index([role_id])
   @@index([is_active])
@@ -715,6 +724,12 @@ model WorkSession {
   clock_in      DateTime
   clock_out     DateTime?
   source        WorkSessionSource @default(clock)
+  /// Device position when clocking in / out — null when the browser gave none
+  /// (permission denied, no fix) and on HR-entered records.
+  clock_in_lat  Decimal?          @db.Decimal(10, 7)
+  clock_in_lng  Decimal?          @db.Decimal(10, 7)
+  clock_out_lat Decimal?          @db.Decimal(10, 7)
+  clock_out_lng Decimal?          @db.Decimal(10, 7)
   note          String?
   /// The HR administrator who entered or last corrected it; null for self clock-ins.
   created_by    User?             @relation("WorkSessionAuthors", fields: [created_by_id], references: [id], onDelete: SetNull)
@@ -725,6 +740,71 @@ model WorkSession {
   @@index([user_id, clock_in])
   @@index([clock_out])
   @@map("work_sessions")
+}
+
+/// A fixed place employees may work from — an agency, office, depot.
+model WorkLocation {
+  id            String   @id @default(uuid())
+  name          String
+  address       String?
+  latitude      Decimal  @db.Decimal(10, 7)
+  longitude     Decimal  @db.Decimal(10, 7)
+  /// How close a clock-in/out must be to count as "at" this place.
+  radius_meters Int      @default(150)
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @default(now()) @updatedAt
+
+  policies AttendancePolicyLocation[]
+
+  @@map("work_locations")
+}
+
+/// Where one employee's working time counts as being at work. Configured per
+/// user — never derived from their role — so two merchandisers (or an office
+/// worker who also visits stores) can follow different rules. No row, or
+/// `enabled = false`, means their time is not location-checked at all.
+model AttendancePolicy {
+  id                    String             @id @default(uuid())
+  user                  User               @relation("UserAttendancePolicy", fields: [user_id], references: [id], onDelete: Cascade)
+  user_id               String             @unique
+  enabled               Boolean            @default(true)
+  /// The fixed work locations listed in `locations` are valid.
+  allow_work_locations  Boolean            @default(true)
+  /// The store of one of their visits is valid — see `visit_scope`.
+  allow_visit_stores    Boolean            @default(false)
+  /// Any store they are assigned to (user_stores) is valid, visit or not.
+  allow_assigned_stores Boolean            @default(false)
+  visit_scope           VisitLocationScope @default(visit_period)
+  /// With `visit_period`: how long before check-in / after check-out the
+  /// store still counts (travel, parking, clocking in on arrival).
+  visit_margin_minutes  Int                @default(30)
+  /// Radius around a store's coordinates (work locations carry their own).
+  store_radius_meters   Int                @default(150)
+  /// Whether time clocked away from every valid place still counts as worked.
+  count_off_site        Boolean            @default(false)
+  /// Whether time with no recorded position (GPS refused or unavailable) counts.
+  count_unverified      Boolean            @default(true)
+  note                  String?
+  updated_by            User?              @relation("AttendancePolicyEditors", fields: [updated_by_id], references: [id], onDelete: SetNull)
+  updated_by_id         String?
+  created_at            DateTime           @default(now())
+  updated_at            DateTime           @default(now()) @updatedAt
+
+  locations AttendancePolicyLocation[]
+
+  @@map("attendance_policies")
+}
+
+model AttendancePolicyLocation {
+  policy      AttendancePolicy @relation(fields: [policy_id], references: [id], onDelete: Cascade)
+  policy_id   String
+  location    WorkLocation     @relation(fields: [location_id], references: [id], onDelete: Cascade)
+  location_id String
+
+  @@id([policy_id, location_id])
+  @@index([location_id])
+  @@map("attendance_policy_locations")
 }
 
 // ─── Price Surveys (Relevé de Prix) ────────────────────────────────────────────

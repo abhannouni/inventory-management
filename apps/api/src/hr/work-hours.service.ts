@@ -15,6 +15,7 @@ import {
 import { paginated } from '../common/dto/pagination.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { SettingsService } from '../settings/settings.service';
+import { ClockPositionDto } from './dto/attendance.dto';
 import { RangeQueryDto } from './dto/range-query.dto';
 import { AssignSchedulesDto, SetRoleScheduleDto } from './dto/set-schedule.dto';
 import {
@@ -605,7 +606,7 @@ export class WorkHoursService {
 
     const roles = await this.roleIndex();
     const roleId = user.role_id ?? roles.byName.get(user.role)?.id ?? null;
-    const [{ byUser, byRole }, sessions, open] = await Promise.all([
+    const [{ byUser, byRole }, sessions, open, policy] = await Promise.all([
       this.loadVersions([user.id], roleId ? [roleId] : [], today),
       this.loadSessions(
         [user.id],
@@ -615,6 +616,10 @@ export class WorkHoursService {
       this.prisma.workSession.findFirst({
         where: { user_id: user.id, clock_out: null },
         orderBy: { clock_in: 'desc' },
+      }),
+      this.prisma.attendancePolicy.findUnique({
+        where: { user_id: user.id },
+        select: { enabled: true },
       }),
     ]);
 
@@ -627,6 +632,8 @@ export class WorkHoursService {
 
     return {
       enabled,
+      /** Their attendance policy checks where they clock — the app should send a position. */
+      location_check: !!policy?.enabled,
       server_now: now,
       ...day,
       schedule_source: schedule.source,
@@ -635,7 +642,7 @@ export class WorkHoursService {
     };
   }
 
-  async clockIn(user: User) {
+  async clockIn(user: User, pos: ClockPositionDto = {}) {
     if (!(await this.settings.isEnabled(TIME_CLOCK_FLAG))) {
       throw new ForbiddenException('The time clock is turned off');
     }
@@ -670,6 +677,9 @@ export class WorkHoursService {
           user_id: user.id,
           clock_in: now,
           source: WorkSessionSource.clock,
+          ...(hasPosition(pos)
+            ? { clock_in_lat: pos.lat, clock_in_lng: pos.lng }
+            : {}),
         },
       });
     });
@@ -678,7 +688,7 @@ export class WorkHoursService {
   }
 
   /** Always allowed, even with the clock turned off, so nobody is stuck clocked in. */
-  async clockOut(user: User) {
+  async clockOut(user: User, pos: ClockPositionDto = {}) {
     const now = new Date();
     const open = await this.prisma.workSession.findFirst({
       where: { user_id: user.id, clock_out: null },
@@ -694,6 +704,11 @@ export class WorkHoursService {
         note: stale
           ? (open.note ?? 'Auto-closed: no clock-out was recorded')
           : open.note,
+        // A stale session ends at its cap, hours before the employee is
+        // standing anywhere — where they are now says nothing about then.
+        ...(hasPosition(pos) && !stale
+          ? { clock_out_lat: pos.lat, clock_out_lng: pos.lng }
+          : {}),
       },
     });
     return this.myToday(user);
@@ -1042,6 +1057,13 @@ function toVersion(row: {
 /** SQL NULL for "no days" — a JSON `null` would read back the same but isn't what the column means. */
 function toJsonDays(days: WeekDays | null) {
   return days ? (days as unknown as Prisma.InputJsonArray) : Prisma.DbNull;
+}
+
+/** Both coordinates, or neither — half a position is no position. */
+function hasPosition(
+  pos: ClockPositionDto,
+): pos is { lat: number; lng: number } {
+  return typeof pos.lat === 'number' && typeof pos.lng === 'number';
 }
 
 function groupBy<T>(items: T[], key: (item: T) => string) {

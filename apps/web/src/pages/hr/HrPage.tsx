@@ -5,19 +5,23 @@ import { hrApi, type HrFilters } from '../../api/hr.api';
 import PageHeader from '../../components/ui/PageHeader';
 import SchedulesView from './SchedulesView';
 import TrackingView from './TrackingView';
+import WorkLocationsView from './WorkLocationsView';
 import './hr.css';
 
-type Tab = 'tracking' | 'schedules';
+type Tab = 'tracking' | 'schedules' | 'locations';
+const TABS: Tab[] = ['tracking', 'schedules', 'locations'];
 
 /**
  * HR → Working hours. "Tracking" is the day-by-day overview of every
  * employee; "Schedules" is where hours get assigned — by role, in bulk, or
- * to one person. The tab lives in the URL so links can open either one.
+ * to one person; "Locations" lists the agencies and offices that employees'
+ * location rules can point at. The tab lives in the URL so links can open any.
  */
 export default function HrPage() {
   const { t } = useTranslation('hr');
   const [params, setParams] = useSearchParams();
-  const tab: Tab = params.get('tab') === 'schedules' ? 'schedules' : 'tracking';
+  const requested = params.get('tab') as Tab | null;
+  const tab: Tab = requested && TABS.includes(requested) ? requested : 'tracking';
   const [filters, setFilters] = useState<HrFilters | null>(null);
 
   useEffect(() => {
@@ -31,25 +35,22 @@ export default function HrPage() {
       <PageHeader title={t('title')} subtitle={t('subtitle')} />
 
       <div className="tabs" role="tablist">
-        <button
-          role="tab"
-          aria-selected={tab === 'tracking'}
-          className={`tab-item ${tab === 'tracking' ? 'active' : ''}`}
-          onClick={() => setTab('tracking')}
-        >
-          {t('tabs.tracking')}
-        </button>
-        <button
-          role="tab"
-          aria-selected={tab === 'schedules'}
-          className={`tab-item ${tab === 'schedules' ? 'active' : ''}`}
-          onClick={() => setTab('schedules')}
-        >
-          {t('tabs.schedules')}
-        </button>
+        {TABS.map((key) => (
+          <button
+            key={key}
+            role="tab"
+            aria-selected={tab === key}
+            className={`tab-item ${tab === key ? 'active' : ''}`}
+            onClick={() => setTab(key)}
+          >
+            {t(`tabs.${key}`)}
+          </button>
+        ))}
       </div>
 
-      {tab === 'tracking' ? <TrackingView filters={filters} /> : <SchedulesView filters={filters} />}
+      {tab === 'tracking' && <TrackingView filters={filters} />}
+      {tab === 'schedules' && <SchedulesView filters={filters} />}
+      {tab === 'locations' && <WorkLocationsView />}
     </div>
   );
 }

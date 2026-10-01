@@ -445,13 +445,78 @@
 
 /* ─── Responsive ─── */
 
+/* ─── Location rules ─── */
+.wh-policy-switch {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+}
+.wh-policy-switch > div { display: flex; flex-direction: column; gap: 2px; }
+.wh-policy-switch strong { font-size: 14px; color: var(--gray-900); }
+.wh-policy .wh-editor-presets { margin-bottom: 16px; }
+.wh-policy-heading { margin: 18px 0 10px; font-size: 13px; font-weight: 700; color: var(--gray-700); text-transform: uppercase; letter-spacing: .03em; }
+.wh-policy-block {
+  margin-bottom: 10px;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  background: var(--gray-50);
+  transition: border-color .15s, background .15s;
+}
+.wh-policy-block.is-on { border-color: var(--primary); background: #fff; }
+.wh-policy-option { display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; cursor: pointer; }
+.wh-policy-option input { margin-top: 3px; flex-shrink: 0; }
+.wh-policy-sub { padding: 0 14px 12px; padding-inline-start: 38px; }
+.wh-policy-sub .wh-notice { margin: 0; }
+.wh-policy-locations { display: flex; flex-direction: column; gap: 6px; }
+.wh-policy-location { display: flex; align-items: flex-start; gap: 8px; cursor: pointer; font-size: 13.5px; }
+.wh-policy-location input { margin-top: 3px; }
+.wh-policy-location > span { display: flex; flex-direction: column; }
+.wh-policy-location.is-inactive { opacity: .6; }
+.wh-mode-grid-2 { grid-template-columns: repeat(2, 1fr); margin-bottom: 12px; }
+.wh-clock-location { margin: 0; font-size: 12px; }
+
+/* ─── Working-hours calculation ─── */
+.wh-calc { display: flex; flex-direction: column; gap: 18px; }
+.wh-calc .is-loading { opacity: .55; pointer-events: none; transition: opacity .15s; }
+.wh-calc-period { display: flex; flex-direction: column; gap: 10px; }
+.wh-calc-dates { display: flex; align-items: flex-end; gap: 12px; flex-wrap: wrap; }
+.wh-calc-dates .form-group { margin: 0; }
+.wh-chip.is-active { border-color: var(--primary); background: var(--primary-light); color: var(--primary); }
+.wh-calc-explain { margin: 2px 0 10px; font-size: 12.5px; }
+.wh-calc-policy {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--gray-200);
+  background: var(--gray-50);
+  font-size: 13px;
+}
+.wh-calc-policy.is-on { border-color: #bae6fd; background: var(--info-light); }
+.wh-calc-policy strong { color: var(--gray-900); }
+.wh-breakdown { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; }
+.wh-breakdown-bar { display: flex; height: 10px; border-radius: 99px; overflow: hidden; background: var(--gray-100); gap: 2px; }
+.wh-breakdown-bar > span { background: var(--wh-solid); min-width: 4px; }
+.wh-breakdown-legend { display: flex; flex-wrap: wrap; gap: 6px; }
+.wh-excluded { color: #b91c1c; }
+.wh-row-excluded td { background: #fef2f2; }
+
 @media (max-width: 1024px) {
   .wh-detail-grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 768px) {
   .wh-section { padding: 14px; }
-  .wh-mode-grid { grid-template-columns: 1fr; }
+  .wh-mode-grid, .wh-mode-grid-2 { grid-template-columns: 1fr; }
+  .wh-calc-policy { flex-direction: column; align-items: flex-start; }
+  .wh-policy-sub { padding-inline-start: 14px; }
   .wh-editor-row { grid-template-columns: 1fr auto; row-gap: 6px; }
   .wh-editor-times { grid-column: 1 / -1; }
   .wh-editor-break { grid-column: 1; }

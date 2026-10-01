@@ -3,7 +3,8 @@
   "subtitle": "Assign working hours and follow the time every employee records",
   "tabs": {
     "tracking": "Tracking",
-    "schedules": "Schedules"
+    "schedules": "Schedules",
+    "locations": "Locations"
   },
   "status": {
     "working": "Working now",
@@ -172,7 +173,9 @@
   },
   "actions": {
     "details": "Details",
-    "editSchedule": "Edit schedule"
+    "editSchedule": "Edit schedule",
+    "calculate": "Calculate hours",
+    "locationRules": "Location rules"
   },
   "review": {
     "label": "Clock-out missing",
@@ -262,6 +265,202 @@
     "working": "You are clocked in",
     "notWorking": "You are not clocked in",
     "noShift": "No shift scheduled today",
-    "stale": "Your last clock-out was never recorded. Clock in to start today; HR can correct the earlier time."
+    "stale": "Your last clock-out was never recorded. Clock in to start today; HR can correct the earlier time.",
+    "noPosition": "Your location couldn't be read — your time is recorded without it.",
+    "locationChecked": "Your location is recorded when you clock in and out."
+  },
+  "verdict": {
+    "verified": {
+      "label": "At a valid place",
+      "hint": "Clocked at one of the places this employee may work from"
+    },
+    "off_site": {
+      "label": "Off site",
+      "hint": "Clocked away from every place valid at that time"
+    },
+    "unverified": {
+      "label": "No position",
+      "hint": "No location was recorded (refused or unavailable)"
+    },
+    "manual": {
+      "label": "Entered by HR",
+      "hint": "Recorded by HR, who vouch for it — always counted"
+    },
+    "not_checked": {
+      "label": "Not checked",
+      "hint": "This employee's location is not checked"
+    }
+  },
+  "policy": {
+    "title": "Location rules — {{name}}",
+    "enabled": "Check where this employee works",
+    "enabledHint": "Their clock-ins and clock-outs are compared with the places below.",
+    "disabledInfo": "Location is not checked: all of their clocked time counts as working time.",
+    "presets": "Start from:",
+    "preset": {
+      "office": {
+        "label": "Office / agency",
+        "hint": "Only the selected work locations"
+      },
+      "field": {
+        "label": "Field — store visits",
+        "hint": "The store of each visit, around that visit"
+      },
+      "hybrid": {
+        "label": "Hybrid",
+        "hint": "Work locations, plus the store during each visit"
+      },
+      "stores": {
+        "label": "Any of their stores",
+        "hint": "Visit stores and every store assigned to them"
+      }
+    },
+    "placesTitle": "Valid places",
+    "workLocations": "Work locations (agency, office…)",
+    "workLocationsHint": "Valid at any time.",
+    "noLocations": "No work locations exist yet.",
+    "manageLocations": "Add one",
+    "visitStores": "The store of a visit",
+    "visitStoresHint": "While they have a visit, its store is a valid workplace — they don't need to be at the agency.",
+    "scope": {
+      "visit_period": {
+        "label": "Around the visit",
+        "hint": "From check-in to check-out (or the planned hour), plus a margin"
+      },
+      "visit_day": {
+        "label": "The whole visit day",
+        "hint": "Any time on a day they have a visit there"
+      }
+    },
+    "margin": "Margin before and after the visit",
+    "marginNone": "No margin",
+    "marginOption": "{{minutes}} min",
+    "marginHint": "Covers arriving, parking and clocking in just before checking in.",
+    "assignedStores": "Any store assigned to them",
+    "assignedStoresHint_one": "Valid at any time — {{count}} store assigned.",
+    "assignedStoresHint_other": "Valid at any time — {{count}} stores assigned.",
+    "storesWithoutCoordinates_one": "{{count}} assigned store has no coordinates and can't be checked.",
+    "storesWithoutCoordinates_other": "{{count}} assigned stores have no coordinates and can't be checked.",
+    "storeRadius": "Store radius (meters)",
+    "storeRadiusHint": "How close to a store counts as being there.",
+    "countingTitle": "What counts as working time",
+    "countOffSite": "Count off-site time",
+    "countOffSiteHint": "Time clocked away from every valid place still counts (it stays flagged).",
+    "countUnverified": "Count time without a position",
+    "countUnverifiedHint": "Time clocked without location (refused or unavailable GPS) still counts.",
+    "notePlaceholder": "e.g. Covers the Casablanca stores",
+    "lastUpdated": "Last changed by {{name}} on {{date}}",
+    "saved": "Location rules saved",
+    "errors": {
+      "noPlace": "Choose at least one kind of valid place",
+      "noLocation": "Select at least one work location"
+    },
+    "summary": {
+      "on": "Location checked",
+      "off": "Location not checked",
+      "offHint": " — all clocked time counts.",
+      "places": " — valid: {{places}}",
+      "noLocation": "no work location selected",
+      "visitPeriod": "visit stores (±{{minutes}} min)",
+      "visitDay": "visit stores (whole day)",
+      "assigned": "assigned stores",
+      "offSiteCounted": "off-site time counted",
+      "offSiteExcluded": "off-site time excluded",
+      "unverifiedCounted": "no-position time counted",
+      "unverifiedExcluded": "no-position time excluded"
+    }
+  },
+  "locations": {
+    "title": "Work locations",
+    "subtitle": "Agencies, offices and other fixed places. Each employee's location rules choose which apply to them.",
+    "add": "Add location",
+    "addTitle": "New work location",
+    "editTitle": "Edit work location",
+    "name": "Name",
+    "namePlaceholder": "e.g. Casablanca agency",
+    "address": "Address (optional)",
+    "coordinates": "Coordinates",
+    "latitude": "Latitude",
+    "longitude": "Longitude",
+    "useMyPosition": "Use my current position",
+    "radiusLabel": "Radius",
+    "radiusHint": "Between 20 and 5000 m. How close to this place counts as being there.",
+    "radius": "{{meters}} m radius",
+    "employees": "Employees",
+    "active": "Active",
+    "activeHint": "An inactive location stops counting for everyone, without editing their rules.",
+    "inactive": "Inactive",
+    "empty": "No work locations yet",
+    "saved": "Work location saved",
+    "deleted": "Work location deleted",
+    "deleteTitle": "Delete work location",
+    "deleteMessage_one": "It will be removed from {{count}} employee's location rules.",
+    "deleteMessage_other": "It will be removed from {{count}} employees' location rules.",
+    "errors": {
+      "name": "Enter a name",
+      "coordinates": "Enter a valid latitude and longitude",
+      "radius": "The radius must be a whole number between 20 and 5000"
+    }
+  },
+  "calc": {
+    "title": "Working hours — {{name}}",
+    "from": "From",
+    "to": "To",
+    "run": "Calculate",
+    "range": {
+      "thisWeek": "This week",
+      "lastWeek": "Last week",
+      "thisMonth": "This month",
+      "lastMonth": "Last month"
+    },
+    "errors": {
+      "range": "Choose a start and an end date",
+      "order": "The end date must be on or after the start date",
+      "tooLong": "A calculation can cover at most {{days}} days"
+    },
+    "workingTitle": "Working hours",
+    "workingExplain": "From clocked time only, checked against this employee's location rules. Visits are not added.",
+    "counted": "Working hours",
+    "countedHint": "Counted under their location rules",
+    "recorded": "Clocked",
+    "sessions_one": "{{count}} time record",
+    "sessions_other": "{{count}} time records",
+    "excluded": "Not counted",
+    "excludedHint": "Off-site or no-position time the rules exclude",
+    "breakdown": "Clocked time by location check",
+    "visitsTitle": "Visits",
+    "visitsExplain": "Reported separately — visit time is not part of the working hours above.",
+    "visitsPerformed": "Visits made",
+    "visitsCompleted_one": "{{count}} completed",
+    "visitsCompleted_other": "{{count}} completed",
+    "visitTime": "Time in visits",
+    "visitsNotStarted": "Planned, not started",
+    "visitsCol": "Visits",
+    "sessionsTitle": "Time records & location checks",
+    "noSessions": "No time recorded in this period",
+    "time": "Time",
+    "duration": "Duration",
+    "location": "Location",
+    "atClockIn": "At clock-in",
+    "atClockOut": "At clock-out",
+    "notCounted": "not counted",
+    "visitList": "Visit records",
+    "store": "Store",
+    "plannedAt": "planned {{time}}",
+    "visitStatus": {
+      "planned": "Planned",
+      "open": "In progress",
+      "completed": "Completed"
+    },
+    "check": {
+      "noPosition": "No position",
+      "nowhereValid": "No valid place at that time",
+      "away": "{{meters}} from {{place}}"
+    },
+    "placeKind": {
+      "work_location": "work location",
+      "visit_store": "visit",
+      "assigned_store": "assigned store"
+    }
   }
 }

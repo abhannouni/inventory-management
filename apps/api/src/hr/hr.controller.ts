@@ -24,6 +24,13 @@ import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { RequirePermissions } from '../auth/decorators/require-permissions.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../auth/guards/permissions.guard';
+import { AttendanceService } from './attendance.service';
+import {
+  ClockPositionDto,
+  CreateWorkLocationDto,
+  SetAttendancePolicyDto,
+  UpdateWorkLocationDto,
+} from './dto/attendance.dto';
 import { RangeQueryDto } from './dto/range-query.dto';
 import { AssignSchedulesDto, SetRoleScheduleDto } from './dto/set-schedule.dto';
 import { EmployeeFilterDto, TrackingQueryDto } from './dto/tracking-query.dto';
@@ -45,6 +52,7 @@ export class HrController {
   constructor(
     private readonly hrService: HrService,
     private readonly workHours: WorkHoursService,
+    private readonly attendance: AttendanceService,
   ) {}
 
   @Get()
@@ -68,14 +76,14 @@ export class HrController {
   @ApiOperation({
     summary: 'Start recording working time (idempotent while clocked in)',
   })
-  clockIn(@CurrentUser() user: User) {
-    return this.workHours.clockIn(user);
+  clockIn(@CurrentUser() user: User, @Body() pos: ClockPositionDto) {
+    return this.workHours.clockIn(user, pos);
   }
 
   @Post('me/clock-out')
   @ApiOperation({ summary: 'Stop recording working time' })
-  clockOut(@CurrentUser() user: User) {
-    return this.workHours.clockOut(user);
+  clockOut(@CurrentUser() user: User, @Body() pos: ClockPositionDto) {
+    return this.workHours.clockOut(user, pos);
   }
 
   // ─── Tracking ────────────────────────────────────────────────────────────
@@ -117,6 +125,81 @@ export class HrController {
     @Query() query: RangeQueryDto,
   ) {
     return this.workHours.employeeDetail(id, query);
+  }
+
+  @Get('employees/:id/working-hours')
+  @RequirePermissions('hr.read')
+  @ApiOperation({
+    summary:
+      "Calculate one employee's working hours from their clocked time, location-checked against their policy, with their visits reported separately",
+  })
+  calculate(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Query() query: RangeQueryDto,
+  ) {
+    return this.attendance.calculate(id, query);
+  }
+
+  // ─── Attendance policies & work locations ────────────────────────────────
+
+  @Get('employees/:id/attendance-policy')
+  @RequirePermissions('hr.read')
+  @ApiOperation({ summary: 'Where one employee may clock their working time' })
+  getPolicy(@Param('id', ParseUUIDPipe) id: string) {
+    return this.attendance.getPolicy(id);
+  }
+
+  @Put('employees/:id/attendance-policy')
+  @RequirePermissions('hr.manage')
+  @ApiOperation({ summary: "Set one employee's attendance location rules" })
+  setPolicy(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: SetAttendancePolicyDto,
+    @CurrentUser() actor: User,
+  ) {
+    return this.attendance.setPolicy(id, dto, actor);
+  }
+
+  @Get('work-locations')
+  @RequirePermissions('hr.read')
+  @ApiOperation({ summary: 'Agencies, offices and other fixed work locations' })
+  locations() {
+    return this.attendance.listLocations();
+  }
+
+  @Post('work-locations')
+  @RequirePermissions('hr.manage')
+  @ApiOperation({ summary: 'Add a work location' })
+  createLocation(
+    @Body() dto: CreateWorkLocationDto,
+    @CurrentUser() actor: User,
+  ) {
+    return this.attendance.createLocation(dto, actor);
+  }
+
+  @Patch('work-locations/:id')
+  @RequirePermissions('hr.manage')
+  @ApiOperation({ summary: 'Edit a work location' })
+  updateLocation(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: UpdateWorkLocationDto,
+    @CurrentUser() actor: User,
+  ) {
+    return this.attendance.updateLocation(id, dto, actor);
+  }
+
+  @Delete('work-locations/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @RequirePermissions('hr.manage')
+  @ApiOperation({
+    summary: 'Delete a work location (removes it from every policy)',
+  })
+  @ApiNoContentResponse()
+  removeLocation(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() actor: User,
+  ) {
+    return this.attendance.removeLocation(id, actor);
   }
 
   // ─── Schedules ───────────────────────────────────────────────────────────

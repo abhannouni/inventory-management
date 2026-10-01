@@ -3,7 +3,8 @@
   "subtitle": "Attribuez les horaires et suivez le temps enregistré par chaque employé",
   "tabs": {
     "tracking": "Suivi",
-    "schedules": "Horaires"
+    "schedules": "Horaires",
+    "locations": "Lieux"
   },
   "status": {
     "working": "En poste",
@@ -172,7 +173,9 @@
   },
   "actions": {
     "details": "Détails",
-    "editSchedule": "Modifier l'horaire"
+    "editSchedule": "Modifier l'horaire",
+    "calculate": "Calculer les heures",
+    "locationRules": "Règles de lieu"
   },
   "review": {
     "label": "Sortie manquante",
@@ -262,6 +265,202 @@
     "working": "Vous êtes pointé",
     "notWorking": "Vous n'êtes pas pointé",
     "noShift": "Aucun service prévu aujourd'hui",
-    "stale": "Votre dernier départ n'a pas été enregistré. Pointez pour commencer aujourd'hui ; les RH pourront corriger."
+    "stale": "Votre dernier départ n'a pas été enregistré. Pointez pour commencer aujourd'hui ; les RH pourront corriger.",
+    "noPosition": "Votre position n'a pas pu être lue — votre temps est enregistré sans elle.",
+    "locationChecked": "Votre position est enregistrée au pointage d'entrée et de sortie."
+  },
+  "verdict": {
+    "verified": {
+      "label": "Lieu valide",
+      "hint": "Pointé dans un des lieux où cet employé peut travailler"
+    },
+    "off_site": {
+      "label": "Hors site",
+      "hint": "Pointé loin de tout lieu valide à ce moment"
+    },
+    "unverified": {
+      "label": "Sans position",
+      "hint": "Aucune position enregistrée (refusée ou indisponible)"
+    },
+    "manual": {
+      "label": "Saisi par les RH",
+      "hint": "Enregistré par les RH, qui s'en portent garants — toujours compté"
+    },
+    "not_checked": {
+      "label": "Non contrôlé",
+      "hint": "Le lieu de cet employé n'est pas contrôlé"
+    }
+  },
+  "policy": {
+    "title": "Règles de lieu — {{name}}",
+    "enabled": "Contrôler le lieu de travail de cet employé",
+    "enabledHint": "Ses pointages d'entrée et de sortie sont comparés aux lieux ci-dessous.",
+    "disabledInfo": "Le lieu n'est pas contrôlé : tout son temps pointé compte comme temps de travail.",
+    "presets": "Partir de :",
+    "preset": {
+      "office": {
+        "label": "Bureau / agence",
+        "hint": "Uniquement les lieux de travail sélectionnés"
+      },
+      "field": {
+        "label": "Terrain — visites",
+        "hint": "Le magasin de chaque visite, autour de la visite"
+      },
+      "hybrid": {
+        "label": "Hybride",
+        "hint": "Lieux de travail, plus le magasin pendant chaque visite"
+      },
+      "stores": {
+        "label": "Tous ses magasins",
+        "hint": "Magasins visités et tous les magasins qui lui sont affectés"
+      }
+    },
+    "placesTitle": "Lieux valides",
+    "workLocations": "Lieux de travail (agence, bureau…)",
+    "workLocationsHint": "Valides à tout moment.",
+    "noLocations": "Aucun lieu de travail n'existe encore.",
+    "manageLocations": "En ajouter un",
+    "visitStores": "Le magasin d'une visite",
+    "visitStoresHint": "Pendant une visite, son magasin est un lieu de travail valide — pas besoin d'être à l'agence.",
+    "scope": {
+      "visit_period": {
+        "label": "Autour de la visite",
+        "hint": "Du check-in au check-out (ou l'heure prévue), plus une marge"
+      },
+      "visit_day": {
+        "label": "Toute la journée de visite",
+        "hint": "À tout moment le jour d'une visite dans ce magasin"
+      }
+    },
+    "margin": "Marge avant et après la visite",
+    "marginNone": "Aucune marge",
+    "marginOption": "{{minutes}} min",
+    "marginHint": "Couvre l'arrivée, le stationnement et le pointage juste avant le check-in.",
+    "assignedStores": "Tout magasin qui lui est affecté",
+    "assignedStoresHint_one": "Valide à tout moment — {{count}} magasin affecté.",
+    "assignedStoresHint_other": "Valide à tout moment — {{count}} magasins affectés.",
+    "storesWithoutCoordinates_one": "{{count}} magasin affecté n'a pas de coordonnées et ne peut pas être contrôlé.",
+    "storesWithoutCoordinates_other": "{{count}} magasins affectés n'ont pas de coordonnées et ne peuvent pas être contrôlés.",
+    "storeRadius": "Rayon autour des magasins (mètres)",
+    "storeRadiusHint": "Distance à laquelle on est considéré comme présent au magasin.",
+    "countingTitle": "Ce qui compte comme temps de travail",
+    "countOffSite": "Compter le temps hors site",
+    "countOffSiteHint": "Le temps pointé loin de tout lieu valide compte quand même (il reste signalé).",
+    "countUnverified": "Compter le temps sans position",
+    "countUnverifiedHint": "Le temps pointé sans position (GPS refusé ou indisponible) compte quand même.",
+    "notePlaceholder": "ex. Couvre les magasins de Casablanca",
+    "lastUpdated": "Modifié par {{name}} le {{date}}",
+    "saved": "Règles de lieu enregistrées",
+    "errors": {
+      "noPlace": "Choisissez au moins un type de lieu valide",
+      "noLocation": "Sélectionnez au moins un lieu de travail"
+    },
+    "summary": {
+      "on": "Lieu contrôlé",
+      "off": "Lieu non contrôlé",
+      "offHint": " — tout le temps pointé compte.",
+      "places": " — valides : {{places}}",
+      "noLocation": "aucun lieu de travail sélectionné",
+      "visitPeriod": "magasins visités (±{{minutes}} min)",
+      "visitDay": "magasins visités (toute la journée)",
+      "assigned": "magasins affectés",
+      "offSiteCounted": "temps hors site compté",
+      "offSiteExcluded": "temps hors site exclu",
+      "unverifiedCounted": "temps sans position compté",
+      "unverifiedExcluded": "temps sans position exclu"
+    }
+  },
+  "locations": {
+    "title": "Lieux de travail",
+    "subtitle": "Agences, bureaux et autres lieux fixes. Les règles de lieu de chaque employé choisissent ceux qui s'appliquent.",
+    "add": "Ajouter un lieu",
+    "addTitle": "Nouveau lieu de travail",
+    "editTitle": "Modifier le lieu de travail",
+    "name": "Nom",
+    "namePlaceholder": "ex. Agence Casablanca",
+    "address": "Adresse (facultatif)",
+    "coordinates": "Coordonnées",
+    "latitude": "Latitude",
+    "longitude": "Longitude",
+    "useMyPosition": "Utiliser ma position actuelle",
+    "radiusLabel": "Rayon",
+    "radiusHint": "Entre 20 et 5000 m. Distance à laquelle on est considéré comme présent.",
+    "radius": "rayon {{meters}} m",
+    "employees": "Employés",
+    "active": "Actif",
+    "activeHint": "Un lieu inactif ne compte plus pour personne, sans modifier leurs règles.",
+    "inactive": "Inactif",
+    "empty": "Aucun lieu de travail",
+    "saved": "Lieu de travail enregistré",
+    "deleted": "Lieu de travail supprimé",
+    "deleteTitle": "Supprimer le lieu de travail",
+    "deleteMessage_one": "Il sera retiré des règles de lieu de {{count}} employé.",
+    "deleteMessage_other": "Il sera retiré des règles de lieu de {{count}} employés.",
+    "errors": {
+      "name": "Saisissez un nom",
+      "coordinates": "Saisissez une latitude et une longitude valides",
+      "radius": "Le rayon doit être un nombre entier entre 20 et 5000"
+    }
+  },
+  "calc": {
+    "title": "Heures de travail — {{name}}",
+    "from": "Du",
+    "to": "Au",
+    "run": "Calculer",
+    "range": {
+      "thisWeek": "Cette semaine",
+      "lastWeek": "Semaine dernière",
+      "thisMonth": "Ce mois-ci",
+      "lastMonth": "Mois dernier"
+    },
+    "errors": {
+      "range": "Choisissez une date de début et de fin",
+      "order": "La date de fin doit être après la date de début",
+      "tooLong": "Un calcul couvre au plus {{days}} jours"
+    },
+    "workingTitle": "Heures de travail",
+    "workingExplain": "Uniquement à partir du temps pointé, contrôlé selon les règles de lieu de cet employé. Les visites ne sont pas ajoutées.",
+    "counted": "Heures de travail",
+    "countedHint": "Comptées selon ses règles de lieu",
+    "recorded": "Pointé",
+    "sessions_one": "{{count}} pointage",
+    "sessions_other": "{{count}} pointages",
+    "excluded": "Non compté",
+    "excludedHint": "Temps hors site ou sans position exclu par les règles",
+    "breakdown": "Temps pointé par contrôle de lieu",
+    "visitsTitle": "Visites",
+    "visitsExplain": "Présentées à part — le temps de visite ne fait pas partie des heures de travail ci-dessus.",
+    "visitsPerformed": "Visites effectuées",
+    "visitsCompleted_one": "{{count}} terminée",
+    "visitsCompleted_other": "{{count}} terminées",
+    "visitTime": "Temps en visite",
+    "visitsNotStarted": "Prévues, non commencées",
+    "visitsCol": "Visites",
+    "sessionsTitle": "Pointages et contrôles de lieu",
+    "noSessions": "Aucun temps pointé sur cette période",
+    "time": "Heure",
+    "duration": "Durée",
+    "location": "Lieu",
+    "atClockIn": "À l'entrée",
+    "atClockOut": "À la sortie",
+    "notCounted": "non compté",
+    "visitList": "Détail des visites",
+    "store": "Magasin",
+    "plannedAt": "prévue à {{time}}",
+    "visitStatus": {
+      "planned": "Prévue",
+      "open": "En cours",
+      "completed": "Terminée"
+    },
+    "check": {
+      "noPosition": "Sans position",
+      "nowhereValid": "Aucun lieu valide à ce moment",
+      "away": "à {{meters}} de {{place}}"
+    },
+    "placeKind": {
+      "work_location": "lieu de travail",
+      "visit_store": "visite",
+      "assigned_store": "magasin affecté"
+    }
   }
 }

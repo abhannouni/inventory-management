@@ -14,6 +14,7 @@ import { useTableQuery } from '../../hooks/useTableQuery';
 import AssignHoursForm from './AssignHoursForm';
 import EmployeeCell from './EmployeeCell';
 import WorkStatusBadge from './WorkStatusBadge';
+import WorkingHoursModal from './WorkingHoursModal';
 import {
   STATUS_ORDER,
   STATUS_TONE,
@@ -43,6 +44,7 @@ export default function TrackingView({ filters }: Props) {
   const [date, setDate] = useState(todayKey());
   const [data, setData] = useState<TrackingResponse | null>(null);
   const [editRow, setEditRow] = useState<TrackingRow | null>(null);
+  const [calcRow, setCalcRow] = useState<TrackingRow | null>(null);
 
   const { query, params, setPage, setLimit, setSearch, setSort, setFilter, reset } = useTableQuery({
     limit: 50,
@@ -169,6 +171,9 @@ export default function TrackingView({ filters }: Props) {
           <Link to={`/hr/employees/${r.id}?from=${date}`} className="btn btn-ghost btn-sm">
             {t('actions.details')}
           </Link>
+          <Button size="sm" variant="outline" onClick={() => setCalcRow(r)}>
+            {t('actions.calculate')}
+          </Button>
           {can('hr.manage') && (
             <Button size="sm" variant="outline" onClick={() => setEditRow(r)}>
               {t('actions.editSchedule')}
@@ -304,6 +309,8 @@ export default function TrackingView({ filters }: Props) {
 
         {data && <Pagination meta={data.meta} onPageChange={setPage} onLimitChange={setLimit} />}
       </div>
+
+      <WorkingHoursModal employee={calcRow} initialDate={date} onClose={() => setCalcRow(null)} />
 
       <Modal
         open={!!editRow}

@@ -145,6 +145,8 @@ export interface HrFilters {
 
 export interface MyToday extends DayFields {
   enabled: boolean;
+  /** Their attendance policy checks where they clock — send a position. */
+  location_check: boolean;
   server_now: string;
   schedule_source: ScheduleSource;
   sessions: WorkSessionRecord[];
@@ -172,11 +174,153 @@ export interface ScheduleChange {
   note?: string;
 }
 
+// ─── Location-checked attendance ──────────────────────────────────────────────
+
+export type VisitScope = 'visit_period' | 'visit_day';
+export type PlaceKind = 'work_location' | 'visit_store' | 'assigned_store';
+export type SessionVerdict = 'verified' | 'off_site' | 'unverified' | 'manual' | 'not_checked';
+
+export interface GeoPoint {
+  lat: number;
+  lng: number;
+}
+
+export interface WorkLocation {
+  id: string;
+  name: string;
+  address: string | null;
+  latitude: number;
+  longitude: number;
+  radius_meters: number;
+  is_active: boolean;
+}
+
+export interface WorkLocationRow extends WorkLocation {
+  employee_count: number;
+}
+
+export interface WorkLocationInput {
+  name: string;
+  address?: string;
+  latitude: number;
+  longitude: number;
+  radius_meters: number;
+  is_active: boolean;
+}
+
+export interface AttendancePolicyRules {
+  enabled: boolean;
+  allow_work_locations: boolean;
+  allow_visit_stores: boolean;
+  allow_assigned_stores: boolean;
+  visit_scope: VisitScope;
+  visit_margin_minutes: number;
+  store_radius_meters: number;
+  count_off_site: boolean;
+  count_unverified: boolean;
+}
+
+export interface AttendancePolicyInput extends AttendancePolicyRules {
+  work_location_ids: string[];
+  note?: string;
+}
+
+export interface AttendancePolicyView extends AttendancePolicyRules {
+  configured: boolean;
+  work_locations: WorkLocation[];
+  note: string | null;
+  updated_at: string | null;
+  updated_by: { id: string; full_name: string } | null;
+}
+
+export interface AttendancePolicy extends AttendancePolicyView {
+  assigned_stores: { total: number; without_coordinates: number };
+}
+
+export interface PointCheck {
+  status: 'at_location' | 'off_site' | 'no_position';
+  place: { kind: PlaceKind; id: string; name: string; distance_meters: number } | null;
+}
+
+export interface CalculatedSession {
+  id: string;
+  clock_in: string;
+  clock_out: string | null;
+  is_open: boolean;
+  source: 'clock' | 'manual';
+  note: string | null;
+  /** Seconds inside the calculated range. */
+  seconds: number;
+  verdict: SessionVerdict;
+  counts: boolean;
+  checks: { clock_in: PointCheck | null; clock_out: PointCheck | null };
+}
+
+export interface CalculatedDay {
+  date: string;
+  planned: ScheduleDay | null;
+  assigned_seconds: number;
+  recorded_seconds: number;
+  counted_seconds: number;
+  excluded_seconds: number;
+  verified_seconds: number;
+  off_site_seconds: number;
+  unverified_seconds: number;
+  manual_seconds: number;
+  status: WorkStatus;
+  is_working: boolean;
+  visit_count: number;
+  visit_seconds: number;
+}
+
+export interface CalculatedVisit {
+  id: string;
+  status: 'planned' | 'open' | 'completed';
+  store: { id: string; name: string };
+  planned_date: string | null;
+  planned_time: string | null;
+  checkin_time: string | null;
+  checkout_time: string | null;
+  duration_seconds: number;
+}
+
+export interface WorkingHoursCalculation {
+  employee: HrEmployee;
+  from: string;
+  to: string;
+  today: string;
+  generated_at: string;
+  policy: AttendancePolicyView;
+  working_hours: {
+    assigned_seconds: number;
+    recorded_seconds: number;
+    counted_seconds: number;
+    excluded_seconds: number;
+    verified_seconds: number;
+    off_site_seconds: number;
+    unverified_seconds: number;
+    manual_seconds: number;
+    remaining_seconds: number;
+    overtime_seconds: number;
+    session_count: number;
+  };
+  visits: {
+    performed: number;
+    completed: number;
+    open: number;
+    not_started: number;
+    total_seconds: number;
+  };
+  days: CalculatedDay[];
+  sessions: CalculatedSession[];
+  visit_list: CalculatedVisit[];
+}
+
 export const hrApi = {
   // Own time clock
   myToday: () => api.get<MyToday>('/hr/me/today'),
-  clockIn: () => api.post<MyToday>('/hr/me/clock-in'),
-  clockOut: () => api.post<MyToday>('/hr/me/clock-out'),
+  clockIn: (position?: GeoPoint | null) => api.post<MyToday>('/hr/me/clock-in', position ?? {}),
+  clockOut: (position?: GeoPoint | null) => api.post<MyToday>('/hr/me/clock-out', position ?? {}),
 
   // Tracking
   filters: () => api.get<HrFilters>('/hr/filters'),
@@ -198,4 +342,16 @@ export const hrApi = {
   updateSession: (id: string, payload: { clock_in?: string; clock_out?: string | null; note?: string }) =>
     api.patch<WorkSessionRecord>(`/hr/sessions/${id}`, payload),
   removeSession: (id: string) => api.delete<void>(`/hr/sessions/${id}`),
+
+  // Working-hours calculation & location rules
+  calculate: (id: string, range: { from: string; to: string }) =>
+    api.get<WorkingHoursCalculation>(`/hr/employees/${id}/working-hours`, range),
+  policy: (id: string) => api.get<AttendancePolicy>(`/hr/employees/${id}/attendance-policy`),
+  setPolicy: (id: string, payload: AttendancePolicyInput) =>
+    api.put<AttendancePolicy>(`/hr/employees/${id}/attendance-policy`, payload),
+  locations: () => api.get<WorkLocationRow[]>('/hr/work-locations'),
+  createLocation: (payload: WorkLocationInput) => api.post<WorkLocation>('/hr/work-locations', payload),
+  updateLocation: (id: string, payload: Partial<WorkLocationInput>) =>
+    api.patch<WorkLocation>(`/hr/work-locations/${id}`, payload),
+  removeLocation: (id: string) => api.delete<void>(`/hr/work-locations/${id}`),
 };

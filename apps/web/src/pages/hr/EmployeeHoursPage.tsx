@@ -13,6 +13,7 @@ import AssignHoursForm from './AssignHoursForm';
 import TimeRecordForm from './TimeRecordForm';
 import WeekStrip from './WeekStrip';
 import WorkStatusBadge from './WorkStatusBadge';
+import WorkingHoursModal from './WorkingHoursModal';
 import {
   addDays,
   formatDay,
@@ -42,6 +43,7 @@ export default function EmployeeHoursPage() {
   const [record, setRecord] = useState<{ record?: WorkSessionRecord; date: string } | null>(null);
   const [deleting, setDeleting] = useState<WorkSessionRecord | null>(null);
   const [busy, setBusy] = useState(false);
+  const [hoursView, setHoursView] = useState<'calculate' | 'policy' | null>(null);
 
   const load = useCallback(() => {
     hrApi
@@ -101,14 +103,22 @@ export default function EmployeeHoursPage() {
             <span>{employee.email}</span>
           </div>
         </div>
-        {canManage && (
-          <div className="wh-profile-actions">
-            <Button variant="outline" onClick={() => setRecord({ date: isThisWeek ? todayKey() : from })}>
-              {t('records.add')}
-            </Button>
-            <Button onClick={() => setEditSchedule(true)}>{t('actions.editSchedule')}</Button>
-          </div>
-        )}
+        <div className="wh-profile-actions">
+          <Button variant="outline" onClick={() => setHoursView('calculate')}>
+            {t('actions.calculate')}
+          </Button>
+          {canManage && (
+            <>
+              <Button variant="outline" onClick={() => setHoursView('policy')}>
+                {t('actions.locationRules')}
+              </Button>
+              <Button variant="outline" onClick={() => setRecord({ date: isThisWeek ? todayKey() : from })}>
+                {t('records.add')}
+              </Button>
+              <Button onClick={() => setEditSchedule(true)}>{t('actions.editSchedule')}</Button>
+            </>
+          )}
+        </div>
       </div>
 
       {/* ── Week navigation + totals ─────────────────────────────────── */}
@@ -267,6 +277,13 @@ export default function EmployeeHoursPage() {
           />
         )}
       </Modal>
+
+      <WorkingHoursModal
+        employee={hoursView ? employee : null}
+        view={hoursView ?? 'calculate'}
+        initialDate={from}
+        onClose={() => setHoursView(null)}
+      />
 
       <ConfirmDialog
         open={!!deleting}
