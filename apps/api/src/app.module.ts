@@ -27,6 +27,7 @@ import { ProductRequestsModule } from './product-requests/product-requests.modul
 import { PromosModule } from './promos/promos.module';
 import { PriceSurveysModule } from './price-surveys/price-surveys.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { OrdersModule } from './orders/orders.module';
 
 @Module({
   imports: [
@@ -72,6 +73,7 @@ import { NotificationsModule } from './notifications/notifications.module';
     PromosModule,
     PriceSurveysModule,
     NotificationsModule,
+    OrdersModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: ThrottlerGuard }],

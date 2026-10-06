@@ -1,0 +1,121 @@
+{
+  "title": "Orders",
+  "subtitle": "Orders placed for points of sale, with their invoices",
+  "newOrder": "New order",
+  "placeOrder": "Place an order",
+  "status": {
+    "confirmed": "Confirmed",
+    "cancelled": "Cancelled"
+  },
+  "filters": {
+    "search": "Order no., invoice no. or point of sale…",
+    "allStatuses": "All statuses",
+    "allStores": "All points of sale",
+    "clear": "Clear filters"
+  },
+  "table": {
+    "order": "Order",
+    "invoice": "Invoice",
+    "store": "Point of sale",
+    "date": "Date",
+    "items": "Items",
+    "totalHt": "Total excl. VAT",
+    "totalTtc": "Total incl. VAT",
+    "status": "Status",
+    "by": "By",
+    "empty": "No orders yet",
+    "viewInvoice": "View invoice",
+    "deletedStore": "Deleted point of sale"
+  },
+  "form": {
+    "title": "New order",
+    "back": "Back",
+    "storeStep": "Point of sale",
+    "storeSearch": "Search for a point of sale…",
+    "change": "Change",
+    "productsStep": "Products ordered",
+    "product": "Product",
+    "productPlaceholder": "Product name or SKU…",
+    "noResults": "No results",
+    "quantity": "Quantity",
+    "unitPrice": "Unit price excl. VAT",
+    "tvaRate": "VAT (%)",
+    "lineHt": "Total excl. VAT",
+    "lineTva": "VAT",
+    "lineTtc": "Total incl. VAT",
+    "addLine": "Add product",
+    "removeLine": "Remove this product",
+    "lastPriceHere": "Last price for this point of sale",
+    "lastPriceElsewhere": "Last price used",
+    "applyTvaAll": "Apply a VAT rate to every line:",
+    "notes": "Notes (optional)",
+    "notesPlaceholder": "e.g. Morning delivery preferred",
+    "summary": "Summary",
+    "lines_one": "{{count}} product",
+    "lines_other": "{{count}} products",
+    "review": "Review order",
+    "editable": "Unit price and VAT stay editable until you confirm.",
+    "errors": {
+      "store": "Choose a point of sale",
+      "product": "Choose a product",
+      "quantity": "Whole number above 0",
+      "unitPrice": "Valid price (≥ 0, max 2 decimals)",
+      "tvaRate": "VAT between 0 and 100%",
+      "fixLines": "Fix the highlighted lines to continue"
+    }
+  },
+  "review": {
+    "title": "Confirm the order",
+    "intro": "Check the order. Once confirmed, the invoice is generated and can no longer be changed.",
+    "back": "Edit",
+    "confirm": "Confirm and generate invoice",
+    "success": "Order {{number}} confirmed — invoice {{invoice}} generated"
+  },
+  "totals": {
+    "ht": "Total excl. VAT",
+    "tva": "VAT",
+    "ttc": "Total incl. VAT"
+  },
+  "invoice": {
+    "title": "Invoice",
+    "number": "Invoice no.",
+    "date": "Date",
+    "orderNumber": "Order no.",
+    "billedTo": "Billed to",
+    "issuedBy": "Issued by",
+    "placedBy": "Order placed by",
+    "designation": "Description",
+    "sku": "Ref.",
+    "qty": "Qty",
+    "unitPrice": "Unit price",
+    "totalHt": "Total excl. VAT",
+    "tvaRate": "VAT %",
+    "tvaAmount": "VAT amount",
+    "totalTtc": "Total incl. VAT",
+    "notes": "Notes",
+    "cancelledStamp": "CANCELLED",
+    "cancelledOn": "Order cancelled on {{date}} by {{name}}",
+    "reason": "Reason: {{reason}}",
+    "print": "Print",
+    "download": "Download PDF",
+    "downloadHint": "In the print window, choose “Save as PDF”.",
+    "viewStore": "View point of sale",
+    "allOrders": "All orders",
+    "notFound": "Order not found"
+  },
+  "cancel": {
+    "button": "Cancel order",
+    "title": "Cancel order {{number}}?",
+    "message": "The order and its invoice stay in the history, marked as cancelled.",
+    "reason": "Reason (optional)",
+    "confirm": "Cancel order",
+    "success": "Order cancelled"
+  },
+  "storeSection": {
+    "title": "Orders",
+    "empty": "No orders for this point of sale yet",
+    "viewAll": "View all orders",
+    "count_one": "{{count}} order",
+    "count_other": "{{count}} orders"
+  }
+}

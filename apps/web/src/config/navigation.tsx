@@ -24,6 +24,9 @@ import HrPage from '../pages/hr/HrPage';
 import EmployeeHoursPage from '../pages/hr/EmployeeHoursPage';
 import PromosPage from '../pages/promos/PromosPage';
 import PriceSurveysPage from '../pages/price-surveys/PriceSurveysPage';
+import OrdersPage from '../pages/orders/OrdersPage';
+import NewOrderPage from '../pages/orders/NewOrderPage';
+import OrderDetailPage from '../pages/orders/OrderDetailPage';
 
 /**
  * The permission-to-page map. This is the single source of truth for the
@@ -296,6 +299,24 @@ export const NAV_PAGES: NavPage[] = [
       section: 'general',
     },
   },
+  {
+    // Passage de commande — orders are placed from a POS (its page links here
+    // with `?store=`), and each order carries its own invoice.
+    id: 'orders',
+    path: '/orders',
+    element: OrdersPage,
+    permissions: ['orders.read'],
+    nav: {
+      labelKey: 'nav.orders',
+      icon: {
+        d: 'M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z',
+        d2: 'M3 6h18M16 10a4 4 0 01-8 0',
+      },
+      section: 'general',
+    },
+  },
+  { id: 'orders-new', path: '/orders/new', element: NewOrderPage, permissions: ['orders.create'] },
+  { id: 'orders-detail', path: '/orders/:id', element: OrderDetailPage, permissions: ['orders.read'] },
   {
     id: 'training',
     path: '/training',

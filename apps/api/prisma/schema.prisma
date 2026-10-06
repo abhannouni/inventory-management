@@ -130,6 +130,13 @@ enum VisitLocationScope {
   visit_day
 }
 
+/// An order is confirmed (and invoiced) on creation; cancelling keeps it, and
+/// its invoice, on record.
+enum OrderStatus {
+  confirmed
+  cancelled
+}
+
 // ─── Models ────────────────────────────────────────────────────────────────────
 
 model Region {
@@ -188,6 +195,8 @@ model User {
   workSessionsEntered    WorkSession[]   @relation("WorkSessionAuthors")
   attendancePolicy       AttendancePolicy?  @relation("UserAttendancePolicy")
   attendancePoliciesEdited AttendancePolicy[] @relation("AttendancePolicyEditors")
+  ordersCreated          Order[]         @relation("OrderAuthors")
+  ordersCancelled        Order[]         @relation("OrderCancellers")
 
   @@index([role_id])
   @@index([is_active])
@@ -263,6 +272,7 @@ model Store {
   productRequests ProductRequest[]
   priceSurveyAssignments PriceSurveyAssignment[]
   priceSurveySubmissions PriceSurveySubmission[]
+  orders          Order[]
 
   @@index([visible_to_gm])
   @@index([is_active])
@@ -305,6 +315,7 @@ model Product {
   promoItems    PromoItem[]
   priceSurveyAssignments PriceSurveyAssignment[]
   priceSurveyItems       PriceSurveyItem[]
+  orderItems             OrderItem[]
 
   @@index([client_id])
   @@map("products")
@@ -326,6 +337,88 @@ model SellOut {
   @@index([product_id])
   @@index([store_id])
   @@map("sell_outs")
+}
+
+// ─── Passage de commande (orders & invoices) ───────────────────────────────────
+
+/// An order placed for a point of sale. Amounts are computed server-side from
+/// the lines and never edited afterwards — the invoice is a record of them.
+///
+/// `store_id` is nullable (SetNull) so deleting a POS never deletes an
+/// invoice: the invoice keeps its own snapshot of the POS details.
+model Order {
+  id              String      @id @default(uuid())
+  /// Sequential per year, e.g. `CMD-2026-00001`.
+  number          String      @unique
+  store           Store?      @relation(fields: [store_id], references: [id], onDelete: SetNull)
+  store_id        String?
+  status          OrderStatus @default(confirmed)
+  notes           String?
+  total_ht        Decimal     @db.Decimal(14, 2)
+  total_tva       Decimal     @db.Decimal(14, 2)
+  total_ttc       Decimal     @db.Decimal(14, 2)
+  created_by      User?       @relation("OrderAuthors", fields: [created_by_id], references: [id], onDelete: SetNull)
+  created_by_id   String?
+  cancelled_at    DateTime?
+  cancelled_by    User?       @relation("OrderCancellers", fields: [cancelled_by_id], references: [id], onDelete: SetNull)
+  cancelled_by_id String?
+  cancel_reason   String?
+  created_at      DateTime    @default(now())
+  updated_at      DateTime    @default(now()) @updatedAt
+
+  items   OrderItem[]
+  invoice Invoice?
+
+  @@index([store_id, created_at])
+  @@index([created_at])
+  @@map("orders")
+}
+
+/// One ordered product. Name and SKU are copied in so the invoice still reads
+/// correctly if the product is later renamed or deleted.
+model OrderItem {
+  id           String   @id @default(uuid())
+  order        Order    @relation(fields: [order_id], references: [id], onDelete: Cascade)
+  order_id     String
+  product      Product? @relation(fields: [product_id], references: [id], onDelete: SetNull)
+  product_id   String?
+  product_name String
+  product_sku  String
+  position     Int
+  quantity     Int
+  /// Price HT per unit, as agreed when ordering.
+  unit_price   Decimal  @db.Decimal(12, 2)
+  /// TVA percentage, e.g. 20.00.
+  tva_rate     Decimal  @db.Decimal(5, 2)
+  total_ht     Decimal  @db.Decimal(14, 2)
+  tva_amount   Decimal  @db.Decimal(14, 2)
+  total_ttc    Decimal  @db.Decimal(14, 2)
+
+  @@index([order_id])
+  @@index([product_id])
+  @@map("order_items")
+}
+
+/// The invoice (facture) of exactly one order, issued when it is confirmed.
+model Invoice {
+  id             String   @id @default(uuid())
+  /// Sequential per year, e.g. `FAC-2026-00001`.
+  number         String   @unique
+  order          Order    @relation(fields: [order_id], references: [id], onDelete: Cascade)
+  order_id       String   @unique
+  /// The POS as it was when invoiced: name, brand, address, city, postal code, region.
+  store_snapshot Json
+  issued_at      DateTime @default(now())
+
+  @@map("invoices")
+}
+
+/// Atomic counters behind sequential document numbers (`order:2026`, `invoice:2026`).
+model DocumentCounter {
+  key   String @id
+  value Int    @default(0)
+
+  @@map("document_counters")
 }
 
 // Per-store quantity limit for a product

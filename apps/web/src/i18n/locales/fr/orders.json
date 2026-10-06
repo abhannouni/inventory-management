@@ -1,0 +1,121 @@
+{
+  "title": "Passage de commande",
+  "subtitle": "Commandes passées pour les points de vente et leurs factures",
+  "newOrder": "Nouvelle commande",
+  "placeOrder": "Passer une commande",
+  "status": {
+    "confirmed": "Confirmée",
+    "cancelled": "Annulée"
+  },
+  "filters": {
+    "search": "N° de commande, de facture ou point de vente…",
+    "allStatuses": "Tous les statuts",
+    "allStores": "Tous les points de vente",
+    "clear": "Effacer les filtres"
+  },
+  "table": {
+    "order": "Commande",
+    "invoice": "Facture",
+    "store": "Point de vente",
+    "date": "Date",
+    "items": "Articles",
+    "totalHt": "Total HT",
+    "totalTtc": "Total TTC",
+    "status": "Statut",
+    "by": "Par",
+    "empty": "Aucune commande pour le moment",
+    "viewInvoice": "Voir la facture",
+    "deletedStore": "Point de vente supprimé"
+  },
+  "form": {
+    "title": "Nouvelle commande",
+    "back": "Retour",
+    "storeStep": "Point de vente",
+    "storeSearch": "Rechercher un point de vente…",
+    "change": "Changer",
+    "productsStep": "Produits commandés",
+    "product": "Produit",
+    "productPlaceholder": "Nom ou SKU du produit…",
+    "noResults": "Aucun résultat",
+    "quantity": "Quantité",
+    "unitPrice": "Prix unitaire HT",
+    "tvaRate": "TVA (%)",
+    "lineHt": "Total HT",
+    "lineTva": "TVA",
+    "lineTtc": "Total TTC",
+    "addLine": "Ajouter un produit",
+    "removeLine": "Retirer ce produit",
+    "lastPriceHere": "Dernier prix pour ce point de vente",
+    "lastPriceElsewhere": "Dernier prix pratiqué",
+    "applyTvaAll": "Appliquer une TVA à toutes les lignes :",
+    "notes": "Remarques (facultatif)",
+    "notesPlaceholder": "ex. Livraison souhaitée le matin",
+    "summary": "Récapitulatif",
+    "lines_one": "{{count}} produit",
+    "lines_other": "{{count}} produits",
+    "review": "Vérifier la commande",
+    "editable": "Le prix unitaire et la TVA restent modifiables jusqu'à la confirmation.",
+    "errors": {
+      "store": "Choisissez un point de vente",
+      "product": "Choisissez un produit",
+      "quantity": "Quantité entière supérieure à 0",
+      "unitPrice": "Prix valide (≥ 0, 2 décimales max.)",
+      "tvaRate": "TVA entre 0 et 100 %",
+      "fixLines": "Corrigez les lignes signalées avant de continuer"
+    }
+  },
+  "review": {
+    "title": "Confirmer la commande",
+    "intro": "Vérifiez la commande. Une fois confirmée, la facture est générée et ne peut plus être modifiée.",
+    "back": "Modifier",
+    "confirm": "Confirmer et générer la facture",
+    "success": "Commande {{number}} confirmée — facture {{invoice}} générée"
+  },
+  "totals": {
+    "ht": "Total HT",
+    "tva": "TVA",
+    "ttc": "Total TTC"
+  },
+  "invoice": {
+    "title": "Facture",
+    "number": "Facture N°",
+    "date": "Date",
+    "orderNumber": "Commande N°",
+    "billedTo": "Facturé à",
+    "issuedBy": "Émise par",
+    "placedBy": "Commande passée par",
+    "designation": "Désignation",
+    "sku": "Réf.",
+    "qty": "Qté",
+    "unitPrice": "P.U. HT",
+    "totalHt": "Total HT",
+    "tvaRate": "TVA %",
+    "tvaAmount": "Montant TVA",
+    "totalTtc": "Total TTC",
+    "notes": "Remarques",
+    "cancelledStamp": "ANNULÉE",
+    "cancelledOn": "Commande annulée le {{date}} par {{name}}",
+    "reason": "Motif : {{reason}}",
+    "print": "Imprimer",
+    "download": "Télécharger PDF",
+    "downloadHint": "Dans la fenêtre d'impression, choisissez « Enregistrer au format PDF ».",
+    "viewStore": "Voir le point de vente",
+    "allOrders": "Toutes les commandes",
+    "notFound": "Commande introuvable"
+  },
+  "cancel": {
+    "button": "Annuler la commande",
+    "title": "Annuler la commande {{number}} ?",
+    "message": "La commande et sa facture restent dans l'historique, marquées comme annulées.",
+    "reason": "Motif (facultatif)",
+    "confirm": "Annuler la commande",
+    "success": "Commande annulée"
+  },
+  "storeSection": {
+    "title": "Commandes",
+    "empty": "Aucune commande pour ce point de vente",
+    "viewAll": "Voir toutes les commandes",
+    "count_one": "{{count}} commande",
+    "count_other": "{{count}} commandes"
+  }
+}

@@ -48,6 +48,10 @@ export class PrismaService implements OnModuleInit, OnModuleDestroy {
   readonly workLocation: PrismaClient['workLocation'];
   readonly attendancePolicy: PrismaClient['attendancePolicy'];
   readonly attendancePolicyLocation: PrismaClient['attendancePolicyLocation'];
+  readonly order: PrismaClient['order'];
+  readonly orderItem: PrismaClient['orderItem'];
+  readonly invoice: PrismaClient['invoice'];
+  readonly documentCounter: PrismaClient['documentCounter'];
 
   constructor(config: ConfigService) {
     const adapter = new PrismaPg(config.get<string>('DATABASE_URL')!);
@@ -95,6 +99,10 @@ export class PrismaService implements OnModuleInit, OnModuleDestroy {
     this.workLocation = this.client.workLocation;
     this.attendancePolicy = this.client.attendancePolicy;
     this.attendancePolicyLocation = this.client.attendancePolicyLocation;
+    this.order = this.client.order;
+    this.orderItem = this.client.orderItem;
+    this.invoice = this.client.invoice;
+    this.documentCounter = this.client.documentCounter;
   }
 
   $transaction: PrismaClient['$transaction'] = (...args: any[]) =>

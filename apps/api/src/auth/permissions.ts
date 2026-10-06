@@ -29,6 +29,7 @@ export const RESOURCES = [
   'promos',
   'price_surveys',
   'training',
+  'orders',
 ] as const;
 
 export type Resource = (typeof RESOURCES)[number];
@@ -193,6 +194,14 @@ export const PERMISSIONS: PermissionDef[] = [
     action: 'manage',
     description: 'Create training quizzes, assign them and view results (super admin only)',
   },
+
+  // Passage de commande: orders placed for a point of sale, each with its
+  // invoice. `create` places (and so invoices) an order; `update` cancels one
+  // — orders are never edited or deleted, so the invoice history stays intact.
+  // Every action is also bounded by the POS the user may see (store-scope.ts).
+  { code: 'orders.read', resource: 'orders', action: 'read', description: 'View orders and their invoices' },
+  { code: 'orders.create', resource: 'orders', action: 'create', description: 'Place an order for a point of sale' },
+  { code: 'orders.update', resource: 'orders', action: 'update', description: 'Cancel an order' },
 ];
 
 export const PERMISSION_CODES = PERMISSIONS.map((p) => p.code);
@@ -231,6 +240,9 @@ export const ROLE_PRESETS: Record<string, string[]> = {
     ...crud('product_requests', '').map((p) => p.code),
     'promos.read',
     'price_surveys.manage',
+    'orders.read',
+    'orders.create',
+    'orders.update',
   ],
 
   // Reads consolidated data, but only for the POS the Super Admin has exposed.
@@ -250,6 +262,7 @@ export const ROLE_PRESETS: Record<string, string[]> = {
     'sell_out.read',
     'product_requests.read',
     'promos.read',
+    'orders.read',
   ],
 
   supervisor: [
@@ -286,6 +299,8 @@ export const ROLE_PRESETS: Record<string, string[]> = {
     'promos.read',
     'promos.upload_picture',
     'price_surveys.update',
+    'orders.read',
+    'orders.create',
   ],
 
   merchandiser: [

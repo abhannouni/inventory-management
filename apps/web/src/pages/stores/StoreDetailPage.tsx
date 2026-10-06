@@ -19,6 +19,7 @@ import StoreMap from './StoreMap';
 import StoreProductsPicker from './StoreProductsPicker';
 import type { ProductAssignmentValue } from './StoreProductsPicker';
 import PosOverviewSections from './PosOverviewSections';
+import StoreOrdersSection from '../orders/StoreOrdersSection';
 import { storesApi } from '../../api/stores.api';
 import { formatDateOnly } from '../../utils/format';
 import type { Store, StoreOverview } from '../../types';
@@ -75,6 +76,7 @@ export default function StoreDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { t, i18n } = useTranslation('stores');
   const { t: tCommon } = useTranslation('common');
+  const { t: tOrders } = useTranslation('orders');
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const p = usePermissions();
@@ -188,8 +190,13 @@ export default function StoreDetailPage() {
         title={s.name}
         subtitle={[s.brand, s.city, s.region?.name].filter(Boolean).join(' · ')}
         actions={
-          p.can('inventory.create') || p.canManageStores ? (
-            <div style={{ display: 'flex', gap: 8 }}>
+          p.can('inventory.create') || p.canManageStores || (p.can('orders.create') && s.is_active) ? (
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+              {p.can('orders.create') && s.is_active && (
+                <Button variant="outline" onClick={() => navigate(`/orders/new?store=${s.id}`)}>
+                  {tOrders('placeOrder')}
+                </Button>
+              )}
               {p.can('inventory.create') && (
                 <Button variant="outline" onClick={openAddProducts}>{t('detail.addProducts')}</Button>
               )}
@@ -291,6 +298,9 @@ export default function StoreDetailPage() {
 
         {/* ── Operational sections — team, stock, visits, photos, … ────────── */}
         <PosOverviewSections overview={overview} loading={overviewLoading} />
+
+        {/* ── Orders & invoices (Passage de commande) ──────────────────────── */}
+        <StoreOrdersSection storeId={s.id} storeActive={s.is_active} />
       </motion.div>
 
       <Modal open={editOpen} onClose={() => setEditOpen(false)} title={t('detail.editTitle')} size="lg">

@@ -26,6 +26,7 @@ import frPriceSurveys from './locales/fr/priceSurveys.json';
 import frPlanning from './locales/fr/planning.json';
 import frTraining from './locales/fr/training.json';
 import frHr from './locales/fr/hr.json';
+import frOrders from './locales/fr/orders.json';
 
 import enCommon from './locales/en/common.json';
 import enSidebar from './locales/en/sidebar.json';
@@ -52,6 +53,7 @@ import enPriceSurveys from './locales/en/priceSurveys.json';
 import enPlanning from './locales/en/planning.json';
 import enTraining from './locales/en/training.json';
 import enHr from './locales/en/hr.json';
+import enOrders from './locales/en/orders.json';
 
 import arCommon from './locales/ar/common.json';
 import arSidebar from './locales/ar/sidebar.json';
@@ -78,6 +80,7 @@ import arPriceSurveys from './locales/ar/priceSurveys.json';
 import arPlanning from './locales/ar/planning.json';
 import arTraining from './locales/ar/training.json';
 import arHr from './locales/ar/hr.json';
+import arOrders from './locales/ar/orders.json';
 
 export const LANGUAGE_STORAGE_KEY = 'appLanguage';
 export const SUPPORTED_LANGUAGES = ['fr', 'en', 'ar'] as const;
@@ -111,6 +114,7 @@ export const NAMESPACES = [
   'planning',
   'training',
   'hr',
+  'orders',
 ] as const;
 
 function getInitialLanguage(): SupportedLanguage {
@@ -158,6 +162,7 @@ i18n.use(initReactI18next).init({
       planning: frPlanning,
       training: frTraining,
       hr: frHr,
+      orders: frOrders,
     },
     en: {
       common: enCommon,
@@ -185,6 +190,7 @@ i18n.use(initReactI18next).init({
       planning: enPlanning,
       training: enTraining,
       hr: enHr,
+      orders: enOrders,
     },
     ar: {
       common: arCommon,
@@ -212,6 +218,7 @@ i18n.use(initReactI18next).init({
       planning: arPlanning,
       training: arTraining,
       hr: arHr,
+      orders: arOrders,
     },
   },
   ns: NAMESPACES,
