@@ -383,6 +383,16 @@
     "latitude": "Latitude",
     "longitude": "Longitude",
     "useMyPosition": "Use my current position",
+    "position": "Position",
+    "map": {
+      "label": "Map — click to place the location",
+      "hint": "Click the map to place the location",
+      "dragHint": "Drag the pin to adjust",
+      "searchPlaceholder": "Search an address or place…",
+      "search": "Search",
+      "notFound": "No place found — try another search, or click the map",
+      "unavailable": "The map isn't available here — use your current position or enter the coordinates."
+    },
     "radiusLabel": "Radius",
     "radiusHint": "Between 20 and 5000 m. How close to this place counts as being there.",
     "radius": "{{meters}} m radius",

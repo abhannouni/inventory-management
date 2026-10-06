@@ -8,6 +8,7 @@ import DataTable, { type Column } from '../../components/ui/DataTable';
 import Modal from '../../components/ui/Modal';
 import { usePermissions } from '../../hooks/usePermissions';
 import { getCurrentPosition } from '../../utils/geolocation';
+import LocationPickerMap from './LocationPickerMap';
 
 /**
  * Agencies, offices and other fixed places employees may work from. Each
@@ -128,7 +129,7 @@ export default function WorkLocationsView() {
         open={!!editing}
         onClose={() => setEditing(null)}
         title={editing === 'new' ? t('locations.addTitle') : t('locations.editTitle')}
-        size="md"
+        size="lg"
       >
         {editing && (
           <WorkLocationForm
@@ -175,9 +176,11 @@ function WorkLocationForm({ location, onCancel, onDone }: FormProps) {
   const latN = Number(lat);
   const lngN = Number(lng);
   const radiusN = Number(radius);
+  const pinValid =
+    lat !== '' && lng !== '' && Number.isFinite(latN) && Number.isFinite(lngN) && Math.abs(latN) <= 90 && Math.abs(lngN) <= 180;
   const error = !name.trim()
     ? t('locations.errors.name')
-    : lat === '' || lng === '' || Number.isNaN(latN) || Number.isNaN(lngN) || Math.abs(latN) > 90 || Math.abs(lngN) > 180
+    : !pinValid
       ? t('locations.errors.coordinates')
       : !Number.isInteger(radiusN) || radiusN < 20 || radiusN > 5000
         ? t('locations.errors.radius')
@@ -228,7 +231,22 @@ function WorkLocationForm({ location, onCancel, onDone }: FormProps) {
         <label className="form-label" htmlFor="loc-address">{t('locations.address')}</label>
         <input id="loc-address" className="form-input" value={address} maxLength={300} onChange={(e) => setAddress(e.target.value)} />
       </div>
-      <div className="form-row">
+      <div className="wh-picker-head">
+        <span className="form-label" style={{ margin: 0 }}>{t('locations.position')}</span>
+        <Button size="sm" variant="outline" type="button" onClick={useMyPosition} loading={locating}>
+          {t('locations.useMyPosition')}
+        </Button>
+      </div>
+      <LocationPickerMap
+        lat={pinValid ? latN : null}
+        lng={pinValid ? lngN : null}
+        radiusMeters={radiusN >= 20 && radiusN <= 5000 ? radiusN : 0}
+        onChange={(newLat, newLng) => {
+          setLat(String(newLat));
+          setLng(String(newLng));
+        }}
+      />
+      <div className="form-row" style={{ marginTop: 12 }}>
         <div className="form-group">
           <label className="form-label" htmlFor="loc-lat">{t('locations.latitude')}</label>
           <input id="loc-lat" className="form-input" inputMode="decimal" value={lat} onChange={(e) => setLat(e.target.value.trim())} />
@@ -238,10 +256,7 @@ function WorkLocationForm({ location, onCancel, onDone }: FormProps) {
           <input id="loc-lng" className="form-input" inputMode="decimal" value={lng} onChange={(e) => setLng(e.target.value.trim())} />
         </div>
       </div>
-      <Button size="sm" variant="outline" type="button" onClick={useMyPosition} loading={locating}>
-        {t('locations.useMyPosition')}
-      </Button>
-      <div className="form-group" style={{ marginTop: 12 }}>
+      <div className="form-group">
         <label className="form-label" htmlFor="loc-radius">{t('locations.radiusLabel')}</label>
         <input id="loc-radius" type="number" className="form-input" min={20} max={5000} step={10} value={radius} onChange={(e) => setRadius(e.target.value)} />
         <p className="form-hint">{t('locations.radiusHint')}</p>

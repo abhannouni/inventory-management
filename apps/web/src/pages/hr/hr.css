@@ -508,6 +508,14 @@
 .wh-excluded { color: #b91c1c; }
 .wh-row-excluded td { background: #fef2f2; }
 
+/* ─── Work location picker ─── */
+.wh-picker-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+.wh-picker { display: flex; flex-direction: column; gap: 8px; }
+.wh-picker-search { display: flex; gap: 8px; }
+.wh-picker-search .form-input { flex: 1; min-width: 0; }
+.wh-picker .form-error { margin: 0; }
+.wh-picker .store-map-canvas canvas { outline: none; }
+
 /* ─── Add time by role ─── */
 .wh-roletime-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
 .wh-roletime-head strong { font-size: 13.5px; color: var(--gray-900); }
