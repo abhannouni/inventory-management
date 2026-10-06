@@ -5,7 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../../hooks/useAppDispatch';
 import { usePermissions } from '../../hooks/usePermissions';
 import { useClientPagination } from '../../hooks/useClientPagination';
-import { fetchSellOuts, createSellOut } from '../../store/slices/sellOutSlice';
+import { fetchSellOuts, createSellOuts } from '../../store/slices/sellOutSlice';
+import type { SellOutBatchPayload } from '../../api/sellOut.api';
 import PageHeader from '../../components/ui/PageHeader';
 import Button from '../../components/ui/Button';
 import DataTable from '../../components/ui/DataTable';
@@ -72,10 +73,10 @@ export default function SellOutPage() {
 
   const { pageItems, meta, setPage, setLimit } = useClientPagination(filtered, { storageKey: 'pagination:sellOut' });
 
-  const handleCreate = async (data: { product_id: string; store_id: string; quantity: number; price: number }) => {
-    const res = await dispatch(createSellOut(data));
-    if (createSellOut.fulfilled.match(res)) {
-      toast.success(t('toasts.createSuccess'));
+  const handleCreate = async (data: SellOutBatchPayload) => {
+    const res = await dispatch(createSellOuts(data));
+    if (createSellOuts.fulfilled.match(res)) {
+      toast.success(t('toasts.createManySuccess', { count: res.payload.length }));
       setCreateOpen(false);
     } else {
       toast.error((res.payload as string) || t('toasts.createError'));
@@ -173,7 +174,7 @@ export default function SellOutPage() {
         <Pagination meta={meta} onPageChange={setPage} onLimitChange={setLimit} />
       </motion.div>
 
-      <Modal open={createOpen} onClose={() => setCreateOpen(false)} title={t('modalTitle')} size="md">
+      <Modal open={createOpen} onClose={() => setCreateOpen(false)} title={t('modalTitle')} size="lg">
         <SellOutForm onSubmit={handleCreate} onCancel={() => setCreateOpen(false)} />
       </Modal>
 

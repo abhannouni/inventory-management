@@ -17,7 +17,7 @@ import { RequirePermissions } from '../auth/decorators/require-permissions.decor
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../auth/guards/permissions.guard';
 import { ExcelTypeValidator } from '../products/validators/excel-type.validator';
-import { CreateSellOutDto } from './dto/create-sell-out.dto';
+import { CreateSellOutBatchDto, CreateSellOutDto } from './dto/create-sell-out.dto';
 import { SellOutService } from './sell-out.service';
 
 const MAX_IMPORT_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
@@ -41,6 +41,13 @@ export class SellOutController {
   @ApiOperation({ summary: 'Record a sell-out entry' })
   create(@Body() dto: CreateSellOutDto, @CurrentUser() user: User) {
     return this.sellOutService.create(dto, user);
+  }
+
+  @Post('batch')
+  @RequirePermissions('sell_out.create')
+  @ApiOperation({ summary: 'Record several products sold at one store (all or nothing)' })
+  createMany(@Body() dto: CreateSellOutBatchDto, @CurrentUser() user: User) {
+    return this.sellOutService.createMany(dto, user);
   }
 
   @Post('bulk-import')

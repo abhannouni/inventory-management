@@ -13,6 +13,18 @@
     "quantity": "Quantity",
     "price": "Price"
   },
+  "lines": {
+    "title": "Products",
+    "count_one": "{{count}} product",
+    "count_other": "{{count}} products",
+    "add": "Add product",
+    "remove": "Remove this product",
+    "lineTotal": "Line total",
+    "totalUnits": "{{units}} units",
+    "total": "Total",
+    "submit_one": "Save {{count}} product",
+    "submit_other": "Save {{count}} products"
+  },
   "search": {
     "placeholder": "Search by product, SKU or store...",
     "noResults": "No matching results",
@@ -41,6 +53,8 @@
   },
   "toasts": {
     "createSuccess": "Sell-out entry recorded",
+    "createManySuccess_one": "{{count}} sell-out entry recorded",
+    "createManySuccess_other": "{{count}} sell-out entries recorded",
     "createError": "Failed to record sell-out entry"
   },
   "bulkImport": {

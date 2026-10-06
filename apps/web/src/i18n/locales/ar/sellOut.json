@@ -13,6 +13,18 @@
     "quantity": "الكمية",
     "price": "السعر"
   },
+  "lines": {
+    "title": "المنتجات",
+    "count_one": "{{count}} منتج",
+    "count_other": "{{count}} منتجات",
+    "add": "إضافة منتج",
+    "remove": "إزالة هذا المنتج",
+    "lineTotal": "إجمالي السطر",
+    "totalUnits": "{{units}} وحدة",
+    "total": "الإجمالي",
+    "submit_one": "حفظ {{count}} منتج",
+    "submit_other": "حفظ {{count}} منتجات"
+  },
   "search": {
     "placeholder": "ابحث بالمنتج أو SKU أو المتجر...",
     "noResults": "لا توجد نتائج مطابقة",
@@ -41,6 +53,8 @@
   },
   "toasts": {
     "createSuccess": "تم تسجيل عملية البيع",
+    "createManySuccess_one": "تم تسجيل {{count}} عملية بيع",
+    "createManySuccess_other": "تم تسجيل {{count}} عمليات بيع",
     "createError": "فشل تسجيل عملية البيع"
   },
   "bulkImport": {

@@ -13,6 +13,18 @@
     "quantity": "Quantité",
     "price": "Prix"
   },
+  "lines": {
+    "title": "Produits",
+    "count_one": "{{count}} produit",
+    "count_other": "{{count}} produits",
+    "add": "Ajouter un produit",
+    "remove": "Retirer ce produit",
+    "lineTotal": "Total ligne",
+    "totalUnits": "{{units}} unités",
+    "total": "Total",
+    "submit_one": "Enregistrer {{count}} produit",
+    "submit_other": "Enregistrer {{count}} produits"
+  },
   "search": {
     "placeholder": "Rechercher par produit, SKU ou magasin...",
     "noResults": "Aucun résultat correspondant",
@@ -41,6 +53,8 @@
   },
   "toasts": {
     "createSuccess": "Entrée de sell-out enregistrée",
+    "createManySuccess_one": "{{count}} entrée de sell-out enregistrée",
+    "createManySuccess_other": "{{count}} entrées de sell-out enregistrées",
     "createError": "Échec de l'enregistrement de l'entrée de sell-out"
   },
   "bulkImport": {

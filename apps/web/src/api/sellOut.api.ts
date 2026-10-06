@@ -8,6 +8,12 @@ export interface SellOutPayload {
   price: number;
 }
 
+/** Several products sold at one store, saved together (all or nothing). */
+export interface SellOutBatchPayload {
+  store_id: string;
+  items: { product_id: string; quantity: number; price: number }[];
+}
+
 export interface BulkImportRowError {
   row: number;
   message: string;
@@ -22,6 +28,7 @@ export interface BulkImportResult {
 export const sellOutApi = {
   findAll: () => api.get<SellOut[]>('/sell-out'),
   create: (payload: SellOutPayload) => api.post<SellOut>('/sell-out', payload),
+  createMany: (payload: SellOutBatchPayload) => api.post<SellOut[]>('/sell-out/batch', payload),
   bulkImport: (file: File) => {
     const formData = new FormData();
     formData.append('file', file);

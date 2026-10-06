@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import type { User } from '@prisma/client';
 import * as XLSX from 'xlsx';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateSellOutDto } from './dto/create-sell-out.dto';
+import { CreateSellOutBatchDto, CreateSellOutDto } from './dto/create-sell-out.dto';
 import { parseSellOutRow } from './sell-out-import.util';
 
 export interface BulkImportRowError {
@@ -45,6 +45,32 @@ export class SellOutService {
       },
       include: { product: true, store: true },
     });
+  }
+
+  /** All lines or none: one bad product rejects the batch before anything is written. */
+  async createMany(dto: CreateSellOutBatchDto, user: User) {
+    const productIds = Array.from(new Set(dto.items.map((i) => i.product_id)));
+    const [store, found] = await Promise.all([
+      this.prisma.store.findUnique({ where: { id: dto.store_id } }),
+      this.prisma.product.count({ where: { id: { in: productIds } } }),
+    ]);
+    if (!store) throw new NotFoundException('Store not found');
+    if (found !== productIds.length) throw new NotFoundException('Product not found');
+
+    return this.prisma.$transaction(
+      dto.items.map((item) =>
+        this.prisma.sellOut.create({
+          data: {
+            product_id: item.product_id,
+            store_id: dto.store_id,
+            quantity: item.quantity,
+            price: item.price,
+            created_by_id: user.id,
+          },
+          include: { product: true, store: true },
+        }),
+      ),
+    );
   }
 
   async bulkImportFromFile(buffer: Buffer, user: User): Promise<BulkImportResult> {
